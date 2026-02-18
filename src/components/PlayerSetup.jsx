@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import BouncyButton from './BouncyButton';
 
-const PlayerSetup = ({ onNext }) => {
-    const [count, setCount] = useState(4); // Default 4 players
+const PlayerSetup = ({ onNext, onBack }) => {
+    const [count, setCount] = useState(3);
 
     const increment = () => {
         if (count < 20) setCount(count + 1);
@@ -13,59 +13,57 @@ const PlayerSetup = ({ onNext }) => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen p-6 relative overflow-hidden bg-spy-blue">
+        <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-spy-blue relative overflow-hidden">
+
             {/* Background Decor */}
-            <div className="absolute top-[20%] right-[-10%] w-32 h-32 bg-spy-lime opacity-10 rounded-full blur-2xl animate-pulse-fast"></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-white/5 rounded-full blur-[120px] pointer-events-none"></div>
 
-            <div className="z-10 text-center mb-10">
-                <h2 className="text-3xl font-black text-white uppercase tracking-tighter drop-shadow-md">
-                    Combien d'Agents ?
+            {/* Glass Card Container */}
+            <div className="w-full max-w-sm bg-white/5 backdrop-blur-xl border border-white/10 rounded-[32px] p-8 shadow-2xl flex flex-col items-center animate-slide-up z-10">
+
+                <h2 className="text-3xl font-black text-white text-center mb-2 uppercase tracking-tight">
+                    Joueurs
                 </h2>
-                <p className="text-white/60 font-bold mt-2">
-                    Sélectionnez le nombre de joueurs
+                <p className="text-white/50 text-sm font-bold mb-10 text-center uppercase tracking-widest">
+                    Combien d'agents ?
                 </p>
-            </div>
 
-            {/* Counter Controls */}
-            <div className="z-10 flex items-center justify-center space-x-8 mb-16">
-                <BouncyButton
-                    onClick={decrement}
-                    variant="secondary"
-                    className="w-20 h-20 rounded-full text-4xl shadow-lg disabled:opacity-50"
-                    disabled={count <= 3}
-                >
-                    -
-                </BouncyButton>
+                {/* Counter Control */}
+                <div className="flex items-center justify-between w-full mb-12 bg-black/20 rounded-2xl p-2 border border-white/5">
+                    <BouncyButton
+                        onClick={decrement}
+                        variant="secondary"
+                        className="w-16 h-16 text-3xl !rounded-xl"
+                        disabled={count <= 3}
+                    >
+                        -
+                    </BouncyButton>
 
-                <div className="flex flex-col items-center">
-                    <span className="text-8xl font-black text-white drop-shadow-2xl font-display">
+                    <span className="text-6xl font-black text-white px-4 min-w-[3ch] text-center font-display drop-shadow-md">
                         {count}
                     </span>
-                    <span className="text-spy-lime font-bold uppercase tracking-widest">
-                        JOUEURS
-                    </span>
+
+                    <BouncyButton
+                        onClick={increment}
+                        variant="secondary"
+                        className="w-16 h-16 text-3xl !rounded-xl"
+                        disabled={count >= 20}
+                    >
+                        +
+                    </BouncyButton>
                 </div>
 
-                <BouncyButton
-                    onClick={increment}
-                    variant="secondary"
-                    className="w-20 h-20 rounded-full text-4xl shadow-lg disabled:opacity-50"
-                    disabled={count >= 20}
-                >
-                    +
-                </BouncyButton>
-            </div>
+                {/* Navigation Actions */}
+                <div className="w-full space-y-3">
+                    <BouncyButton onClick={() => onNext(count)} className="text-xl py-5 w-full">
+                        CONTINUER
+                    </BouncyButton>
 
-            {/* Next Button */}
-            <div className="z-10 w-full max-w-sm">
-                <BouncyButton
-                    onClick={() => onNext(count)}
-                    className="w-full text-xl py-5 shadow-spy-orange/50 shadow-xl"
-                >
-                    SUIVANT : IDENTIFICATION
-                </BouncyButton>
+                    <BouncyButton onClick={onBack} variant="secondary" className="text-sm py-4 w-full">
+                        RETOUR
+                    </BouncyButton>
+                </div>
             </div>
-
         </div>
     );
 };

@@ -1,40 +1,41 @@
 import React from 'react';
 import BouncyButton from './BouncyButton';
 
-const RoleStepper = ({ label, count, onIncrement, onDecrement, color = 'spy-lime', subLabel }) => {
+const RoleStepper = ({ label, count, onIncrement, onDecrement, color = 'text-white', subLabel }) => {
     return (
-        <div className="flex flex-col items-center w-full max-w-xs mb-6">
-            <div className="flex items-center justify-between w-full bg-white/10 rounded-full p-2 pr-4 border border-white/10">
-
-                {/* Decrement */}
+        <div className="flex flex-col items-center w-full mb-6">
+            <div className="flex items-center justify-between w-full bg-black/20 rounded-2xl p-2 border border-white/5 shadow-inner">
                 <BouncyButton
                     onClick={onDecrement}
-                    className={`w-12 h-12 text-2xl rounded-full bg-spy-orange shadow-md flex-none`}
+                    className="w-12 h-12 text-2xl !rounded-xl bg-white/5 hover:bg-white/10"
                     variant="secondary"
+                    disabled={count <= 0}
                 >
                     -
                 </BouncyButton>
 
-                {/* Display */}
-                <div className="flex flex-col items-center flex-grow">
-                    <span className="text-2xl font-black text-white leading-none">
+                <div className="flex flex-col items-center flex-grow px-2">
+                    <span className="text-3xl font-black text-white leading-none drop-shadow-sm font-display">
                         {count}
                     </span>
-                    <span className={`text-xs font-bold uppercase tracking-wider text-${color}`}>
+                    <span className={`text-[10px] font-bold uppercase tracking-widest ${color} opacity-90`}>
                         {label}
                     </span>
                 </div>
 
-                {/* Increment */}
                 <BouncyButton
                     onClick={onIncrement}
-                    className={`w-12 h-12 text-2xl rounded-full bg-${color} text-spy-blue shadow-md flex-none`}
-                    variant="primary"
+                    className="w-12 h-12 text-2xl !rounded-xl bg-white/5 hover:bg-white/10"
+                    variant="secondary"
                 >
                     +
                 </BouncyButton>
             </div>
-            {subLabel && <span className="text-xs text-white/40 mt-1 font-bold">{subLabel}</span>}
+            {subLabel && (
+                <span className="text-[10px] text-white/40 mt-1 font-bold uppercase tracking-wide text-center">
+                    {subLabel}
+                </span>
+            )}
         </div>
     );
 };
