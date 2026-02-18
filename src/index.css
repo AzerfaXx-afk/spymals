@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+@theme {
+  --color-spy-blue: #1e3a8a;
+  --color-spy-lime: #84cc16;
+  --color-spy-orange: #f97316;
+
+  --font-sans: "Fredoka", "Nunito", sans-serif;
+
+  --animate-bounce-slow: bounce 3s infinite;
+  --animate-pulse-fast: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@layer base {
+  body {
+    @apply bg-spy-blue text-white font-sans overflow-hidden select-none;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-spy-lime text-spy-blue font-bold py-4 px-8 rounded-full shadow-lg transform transition-transform active:scale-95 hover:scale-105 flex items-center justify-center text-xl uppercase tracking-wider;
+  }
+
+  .btn-secondary {
+    @apply bg-spy-orange text-white font-bold py-2 px-6 rounded-full shadow-md transform transition-transform active:scale-95 hover:scale-105 flex items-center justify-center text-lg;
+  }
+
+  .card {
+    @apply bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-white/20;
+  }
+}
