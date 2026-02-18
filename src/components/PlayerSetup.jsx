@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import BouncyButton from './BouncyButton';
+import BackArrow from './BackArrow';
 
 const PlayerSetup = ({ onNext, onBack }) => {
     const [count, setCount] = useState(3);
@@ -14,6 +15,7 @@ const PlayerSetup = ({ onNext, onBack }) => {
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-spy-blue relative overflow-hidden">
+            <BackArrow onClick={onBack} />
 
             {/* Background Decor */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-white/5 rounded-full blur-[120px] pointer-events-none"></div>

@@ -1,9 +1,11 @@
 import React from 'react';
 import BouncyButton from './BouncyButton';
+import BackArrow from './BackArrow';
 
 const HowToPlay = ({ onBack }) => {
     return (
         <div className="min-h-screen flex flex-col items-center p-6 bg-spy-blue overflow-y-auto relative no-scrollbar">
+            <BackArrow onClick={onBack} />
 
             {/* Background Decor */}
             <div className="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none">

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import PlayerCard from './PlayerCard';
 import EditPlayerModal from './EditPlayerModal';
+import EditPlayerModal from './EditPlayerModal';
 import BouncyButton from './BouncyButton';
+import BackArrow from './BackArrow';
 
-const IdentifyAgents = ({ players, onUpdatePlayers, onConfirm }) => {
+const IdentifyAgents = ({ players, onUpdatePlayers, onConfirm, onBack }) => {
     const [editingPlayerId, setEditingPlayerId] = useState(null);
 
     const handleEditPlayer = (id) => {
@@ -22,6 +24,7 @@ const IdentifyAgents = ({ players, onUpdatePlayers, onConfirm }) => {
 
     return (
         <div className="flex flex-col h-screen bg-spy-blue relative overflow-hidden">
+            <BackArrow onClick={onBack} />
 
             {/* Background Decor */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">

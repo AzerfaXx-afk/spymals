@@ -85,18 +85,25 @@ function App() {
           setVolume={setVolume}
         />
       )}
-      {currentScreen === 'setup' && <PlayerSetup onNext={confirmPlayerCount} />}
+      {currentScreen === 'setup' && (
+        <PlayerSetup
+          onNext={confirmPlayerCount}
+          onBack={() => setCurrentScreen('home')}
+        />
+      )}
       {currentScreen === 'identify' && (
         <IdentifyAgents
           players={players}
           onUpdatePlayers={setPlayers}
           onConfirm={confirmTeam}
+          onBack={() => setCurrentScreen('setup')}
         />
       )}
       {currentScreen === 'briefing' && (
         <MissionBriefing
           totalPlayers={players.length}
           onStartGame={startGame}
+          onBack={() => setCurrentScreen('identify')}
         />
       )}
       {currentScreen === 'game' && (

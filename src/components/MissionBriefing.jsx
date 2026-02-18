@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import BouncyButton from './BouncyButton';
 import RoleStepper from './RoleStepper';
+import BackArrow from './BackArrow';
 
-const MissionBriefing = ({ totalPlayers, onStartGame }) => {
+const MissionBriefing = ({ totalPlayers, onStartGame, onBack }) => {
     const [undercoverCount, setUndercoverCount] = useState(1);
     const [whiteCount, setWhiteCount] = useState(0);
     const [wordPack, setWordPack] = useState('standard');
@@ -32,6 +33,7 @@ const MissionBriefing = ({ totalPlayers, onStartGame }) => {
 
     return (
         <div className="min-h-screen flex flex-col items-center p-6 relative overflow-hidden bg-spy-blue">
+            <BackArrow onClick={onBack} />
             {/* Background Decor */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
                 <div className="absolute top-[-10%] right-[-20%] w-[600px] h-[600px] bg-spy-orange opacity-[0.05] rounded-full blur-[100px] animate-pulse-slow"></div>
