@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PlayerCard from './PlayerCard';
 import EditPlayerModal from './EditPlayerModal';
-import EditPlayerModal from './EditPlayerModal';
+
 import BouncyButton from './BouncyButton';
 import BackArrow from './BackArrow';
 
