@@ -3,11 +3,12 @@ import BouncyButton from './BouncyButton';
 import { wordPacks } from '../data/wordPacks';
 
 const GameSession = ({ players, config, onEndGame }) => {
-    const [gameState, setGameState] = useState('distributing'); // distributing, playing
+    const [gameState, setGameState] = useState('distributing'); // distributing, playing, voting, reveal
     const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
     const [isRevealed, setIsRevealed] = useState(false);
     const [assignedRoles, setAssignedRoles] = useState([]);
     const [targetWord, setTargetWord] = useState(null);
+    const [votedPlayer, setVotedPlayer] = useState(null);
 
     // Initialize Game
     useEffect(() => {
@@ -52,6 +53,20 @@ const GameSession = ({ players, config, onEndGame }) => {
         }
     };
 
+    const handleStartVote = () => {
+        setGameState('voting');
+    };
+
+    const handleVote = (player) => {
+        setVotedPlayer(player);
+        setGameState('reveal');
+    };
+
+    const handleContinue = () => {
+        setVotedPlayer(null);
+        setGameState('playing');
+    };
+
     const currentPlayer = assignedRoles[currentPlayerIndex];
 
     if (gameState === 'playing') {
@@ -60,30 +75,118 @@ const GameSession = ({ players, config, onEndGame }) => {
                 {/* Decor */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-spy-lime opacity-10 rounded-full blur-[100px] animate-pulse-slow pointer-events-none"></div>
 
-                <div className="z-10 animate-pop-in">
+                <div className="z-10 animate-pop-in flex flex-col items-center w-full max-w-md">
                     <div className="text-8xl mb-6 filter drop-shadow-[0_0_30px_rgba(255,255,255,0.3)] animate-bounce-slow">
                         🕵️‍♂️
                     </div>
                     <h1 className="text-5xl font-black text-white mb-6 drop-shadow-lg uppercase tracking-tighter">
                         Mission<br /><span className="text-spy-lime">Lancée !</span>
                     </h1>
-                    <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 border border-white/10 shadow-xl max-w-sm mx-auto mb-12">
+                    <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 border border-white/10 shadow-xl w-full mb-12">
                         <p className="text-lg text-white/90 font-bold leading-relaxed">
                             Tous les agents ont leur mot secret. Discutez et trouvez les imposteurs !
                         </p>
                     </div>
 
-                    <BouncyButton onClick={onEndGame} variant="secondary" className="max-w-xs mx-auto py-4 text-sm w-full">
-                        TERMINER LA MISSION
+                    <BouncyButton onClick={handleStartVote} className="w-full py-6 text-xl shadow-spy-orange/30 shadow-2xl">
+                        PASSER AU VOTE
+                    </BouncyButton>
+
+                    <button
+                        onClick={onEndGame}
+                        className="mt-6 text-white/40 text-sm font-bold uppercase tracking-widest hover:text-white transition-colors"
+                    >
+                        Annuler la mission
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    if (gameState === 'voting') {
+        return (
+            <div className="min-h-screen flex flex-col items-center p-6 bg-spy-blue relative overflow-hidden">
+                <div className="w-full max-w-md z-10 animate-pop-in">
+                    <h2 className="text-3xl font-black text-white text-center mb-8 uppercase tracking-tighter">
+                        Qui est <span className="text-spy-orange">l'imposteur ?</span>
+                    </h2>
+
+                    <div className="grid grid-cols-2 gap-4 mb-8">
+                        {assignedRoles.map((player) => (
+                            <button
+                                key={player.id}
+                                onClick={() => handleVote(player)}
+                                className="bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl p-4 flex flex-col items-center transition-all active:scale-95"
+                            >
+                                <div className="text-4xl mb-2">{player.avatar.value}</div>
+                                <span className="font-bold text-white uppercase text-sm">{player.name}</span>
+                            </button>
+                        ))}
+                    </div>
+
+                    <BouncyButton onClick={() => setGameState('playing')} variant="secondary" className="w-full">
+                        RETOUR DISCUSSION
                     </BouncyButton>
                 </div>
             </div>
         );
     }
 
-    // Loading state
+    if (gameState === 'reveal' && votedPlayer) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-spy-blue text-center relative overflow-hidden">
+                <div className="absolute inset-0 bg-black/80 backdrop-blur-sm z-0"></div>
+
+                <div className="z-10 animate-pop-in w-full max-w-md">
+                    <div className="mb-8 relative">
+                        <div className="text-9xl mb-4 animate-bounce-slow filter drop-shadow-[0_0_50px_rgba(255,255,255,0.2)]">
+                            {votedPlayer.avatar.value}
+                        </div>
+                        <h2 className="text-4xl font-black text-white uppercase tracking-wider mb-2">
+                            {votedPlayer.name}
+                        </h2>
+                        <p className="text-white/60 font-bold uppercase tracking-widest text-sm">était...</p>
+                    </div>
+
+                    <div className="bg-white/10 backdrop-blur-xl rounded-[40px] p-8 border border-white/10 shadow-2xl mb-8 transform hover:scale-105 transition-transform duration-500">
+                        <h3 className="text-5xl font-black uppercase drop-shadow-lg mb-2">
+                            {votedPlayer.role === 'Civilian' ? (
+                                <span className="text-spy-lime">Civil</span>
+                            ) : votedPlayer.role === 'Undercover' ? (
+                                <span className="text-spy-orange">Espion</span>
+                            ) : (
+                                <span className="text-white">Mr. White</span>
+                            )}
+                        </h3>
+                        {votedPlayer.role !== 'Civilian' && (
+                            <p className="text-white/80 font-bold mt-4">
+                                Bien joué agents !
+                            </p>
+                        )}
+                        {votedPlayer.role === 'Civilian' && (
+                            <p className="text-spy-orange font-bold mt-4 animate-pulse">
+                                Oups ! Vous avez éliminé un innocent...
+                            </p>
+                        )}
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-4">
+                        <BouncyButton onClick={handleContinue} className="w-full py-5 text-lg">
+                            CONTINUER LA MISSION
+                        </BouncyButton>
+                        <BouncyButton onClick={onEndGame} variant="secondary" className="w-full py-4 text-sm">
+                            TERMINER LA PARTIE
+                        </BouncyButton>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // Distributing State - Loading
     if (!currentPlayer) return <div className="text-white">Initialisation...</div>;
 
+    // Distributing State - Card View
     return (
         <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-spy-blue relative overflow-hidden">
 

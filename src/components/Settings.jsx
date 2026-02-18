@@ -48,15 +48,7 @@ const Settings = ({ onBack, volume, setVolume }) => {
                     </div>
                 </div>
 
-                {/* Credits */}
-                <div className="text-center mb-8">
-                    <p className="text-white/40 text-[10px] font-bold uppercase tracking-[0.2em] mb-2">
-                        SpyMals v1.0.0
-                    </p>
-                    <p className="text-white/20 text-[10px] font-bold uppercase">
-                        Secret Défense Project
-                    </p>
-                </div>
+
 
                 <BouncyButton onClick={onBack} variant="secondary" className="w-full py-5 shadow-xl">
                     RETOUR
