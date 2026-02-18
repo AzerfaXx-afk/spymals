@@ -7,9 +7,14 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack }) => {
     const [undercoverCount, setUndercoverCount] = useState(1);
     const [whiteCount, setWhiteCount] = useState(0);
     const [wordPack, setWordPack] = useState('standard');
+    const [customWords, setCustomWords] = useState({ innocent: '', spy: '' });
 
     const civilianCount = totalPlayers - undercoverCount - whiteCount;
-    const isValid = civilianCount >= 2;
+
+    // Validation Logic
+    const isRoleCountValid = civilianCount >= 2;
+    const isCustomValid = wordPack !== 'custom' || (customWords.innocent.trim() !== '' && customWords.spy.trim() !== '');
+    const isValid = isRoleCountValid && isCustomValid;
 
     const handleIncrement = (type) => {
         if (type === 'undercover') {
@@ -49,7 +54,7 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack }) => {
                 </p>
             </div>
 
-            <div className="w-full max-w-sm space-y-4 flex-1 overflow-y-auto pb-24 z-10 no-scrollbar animate-slide-up" style={{ animationDelay: '0.1s' }}>
+            <div className="w-full max-w-sm space-y-4 flex-1 overflow-y-auto pb-32 z-10 no-scrollbar animate-slide-up" style={{ animationDelay: '0.1s' }}>
 
                 {/* Main Stats Card */}
                 <div className="bg-white/5 backdrop-blur-md rounded-[32px] p-6 border border-white/10 shadow-xl">
@@ -88,7 +93,7 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack }) => {
                 {/* Word Pack Selection */}
                 <div className="bg-white/5 backdrop-blur-md rounded-[32px] p-6 border border-white/10 shadow-xl">
                     <label className="block text-white/60 text-[10px] font-bold mb-3 uppercase tracking-widest text-center">Pack de Mots</label>
-                    <div className="relative">
+                    <div className="relative mb-4">
                         <select
                             value={wordPack}
                             onChange={(e) => setWordPack(e.target.value)}
@@ -98,15 +103,48 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack }) => {
                             <option value="pop-culture" className="bg-spy-blue text-white">Pop Culture</option>
                             <option value="abstract" className="bg-spy-blue text-white">Abstrait</option>
                             <option value="animals" className="bg-spy-blue text-white">Animaux</option>
+                            <option value="custom" className="bg-spy-orange text-white font-black">✨ Personnalisé</option>
                         </select>
                         <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/40">▼</div>
                     </div>
+
+                    {/* Custom Word Inputs */}
+                    {wordPack === 'custom' && (
+                        <div className="space-y-3 animate-pop-in">
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-bold uppercase text-spy-lime ml-2">Mot des Innocents</label>
+                                <input
+                                    type="text"
+                                    placeholder="Ex: Chien"
+                                    value={customWords.innocent}
+                                    onChange={(e) => setCustomWords({ ...customWords, innocent: e.target.value })}
+                                    className="w-full bg-black/40 border border-spy-lime/30 rounded-xl px-4 py-3 text-white font-bold focus:border-spy-lime focus:outline-none transition-colors placeholder:text-white/20"
+                                />
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-[10px] font-bold uppercase text-spy-orange ml-2">Mot des Espions</label>
+                                <input
+                                    type="text"
+                                    placeholder="Ex: Loup"
+                                    value={customWords.spy}
+                                    onChange={(e) => setCustomWords({ ...customWords, spy: e.target.value })}
+                                    className="w-full bg-black/40 border border-spy-orange/30 rounded-xl px-4 py-3 text-white font-bold focus:border-spy-orange focus:outline-none transition-colors placeholder:text-white/20"
+                                />
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Validation Warning */}
-                {!isValid && (
+                {!isRoleCountValid && (
                     <div className="bg-red-500/20 border border-red-500/30 text-red-200 text-xs font-bold p-4 rounded-2xl text-center animate-shake">
                         ⚠️ Trop d'espions ! Il faut au moins 2 Civils.
+                    </div>
+                )}
+
+                {wordPack === 'custom' && !isCustomValid && (
+                    <div className="bg-spy-orange/20 border border-spy-orange/30 text-spy-orange text-xs font-bold p-4 rounded-2xl text-center animate-shake">
+                        ⚠️ Remplissez les deux mots secrets !
                     </div>
                 )}
 
@@ -115,7 +153,7 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack }) => {
             {/* Start Button */}
             <div className="fixed bottom-0 left-0 w-full p-6 bg-gradient-to-t from-spy-blue via-spy-blue/95 to-transparent z-20 backdrop-blur-[2px]">
                 <BouncyButton
-                    onClick={() => onStartGame({ undercoverCount, whiteCount, wordPack })}
+                    onClick={() => onStartGame({ undercoverCount, whiteCount, wordPack, customWords })}
                     className="w-full shadow-spy-lime/20 shadow-2xl text-xl py-5"
                     disabled={!isValid}
                 >

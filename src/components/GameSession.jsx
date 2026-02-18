@@ -19,9 +19,18 @@ const GameSession = ({ players, config, onEndGame }) => {
     }, [gameState, assignedRoles.length]);
 
     const assignRoles = () => {
-        const { undercoverCount, whiteCount, wordPack } = config;
-        const pack = wordPacks[wordPack] || wordPacks.standard;
-        const wordPair = pack[Math.floor(Math.random() * pack.length)];
+        const { undercoverCount, whiteCount, wordPack, customWords } = config;
+
+        let wordPair;
+        if (wordPack === 'custom' && customWords) {
+            wordPair = {
+                civilian: customWords.innocent,
+                undercover: customWords.spy
+            };
+        } else {
+            const pack = wordPacks[wordPack] || wordPacks.standard;
+            wordPair = pack[Math.floor(Math.random() * pack.length)];
+        }
 
         // Create roles array
         let roles = [];
