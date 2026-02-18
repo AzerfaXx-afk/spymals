@@ -33,7 +33,7 @@ const IdentifyAgents = ({ players, onUpdatePlayers, onConfirm, onBack }) => {
             </div>
 
             {/* Header */}
-            <div className="flex-none p-6 text-center z-10 pt-12 pb-8">
+            <div className="flex-none p-6 text-center z-10 pt-24 pb-8">
                 <h2 className="text-3xl font-black text-white uppercase tracking-tighter drop-shadow-lg animate-slide-up">
                     Identifiez les Agents
                 </h2>

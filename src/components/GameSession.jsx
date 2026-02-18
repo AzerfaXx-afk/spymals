@@ -9,13 +9,14 @@ const GameSession = ({ players, config, onEndGame }) => {
     const [assignedRoles, setAssignedRoles] = useState([]);
     const [targetWord, setTargetWord] = useState(null);
     const [votedPlayer, setVotedPlayer] = useState(null);
+    const [eliminatedPlayers, setEliminatedPlayers] = useState([]);
 
     // Initialize Game
     useEffect(() => {
         if (gameState === 'distributing' && assignedRoles.length === 0) {
             assignRoles();
         }
-    }, []);
+    }, [gameState, assignedRoles.length]);
 
     const assignRoles = () => {
         const { undercoverCount, whiteCount, wordPack } = config;
@@ -63,8 +64,15 @@ const GameSession = ({ players, config, onEndGame }) => {
     };
 
     const handleContinue = () => {
-        setVotedPlayer(null);
-        setGameState('playing');
+        // If it was a civilian, add to eliminated and continue
+        if (votedPlayer?.role === 'Civilian') {
+            setEliminatedPlayers([...eliminatedPlayers, votedPlayer.id]);
+            setVotedPlayer(null);
+            setGameState('playing');
+        } else {
+            // Should not happen via "Continue" button if logic is correct, but fallback
+            onEndGame();
+        }
     };
 
     const currentPlayer = assignedRoles[currentPlayerIndex];
@@ -84,7 +92,9 @@ const GameSession = ({ players, config, onEndGame }) => {
                     </h1>
                     <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 border border-white/10 shadow-xl w-full mb-12">
                         <p className="text-lg text-white/90 font-bold leading-relaxed">
-                            Tous les agents ont leur mot secret. Discutez et trouvez les imposteurs !
+                            {eliminatedPlayers.length > 0
+                                ? `${eliminatedPlayers.length} agent(s) éliminé(s). Continuez l'enquête !`
+                                : "Tous les agents ont leur mot secret. Discutez et trouvez les imposteurs !"}
                         </p>
                     </div>
 
@@ -112,16 +122,28 @@ const GameSession = ({ players, config, onEndGame }) => {
                     </h2>
 
                     <div className="grid grid-cols-2 gap-4 mb-8">
-                        {assignedRoles.map((player) => (
-                            <button
-                                key={player.id}
-                                onClick={() => handleVote(player)}
-                                className="bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl p-4 flex flex-col items-center transition-all active:scale-95"
-                            >
-                                <div className="text-4xl mb-2">{player.avatar.value}</div>
-                                <span className="font-bold text-white uppercase text-sm">{player.name}</span>
-                            </button>
-                        ))}
+                        {assignedRoles.map((player) => {
+                            const isEliminated = eliminatedPlayers.includes(player.id);
+                            return (
+                                <button
+                                    key={player.id}
+                                    onClick={() => !isEliminated && handleVote(player)}
+                                    disabled={isEliminated}
+                                    className={`
+                                        border rounded-2xl p-4 flex flex-col items-center transition-all
+                                        ${isEliminated
+                                            ? 'bg-red-900/20 border-red-900/30 opacity-50 grayscale cursor-not-allowed'
+                                            : 'bg-white/5 hover:bg-white/10 border-white/10 active:scale-95'}
+                                    `}
+                                >
+                                    <div className="text-4xl mb-2">{player.avatar.value}</div>
+                                    <span className="font-bold text-white uppercase text-sm">
+                                        {player.name}
+                                        {isEliminated && <span className="block text-xs text-red-500 mt-1">(Éliminé)</span>}
+                                    </span>
+                                </button>
+                            );
+                        })}
                     </div>
 
                     <BouncyButton onClick={() => setGameState('playing')} variant="secondary" className="w-full">
@@ -133,6 +155,8 @@ const GameSession = ({ players, config, onEndGame }) => {
     }
 
     if (gameState === 'reveal' && votedPlayer) {
+        const isCivilian = votedPlayer.role === 'Civilian';
+
         return (
             <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-spy-blue text-center relative overflow-hidden">
                 <div className="absolute inset-0 bg-black/80 backdrop-blur-sm z-0"></div>
@@ -151,32 +175,34 @@ const GameSession = ({ players, config, onEndGame }) => {
                     <div className="bg-white/10 backdrop-blur-xl rounded-[40px] p-8 border border-white/10 shadow-2xl mb-8 transform hover:scale-105 transition-transform duration-500">
                         <h3 className="text-5xl font-black uppercase drop-shadow-lg mb-2">
                             {votedPlayer.role === 'Civilian' ? (
-                                <span className="text-spy-lime">Civil</span>
+                                <span className="text-spy-lime">Innocent</span>
                             ) : votedPlayer.role === 'Undercover' ? (
                                 <span className="text-spy-orange">Espion</span>
                             ) : (
-                                <span className="text-white">Mr. White</span>
+                                <span className="text-white">Mr. Blanc</span>
                             )}
                         </h3>
-                        {votedPlayer.role !== 'Civilian' && (
+                        {!isCivilian ? (
                             <p className="text-white/80 font-bold mt-4">
-                                Bien joué agents !
+                                Bien joué agents !<br />L'imposteur est démasqué.
                             </p>
-                        )}
-                        {votedPlayer.role === 'Civilian' && (
+                        ) : (
                             <p className="text-spy-orange font-bold mt-4 animate-pulse">
-                                Oups ! Vous avez éliminé un innocent...
+                                Oups ! Vous avez éliminé un innocent...<br />L'imposteur est toujours là.
                             </p>
                         )}
                     </div>
 
                     <div className="grid grid-cols-1 gap-4">
-                        <BouncyButton onClick={handleContinue} className="w-full py-5 text-lg">
-                            CONTINUER LA MISSION
-                        </BouncyButton>
-                        <BouncyButton onClick={onEndGame} variant="secondary" className="w-full py-4 text-sm">
-                            TERMINER LA PARTIE
-                        </BouncyButton>
+                        {isCivilian ? (
+                            <BouncyButton onClick={handleContinue} className="w-full py-5 text-lg">
+                                CONTINUER L'ENQUÊTE
+                            </BouncyButton>
+                        ) : (
+                            <BouncyButton onClick={onEndGame} className="w-full py-5 text-lg shadow-spy-lime/50 shadow-2xl">
+                                MISSION ACCOMPLIE (Menu)
+                            </BouncyButton>
+                        )}
                     </div>
                 </div>
             </div>
@@ -198,20 +224,20 @@ const GameSession = ({ players, config, onEndGame }) => {
                 <div className="absolute top-[-20%] left-[-20%] w-[500px] h-[500px] bg-white/5 rounded-full blur-[100px]"></div>
             </div>
 
-            <div className="z-10 flex flex-col items-center w-full max-w-md space-y-8 text-center perspective-1000">
+            <div className="z-10 flex flex-col items-center w-full max-w-md space-y-4 text-center perspective-1000">
 
                 {/* Header / Avatar */}
                 <div className={`flex flex-col items-center transition-all duration-500 ${isRevealed ? 'transform scale-75 opacity-50 blur-sm' : 'animate-bounce-slow'}`}>
-                    <div className="w-32 h-32 rounded-full bg-white/10 flex items-center justify-center text-7xl border-4 border-spy-lime mb-4 shadow-[0_0_40px_rgba(204,255,0,0.3)] relative">
+                    <div className="w-24 h-24 rounded-full bg-white/10 flex items-center justify-center text-5xl border-4 border-spy-lime mb-2 shadow-[0_0_40px_rgba(204,255,0,0.3)] relative">
                         {currentPlayer.avatar.type === 'image' ? (
                             <img src={currentPlayer.avatar.value} alt={currentPlayer.name} className="w-full h-full object-cover rounded-full" />
                         ) : (
                             <span className="filter drop-shadow-md">{currentPlayer.avatar.value}</span>
                         )}
                         {/* Status Indicator */}
-                        <div className="absolute bottom-0 right-0 w-8 h-8 bg-spy-lime rounded-full border-4 border-spy-blue"></div>
+                        <div className="absolute bottom-0 right-0 w-6 h-6 bg-spy-lime rounded-full border-4 border-spy-blue"></div>
                     </div>
-                    <h2 className="text-3xl font-black text-white uppercase tracking-wider drop-shadow-lg">
+                    <h2 className="text-2xl font-black text-white uppercase tracking-wider drop-shadow-lg">
                         {currentPlayer.name}
                     </h2>
                 </div>
@@ -220,43 +246,46 @@ const GameSession = ({ players, config, onEndGame }) => {
                 <div className="w-full relative min-h-[300px] flex items-center justify-center">
 
                     {!isRevealed ? (
-                        <div className="absolute inset-0 bg-white/5 backdrop-blur-xl rounded-[40px] p-8 border border-white/10 shadow-2xl flex flex-col items-center justify-center animate-pop-in">
-                            <p className="text-white/60 font-bold mb-8 uppercase tracking-widest text-xs">
+                        <div className="w-full bg-white/5 backdrop-blur-xl rounded-[32px] p-6 border border-white/10 shadow-2xl flex flex-col items-center justify-center animate-pop-in min-h-[300px]">
+                            <p className="text-white/60 font-bold mb-6 uppercase tracking-widest text-xs">
                                 Passe le téléphone à
                                 <br />
                                 <span className="text-white text-lg block mt-1">{currentPlayer.name}</span>
                             </p>
-                            <span className="text-5xl mb-8 opacity-50 animate-pulse">🔒</span>
+                            <span className="text-5xl mb-6 opacity-50 animate-pulse">🔒</span>
                             <BouncyButton
                                 onClick={() => setIsRevealed(true)}
-                                className="w-full py-6 text-xl shadow-spy-orange/30 shadow-2xl"
+                                className="w-full py-5 text-lg shadow-spy-orange/30 shadow-2xl"
                             >
                                 VOIR MON SECRET
                             </BouncyButton>
                         </div>
                     ) : (
-                        <div className="absolute inset-0 bg-[#1a2c4e] rounded-[40px] p-8 border-4 border-spy-lime shadow-[0_0_50px_rgba(204,255,0,0.2)] flex flex-col items-center justify-center animate-slide-up transform scale-105 z-20">
-                            <p className="text-spy-lime/80 font-black mb-2 uppercase tracking-widest text-[10px]">
-                                Ton Rôle Secret
-                            </p>
-                            <h3 className="text-4xl font-black mb-8 uppercase text-white drop-shadow-lg leading-tight">
-                                {currentPlayer.role === 'Civilian' ? <span className="text-spy-lime">Civil</span> :
-                                    currentPlayer.role === 'Undercover' ? <span className="text-spy-orange">Espion</span> :
-                                        <span className="text-white">Mr. White</span>}
-                            </h3>
+                        <div className="w-full bg-[#1a2c4e] rounded-[32px] p-6 border-4 border-spy-lime shadow-[0_0_50px_rgba(204,255,0,0.2)] flex flex-col items-center justify-center animate-slide-up transform scale-100 z-20 min-h-[300px]">
+
+                            {/* Role title HIDDEN for players. Only show Word or Mr White msg */}
 
                             {currentPlayer.role !== 'Mr. White' ? (
-                                <div className="bg-black/30 rounded-2xl p-6 mb-8 w-full border border-white/10">
-                                    <p className="text-[10px] font-bold uppercase mb-2 text-white/40">Mot Secret</p>
-                                    <p className="text-4xl font-black text-white tracking-wide">
-                                        {currentPlayer.word ? currentPlayer.word : "???"}
+                                <div className="w-full flex flex-col items-center flex-1 justify-center">
+                                    <p className="text-[10px] font-bold uppercase mb-4 text-white/40 tracking-widest">
+                                        Mémorise ton mot
                                     </p>
+                                    <div className="bg-black/30 rounded-2xl p-6 mb-8 w-full border border-white/10">
+                                        <p className="text-4xl font-black text-white tracking-wide break-words">
+                                            {currentPlayer.word ? currentPlayer.word : "???"}
+                                        </p>
+                                    </div>
                                 </div>
                             ) : (
-                                <div className="bg-white/10 rounded-2xl p-6 mb-8 w-full border border-white/10">
-                                    <p className="text-sm font-bold text-white/80 leading-snug">
-                                        Tu n'as pas de mot.<br />Découvre celui des autres !
-                                    </p>
+                                <div className="w-full flex flex-col items-center flex-1 justify-center">
+                                    <h3 className="text-3xl font-black mb-6 uppercase text-white drop-shadow-lg leading-tight">
+                                        Tu es <span className="text-white">Mr. Blanc</span>
+                                    </h3>
+                                    <div className="bg-white/10 rounded-2xl p-6 mb-8 w-full border border-white/10">
+                                        <p className="text-sm font-bold text-white/80 leading-snug">
+                                            Tu n'as pas de mot.<br />Découvre celui des autres !
+                                        </p>
+                                    </div>
                                 </div>
                             )}
 

@@ -32,7 +32,7 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack }) => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center p-6 relative overflow-hidden bg-spy-blue">
+        <div className="min-h-screen flex flex-col items-center p-6 pt-24 relative overflow-hidden bg-spy-blue">
             <BackArrow onClick={onBack} />
             {/* Background Decor */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
@@ -59,14 +59,14 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack }) => {
                         <div className="absolute inset-0 bg-spy-lime/5 animate-pulse-slow"></div>
                         <div className="relative z-10 flex flex-col">
                             <span className="text-2xl font-black text-white">{civilianCount}</span>
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-spy-lime">Civils (Innocents)</span>
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-spy-lime">Innocents</span>
                         </div>
                         <span className="text-4xl">🕵️‍♂️</span>
                     </div>
 
                     <div className="space-y-2">
                         <RoleStepper
-                            label="Undercovers"
+                            label="Espions"
                             count={undercoverCount}
                             onIncrement={() => handleIncrement('undercover')}
                             onDecrement={() => handleDecrement('undercover')}
@@ -75,7 +75,7 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack }) => {
                         />
 
                         <RoleStepper
-                            label="Mr. White"
+                            label="Mr. Blanc"
                             count={whiteCount}
                             onIncrement={() => handleIncrement('white')}
                             onDecrement={() => handleDecrement('white')}

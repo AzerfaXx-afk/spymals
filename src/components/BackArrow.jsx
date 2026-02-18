@@ -5,17 +5,30 @@ const BackArrow = ({ onClick, className = '' }) => {
         <button
             onClick={onClick}
             className={`
-                absolute top-6 left-6 z-50
-                w-12 h-12 flex items-center justify-center
-                bg-white/10 backdrop-blur-md border border-white/20 rounded-full
-                text-white text-2xl shadow-lg
-                active:scale-90 hover:bg-white/20 transition-all duration-200
+                fixed top-4 left-4 z-50
+                w-14 h-14 flex items-center justify-center
+                bg-white text-spy-blue rounded-full
+                border-4 border-spy-blue
+                shadow-[4px_4px_0px_0px_rgba(10,31,61,1)]
+                active:shadow-none active:translate-x-[2px] active:translate-y-[2px]
+                hover:scale-105 active:scale-95 transition-all duration-150
                 touch-manipulation
                 ${className}
             `}
             aria-label="Retour"
         >
-            ←
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={4}
+                stroke="currentColor"
+                className="w-8 h-8 font-black"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            >
+                <path d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+            </svg>
         </button>
     );
 };

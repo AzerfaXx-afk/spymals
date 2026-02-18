@@ -4,7 +4,7 @@ import BackArrow from './BackArrow';
 
 const HowToPlay = ({ onBack }) => {
     return (
-        <div className="min-h-screen flex flex-col items-center p-6 bg-spy-blue overflow-y-auto relative no-scrollbar">
+        <div className="min-h-screen flex flex-col items-center p-6 pt-24 bg-spy-blue overflow-y-auto relative no-scrollbar">
             <BackArrow onClick={onBack} />
 
             {/* Background Decor */}
@@ -38,21 +38,21 @@ const HowToPlay = ({ onBack }) => {
                             <li className="flex items-start">
                                 <span className="mr-2 mt-1">🔵</span>
                                 <div>
-                                    <strong className="text-white block uppercase text-xs tracking-wider mb-1">Civils</strong>
+                                    <strong className="text-white block uppercase text-xs tracking-wider mb-1">Innocents</strong>
                                     Ils ont le <span className="text-spy-lime font-bold">MÊME mot</span>. Démasquez les intrus !
                                 </div>
                             </li>
                             <li className="flex items-start">
                                 <span className="mr-2 mt-1">🟠</span>
                                 <div>
-                                    <strong className="text-spy-orange block uppercase text-xs tracking-wider mb-1">Undercovers</strong>
+                                    <strong className="text-spy-orange block uppercase text-xs tracking-wider mb-1">Espions</strong>
                                     Ils ont un mot <span className="text-spy-orange font-bold">DIFFÉRENT</span>. Fondez-vous dans la masse.
                                 </div>
                             </li>
                             <li className="flex items-start">
                                 <span className="mr-2 mt-1">⚪</span>
                                 <div>
-                                    <strong className="text-white block uppercase text-xs tracking-wider mb-1">Mr. White</strong>
+                                    <strong className="text-white block uppercase text-xs tracking-wider mb-1">Mr. Blanc</strong>
                                     Il n'a <span className="text-white font-bold bg-white/20 px-1 rounded">AUCUN mot</span>. Devinez celui des autres !
                                 </div>
                             </li>

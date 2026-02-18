@@ -14,7 +14,7 @@ const PlayerSetup = ({ onNext, onBack }) => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-spy-blue relative overflow-hidden">
+        <div className="min-h-screen flex flex-col items-center justify-center p-6 pt-24 bg-spy-blue relative overflow-hidden">
             <BackArrow onClick={onBack} />
 
             {/* Background Decor */}
