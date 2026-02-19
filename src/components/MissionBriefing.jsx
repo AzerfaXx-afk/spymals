@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import BouncyButton from './BouncyButton';
 import RoleStepper from './RoleStepper';
 import BackArrow from './BackArrow';
+import SettingsGear from './SettingsGear';
 
-const MissionBriefing = ({ totalPlayers, onStartGame, onBack }) => {
+const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) => {
     const [undercoverCount, setUndercoverCount] = useState(1);
     const [whiteCount, setWhiteCount] = useState(0);
     const [wordPack, setWordPack] = useState('standard');
@@ -37,46 +38,49 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack }) => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center p-6 pt-24 relative overflow-hidden bg-spy-blue">
+        <div className="h-screen flex flex-col items-center p-4 pt-20 relative overflow-hidden bg-spy-blue">
             <BackArrow onClick={onBack} />
+            <SettingsGear onClick={onOpenSettings} />
             {/* Background Decor */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
                 <div className="absolute top-[-10%] right-[-20%] w-[600px] h-[600px] bg-spy-orange opacity-[0.05] rounded-full blur-[100px] animate-pulse-slow"></div>
                 <div className="absolute bottom-[-10%] left-[-20%] w-[500px] h-[500px] bg-spy-lime opacity-[0.05] rounded-full blur-[100px] animate-pulse-slow delay-700"></div>
             </div>
 
-            <div className="z-10 mt-6 mb-4 text-center animate-slide-up">
-                <h2 className="text-3xl font-black text-white uppercase tracking-tighter drop-shadow-lg">
+            <div className="z-10 mb-2 text-center flex-none animate-slide-up">
+                <h2 className="text-2xl font-black text-white uppercase tracking-tighter drop-shadow-lg">
                     Briefing
                 </h2>
-                <p className="text-white/60 text-xs font-bold mt-1 uppercase tracking-widest">
+                <p className="text-white/60 text-[10px] font-bold uppercase tracking-widest">
                     Préparez la mission
                 </p>
             </div>
 
-            <div className="w-full max-w-sm space-y-4 flex-1 overflow-y-auto pb-32 z-10 no-scrollbar animate-slide-up" style={{ animationDelay: '0.1s' }}>
+            <div className="w-full max-w-sm flex-1 flex flex-col min-h-0 z-10 animate-slide-up" style={{ animationDelay: '0.1s' }}>
 
-                {/* Main Stats Card */}
-                <div className="bg-white/5 backdrop-blur-md rounded-[32px] p-6 border border-white/10 shadow-xl">
+                {/* Main Stats Card - Compact */}
+                <div className="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 shadow-xl mb-3 flex-none">
 
-                    {/* Civilians Display */}
-                    <div className="bg-spy-lime/10 rounded-2xl p-4 flex items-center justify-between border border-spy-lime/20 mb-6 relative overflow-hidden">
+                    {/* Civilians Display - Horizontal Compact */}
+                    <div className="bg-spy-lime/10 rounded-xl p-3 flex items-center justify-between border border-spy-lime/20 mb-3 relative overflow-hidden">
                         <div className="absolute inset-0 bg-spy-lime/5 animate-pulse-slow"></div>
-                        <div className="relative z-10 flex flex-col">
-                            <span className="text-2xl font-black text-white">{civilianCount}</span>
-                            <span className="text-[10px] font-bold uppercase tracking-widest text-spy-lime">Innocents</span>
+                        <div className="relative z-10 flex items-center gap-3">
+                            <span className="text-2xl">🕵️‍♂️</span>
+                            <div className="flex flex-col text-left">
+                                <span className="text-xl font-black text-white leading-none">{civilianCount}</span>
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-spy-lime">Innocents</span>
+                            </div>
                         </div>
-                        <span className="text-4xl">🕵️‍♂️</span>
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="grid grid-cols-2 gap-3">
                         <RoleStepper
                             label="Espions"
                             count={undercoverCount}
                             onIncrement={() => handleIncrement('undercover')}
                             onDecrement={() => handleDecrement('undercover')}
                             color="text-spy-orange"
-                            subLabel="Ont un mot différent"
+                            subLabel="Mot différent"
                         />
 
                         <RoleStepper
@@ -85,19 +89,19 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack }) => {
                             onIncrement={() => handleIncrement('white')}
                             onDecrement={() => handleDecrement('white')}
                             color="text-white"
-                            subLabel="N'ont AUCUN mot"
+                            subLabel="Aucun mot"
                         />
                     </div>
                 </div>
 
-                {/* Word Pack Selection */}
-                <div className="bg-white/5 backdrop-blur-md rounded-[32px] p-6 border border-white/10 shadow-xl">
-                    <label className="block text-white/60 text-[10px] font-bold mb-3 uppercase tracking-widest text-center">Pack de Mots</label>
-                    <div className="relative mb-4">
+                {/* Word Pack Selection - Compact */}
+                <div className="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 shadow-xl flex-none">
+                    <label className="block text-white/60 text-[10px] font-bold mb-2 uppercase tracking-widest text-center">Pack de Mots</label>
+                    <div className="relative mb-2">
                         <select
                             value={wordPack}
                             onChange={(e) => setWordPack(e.target.value)}
-                            className="w-full bg-black/20 border-2 border-white/10 rounded-2xl px-6 py-4 text-white font-bold text-center appearance-none focus:border-spy-lime focus:outline-none transition-all shadow-inner"
+                            className="w-full bg-black/20 border-2 border-white/10 rounded-xl px-4 py-2 text-white font-bold text-center appearance-none focus:border-spy-lime focus:outline-none transition-all shadow-inner text-sm"
                         >
                             <option value="standard" className="bg-spy-blue text-white">Standard</option>
                             <option value="pop-culture" className="bg-spy-blue text-white">Pop Culture</option>
@@ -110,25 +114,23 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack }) => {
 
                     {/* Custom Word Inputs */}
                     {wordPack === 'custom' && (
-                        <div className="space-y-3 animate-pop-in">
+                        <div className="space-y-2 animate-pop-in">
                             <div className="space-y-1">
-                                <label className="text-[10px] font-bold uppercase text-spy-lime ml-2">Mot des Innocents</label>
                                 <input
                                     type="text"
-                                    placeholder="Ex: Chien"
+                                    placeholder="Mot Innocents"
                                     value={customWords.innocent}
                                     onChange={(e) => setCustomWords({ ...customWords, innocent: e.target.value })}
-                                    className="w-full bg-black/40 border border-spy-lime/30 rounded-xl px-4 py-3 text-white font-bold focus:border-spy-lime focus:outline-none transition-colors placeholder:text-white/20"
+                                    className="w-full bg-black/40 border border-spy-lime/30 rounded-lg px-3 py-2 text-white font-bold text-sm focus:border-spy-lime focus:outline-none transition-colors placeholder:text-white/20"
                                 />
                             </div>
                             <div className="space-y-1">
-                                <label className="text-[10px] font-bold uppercase text-spy-orange ml-2">Mot des Espions</label>
                                 <input
                                     type="text"
-                                    placeholder="Ex: Loup"
+                                    placeholder="Mot Espions"
                                     value={customWords.spy}
                                     onChange={(e) => setCustomWords({ ...customWords, spy: e.target.value })}
-                                    className="w-full bg-black/40 border border-spy-orange/30 rounded-xl px-4 py-3 text-white font-bold focus:border-spy-orange focus:outline-none transition-colors placeholder:text-white/20"
+                                    className="w-full bg-black/40 border border-spy-orange/30 rounded-lg px-3 py-2 text-white font-bold text-sm focus:border-spy-orange focus:outline-none transition-colors placeholder:text-white/20"
                                 />
                             </div>
                         </div>
@@ -136,25 +138,27 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack }) => {
                 </div>
 
                 {/* Validation Warning */}
-                {!isRoleCountValid && (
-                    <div className="bg-red-500/20 border border-red-500/30 text-red-200 text-xs font-bold p-4 rounded-2xl text-center animate-shake">
-                        ⚠️ Trop d'espions ! Il faut au moins 2 Civils.
-                    </div>
-                )}
+                <div className="mt-2 flex-none">
+                    {!isRoleCountValid && (
+                        <div className="bg-red-500/20 border border-red-500/30 text-red-200 text-[10px] font-bold p-2 rounded-xl text-center animate-shake">
+                            ⚠️ Trop d'espions ! Min 2 Civils.
+                        </div>
+                    )}
 
-                {wordPack === 'custom' && !isCustomValid && (
-                    <div className="bg-spy-orange/20 border border-spy-orange/30 text-spy-orange text-xs font-bold p-4 rounded-2xl text-center animate-shake">
-                        ⚠️ Remplissez les deux mots secrets !
-                    </div>
-                )}
+                    {wordPack === 'custom' && !isCustomValid && (
+                        <div className="bg-spy-orange/20 border border-spy-orange/30 text-spy-orange text-[10px] font-bold p-2 rounded-xl text-center animate-shake">
+                            ⚠️ Mots manquants !
+                        </div>
+                    )}
+                </div>
 
             </div>
 
             {/* Start Button */}
-            <div className="fixed bottom-0 left-0 w-full p-6 bg-gradient-to-t from-spy-blue via-spy-blue/95 to-transparent z-20 backdrop-blur-[2px]">
+            <div className="w-full max-w-sm mt-auto z-20 pt-2 pb-6">
                 <BouncyButton
                     onClick={() => onStartGame({ undercoverCount, whiteCount, wordPack, customWords })}
-                    className="w-full shadow-spy-lime/20 shadow-2xl text-xl py-5"
+                    className="w-full shadow-spy-lime/20 shadow-2xl text-lg py-4"
                     disabled={!isValid}
                 >
                     LANCER LA PARTIE

@@ -7,11 +7,14 @@ import GameSession from './components/GameSession';
 import HowToPlay from './components/HowToPlay';
 import Settings from './components/Settings';
 
+import { AudioProvider } from './contexts/AudioContext';
+
 function App() {
   const [currentScreen, setCurrentScreen] = useState('home');
   const [players, setPlayers] = useState([]);
   const [gameConfig, setGameConfig] = useState(null);
-  const [volume, setVolume] = useState(0.8);
+
+  const [showSettings, setShowSettings] = useState(false);
 
   const startNewMission = () => {
     setCurrentScreen('setup');
@@ -67,53 +70,64 @@ function App() {
   };
 
   return (
-    <div className="antialiased text-gray-900 bg-spy-blue min-h-screen">
-      {currentScreen === 'home' && (
-        <Home
-          onStartGame={startNewMission}
-          onOpenHowToPlay={() => setCurrentScreen('how-to-play')}
-          onOpenSettings={() => setCurrentScreen('settings')}
-        />
-      )}
-      {currentScreen === 'how-to-play' && (
-        <HowToPlay onBack={() => setCurrentScreen('home')} />
-      )}
-      {currentScreen === 'settings' && (
-        <Settings
-          onBack={() => setCurrentScreen('home')}
-          volume={volume}
-          setVolume={setVolume}
-        />
-      )}
-      {currentScreen === 'setup' && (
-        <PlayerSetup
-          onNext={confirmPlayerCount}
-          onBack={() => setCurrentScreen('home')}
-        />
-      )}
-      {currentScreen === 'identify' && (
-        <IdentifyAgents
-          players={players}
-          onUpdatePlayers={setPlayers}
-          onConfirm={confirmTeam}
-          onBack={() => setCurrentScreen('setup')}
-        />
-      )}
-      {currentScreen === 'briefing' && (
-        <MissionBriefing
-          totalPlayers={players.length}
-          onStartGame={startGame}
-          onBack={() => setCurrentScreen('identify')}
-        />
-      )}
-      {currentScreen === 'game' && (
-        <GameSession
-          players={players}
-          config={gameConfig}
-          onEndGame={() => setCurrentScreen('home')}
-        />
-      )}
-    </div>
+    <AudioProvider>
+      <div className="antialiased text-gray-900 bg-spy-blue min-h-screen relative">
+        {currentScreen === 'home' && (
+          <Home
+            onStartGame={startNewMission}
+            onOpenHowToPlay={() => setCurrentScreen('how-to-play')}
+            onOpenSettings={() => setShowSettings(true)}
+          />
+        )}
+        {currentScreen === 'how-to-play' && (
+          <HowToPlay
+            onBack={() => setCurrentScreen('home')}
+            onOpenSettings={() => setShowSettings(true)}
+          />
+        )}
+        {currentScreen === 'setup' && (
+          <PlayerSetup
+            onNext={confirmPlayerCount}
+            onBack={() => setCurrentScreen('home')}
+            onOpenSettings={() => setShowSettings(true)}
+          />
+        )}
+        {currentScreen === 'identify' && (
+          <IdentifyAgents
+            players={players}
+            onUpdatePlayers={setPlayers}
+            onConfirm={confirmTeam}
+            onBack={() => setCurrentScreen('setup')}
+            onOpenSettings={() => setShowSettings(true)}
+          />
+        )}
+        {currentScreen === 'briefing' && (
+          <MissionBriefing
+            totalPlayers={players.length}
+            onStartGame={startGame}
+            onBack={() => setCurrentScreen('identify')}
+            onOpenSettings={() => setShowSettings(true)}
+          />
+        )}
+        {currentScreen === 'game' && (
+          <GameSession
+            players={players}
+            config={gameConfig}
+            onEndGame={() => setCurrentScreen('home')}
+            onOpenSettings={() => setShowSettings(true)}
+          />
+        )}
+
+        {/* Settings Overlay */}
+        {showSettings && (
+          <div className="fixed inset-0 z-[100]">
+            <Settings
+              onBack={() => setShowSettings(false)}
+            />
+          </div>
+        )}
+      </div>
+    </AudioProvider>
   );
 }
 

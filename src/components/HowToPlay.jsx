@@ -1,11 +1,13 @@
 import React from 'react';
 import BouncyButton from './BouncyButton';
 import BackArrow from './BackArrow';
+import SettingsGear from './SettingsGear';
 
-const HowToPlay = ({ onBack }) => {
+const HowToPlay = ({ onBack, onOpenSettings }) => {
     return (
         <div className="min-h-screen flex flex-col items-center p-6 pt-24 bg-spy-blue overflow-y-auto relative no-scrollbar">
             <BackArrow onClick={onBack} />
+            <SettingsGear onClick={onOpenSettings} />
 
             {/* Background Decor */}
             <div className="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none">

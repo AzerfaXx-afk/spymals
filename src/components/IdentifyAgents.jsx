@@ -4,8 +4,9 @@ import EditPlayerModal from './EditPlayerModal';
 
 import BouncyButton from './BouncyButton';
 import BackArrow from './BackArrow';
+import SettingsGear from './SettingsGear';
 
-const IdentifyAgents = ({ players, onUpdatePlayers, onConfirm, onBack }) => {
+const IdentifyAgents = ({ players, onUpdatePlayers, onConfirm, onBack, onOpenSettings }) => {
     const [editingPlayerId, setEditingPlayerId] = useState(null);
 
     const handleEditPlayer = (id) => {
@@ -25,6 +26,7 @@ const IdentifyAgents = ({ players, onUpdatePlayers, onConfirm, onBack }) => {
     return (
         <div className="flex flex-col h-screen bg-spy-blue relative overflow-hidden">
             <BackArrow onClick={onBack} />
+            <SettingsGear onClick={onOpenSettings} />
 
             {/* Background Decor */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">

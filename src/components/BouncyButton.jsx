@@ -1,8 +1,8 @@
 import React from 'react';
-// Note: Sound effects to be added later
-// For now, pure CSS "Juiciness"
+import { useAudio } from '../contexts/AudioContext';
 
-const BouncyButton = ({ children, onClick, className = '', variant = 'primary', disabled = false }) => {
+const BouncyButton = ({ children, onClick, className = '', variant = 'primary', disabled = false, soundOptions = {} }) => {
+  const { playSfx } = useAudio();
   // 3D Button Styles:
   // - High border-bottom for depth (border-b-8)
   // - Active state removes border and translates down to simulate press
@@ -41,9 +41,16 @@ const BouncyButton = ({ children, onClick, className = '', variant = 'primary', 
     `
   };
 
+  const handleClick = (e) => {
+    if (!disabled) {
+      playSfx('/sons/button.mp3', soundOptions);
+      if (onClick) onClick(e);
+    }
+  };
+
   return (
     <button
-      onClick={onClick}
+      onClick={handleClick}
       disabled={disabled}
       className={`${baseStyles} ${variants[variant] || variants.primary} ${className}`}
     >

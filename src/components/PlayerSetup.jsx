@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import BouncyButton from './BouncyButton';
 import BackArrow from './BackArrow';
+import SettingsGear from './SettingsGear';
 
-const PlayerSetup = ({ onNext, onBack }) => {
+const PlayerSetup = ({ onNext, onBack, onOpenSettings }) => {
     const [count, setCount] = useState(3);
 
     const increment = () => {
@@ -16,6 +17,7 @@ const PlayerSetup = ({ onNext, onBack }) => {
     return (
         <div className="min-h-screen flex flex-col items-center justify-center p-6 pt-24 bg-spy-blue relative overflow-hidden">
             <BackArrow onClick={onBack} />
+            <SettingsGear onClick={onOpenSettings} />
 
             {/* Background Decor */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-white/5 rounded-full blur-[120px] pointer-events-none"></div>
@@ -37,6 +39,7 @@ const PlayerSetup = ({ onNext, onBack }) => {
                         variant="secondary"
                         className="w-16 h-16 text-3xl !rounded-xl"
                         disabled={count <= 3}
+                        soundOptions={{ pitch: Math.max(0.5, 0.8 + ((count - 1 - 3) * 0.1)) }}
                     >
                         -
                     </BouncyButton>
@@ -50,6 +53,7 @@ const PlayerSetup = ({ onNext, onBack }) => {
                         variant="secondary"
                         className="w-16 h-16 text-3xl !rounded-xl"
                         disabled={count >= 20}
+                        soundOptions={{ pitch: Math.min(3.0, 0.8 + ((count + 1 - 3) * 0.1)) }}
                     >
                         +
                     </BouncyButton>

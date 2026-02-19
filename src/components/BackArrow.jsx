@@ -1,9 +1,16 @@
-import React from 'react';
+import { useAudio } from '../contexts/AudioContext';
 
 const BackArrow = ({ onClick, className = '' }) => {
+    const { playSfx } = useAudio();
+
+    const handleClick = () => {
+        playSfx();
+        if (onClick) onClick();
+    };
+
     return (
         <button
-            onClick={onClick}
+            onClick={handleClick}
             className={`
                 fixed top-4 left-4 z-50
                 w-14 h-14 flex items-center justify-center

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import BouncyButton from './BouncyButton';
 import { wordPacks } from '../data/wordPacks';
+import SettingsGear from './SettingsGear';
 
-const GameSession = ({ players, config, onEndGame }) => {
+const GameSession = ({ players, config, onEndGame, onOpenSettings }) => {
     const [gameState, setGameState] = useState('distributing'); // distributing, playing, voting, reveal
     const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
     const [isRevealed, setIsRevealed] = useState(false);
@@ -89,6 +90,7 @@ const GameSession = ({ players, config, onEndGame }) => {
     if (gameState === 'playing') {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-spy-blue text-center relative overflow-hidden">
+                <SettingsGear onClick={onOpenSettings} />
                 {/* Decor */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-spy-lime opacity-10 rounded-full blur-[100px] animate-pulse-slow pointer-events-none"></div>
 
@@ -125,6 +127,7 @@ const GameSession = ({ players, config, onEndGame }) => {
     if (gameState === 'voting') {
         return (
             <div className="min-h-screen flex flex-col items-center p-6 bg-spy-blue relative overflow-hidden">
+                <SettingsGear onClick={onOpenSettings} />
                 <div className="w-full max-w-md z-10 animate-pop-in">
                     <h2 className="text-3xl font-black text-white text-center mb-8 uppercase tracking-tighter">
                         Qui est <span className="text-spy-orange">l'imposteur ?</span>
@@ -168,6 +171,7 @@ const GameSession = ({ players, config, onEndGame }) => {
 
         return (
             <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-spy-blue text-center relative overflow-hidden">
+                <SettingsGear onClick={onOpenSettings} />
                 <div className="absolute inset-0 bg-black/80 backdrop-blur-sm z-0"></div>
 
                 <div className="z-10 animate-pop-in w-full max-w-md">
@@ -224,6 +228,7 @@ const GameSession = ({ players, config, onEndGame }) => {
     // Distributing State - Card View
     return (
         <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-spy-blue relative overflow-hidden">
+            <SettingsGear onClick={onOpenSettings} />
 
             {/* Dynamic Background based on interaction */}
             <div className={`absolute inset-0 transition-colors duration-500 ${isRevealed ? 'bg-black/60 backdrop-blur-sm' : 'bg-transparent'}`}></div>
