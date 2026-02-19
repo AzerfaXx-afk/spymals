@@ -14,7 +14,11 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
 
     // Validation Logic
     const isRoleCountValid = civilianCount >= 2;
-    const isCustomValid = wordPack !== 'custom' || (customWords.innocent.trim() !== '' && customWords.spy.trim() !== '');
+    const isCustomValid = wordPack !== 'custom' || (
+        customWords.innocent.trim() !== '' &&
+        customWords.spy.trim() !== '' &&
+        customWords.innocent.trim().toLowerCase() !== customWords.spy.trim().toLowerCase()
+    );
     const isValid = isRoleCountValid && isCustomValid;
 
     const handleIncrement = (type) => {

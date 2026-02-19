@@ -1,7 +1,7 @@
 import React from 'react';
 import BouncyButton from './BouncyButton';
 
-const Home = ({ onStartGame, onOpenSettings, onOpenHowToPlay }) => {
+const Home = ({ onStartGame, onOpenSettings, onOpenHowToPlay, onOpenLeaderboard }) => {
     return (
         <div className="flex flex-col items-center justify-center min-h-screen p-6 text-center relative overflow-hidden bg-spy-blue touch-none">
 
@@ -49,6 +49,11 @@ const Home = ({ onStartGame, onOpenSettings, onOpenHowToPlay }) => {
                         <span className="font-bold tracking-wider">RÉGLAGES</span>
                     </BouncyButton>
                 </div>
+
+                <BouncyButton variant="secondary" onClick={onOpenLeaderboard} className="w-full text-sm py-4 flex flex-row items-center justify-center gap-3 active:scale-95 transition-transform">
+                    <span className="text-xl">🏆</span>
+                    <span className="font-bold tracking-wider">CLASSEMENT</span>
+                </BouncyButton>
             </div>
 
 

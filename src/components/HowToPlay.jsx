@@ -1,100 +1,168 @@
-import React from 'react';
+import React, { useState } from 'react';
 import BouncyButton from './BouncyButton';
 import BackArrow from './BackArrow';
 import SettingsGear from './SettingsGear';
 
 const HowToPlay = ({ onBack, onOpenSettings }) => {
+    const [activeTab, setActiveTab] = useState('roles'); // 'roles' or 'rules'
+
     return (
-        <div className="min-h-screen flex flex-col items-center p-6 pt-24 bg-spy-blue overflow-y-auto relative no-scrollbar">
+        <div className="min-h-screen flex flex-col items-center p-0 pt-20 bg-spy-blue relative overflow-hidden">
             <BackArrow onClick={onBack} />
             <SettingsGear onClick={onOpenSettings} />
 
             {/* Background Decor */}
-            <div className="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-                <div className="absolute top-[10%] left-[-20%] w-[500px] h-[500px] bg-spy-lime opacity-[0.05] rounded-full blur-[100px]"></div>
-                <div className="absolute bottom-[10%] right-[-20%] w-[500px] h-[500px] bg-spy-orange opacity-[0.05] rounded-full blur-[100px]"></div>
+            <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+                <div className="absolute top-[-20%] right-[-20%] w-[600px] h-[600px] bg-spy-lime opacity-[0.05] rounded-full blur-[100px] animate-pulse-slow"></div>
+                <div className="absolute bottom-[-20%] left-[-20%] w-[600px] h-[600px] bg-spy-orange opacity-[0.05] rounded-full blur-[100px] animate-pulse-slow delay-700"></div>
             </div>
 
-            <div className="max-w-md w-full z-10 animate-slide-up">
+            <div className="w-full max-w-md flex flex-col h-full z-10 animate-slide-up px-6">
 
                 {/* Header */}
-                <div className="text-center mb-8 mt-6">
-                    <h2 className="text-4xl font-black text-white uppercase tracking-tighter drop-shadow-lg">
-                        Comment<br /><span className="text-spy-lime">Jouer ?</span>
+                <div className="text-center mb-6">
+                    <h2 className="text-3xl font-black text-white uppercase tracking-tighter drop-shadow-lg mb-2">
+                        Guide <span className="text-spy-lime">Agent</span>
                     </h2>
-                    <p className="text-white/60 text-xs font-bold mt-2 uppercase tracking-widest border-b border-white/10 pb-4 inline-block">
-                        Briefing Mission
-                    </p>
+                    <div className="flex bg-black/20 p-1 rounded-xl mx-auto w-fit backdrop-blur-sm border border-white/5">
+                        <button
+                            onClick={() => setActiveTab('roles')}
+                            className={`px-6 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${activeTab === 'roles' ? 'bg-spy-lime text-spy-blue shadow-lg scale-105' : 'text-white/50 hover:text-white'}`}
+                        >
+                            Rôles
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('rules')}
+                            className={`px-6 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${activeTab === 'rules' ? 'bg-spy-orange text-white shadow-lg scale-105' : 'text-white/50 hover:text-white'}`}
+                        >
+                            Règles
+                        </button>
+                    </div>
                 </div>
 
-                {/* Content Cards */}
-                <div className="space-y-6 pb-24">
+                {/* Content Area */}
+                <div className="flex-grow overflow-y-auto pb-32 no-scrollbar mask-image-b">
 
-                    <div className="bg-white/5 backdrop-blur-md rounded-3xl p-6 border border-white/10 shadow-xl relative overflow-hidden group hover:bg-white/10 transition-colors">
-                        <div className="absolute -right-4 -top-4 text-8xl opacity-5 group-hover:scale-110 transition-transform">🕵️</div>
-                        <h3 className="text-xl font-black text-white uppercase mb-4 flex items-center">
-                            <span className="bg-spy-lime text-spy-blue w-8 h-8 rounded-full flex items-center justify-center mr-3 text-lg">1</span>
-                            Les Rôles
-                        </h3>
-                        <ul className="space-y-4 text-sm font-medium text-white/80">
-                            <li className="flex items-start">
-                                <span className="mr-2 mt-1">🔵</span>
-                                <div>
-                                    <strong className="text-white block uppercase text-xs tracking-wider mb-1">Innocents</strong>
-                                    Ils ont le <span className="text-spy-lime font-bold">MÊME mot</span>. Démasquez les intrus !
+                    {activeTab === 'roles' && (
+                        <div className="space-y-4 animate-pop-in">
+                            {/* Civilian Card */}
+                            <div className="relative bg-gradient-to-br from-spy-lime/20 to-spy-blue/40 border border-spy-lime/30 rounded-3xl p-5 overflow-hidden group">
+                                <div className="absolute right-[-20px] top-[-20px] text-9xl opacity-10 group-hover:scale-110 transition-transform">🕵️‍♂️</div>
+                                <div className="relative z-10">
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <span className="text-4xl bg-spy-lime/20 p-2 rounded-2xl">🕵️‍♂️</span>
+                                        <div>
+                                            <h3 className="font-black text-2xl text-white uppercase tracking-tight">Innocent</h3>
+                                            <span className="text-[10px] bg-spy-lime text-spy-blue px-2 py-0.5 rounded-full font-bold uppercase tracking-widest">Majorité</span>
+                                        </div>
+                                    </div>
+                                    <p className="text-white/80 text-sm font-medium leading-relaxed bg-black/20 p-3 rounded-xl border border-white/5">
+                                        Vous connaissez le mot secret. <br />
+                                        <span className="text-spy-lime font-bold">Objectif :</span> Démasquer les espions sans vous faire accuser.
+                                    </p>
                                 </div>
-                            </li>
-                            <li className="flex items-start">
-                                <span className="mr-2 mt-1">🟠</span>
-                                <div>
-                                    <strong className="text-spy-orange block uppercase text-xs tracking-wider mb-1">Espions</strong>
-                                    Ils ont un mot <span className="text-spy-orange font-bold">DIFFÉRENT</span>. Fondez-vous dans la masse.
-                                </div>
-                            </li>
-                            <li className="flex items-start">
-                                <span className="mr-2 mt-1">⚪</span>
-                                <div>
-                                    <strong className="text-white block uppercase text-xs tracking-wider mb-1">Mr. Blanc</strong>
-                                    Il n'a <span className="text-white font-bold bg-white/20 px-1 rounded">AUCUN mot</span>. Devinez celui des autres !
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
+                            </div>
 
-                    <div className="bg-white/5 backdrop-blur-md rounded-3xl p-6 border border-white/10 shadow-xl relative overflow-hidden group hover:bg-white/10 transition-colors">
-                        <div className="absolute -right-4 -top-4 text-8xl opacity-5 group-hover:scale-110 transition-transform">🗣️</div>
-                        <h3 className="text-xl font-black text-white uppercase mb-4 flex items-center">
-                            <span className="bg-spy-orange text-white w-8 h-8 rounded-full flex items-center justify-center mr-3 text-lg">2</span>
-                            Discussion
-                        </h3>
-                        <p className="text-white/80 text-sm font-medium leading-relaxed">
-                            Donnez un indice sur votre mot à tour de rôle. <br />
-                            <em className="text-white/60 text-xs mt-2 block">Exemple : Pour "Chat", dites "Moustaches" ou "Lait". Pas trop facile, sinon Mr. White trouvera !</em>
-                        </p>
-                    </div>
+                            {/* Spy Card */}
+                            <div className="relative bg-gradient-to-br from-spy-orange/20 to-red-900/40 border border-spy-orange/30 rounded-3xl p-5 overflow-hidden group">
+                                <div className="absolute right-[-20px] top-[-20px] text-9xl opacity-10 group-hover:scale-110 transition-transform">🦊</div>
+                                <div className="relative z-10">
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <span className="text-4xl bg-spy-orange/20 p-2 rounded-2xl">🦊</span>
+                                        <div>
+                                            <h3 className="font-black text-2xl text-white uppercase tracking-tight">Espion</h3>
+                                            <span className="text-[10px] bg-spy-orange text-white px-2 py-0.5 rounded-full font-bold uppercase tracking-widest">Infiltré</span>
+                                        </div>
+                                    </div>
+                                    <p className="text-white/80 text-sm font-medium leading-relaxed bg-black/20 p-3 rounded-xl border border-white/5">
+                                        Vous avez un mot <span className="italic text-spy-orange">différent</span> (mais proche). <br />
+                                        <span className="text-spy-orange font-bold">Objectif :</span> Vous fondre dans la masse et ne pas être repéré.
+                                    </p>
+                                </div>
+                            </div>
 
-                    <div className="bg-white/5 backdrop-blur-md rounded-3xl p-6 border border-white/10 shadow-xl relative overflow-hidden group hover:bg-white/10 transition-colors">
-                        <div className="absolute -right-4 -top-4 text-8xl opacity-5 group-hover:scale-110 transition-transform">🗳️</div>
-                        <h3 className="text-xl font-black text-white uppercase mb-4 flex items-center">
-                            <span className="bg-white text-spy-blue w-8 h-8 rounded-full flex items-center justify-center mr-3 text-lg">3</span>
-                            Vote
-                        </h3>
-                        <p className="text-white/80 text-sm font-medium leading-relaxed">
-                            Au timer, votez pour éliminer l'intrus.
-                            <span className="block mt-2 text-spy-lime font-bold">
-                                Civils gagnent si l'intrus est éliminé.
-                            </span>
-                        </p>
-                    </div>
+                            {/* Mr White Card */}
+                            <div className="relative bg-gradient-to-br from-white/10 to-gray-900/40 border border-white/30 rounded-3xl p-5 overflow-hidden group">
+                                <div className="absolute right-[-20px] top-[-20px] text-9xl opacity-10 group-hover:scale-110 transition-transform">🐻‍❄️</div>
+                                <div className="relative z-10">
+                                    <div className="flex items-center gap-3 mb-2">
+                                        <span className="text-4xl bg-white/10 p-2 rounded-2xl">🐻‍❄️</span>
+                                        <div>
+                                            <h3 className="font-black text-2xl text-white uppercase tracking-tight">Mr. Blanc</h3>
+                                            <span className="text-[10px] bg-white text-spy-blue px-2 py-0.5 rounded-full font-bold uppercase tracking-widest">Solo</span>
+                                        </div>
+                                    </div>
+                                    <p className="text-white/80 text-sm font-medium leading-relaxed bg-black/20 p-3 rounded-xl border border-white/5">
+                                        Vous n'avez <span className="font-bold text-white uppercase">AUCUN MOT</span>. <br />
+                                        <span className="text-white font-bold">Objectif :</span> Bluffez et devinez le mot des Innocents en écoutant.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'rules' && (
+                        <div className="space-y-6 animate-pop-in px-2">
+                            {/* Step 1 */}
+                            <div className="flex gap-4 items-start relative">
+                                <div className="flex flex-col items-center">
+                                    <div className="w-10 h-10 rounded-full bg-spy-lime flex items-center justify-center text-xl shadow-[0_0_15px_rgba(204,255,0,0.4)] z-10">
+                                        🗣️
+                                    </div>
+                                    <div className="w-1 h-24 bg-white/10 my-2 rounded-full"></div>
+                                </div>
+                                <div className="bg-white/5 border border-white/10 p-4 rounded-2xl flex-1 backdrop-blur-sm">
+                                    <h4 className="font-black text-white uppercase tracking-wide mb-1">1. L'Indice</h4>
+                                    <p className="text-white/70 text-sm">
+                                        À tour de rôle, dites <span className="text-white font-bold">UN seul mot</span> pour décrire votre mot secret.
+                                        <br /><em className="text-xs opacity-50 block mt-2">"Attention : Trop précis, Mr. Blanc devine. Trop vague, on vous suspecte !"</em>
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Step 2 */}
+                            <div className="flex gap-4 items-start relative">
+                                <div className="flex flex-col items-center">
+                                    <div className="w-10 h-10 rounded-full bg-spy-orange flex items-center justify-center text-xl shadow-[0_0_15px_rgba(255,87,34,0.4)] z-10">
+                                        🤔
+                                    </div>
+                                    <div className="w-1 h-24 bg-white/10 my-2 rounded-full"></div>
+                                </div>
+                                <div className="bg-white/5 border border-white/10 p-4 rounded-2xl flex-1 backdrop-blur-sm">
+                                    <h4 className="font-black text-white uppercase tracking-wide mb-1">2. Le Débat</h4>
+                                    <p className="text-white/70 text-sm">
+                                        Discutez librement. Accusez les joueurs aux indices bizarres. Défendez-vous !
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Step 3 */}
+                            <div className="flex gap-4 items-start relative">
+                                <div className="flex flex-col items-center">
+                                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-xl shadow-[0_0_15px_rgba(255,255,255,0.4)] z-10">
+                                        🗳️
+                                    </div>
+                                </div>
+                                <div className="bg-white/5 border border-white/10 p-4 rounded-2xl flex-1 backdrop-blur-sm">
+                                    <h4 className="font-black text-white uppercase tracking-wide mb-1">3. Le Vote</h4>
+                                    <p className="text-white/70 text-sm">
+                                        Désignez l'intrus à la majorité.
+                                        <br />
+                                        <span className="text-spy-lime block mt-2 font-bold text-xs uppercase">🏆 Innocents gagnent si l'espion sort.</span>
+                                        <span className="text-spy-orange block mt-1 font-bold text-xs uppercase">🏆 Espions gagnent s'ils survivent.</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                 </div>
-
             </div>
 
             {/* Floating Back Button */}
             <div className="fixed bottom-0 left-0 w-full p-6 bg-gradient-to-t from-spy-blue via-spy-blue/95 to-transparent z-20 backdrop-blur-[2px]">
-                <BouncyButton onClick={onBack} variant="secondary" className="w-full shadow-xl py-5">
-                    RETOUR AU MENU
+                <BouncyButton onClick={onBack} variant="secondary" className="w-full shadow-xl py-4">
+                    RETOUR
                 </BouncyButton>
             </div>
         </div>

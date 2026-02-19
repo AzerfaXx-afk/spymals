@@ -7,6 +7,7 @@ import GameSession from './components/GameSession';
 import Scoreboard from './components/Scoreboard';
 import HowToPlay from './components/HowToPlay';
 import Settings from './components/Settings';
+import Leaderboard from './components/Leaderboard';
 
 import { AudioProvider } from './contexts/AudioContext';
 
@@ -116,6 +117,47 @@ function App() {
     }));
 
     setCurrentScreen('scoreboard');
+
+    // Update Persistent Leaderboard
+    try {
+      const stored = localStorage.getItem('spyMals_leaderboard');
+      let leaderboard = stored ? JSON.parse(stored) : {};
+
+      const currentPlayers = [...players]; // Use the players state from before this update for names/avatars
+      // actually we need to combine the update calculation with the persistence
+
+      currentPlayers.forEach(p => {
+        const role = playerRoles[p.id];
+        const isWinner = (winningTeam === 'Civilian' && role === 'Civilian') ||
+          (winningTeam === 'Impostors' && (role === 'Undercover' || role === 'Mr. White'));
+
+        const key = p.name.toLowerCase().trim();
+
+        if (!leaderboard[key]) {
+          leaderboard[key] = {
+            name: p.name,
+            avatar: p.avatar.value,
+            score: 0,
+            games: 0,
+            wins: 0
+          };
+        }
+
+        // Update stats
+        leaderboard[key].games += 1;
+        if (isWinner) {
+          leaderboard[key].score += 1; // 1 point per win
+          leaderboard[key].wins += 1;
+        }
+        // Update avatar to latest used
+        leaderboard[key].avatar = p.avatar.value;
+      });
+
+      localStorage.setItem('spyMals_leaderboard', JSON.stringify(leaderboard));
+
+    } catch (e) {
+      console.error("Failed to save leaderboard", e);
+    }
   };
 
   const replayGame = () => {
@@ -135,6 +177,7 @@ function App() {
             onStartGame={startNewMission}
             onOpenHowToPlay={() => setCurrentScreen('how-to-play')}
             onOpenSettings={() => setShowSettings(true)}
+            onOpenLeaderboard={() => setCurrentScreen('leaderboard')}
           />
         )}
         {currentScreen === 'how-to-play' && (
@@ -182,6 +225,12 @@ function App() {
             winners={winners}
             onReplay={replayGame}
             onHome={() => setCurrentScreen('home')}
+            onOpenSettings={() => setShowSettings(true)}
+          />
+        )}
+        {currentScreen === 'leaderboard' && (
+          <Leaderboard
+            onBack={() => setCurrentScreen('home')}
             onOpenSettings={() => setShowSettings(true)}
           />
         )}
