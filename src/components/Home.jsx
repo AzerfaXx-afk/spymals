@@ -19,13 +19,13 @@ const Home = ({ onStartGame, onOpenSettings, onOpenHowToPlay, onOpenLeaderboard 
             {/* Logo Section */}
             <div className="z-10 flex flex-col items-center mb-10 relative w-full">
                 {/* Dynamic SpyMals Logo with Fox Agent */}
-                <div className="relative mb-6 w-full max-w-lg mx-auto h-[350px] md:h-[450px] flex items-center justify-center">
+                <div className="relative mb-6 w-full max-w-lg mx-auto h-[400px] md:h-[450px] flex items-center justify-center">
                     {/* Character Layer - Behind Text - Aligned to lean on the 'M' */}
                     <div className="absolute inset-0 flex items-center justify-center z-0">
                         <img
                             src="/renard.png"
                             alt="Secret Agent Fox"
-                            className="h-full object-contain translate-y-[0px] translate-x-[15px] md:translate-x-[20px] drop-shadow-2xl scale-[1.5] md:scale-[1.6]"
+                            className="h-full object-contain translate-y-[10px] translate-x-[15px] md:translate-x-[20px] drop-shadow-2xl scale-[1.7] md:scale-[1.6]"
                             style={{
                                 maskImage: 'linear-gradient(to bottom, black 85%, transparent 100%)',
                                 WebkitMaskImage: 'linear-gradient(to bottom, black 85%, transparent 100%)'
@@ -34,7 +34,7 @@ const Home = ({ onStartGame, onOpenSettings, onOpenHowToPlay, onOpenLeaderboard 
                     </div>
 
                     {/* Text Layer - In Front - Rounded, Bubble 3D Look */}
-                    <h1 className="relative z-10 text-[18vw] md:text-[11rem] font-black tracking-tighter font-display w-full px-1 whitespace-nowrap leading-tight flex items-center justify-center mt-32 md:mt-48 transform translate-y-[-20px]">
+                    <h1 className="relative z-10 text-[22vw] md:text-[11rem] font-black tracking-tighter font-display w-full px-1 whitespace-nowrap leading-tight flex items-center justify-center mt-32 md:mt-48 transform translate-y-[-20px]">
                         {/* 3D Clay Style - Uses new CSS classes with specular highlights */}
                         <span className="text-clay-white relative z-20">Spy</span>
                         <span className="text-clay-orange relative z-10 -ml-2 md:-ml-4">Mals</span>
