@@ -17,7 +17,7 @@ const HowToPlay = ({ onBack, onOpenSettings }) => {
                 <div className="absolute bottom-[-20%] left-[-20%] w-[600px] h-[600px] bg-spy-orange opacity-[0.05] rounded-full blur-[100px] animate-pulse-slow delay-700"></div>
             </div>
 
-            <div className="w-full max-w-md flex flex-col h-full z-10 animate-slide-up px-6">
+            <div className="w-full max-w-md flex flex-col h-full z-10 px-6">
 
                 {/* Header */}
                 <div className="text-center mb-6">
@@ -44,13 +44,13 @@ const HowToPlay = ({ onBack, onOpenSettings }) => {
                 <div className="flex-grow overflow-y-auto pb-40 no-scrollbar mask-image-b" style={{ paddingBottom: 'calc(10rem + env(safe-area-inset-bottom))' }}>
 
                     {activeTab === 'roles' && (
-                        <div className="space-y-4 animate-pop-in">
+                        <div className="space-y-4">
                             {/* Civilian Card */}
                             <div className="relative bg-gradient-to-br from-spy-lime/20 to-spy-blue/40 border border-spy-lime/30 rounded-3xl p-5 overflow-hidden group">
                                 <div className="absolute right-[-20px] top-[-20px] text-9xl opacity-10 group-hover:scale-110 transition-transform">🕵️‍♂️</div>
                                 <div className="relative z-10">
                                     <div className="flex items-center gap-3 mb-2">
-                                        <span className="text-4xl bg-spy-lime/20 p-2 rounded-2xl">🕵️‍♂️</span>
+                                        <span className="text-4xl bg-spy-lime/20 p-2 rounded-2xl border border-spy-lime/20 shadow-[0_0_15px_rgba(164,246,0,0.2)]">🕵️‍♂️</span>
                                         <div>
                                             <h3 className="font-black text-2xl text-white uppercase tracking-tight">Innocent</h3>
                                             <span className="text-[10px] bg-spy-lime text-spy-blue px-2 py-0.5 rounded-full font-bold uppercase tracking-widest">Majorité</span>
@@ -68,7 +68,7 @@ const HowToPlay = ({ onBack, onOpenSettings }) => {
                                 <div className="absolute right-[-20px] top-[-20px] text-9xl opacity-10 group-hover:scale-110 transition-transform">🦊</div>
                                 <div className="relative z-10">
                                     <div className="flex items-center gap-3 mb-2">
-                                        <span className="text-4xl bg-spy-orange/20 p-2 rounded-2xl">🦊</span>
+                                        <span className="text-4xl bg-spy-orange/20 p-2 rounded-2xl border border-spy-orange/20 shadow-[0_0_15px_rgba(255,87,34,0.2)]">🦊</span>
                                         <div>
                                             <h3 className="font-black text-2xl text-white uppercase tracking-tight">Espion</h3>
                                             <span className="text-[10px] bg-spy-orange text-white px-2 py-0.5 rounded-full font-bold uppercase tracking-widest">Infiltré</span>
@@ -86,7 +86,7 @@ const HowToPlay = ({ onBack, onOpenSettings }) => {
                                 <div className="absolute right-[-20px] top-[-20px] text-9xl opacity-10 group-hover:scale-110 transition-transform">🐻‍❄️</div>
                                 <div className="relative z-10">
                                     <div className="flex items-center gap-3 mb-2">
-                                        <span className="text-4xl bg-white/10 p-2 rounded-2xl">🐻‍❄️</span>
+                                        <span className="text-4xl bg-white/10 p-2 rounded-2xl border border-white/20 shadow-[0_0_15px_rgba(255,255,255,0.2)]">🐻‍❄️</span>
                                         <div>
                                             <h3 className="font-black text-2xl text-white uppercase tracking-tight">Mr. Blanc</h3>
                                             <span className="text-[10px] bg-white text-spy-blue px-2 py-0.5 rounded-full font-bold uppercase tracking-widest">Solo</span>
@@ -102,16 +102,15 @@ const HowToPlay = ({ onBack, onOpenSettings }) => {
                     )}
 
                     {activeTab === 'rules' && (
-                        <div className="space-y-6 animate-pop-in px-2">
+                        <div className="space-y-6 px-2">
                             {/* Step 1 */}
                             <div className="flex gap-4 items-start relative">
                                 <div className="flex flex-col items-center">
-                                    <div className="w-10 h-10 rounded-full bg-spy-lime flex items-center justify-center text-xl shadow-[0_0_15px_rgba(204,255,0,0.4)] z-10">
-                                        🗣️
-                                    </div>
-                                    <div className="w-1 h-24 bg-white/10 my-2 rounded-full"></div>
+                                    {/* Updated to match Roles style */}
+                                    <span className="text-4xl bg-spy-lime/20 p-2 rounded-2xl border border-spy-lime/20 shadow-[0_0_15px_rgba(164,246,0,0.2)] z-10 bg-spy-blue">🗣️</span>
+                                    <div className="w-1 h-24 bg-white/10 my-2 rounded-full absolute top-14 left-[1.65rem]"></div>
                                 </div>
-                                <div className="bg-white/5 border border-white/10 p-4 rounded-2xl flex-1 backdrop-blur-sm">
+                                <div className="bg-white/5 border border-white/10 p-4 rounded-2xl flex-1 backdrop-blur-sm mt-1">
                                     <h4 className="font-black text-white uppercase tracking-wide mb-1">1. L'Indice</h4>
                                     <p className="text-white/70 text-sm">
                                         À tour de rôle, dites <span className="text-white font-bold">UN seul mot</span> pour décrire votre mot secret.
@@ -123,12 +122,11 @@ const HowToPlay = ({ onBack, onOpenSettings }) => {
                             {/* Step 2 */}
                             <div className="flex gap-4 items-start relative">
                                 <div className="flex flex-col items-center">
-                                    <div className="w-10 h-10 rounded-full bg-spy-orange flex items-center justify-center text-xl shadow-[0_0_15px_rgba(255,87,34,0.4)] z-10">
-                                        🤔
-                                    </div>
-                                    <div className="w-1 h-24 bg-white/10 my-2 rounded-full"></div>
+                                    {/* Updated to match Roles style */}
+                                    <span className="text-4xl bg-spy-orange/20 p-2 rounded-2xl border border-spy-orange/20 shadow-[0_0_15px_rgba(255,87,34,0.2)] z-10 bg-spy-blue">🤔</span>
+                                    <div className="w-1 h-24 bg-white/10 my-2 rounded-full absolute top-14 left-[1.65rem]"></div>
                                 </div>
-                                <div className="bg-white/5 border border-white/10 p-4 rounded-2xl flex-1 backdrop-blur-sm">
+                                <div className="bg-white/5 border border-white/10 p-4 rounded-2xl flex-1 backdrop-blur-sm mt-1">
                                     <h4 className="font-black text-white uppercase tracking-wide mb-1">2. Le Débat</h4>
                                     <p className="text-white/70 text-sm">
                                         Discutez librement. Accusez les joueurs aux indices bizarres. Défendez-vous !
@@ -139,11 +137,10 @@ const HowToPlay = ({ onBack, onOpenSettings }) => {
                             {/* Step 3 */}
                             <div className="flex gap-4 items-start relative">
                                 <div className="flex flex-col items-center">
-                                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-xl shadow-[0_0_15px_rgba(255,255,255,0.4)] z-10">
-                                        🗳️
-                                    </div>
+                                    {/* Updated to match Roles style */}
+                                    <span className="text-4xl bg-white/10 p-2 rounded-2xl border border-white/20 shadow-[0_0_15px_rgba(255,255,255,0.2)] z-10 bg-spy-blue">🗳️</span>
                                 </div>
-                                <div className="bg-white/5 border border-white/10 p-4 rounded-2xl flex-1 backdrop-blur-sm">
+                                <div className="bg-white/5 border border-white/10 p-4 rounded-2xl flex-1 backdrop-blur-sm mt-1">
                                     <h4 className="font-black text-white uppercase tracking-wide mb-1">3. Le Vote</h4>
                                     <p className="text-white/70 text-sm">
                                         Désignez l'intrus à la majorité.
