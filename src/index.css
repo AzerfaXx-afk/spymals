@@ -451,38 +451,40 @@ h6 {
         0px 8px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* 3D Clay Typography - White (Spy) */
+/* 3D Bubble/Clay Typography - White (Spy) - Super Inflated */
 .text-clay-white {
-    color: #fdfdfd;
+    color: #ffffff;
     text-shadow:
-        /* Top Highlight - Specular Shine */
-        0px -2px 0px rgba(255, 255, 255, 0.8),
+        /* Top Highlight - Strong Plastic Shine */
+        0px -3px 0px rgba(255, 255, 255, 0.9),
         /* Soft Rim Light */
-        2px -2px 0px rgba(230, 230, 230, 0.5),
-        /* Depth Stack */
-        0px 2px 0px #d4d4d4,
-        0px 4px 0px #bdbdbd,
-        0px 6px 0px #a8a8a8,
-        0px 8px 0px #949494,
-        /* Soft Shadows */
-        0px 10px 10px rgba(0, 0, 0, 0.2),
-        0px 20px 20px rgba(0, 0, 0, 0.15);
+        3px -3px 0px rgba(240, 240, 240, 0.6),
+        /* Depth Stack - Thicker */
+        0px 3px 0px #e0e0e0,
+        0px 6px 0px #c7c7c7,
+        0px 9px 0px #adadad,
+        0px 12px 0px #949494,
+        0px 15px 0px #7a7a7a,
+        /* Deep Soft Shadows for floating effect */
+        0px 15px 20px rgba(0, 0, 0, 0.3),
+        0px 25px 30px rgba(0, 0, 0, 0.2);
 }
 
-/* 3D Clay Typography - Orange (Mals) - Vibrant Balloon Look */
+/* 3D Bubble/Clay Typography - Orange (Mals) - Super Inflated */
 .text-clay-orange {
     color: #ff9f1c;
     text-shadow:
-        /* Top Highlight - Specular Shine */
-        0px -2px 0px rgba(255, 255, 255, 0.4),
+        /* Top Highlight - Strong Plastic Shine */
+        0px -3px 0px rgba(255, 255, 255, 0.5),
         /* Soft Rim Light */
-        2px -2px 0px rgba(255, 200, 100, 0.5),
-        /* Depth Stack */
-        0px 2px 0px #e68a00,
-        0px 4px 0px #cc7a00,
-        0px 6px 0px #b36b00,
-        0px 8px 0px #995c00,
-        /* Soft Shadows */
-        0px 10px 10px rgba(0, 0, 0, 0.2),
-        0px 20px 20px rgba(0, 0, 0, 0.15);
+        3px -3px 0px rgba(255, 220, 150, 0.6),
+        /* Depth Stack - Thicker */
+        0px 3px 0px #ff8c00,
+        0px 6px 0px #e67e00,
+        0px 9px 0px #cc7000,
+        0px 12px 0px #b36200,
+        0px 15px 0px #995400,
+        /* Deep Soft Shadows for floating effect */
+        0px 15px 20px rgba(0, 0, 0, 0.3),
+        0px 25px 30px rgba(0, 0, 0, 0.2);
 }
