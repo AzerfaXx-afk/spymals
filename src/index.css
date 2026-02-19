@@ -50,6 +50,12 @@ body {
     overscroll-behavior-y: none;
     -webkit-tap-highlight-color: transparent;
     min-height: 100vh;
+    min-height: 100dvh;
+    /* Mobile viewport height fix */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    user-select: none;
+    /* Prevent text selection for app-like feel */
 }
 
 h1,

@@ -41,7 +41,7 @@ const HowToPlay = ({ onBack, onOpenSettings }) => {
                 </div>
 
                 {/* Content Area */}
-                <div className="flex-grow overflow-y-auto pb-32 no-scrollbar mask-image-b">
+                <div className="flex-grow overflow-y-auto pb-40 no-scrollbar mask-image-b" style={{ paddingBottom: 'calc(10rem + env(safe-area-inset-bottom))' }}>
 
                     {activeTab === 'roles' && (
                         <div className="space-y-4 animate-pop-in">
@@ -160,8 +160,8 @@ const HowToPlay = ({ onBack, onOpenSettings }) => {
             </div>
 
             {/* Floating Back Button */}
-            <div className="fixed bottom-0 left-0 w-full p-6 bg-gradient-to-t from-spy-blue via-spy-blue/95 to-transparent z-20 backdrop-blur-[2px]">
-                <BouncyButton onClick={onBack} variant="secondary" className="w-full shadow-xl py-4">
+            <div className="fixed bottom-0 left-0 w-full p-6 pb-8 bg-gradient-to-t from-spy-blue via-spy-blue/95 to-transparent z-20 backdrop-blur-[2px]" style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}>
+                <BouncyButton onClick={onBack} variant="secondary" className="w-full shadow-xl py-4 active:scale-95 transition-transform">
                     RETOUR
                 </BouncyButton>
             </div>

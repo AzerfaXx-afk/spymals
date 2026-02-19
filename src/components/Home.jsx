@@ -3,7 +3,7 @@ import BouncyButton from './BouncyButton';
 
 const Home = ({ onStartGame, onOpenSettings, onOpenHowToPlay, onOpenLeaderboard }) => {
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen p-6 text-center relative overflow-hidden bg-spy-blue touch-none">
+        <div className="flex flex-col items-center justify-center min-h-[100dvh] p-6 text-center relative overflow-hidden bg-spy-blue touch-none" style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}>
 
             {/* Background Decor - Animated Orbs */}
             <div className="absolute top-[-10%] left-[-10%] w-80 h-80 bg-spy-lime opacity-20 rounded-full blur-[100px] animate-pulse-slow mix-blend-screen"></div>
@@ -34,7 +34,7 @@ const Home = ({ onStartGame, onOpenSettings, onOpenHowToPlay, onOpenLeaderboard 
                     NOUVELLE MISSION
                 </BouncyButton>
 
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div className="grid grid-cols-2 gap-3">
                     <BouncyButton variant="secondary" onClick={onOpenHowToPlay} className="text-sm py-4 flex flex-row items-center justify-center gap-3 active:scale-95 transition-transform">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 opacity-80">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />

@@ -12,7 +12,7 @@ const SettingsGear = ({ onClick, className = '' }) => {
     return (
         <button
             onClick={handleClick}
-            className={`absolute top-6 right-6 z-50 group p-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-lg transition-all duration-300 hover:scale-110 hover:bg-white/20 hover:shadow-xl active:scale-95 ${className}`}
+            className={`fixed top-4 right-4 z-50 group p-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-lg transition-all duration-300 hover:scale-110 hover:bg-white/20 hover:shadow-xl active:scale-95 ${className}`}
             aria-label="Paramètres"
         >
             <div className="relative w-8 h-8 text-white/90 group-hover:text-white transition-colors">

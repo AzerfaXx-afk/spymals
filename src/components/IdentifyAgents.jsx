@@ -45,7 +45,7 @@ const IdentifyAgents = ({ players, onUpdatePlayers, onConfirm, onBack, onOpenSet
             </div>
 
             {/* Grid - Scrollable area */}
-            <div className="flex-grow overflow-y-auto px-4 pb-32 z-10 no-scrollbar mask-image-b">
+            <div className="flex-grow overflow-y-auto px-4 pb-40 z-10 no-scrollbar mask-image-b" style={{ paddingBottom: 'calc(10rem + env(safe-area-inset-bottom))' }}>
                 <div className="grid grid-cols-2 gap-4 pb-4 animate-slide-up" style={{ animationDelay: '0.2s' }}>
                     {players.map((player, index) => (
                         <div key={player.id} className="animate-pop-in" style={{ animationDelay: `${index * 0.05}s` }}>
@@ -59,10 +59,10 @@ const IdentifyAgents = ({ players, onUpdatePlayers, onConfirm, onBack, onOpenSet
             </div>
 
             {/* Bottom Action - Glass Bar */}
-            <div className="fixed bottom-0 left-0 w-full p-6 bg-gradient-to-t from-spy-blue via-spy-blue/95 to-transparent z-20 backdrop-blur-[2px]">
+            <div className="fixed bottom-0 left-0 w-full p-6 pb-8 bg-gradient-to-t from-spy-blue via-spy-blue/95 to-transparent z-20 backdrop-blur-[2px]" style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}>
                 <BouncyButton
                     onClick={onConfirm}
-                    className="w-full shadow-spy-lime/20 shadow-2xl text-xl py-5"
+                    className="w-full shadow-spy-lime/20 shadow-2xl text-xl py-5 active:scale-95 transition-transform"
                 >
                     CONFIRMER L'ÉQUIPE
                 </BouncyButton>

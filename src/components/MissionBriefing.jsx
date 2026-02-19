@@ -42,7 +42,7 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
     };
 
     return (
-        <div className="h-screen flex flex-col items-center p-4 pt-20 relative overflow-hidden bg-spy-blue">
+        <div className="min-h-screen h-[100dvh] flex flex-col items-center p-4 pt-20 relative overflow-hidden bg-spy-blue">
             <BackArrow onClick={onBack} />
             <SettingsGear onClick={onOpenSettings} />
             {/* Background Decor */}
@@ -161,7 +161,7 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
             </div>
 
             {/* Start Button */}
-            <div className="w-full max-w-sm mt-auto z-20 pt-2 pb-6">
+            <div className="w-full max-w-sm mt-auto z-20 pt-2 pb-6" style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}>
                 <BouncyButton
                     onClick={() => onStartGame({ undercoverCount, whiteCount, wordPack, customWords })}
                     className="w-full shadow-spy-lime/20 shadow-2xl text-lg py-4"
