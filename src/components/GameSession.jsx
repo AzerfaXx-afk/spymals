@@ -3,7 +3,7 @@ import BouncyButton from './BouncyButton';
 import { wordPacks } from '../data/wordPacks';
 import SettingsGear from './SettingsGear';
 
-const GameSession = ({ players, config, onEndGame, onOpenSettings }) => {
+const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) => {
     const [gameState, setGameState] = useState('distributing'); // distributing, playing, voting, reveal
     const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
     const [isRevealed, setIsRevealed] = useState(false);
@@ -87,6 +87,16 @@ const GameSession = ({ players, config, onEndGame, onOpenSettings }) => {
 
     const currentPlayer = assignedRoles[currentPlayerIndex];
 
+    const triggerGameEnd = (winningTeam) => {
+        // winningTeam: 'Civilian' or 'Impostors'
+        // Create a map of player roles to pass back
+        const playerRoles = {};
+        assignedRoles.forEach(p => {
+            playerRoles[p.id] = p.role;
+        });
+        onEndGame(winningTeam, playerRoles);
+    };
+
     if (gameState === 'playing') {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-spy-blue text-center relative overflow-hidden">
@@ -114,11 +124,13 @@ const GameSession = ({ players, config, onEndGame, onOpenSettings }) => {
                     </BouncyButton>
 
                     <button
-                        onClick={onEndGame}
+                        onClick={onAbort}
                         className="mt-6 text-white/40 text-sm font-bold uppercase tracking-widest hover:text-white transition-colors"
                     >
                         Annuler la mission
                     </button>
+
+                    {/* Debug/Shortcuts could go here, but for now we stick to voting flow */}
                 </div>
             </div>
         );
@@ -208,11 +220,19 @@ const GameSession = ({ players, config, onEndGame, onOpenSettings }) => {
 
                     <div className="grid grid-cols-1 gap-4">
                         {isCivilian ? (
-                            <BouncyButton onClick={handleContinue} className="w-full py-5 text-lg">
-                                CONTINUER L'ENQUÊTE
-                            </BouncyButton>
+                            <>
+                                <BouncyButton onClick={handleContinue} className="w-full py-4 text-lg">
+                                    CONTINUER L'ENQUÊTE
+                                </BouncyButton>
+                                <button
+                                    onClick={() => triggerGameEnd('Impostors')}
+                                    className="text-spy-orange/80 hover:text-spy-orange font-bold uppercase text-xs tracking-widest py-2 transition-colors"
+                                >
+                                    Les Imposteurs ont gagné (Abandon)
+                                </button>
+                            </>
                         ) : (
-                            <BouncyButton onClick={onEndGame} className="w-full py-5 text-lg shadow-spy-lime/50 shadow-2xl">
+                            <BouncyButton onClick={() => triggerGameEnd('Civilian')} className="w-full py-5 text-lg shadow-spy-lime/50 shadow-2xl">
                                 MISSION ACCOMPLIE (Menu)
                             </BouncyButton>
                         )}

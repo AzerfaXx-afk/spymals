@@ -73,7 +73,7 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-2 gap-3 items-stretch">
                         <RoleStepper
                             label="Espions"
                             count={undercoverCount}
@@ -81,6 +81,7 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
                             onDecrement={() => handleDecrement('undercover')}
                             color="text-spy-orange"
                             subLabel="Mot différent"
+                            soundOptions={{ pitch: Math.min(2.0, 0.8 + ((undercoverCount) * 0.1)) }}
                         />
 
                         <RoleStepper
@@ -90,6 +91,7 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
                             onDecrement={() => handleDecrement('white')}
                             color="text-white"
                             subLabel="Aucun mot"
+                            soundOptions={{ pitch: Math.min(2.0, 0.8 + ((whiteCount) * 0.1)) }}
                         />
                     </div>
                 </div>
