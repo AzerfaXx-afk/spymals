@@ -31,7 +31,7 @@ const Home = ({ onStartGame, onOpenSettings, onOpenHowToPlay, onOpenLeaderboard 
                         alt="Logo SpyMals avec le Renard Détective"
                         // Classes pour le responsive : prend toute la largeur dispo jusqu'à 500px, 
                         // et ajoute une belle ombre portée 3D.
-                        className="w-full h-auto object-contain drop-shadow-2xl hover:scale-[1.02] transition-transform duration-300 ease-out-back"
+                        className="w-full h-auto object-contain drop-shadow-2xl scale-125 md:scale-110 translate-y-2"
                     />
                 </div>
 
