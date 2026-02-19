@@ -43,7 +43,8 @@
 body {
     font-family: var(--font-body);
     background-color: var(--color-spy-blue);
-    background-image: radial-gradient(circle at center top, #1a3a66 0%, var(--color-spy-blue) 60%, var(--color-spy-dark) 100%);
+    /* Deep blue to dark purple gradient as requested */
+    background-image: radial-gradient(circle at center top, #1e1b4b 0%, #0f172a 60%, #020617 100%);
     background-attachment: fixed;
     color: white;
     overflow-x: hidden;
@@ -80,4 +81,408 @@ h6 {
 .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+}
+
+/* Juicy Button Style */
+.btn-juicy {
+    background: linear-gradient(to bottom, #d4ff00, #aadd00);
+    border: 4px solid #ffffff;
+    box-shadow:
+        0 6px 0 #7cb300,
+        0 12px 20px rgba(0, 0, 0, 0.3),
+        inset 0 2px 0 rgba(255, 255, 255, 0.5);
+    color: #1a3a00;
+    text-transform: uppercase;
+    font-family: var(--font-display);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.1s ease;
+}
+
+.btn-juicy:active {
+    transform: translateY(6px);
+    box-shadow:
+        0 0 0 #7cb300,
+        inset 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.btn-juicy::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 60%);
+    opacity: 0;
+    transform: scale(0.5);
+    animation: ripple 2s infinite;
+}
+
+@keyframes ripple {
+    0% {
+        opacity: 0.4;
+        transform: scale(0.5);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(1.5);
+    }
+}
+
+/* Textured Secondary Button Style */
+.btn-textured {
+    background: linear-gradient(to bottom, #4a6fa5, #35527a);
+    border: 3px solid #6b8cbe;
+    box-shadow:
+        0 4px 0 #1e3352,
+        0 8px 15px rgba(0, 0, 0, 0.3);
+    color: white;
+    font-family: var(--font-display);
+}
+
+.btn-textured:active {
+    transform: translateY(4px);
+    box-shadow:
+        0 0 0 #1e3352,
+        inset 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Spy ID Badge Style */
+.spy-badge {
+    background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+    box-shadow:
+        0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    position: relative;
+    overflow: hidden;
+    transform-style: preserve-3d;
+}
+
+.spy-badge::before {
+    /* Holographic overlay placeholder */
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(125deg, transparent 30%, rgba(255, 255, 255, 0.4) 45%, transparent 50%);
+    background-size: 200% 200%;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.group:hover .spy-badge::before {
+    opacity: 1;
+    animation: holographic-shine 2s infinite;
+}
+
+@keyframes holographic-shine {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    100% {
+        background-position: 100% 50%;
+    }
+}
+
+/* 3D Avatar Effect */
+.avatar-3d {
+    filter: drop-shadow(0 4px 0px rgba(0, 0, 0, 0.2));
+    transform: perspective(500px) rotateX(5deg);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.group:hover .avatar-3d {
+    transform: perspective(500px) rotateX(0deg) scale(1.1);
+}
+
+/* Metallic Sheen Button */
+.btn-metallic {
+    background: linear-gradient(to bottom, #f8fafc, #e2e8f0);
+    color: #0f172a;
+    border-bottom: 4px solid #cbd5e1;
+    box-shadow:
+        0 10px 15px -3px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+    font-family: var(--font-display);
+    font-weight: 900;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.btn-metallic:active {
+    border-bottom: 0;
+    transform: translateY(4px);
+    background: linear-gradient(to bottom, #e2e8f0, #cbd5e1);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-metallic::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+    transform: skewX(-20deg);
+    animation: sheen 3s infinite;
+}
+
+@keyframes sheen {
+    0% {
+        left: -100%;
+    }
+
+    20% {
+        left: 200%;
+    }
+
+    100% {
+        left: 200%;
+    }
+}
+
+
+/* Command Center Theme */
+.command-panel {
+    background: radial-gradient(circle at center, #334155, #1e293b);
+    box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.8);
+    border: 4px solid #475569;
+    position: relative;
+}
+
+.digital-counter {
+    background: #0f172a;
+    color: #38bdf8;
+    font-family: 'Courier New', monospace;
+    text-shadow: 0 0 5px #38bdf8, 0 0 10px #38bdf8;
+    border: 2px inset #1e293b;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.launch-button {
+    background: repeating-linear-gradient(45deg, #ef4444, #ef4444 10px, #dc2626 10px, #dc2626 20px);
+    color: white;
+    text-transform: uppercase;
+    font-weight: 900;
+    border: 4px solid #991b1b;
+    box-shadow: 0 10px 0 #7f1d1d, 0 15px 20px rgba(0, 0, 0, 0.4);
+    text-shadow: 0 2px 0 rgba(0, 0, 0, 0.5);
+    transition: all 0.1s;
+}
+
+.launch-button:active {
+    transform: translateY(6px);
+    box-shadow: 0 4px 0 #7f1d1d, inset 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.gear-spin {
+    animation: spin 10s linear infinite;
+}
+
+.gear-spin-reverse {
+    animation: spin 10s linear infinite reverse;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* Pass Phone Redesign */
+.spotlight-bg {
+    background: radial-gradient(circle at center, #1e293b 0%, #000000 100%);
+    box-shadow: inset 0 0 100px #000;
+}
+
+.biometric-scanner {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 2px solid rgba(56, 189, 248, 0.3);
+    background: rgba(56, 189, 248, 0.05);
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.1), inset 0 0 20px rgba(56, 189, 248, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.biometric-scanner:active,
+.biometric-scanner.scanning {
+    transform: scale(0.95);
+    border-color: rgba(56, 189, 248, 0.8);
+    box-shadow: 0 0 30px rgba(56, 189, 248, 0.4), inset 0 0 30px rgba(56, 189, 248, 0.4);
+}
+
+.scanner-beam {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: #38bdf8;
+    box-shadow: 0 0 10px #38bdf8;
+    animation: scan 1.5s linear infinite;
+    opacity: 0;
+}
+
+.biometric-scanner.scanning .scanner-beam {
+    opacity: 1;
+}
+
+@keyframes scan {
+    0% {
+        top: 0%;
+    }
+
+    50% {
+        top: 100%;
+    }
+
+    100% {
+        top: 0%;
+    }
+}
+
+.folder-container {
+    perspective: 1000px;
+    transform-style: preserve-3d;
+}
+
+.top-secret-folder {
+    background: #f59e0b;
+    /* Amber-500 equivalent */
+    border: 2px solid #b45309;
+    color: #451a03;
+    transform: rotateX(-10deg) rotateY(0deg);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    animation: folderOpen 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes folderOpen {
+    0% {
+        transform: translateY(100px) scale(0.8) rotateX(20deg);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0) scale(1) rotateX(0deg);
+        opacity: 1;
+    }
+}
+
+
+/* Liquid Glass iOS Styles */
+.btn-glass-primary {
+    background: linear-gradient(145deg, rgba(204, 255, 0, 0.9), rgba(170, 221, 0, 0.8));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow:
+        0 8px 32px 0 rgba(31, 38, 135, 0.37),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    color: #1a3a00;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+.btn-glass-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 100%);
+    border-radius: 20px 20px 100% 100% / 20px 20px 20px 20px;
+    opacity: 0.8;
+}
+
+.btn-glass-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow:
+        0 4px 16px 0 rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    color: white;
+    border-radius: 16px;
+    transition: all 0.2s ease;
+}
+
+.btn-glass-secondary:active,
+.btn-glass-primary:active {
+    transform: scale(0.96);
+    box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+
+/* Cartoon Text Effect - Replaced with 3D Clay */
+.cartoon-text {
+    /* Removed stroke for the new style */
+    text-shadow:
+        /* Deep Shadow Layer */
+        0px 4px 0px rgba(0, 0, 0, 0.2),
+        /* Ambient Occlusion */
+        0px 8px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* 3D Clay Typography - White (Spy) */
+.text-clay-white {
+    color: #fdfdfd;
+    text-shadow:
+        /* Top Highlight - Specular Shine */
+        0px -2px 0px rgba(255, 255, 255, 0.8),
+        /* Soft Rim Light */
+        2px -2px 0px rgba(230, 230, 230, 0.5),
+        /* Depth Stack */
+        0px 2px 0px #d4d4d4,
+        0px 4px 0px #bdbdbd,
+        0px 6px 0px #a8a8a8,
+        0px 8px 0px #949494,
+        /* Soft Shadows */
+        0px 10px 10px rgba(0, 0, 0, 0.2),
+        0px 20px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* 3D Clay Typography - Orange (Mals) - Vibrant Balloon Look */
+.text-clay-orange {
+    color: #ff9f1c;
+    text-shadow:
+        /* Top Highlight - Specular Shine */
+        0px -2px 0px rgba(255, 255, 255, 0.4),
+        /* Soft Rim Light */
+        2px -2px 0px rgba(255, 200, 100, 0.5),
+        /* Depth Stack */
+        0px 2px 0px #e68a00,
+        0px 4px 0px #cc7a00,
+        0px 6px 0px #b36b00,
+        0px 8px 0px #995c00,
+        /* Soft Shadows */
+        0px 10px 10px rgba(0, 0, 0, 0.2),
+        0px 20px 20px rgba(0, 0, 0, 0.15);
 }

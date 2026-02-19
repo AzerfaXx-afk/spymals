@@ -32,6 +32,9 @@ const IdentifyAgents = ({ players, onUpdatePlayers, onConfirm, onBack, onOpenSet
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
                 <div className="absolute top-[-10%] right-[-20%] w-[600px] h-[600px] bg-spy-lime opacity-[0.05] rounded-full blur-[100px] animate-pulse-slow"></div>
                 <div className="absolute bottom-[-10%] left-[-20%] w-[500px] h-[500px] bg-spy-orange opacity-[0.05] rounded-full blur-[100px] animate-pulse-slow delay-700"></div>
+                {/* Spotlights */}
+                <div className="absolute top-0 left-1/4 w-px h-full bg-gradient-to-b from-white/10 to-transparent"></div>
+                <div className="absolute top-0 right-1/4 w-px h-full bg-gradient-to-b from-white/10 to-transparent"></div>
             </div>
 
             {/* Header */}
@@ -40,7 +43,7 @@ const IdentifyAgents = ({ players, onUpdatePlayers, onConfirm, onBack, onOpenSet
                     Identifiez les Agents
                 </h2>
                 <p className="text-white/60 text-sm font-bold mt-2 uppercase tracking-wider animate-slide-up" style={{ animationDelay: '0.1s' }}>
-                    Tapez sur une carte pour modifier
+                    Tapez sur une badge pour modifier
                 </p>
             </div>
 
@@ -61,8 +64,9 @@ const IdentifyAgents = ({ players, onUpdatePlayers, onConfirm, onBack, onOpenSet
             {/* Bottom Action - Glass Bar */}
             <div className="fixed bottom-0 left-0 w-full p-6 pb-8 bg-gradient-to-t from-spy-blue via-spy-blue/95 to-transparent z-20 backdrop-blur-[2px]" style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}>
                 <BouncyButton
+                    variant="custom"
                     onClick={onConfirm}
-                    className="w-full shadow-spy-lime/20 shadow-2xl text-xl py-5 active:scale-95 transition-transform"
+                    className="btn-metallic w-full text-xl py-5 active:scale-95 transition-transform"
                 >
                     CONFIRMER L'ÉQUIPE
                 </BouncyButton>

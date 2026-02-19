@@ -1,66 +1,84 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { useAudio } from '../contexts/AudioContext';
 
 const BouncyButton = ({ children, onClick, className = '', variant = 'primary', disabled = false, soundOptions = {} }) => {
   const { playSfx } = useAudio();
-  // 3D Button Styles:
-  // - High border-bottom for depth (border-b-8)
-  // - Active state removes border and translates down to simulate press
 
   const baseStyles = `
     relative w-full
     font-black uppercase tracking-wider rounded-2xl 
-    transition-all duration-100 ease-out
-    active:scale-[0.98] 
-    disabled:opacity-50 disabled:pointer-events-none disabled:active:scale-100
     select-none touch-manipulation
     flex items-center justify-center
+    cursor-pointer
+    disabled:opacity-50 disabled:cursor-not-allowed
   `;
 
-  const variants = {
+  // Framer Motion variants for "squash and stretch"
+  const buttonVariants = {
+    initial: { scale: 1, y: 0 },
+    hover: {
+      scale: 1.02,
+      filter: "brightness(1.1)",
+      transition: { type: "spring", stiffness: 400, damping: 10 }
+    },
+    tap: {
+      scale: 0.95,
+      y: 4,
+      transition: { type: "spring", stiffness: 400, damping: 15 } // Snappy squash
+    },
+    disabled: { opacity: 0.5, scale: 1, y: 0 }
+  };
+
+  const styleVariants = {
     primary: `
-      bg-spy-lime text-spy-blue 
-      border-b-[6px] border-b-[#8fb300]
-      active:border-b-0 active:translate-y-[6px]
-      shadow-[0_10px_0_0_rgba(0,0,0,0.2)]
-      active:shadow-none
-      hover:brightness-110
+      bg-gradient-to-br from-spy-lime/90 to-[#aadd00]/90 
+      backdrop-blur-md border border-white/30
+      text-spy-blue
+      shadow-[0_8px_0_#8fb300,0_15px_20px_rgba(0,0,0,0.2)]
     `,
     secondary: `
       bg-white/10 text-white 
-      border-b-[6px] border-b-white/5
-      active:border-b-0 active:translate-y-[6px]
-      backdrop-blur-md
-      hover:bg-white/20
+      backdrop-blur-md border border-white/20
+      shadow-[0_6px_0_rgba(0,0,0,0.2),0_10px_10px_rgba(0,0,0,0.1)]
     `,
     danger: `
-      bg-red-500 text-white 
-      border-b-[6px] border-b-red-800
-      active:border-b-0 active:translate-y-[6px]
-      hover:bg-red-400
+      bg-red-500/90 text-white 
+      backdrop-blur-md border border-red-400/30
+      shadow-[0_6px_0_#991b1b,0_10px_10px_rgba(0,0,0,0.2)]
+    `,
+    custom: `
+        /* Let className handle everything, but we still apply motion */
+        bg-transparent
     `
   };
 
-  const handleClick = (e) => {
+  // We handle click sound manually to ensure it plays on interaction start
+  const handleTapStart = () => {
     if (!disabled) {
       playSfx('/sons/button.mp3', soundOptions);
-      if (onClick) onClick(e);
     }
   };
 
   return (
-    <button
-      onClick={handleClick}
+    <motion.button
+      onClick={onClick}
       disabled={disabled}
-      className={`${baseStyles} ${variants[variant] || variants.primary} ${className}`}
+      className={`${baseStyles} ${styleVariants[variant] || styleVariants.primary} ${className}`}
+      variants={buttonVariants}
+      initial="initial"
+      whileHover={!disabled ? "hover" : "disabled"}
+      whileTap={!disabled ? "tap" : "disabled"}
+      onTapStart={handleTapStart}
+      layout
     >
       {/* Glossy Reflection Overlay */}
-      <span className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/20 to-transparent rounded-t-2xl pointer-events-none"></span>
+      <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/30 to-transparent rounded-t-2xl pointer-events-none"></div>
 
-      <span className="relative z-10 flex items-center gap-2">
+      <span className="relative z-10 flex items-center justify-center gap-2 pointer-events-none">
         {children}
       </span>
-    </button>
+    </motion.button>
   );
 };
 
