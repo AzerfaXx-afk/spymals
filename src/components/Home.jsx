@@ -2,10 +2,30 @@ import React from 'react';
 import BouncyButton from './BouncyButton';
 // Assure-toi que le chemin vers ton composant BouncyButton est correct
 
-const Home = ({ onStartGame, onOpenSettings, onOpenHowToPlay, onOpenLeaderboard }) => {
+const Home = ({ onStartGame, onOpenSettings, onOpenHowToPlay, onOpenLeaderboard, onBackToHub }) => {
     return (
         // Conteneur principal avec le fond bleu et les effets
         <div className="flex flex-col items-center justify-center min-h-[100dvh] p-6 text-center relative overflow-hidden bg-spy-blue touch-none" style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}>
+
+            {/* ── Back to Hub button ── */}
+            {onBackToHub && (
+                <button
+                    onClick={onBackToHub}
+                    className="absolute top-4 left-4 z-20 w-11 h-11 flex items-center justify-center rounded-full transition-all duration-200 active:scale-90 hover:scale-110"
+                    style={{
+                        background: 'rgba(255,255,255,0.08)',
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        backdropFilter: 'blur(12px)',
+                        WebkitBackdropFilter: 'blur(12px)',
+                        boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
+                    }}
+                    aria-label="Retour au hub"
+                >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M15 18l-6-6 6-6" />
+                    </svg>
+                </button>
+            )}
 
             {/* --- Décors d'arrière-plan (Motifs subtils) --- */}
             <div className="absolute inset-0 opacity-10 pointer-events-none" style={{
