@@ -8,28 +8,16 @@ import Scoreboard from './components/Scoreboard';
 import HowToPlay from './components/HowToPlay';
 import Settings from './components/Settings';
 import Leaderboard from './components/Leaderboard';
-import PocketPartyHome from './components/PocketPartyHome';
-import AffaireClassee from './components/affaire/AffaireClassee';
 
 import { AudioProvider } from './contexts/AudioContext';
 
 function App() {
-  const [activeGame, setActiveGame] = useState('hub');
   const [currentScreen, setCurrentScreen] = useState('home');
   const [players, setPlayers] = useState([]);
   const [gameConfig, setGameConfig] = useState(null);
   const [winners, setWinners] = useState(null); // 'Civilian' or 'Impostors'
 
   const [showSettings, setShowSettings] = useState(false);
-
-  const handleLaunchGame = (gameId) => {
-    setActiveGame(gameId);
-    setCurrentScreen('home');
-  };
-
-  const goBackToHub = () => {
-    setActiveGame('hub');
-  };
 
   const startNewMission = () => {
     setCurrentScreen('setup');
@@ -183,93 +171,79 @@ function App() {
 
   return (
     <AudioProvider>
-      {/* ── Hub Screen ── */}
-      {activeGame === 'hub' && (
-        <PocketPartyHome onSelectGame={handleLaunchGame} />
-      )}
+      <div className="antialiased text-gray-900 bg-spy-blue min-h-screen relative">
+        {currentScreen === 'home' && (
+          <Home
+            onStartGame={startNewMission}
+            onOpenHowToPlay={() => setCurrentScreen('how-to-play')}
+            onOpenSettings={() => setShowSettings(true)}
+            onOpenLeaderboard={() => setCurrentScreen('leaderboard')}
+          />
+        )}
+        {currentScreen === 'how-to-play' && (
+          <HowToPlay
+            onBack={() => setCurrentScreen('home')}
+            onOpenSettings={() => setShowSettings(true)}
+          />
+        )}
+        {currentScreen === 'setup' && (
+          <PlayerSetup
+            onNext={confirmPlayerCount}
+            onBack={() => setCurrentScreen('home')}
+            onOpenSettings={() => setShowSettings(true)}
+          />
+        )}
+        {currentScreen === 'identify' && (
+          <IdentifyAgents
+            players={players}
+            onUpdatePlayers={setPlayers}
+            onConfirm={confirmTeam}
+            onBack={() => setCurrentScreen('setup')}
+            onOpenSettings={() => setShowSettings(true)}
+          />
+        )}
+        {currentScreen === 'briefing' && (
+          <MissionBriefing
+            totalPlayers={players.length}
+            onStartGame={startGame}
+            onBack={() => setCurrentScreen('identify')}
+            onOpenSettings={() => setShowSettings(true)}
+          />
+        )}
+        {currentScreen === 'game' && (
+          <GameSession
+            players={players}
+            config={gameConfig}
+            onEndGame={handleScoreUpdate}
+            onAbort={() => setCurrentScreen('home')}
+            onOpenSettings={() => setShowSettings(true)}
+          />
+        )}
+        {currentScreen === 'scoreboard' && (
+          <Scoreboard
+            players={players}
+            winners={winners}
+            onReplay={replayGame}
+            onHome={() => setCurrentScreen('home')}
+            onOpenSettings={() => setShowSettings(true)}
+          />
+        )}
+        {currentScreen === 'leaderboard' && (
+          <Leaderboard
+            onBack={() => setCurrentScreen('home')}
+            onOpenSettings={() => setShowSettings(true)}
+          />
+        )}
 
-      {/* ── SpyMals Game ── */}
-      {activeGame === 'spymals' && (
-        <div className="antialiased text-gray-900 bg-spy-blue min-h-screen relative">
-          {currentScreen === 'home' && (
-            <Home
-              onStartGame={startNewMission}
-              onOpenHowToPlay={() => setCurrentScreen('how-to-play')}
-              onOpenSettings={() => setShowSettings(true)}
-              onOpenLeaderboard={() => setCurrentScreen('leaderboard')}
-              onBackToHub={goBackToHub}
+        {/* Settings Overlay */}
+        {showSettings && (
+          <div className="fixed inset-0 z-[100]">
+            <Settings
+              onBack={() => setShowSettings(false)}
             />
-          )}
-          {currentScreen === 'how-to-play' && (
-            <HowToPlay
-              onBack={() => setCurrentScreen('home')}
-              onOpenSettings={() => setShowSettings(true)}
-            />
-          )}
-          {currentScreen === 'setup' && (
-            <PlayerSetup
-              onNext={confirmPlayerCount}
-              onBack={() => setCurrentScreen('home')}
-              onOpenSettings={() => setShowSettings(true)}
-            />
-          )}
-          {currentScreen === 'identify' && (
-            <IdentifyAgents
-              players={players}
-              onUpdatePlayers={setPlayers}
-              onConfirm={confirmTeam}
-              onBack={() => setCurrentScreen('setup')}
-              onOpenSettings={() => setShowSettings(true)}
-            />
-          )}
-          {currentScreen === 'briefing' && (
-            <MissionBriefing
-              totalPlayers={players.length}
-              onStartGame={startGame}
-              onBack={() => setCurrentScreen('identify')}
-              onOpenSettings={() => setShowSettings(true)}
-            />
-          )}
-          {currentScreen === 'game' && (
-            <GameSession
-              players={players}
-              config={gameConfig}
-              onEndGame={handleScoreUpdate}
-              onAbort={() => setCurrentScreen('home')}
-              onOpenSettings={() => setShowSettings(true)}
-            />
-          )}
-          {currentScreen === 'scoreboard' && (
-            <Scoreboard
-              players={players}
-              winners={winners}
-              onReplay={replayGame}
-              onHome={() => setCurrentScreen('home')}
-              onOpenSettings={() => setShowSettings(true)}
-            />
-          )}
-          {currentScreen === 'leaderboard' && (
-            <Leaderboard
-              onBack={() => setCurrentScreen('home')}
-              onOpenSettings={() => setShowSettings(true)}
-            />
-          )}
-
-          {/* Settings Overlay */}
-          {showSettings && (
-            <div className="fixed inset-0 z-[100]">
-              <Settings
-                onBack={() => setShowSettings(false)}
-              />
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* ── Affaire Classée Game ── */}
-      {activeGame === 'affaire' && (
-        <AffaireClassee onBackToHub={goBackToHub} />
-      )}
+          </div>
+        )}
+      </div>
     </AudioProvider>
   );
 }

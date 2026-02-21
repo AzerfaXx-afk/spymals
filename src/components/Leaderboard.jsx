@@ -5,6 +5,7 @@ import SettingsGear from './SettingsGear';
 
 const Leaderboard = ({ onBack, onOpenSettings }) => {
     const [stats, setStats] = useState([]);
+    const [confirmReset, setConfirmReset] = useState(false);
 
     useEffect(() => {
         const loadStats = () => {
@@ -22,6 +23,12 @@ const Leaderboard = ({ onBack, onOpenSettings }) => {
         };
         loadStats();
     }, []);
+
+    const handleReset = () => {
+        localStorage.removeItem('spyMals_leaderboard');
+        setStats([]);
+        setConfirmReset(false);
+    };
 
     const getMedal = (index) => {
         if (index === 0) return '🏆';
@@ -64,9 +71,9 @@ const Leaderboard = ({ onBack, onOpenSettings }) => {
                                 <div
                                     key={player.name}
                                     className={`flex items-center justify-between rounded-xl p-3 border border-white/5 ${index === 0 ? 'bg-gradient-to-r from-spy-yellow/20 to-transparent border-spy-yellow/30' :
-                                            index === 1 ? 'bg-white/10' :
-                                                index === 2 ? 'bg-white/5' :
-                                                    'bg-black/20'
+                                        index === 1 ? 'bg-white/10' :
+                                            index === 2 ? 'bg-white/5' :
+                                                'bg-black/20'
                                         }`}
                                 >
                                     <div className="flex items-center gap-3">
@@ -96,10 +103,36 @@ const Leaderboard = ({ onBack, onOpenSettings }) => {
                 </div>
 
                 {/* Actions */}
-                <div className="mt-auto">
+                <div className="mt-auto flex flex-col gap-3">
                     <BouncyButton onClick={onBack} variant="secondary" className="w-full py-4 text-sm">
                         RETOUR ACCUEIL
                     </BouncyButton>
+
+                    {stats.length > 0 && (
+                        confirmReset ? (
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={() => setConfirmReset(false)}
+                                    className="flex-1 py-3 rounded-2xl border border-white/20 text-white/50 font-bold uppercase text-xs tracking-widest hover:border-white/40 transition-all"
+                                >
+                                    Annuler
+                                </button>
+                                <button
+                                    onClick={handleReset}
+                                    className="flex-1 py-3 rounded-2xl bg-red-600/80 border border-red-500 text-white font-black uppercase text-xs tracking-widest hover:bg-red-600 active:scale-95 transition-all shadow-lg"
+                                >
+                                    ⚠️ Confirmer Reset
+                                </button>
+                            </div>
+                        ) : (
+                            <button
+                                onClick={() => setConfirmReset(true)}
+                                className="w-full py-3 rounded-2xl border border-red-500/30 text-red-400/70 font-bold uppercase text-xs tracking-widest hover:border-red-500/60 hover:text-red-400 transition-all"
+                            >
+                                🗑 Réinitialiser le classement
+                            </button>
+                        )
+                    )}
                 </div>
             </div>
         </div>

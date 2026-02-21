@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import BouncyButton from './BouncyButton';
@@ -13,9 +13,7 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
     const [targetWord, setTargetWord] = useState(null);
     const [votedPlayer, setVotedPlayer] = useState(null);
     const [eliminatedPlayers, setEliminatedPlayers] = useState([]);
-    const [holdProgress, setHoldProgress] = useState(0);
 
-    const holdTimer = useRef(null);
 
     // Initialize Game
     useEffect(() => {
@@ -62,7 +60,6 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
 
     const nextPlayer = () => {
         setIsRevealed(false);
-        setHoldProgress(0);
         if (currentPlayerIndex < players.length - 1) {
             setCurrentPlayerIndex(currentPlayerIndex + 1);
         } else {
@@ -112,30 +109,9 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
         onEndGame(winningTeam, playerRoles);
     };
 
-    // Hold to Reveal Logic
-    const startHold = () => {
-        if (isRevealed) return;
-        let progress = 0;
-        const interval = 20; // ms
-        const duration = 1500; // 1.5s hold time
-        const step = 100 / (duration / interval);
-
-        holdTimer.current = setInterval(() => {
-            progress += step;
-            if (progress >= 100) {
-                progress = 100;
-                clearInterval(holdTimer.current);
-                setIsRevealed(true);
-            }
-            setHoldProgress(progress);
-        }, interval);
-    };
-
-    const endHold = () => {
-        if (!isRevealed) {
-            clearInterval(holdTimer.current);
-            setHoldProgress(0);
-        }
+    // Tap to Reveal Logic
+    const handleReveal = () => {
+        if (!isRevealed) setIsRevealed(true);
     };
 
     // --- RENDER STATES ---
@@ -306,181 +282,103 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
     // Distributing State - Loading
     if (!currentPlayer) return <div className="text-white">Initialisation...</div>;
 
-    // Distributing State - Secure Terminal with Hold to Reveal
+    // Distributing State - Tap to Reveal
     return (
         <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center relative overflow-hidden bg-black">
             <SettingsGear onClick={onOpenSettings} />
 
-            {/* Dynamic Background */}
-            <div className={`absolute inset-0 transition-opacity duration-700 ${isRevealed ? 'opacity-30' : 'opacity-100'}`}>
-                <div className="absolute inset-0 bg-radial-gradient from-[#1e293b] to-black opacity-80"></div>
-                <div className="absolute top-0 left-0 w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoNTYsIDE4OSwgMjQ4LCAwLjIpIi8+PC9zdmc+')] opacity-20"></div>
+            {/* Subtle background glow */}
+            <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#0f172a_0%,_#000_100%)]"></div>
             </div>
 
-            <div className="z-10 flex flex-col items-center w-full max-w-md perspective-1000 min-h-[60vh] justify-center">
+            <div className="z-10 flex flex-col items-center w-full max-w-sm gap-6">
 
-                {/* Header / Avatar - Transitions out on reveal */}
-                <motion.div
-                    animate={isRevealed ? { scale: 0.75, opacity: 0.5, filter: "blur(4px)", y: -50 } : { scale: 1, opacity: 1, filter: "blur(0px)", y: 0 }}
-                    transition={{ duration: 0.5 }}
-                    className="flex flex-col items-center mb-8"
-                >
-                    <div className="w-24 h-24 rounded-full bg-black/50 flex items-center justify-center text-5xl border-2 border-spy-lime/50 mb-4 shadow-[0_0_30px_rgba(56,189,248,0.2)] relative">
+                {/* Player identity */}
+                <div className="flex flex-col items-center gap-3">
+                    <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center text-5xl border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.6)]">
                         {currentPlayer.avatar.type === 'image' ? (
                             <img src={currentPlayer.avatar.value} alt={currentPlayer.name} className="w-full h-full object-cover rounded-full" />
                         ) : (
-                            <span className="filter drop-shadow-md">{currentPlayer.avatar.value}</span>
+                            <span>{currentPlayer.avatar.value}</span>
                         )}
-                        <div className="absolute -bottom-2 -right-2 bg-black/80 text-[10px] text-spy-lime border border-spy-lime px-2 py-0.5 rounded uppercase font-bold tracking-widest">
-                            Target
-                        </div>
                     </div>
-                    <h2 className="text-3xl font-black text-white uppercase tracking-widest drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+                    <h2 className="text-2xl font-black text-white uppercase tracking-widest">
                         {currentPlayer.name}
                     </h2>
-                    <p className="text-spy-blue/60 font-bold uppercase tracking-[0.3em] text-[10px] mt-1">
-                        Identity Verification Required
+                    <p className="text-white/30 font-bold uppercase tracking-[0.3em] text-[10px]">
+                        Passe le téléphone à cet agent
                     </p>
-                </motion.div>
-
-                {/* Interaction Area */}
-                <div className="w-full relative flex flex-col items-center justify-center h-[300px]">
-                    <AnimatePresence mode='wait'>
-                        {!isRevealed ? (
-                            <motion.div
-                                key="scanner"
-                                exit={{ opacity: 0, scale: 0.8 }}
-                                className="flex flex-col items-center"
-                            >
-                                <motion.div
-                                    className="relative w-32 h-32 rounded-full border-4 border-white/10 flex items-center justify-center cursor-pointer overflow-hidden group mb-4"
-                                    onMouseDown={startHold}
-                                    onMouseUp={endHold}
-                                    onMouseLeave={endHold}
-                                    onTouchStart={startHold}
-                                    onTouchEnd={endHold}
-                                    whileTap={{ scale: 0.95 }}
-                                >
-                                    {/* Progress Ring */}
-                                    <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 100 100">
-                                        <circle
-                                            cx="50"
-                                            cy="50"
-                                            r="45"
-                                            fill="transparent"
-                                            stroke="#1e293b"
-                                            strokeWidth="8"
-                                        />
-                                        <motion.circle
-                                            cx="50"
-                                            cy="50"
-                                            r="45"
-                                            fill="transparent"
-                                            stroke="#CCFF00"
-                                            strokeWidth="8"
-                                            strokeDasharray="283"
-                                            strokeDashoffset={283 - (283 * holdProgress) / 100}
-                                            transition={{ duration: 0.1 }}
-                                        />
-                                    </svg>
-
-                                    {/* Fingerprint Icon with Scanning Beam */}
-                                    <div className="relative z-10 p-6 text-white/50 group-hover:text-white transition-colors">
-                                        <svg viewBox="0 0 24 24" className="w-12 h-12" fill="currentColor">
-                                            <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z" />
-                                        </svg>
-
-                                        {/* Scanner Beam */}
-                                        {holdProgress > 0 && (
-                                            <motion.div
-                                                className="absolute top-0 left-0 w-full h-1 bg-spy-lime shadow-[0_0_10px_#CCFF00]"
-                                                animate={{ top: ["0%", "100%", "0%"] }}
-                                                transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-                                            />
-                                        )}
-                                    </div>
-
-                                    {/* Glow effect when active */}
-                                    {holdProgress > 0 && (
-                                        <div className="absolute inset-0 bg-spy-lime/20 blur-xl"></div>
-                                    )}
-                                </motion.div>
-
-                                <p className="text-white/60 text-xs uppercase tracking-widest font-bold animate-pulse">
-                                    {holdProgress > 0 ? "Analyzing..." : "Hold to Scan"}
-                                </p>
-                            </motion.div>
-                        ) : (
-                            /* Top Secret Folder Reveal */
-                            <motion.div
-                                key="reveal"
-                                initial={{ y: 50, opacity: 0, rotateX: 20 }}
-                                animate={{ y: 0, opacity: 1, rotateX: 0 }}
-                                className="top-secret-folder w-full max-w-sm p-6 rounded-sm relative transform rotate-1 shadow-2xl"
-                            >
-                                {/* Folder Tab */}
-                                <div className="absolute -top-6 left-0 w-1/3 h-8 bg-[#f59e0b] rounded-t-lg border-t-2 border-l-2 border-r-2 border-[#b45309] z-0"></div>
-
-                                {/* Stamped Text */}
-                                <motion.div
-                                    initial={{ scale: 2, opacity: 0 }}
-                                    animate={{ scale: 1, opacity: 0.8 }}
-                                    transition={{ delay: 0.3, type: 'spring' }}
-                                    className="absolute top-10 right-4 transform rotate-12 border-4 border-red-700 text-red-700 font-black text-xl px-2 py-1 z-20 mix-blend-multiply"
-                                >
-                                    TOP SECRET
-                                </motion.div>
-
-                                <div className="relative z-10 flex flex-col items-center bg-[#fffbeb] p-4 shadow-inner min-h-[250px] justify-between">
-                                    {/* Paper texture background could go here */}
-
-                                    <div className="w-full text-center border-b border-gray-300 pb-2 mb-4">
-                                        <h3 className="text-gray-900 font-black uppercase tracking-tighter text-2xl">
-                                            Mission Profile
-                                        </h3>
-                                        <p className="text-gray-500 text-[10px] uppercase tracking-widest">
-                                            Eyes Only • Do Not Distribute
-                                        </p>
-                                    </div>
-
-                                    <div className="flex-1 flex flex-col justify-center items-center w-full">
-                                        {currentPlayer.role !== 'Mr. White' ? (
-                                            <>
-                                                <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Passcode</p>
-                                                <p className="text-4xl font-black text-gray-900 tracking-widest break-all font-mono">
-                                                    {currentPlayer.word ? currentPlayer.word.toUpperCase() : "???"}
-                                                </p>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Status</p>
-                                                <p className="text-3xl font-black text-gray-900 uppercase tracking-tight">
-                                                    Mr. Blanc
-                                                </p>
-                                                <p className="text-red-600 font-bold text-xs mt-2">
-                                                    NO DATA AVAILABLE
-                                                </p>
-                                            </>
-                                        )}
-                                    </div>
-
-                                    <div className="w-full mt-6 pt-4 border-t border-gray-300">
-                                        <BouncyButton
-                                            onClick={nextPlayer}
-                                            className="w-full bg-gray-800 text-white hover:bg-black py-3 text-sm shadow-lg border-none"
-                                            variant="secondary"
-                                        >
-                                            BURN AFTER READING (NEXT)
-                                        </BouncyButton>
-                                        <p className="text-gray-400 text-[8px] uppercase tracking-widest text-center mt-2">
-                                            Destruction Protocol Initiated
-                                        </p>
-                                    </div>
-                                </div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
                 </div>
+
+                <AnimatePresence mode="wait">
+                    {!isRevealed ? (
+                        /* TAP TO REVEAL BUTTON */
+                        <motion.button
+                            key="tap"
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            onClick={handleReveal}
+                            whileTap={{ scale: 0.95 }}
+                            className="w-full py-5 rounded-2xl border border-spy-lime/40 bg-spy-lime/10 text-spy-lime font-black uppercase tracking-widest text-lg shadow-[0_0_30px_rgba(204,255,0,0.1)] active:bg-spy-lime/20 transition-all"
+                        >
+                            👁 Voir mon mot
+                        </motion.button>
+                    ) : (
+                        /* WORD REVEAL CARD */
+                        <motion.div
+                            key="reveal"
+                            initial={{ y: 30, opacity: 0, scale: 0.95 }}
+                            animate={{ y: 0, opacity: 1, scale: 1 }}
+                            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                            className="w-full bg-black border border-white/10 rounded-3xl overflow-hidden shadow-2xl"
+                        >
+                            {/* TOP SECRET badge - subtle, top of card */}
+                            <div className="flex items-center justify-center gap-2 py-2 border-b border-white/5">
+                                <span className="text-[9px] font-black uppercase tracking-[0.4em] text-red-500/60">⬛ Top Secret ⬛</span>
+                            </div>
+
+                            {/* Main content */}
+                            <div className="flex flex-col items-center justify-center py-10 px-6 gap-3">
+                                {currentPlayer.role !== 'Mr. White' ? (
+                                    <>
+                                        <p className="text-white/30 text-[10px] font-bold uppercase tracking-[0.3em]">Ton mot</p>
+                                        <p className="text-5xl font-black text-white tracking-tight leading-tight break-words text-center">
+                                            {currentPlayer.word ? currentPlayer.word : '???'}
+                                        </p>
+                                        <div className={`mt-1 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${currentPlayer.role === 'Undercover'
+                                            ? 'bg-spy-orange/20 text-spy-orange border border-spy-orange/30'
+                                            : 'bg-spy-lime/20 text-spy-lime border border-spy-lime/30'
+                                            }`}>
+                                            {currentPlayer.role === 'Undercover' ? '🦊 Espion' : '🕵️ Innocent'}
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <p className="text-white/30 text-[10px] font-bold uppercase tracking-[0.3em]">Ton rôle</p>
+                                        <p className="text-4xl font-black text-white uppercase tracking-tight">Mr. Blanc</p>
+                                        <p className="text-white/40 text-sm font-bold mt-1">Tu n'as aucun mot.</p>
+                                        <div className="mt-1 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-white/10 text-white/60 border border-white/10">
+                                            🐻‍❄️ Bluffeur
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+
+                            {/* SUITE button */}
+                            <div className="px-6 pb-6">
+                                <BouncyButton
+                                    onClick={nextPlayer}
+                                    variant="primary"
+                                    className="w-full py-4 text-base"
+                                >
+                                    {currentPlayerIndex < players.length - 1 ? 'SUITE →' : 'LANCER LA MISSION'}
+                                </BouncyButton>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
             </div>
         </div>
