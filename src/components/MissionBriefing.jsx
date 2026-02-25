@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import BouncyButton from './BouncyButton';
 import RoleStepper from './RoleStepper';
 import BackArrow from './BackArrow';
@@ -9,6 +9,16 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
     const [whiteCount, setWhiteCount] = useState(0);
     const [wordPack, setWordPack] = useState('standard');
     const [customWords, setCustomWords] = useState({ innocent: '', spy: '' });
+
+    // Easter egg: screw animation
+    const [unscrewedScrews, setUnscrewedScrews] = useState({});
+    const handleScrewClick = useCallback((id) => {
+        if (unscrewedScrews[id]) return; // already animating
+        setUnscrewedScrews(prev => ({ ...prev, [id]: true }));
+        setTimeout(() => {
+            setUnscrewedScrews(prev => ({ ...prev, [id]: false }));
+        }, 2000);
+    }, [unscrewedScrews]);
 
     const civilianCount = totalPlayers - undercoverCount - whiteCount;
 
@@ -79,11 +89,33 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
 
                 {/* Main Stats Card - Command Panel */}
                 <div className="command-panel rounded-lg p-4 flex-none relative">
-                    {/* Decorative Screws */}
-                    <div className="absolute top-2 left-2 w-3 h-3 rounded-full bg-gray-400 shadow-inner flex items-center justify-center"><div className="w-full h-[1px] bg-gray-600 rotate-45"></div></div>
-                    <div className="absolute top-2 right-2 w-3 h-3 rounded-full bg-gray-400 shadow-inner flex items-center justify-center"><div className="w-full h-[1px] bg-gray-600 rotate-45"></div></div>
-                    <div className="absolute bottom-2 left-2 w-3 h-3 rounded-full bg-gray-400 shadow-inner flex items-center justify-center"><div className="w-full h-[1px] bg-gray-600 rotate-45"></div></div>
-                    <div className="absolute bottom-2 right-2 w-3 h-3 rounded-full bg-gray-400 shadow-inner flex items-center justify-center"><div className="w-full h-[1px] bg-gray-600 rotate-45"></div></div>
+                    {/* Decorative Screws — Easter Egg! */}
+                    {['tl', 'tr', 'bl', 'br'].map((pos) => {
+                        const posClass = pos === 'tl' ? 'top-2 left-2'
+                            : pos === 'tr' ? 'top-2 right-2'
+                                : pos === 'bl' ? 'bottom-2 left-2'
+                                    : 'bottom-2 right-2';
+                        const isUnscrewed = unscrewedScrews[pos];
+                        return (
+                            <button
+                                key={pos}
+                                type="button"
+                                onClick={() => handleScrewClick(pos)}
+                                className={`absolute ${posClass} w-5 h-5 rounded-full bg-gray-400 shadow-inner flex items-center justify-center cursor-pointer z-20 hover:bg-gray-300 active:scale-90 transition-colors`}
+                                style={{
+                                    animation: isUnscrewed === true
+                                        ? 'unscrew 0.6s ease-out forwards'
+                                        : isUnscrewed === false
+                                            ? 'rescrew 0.5s ease-in-out forwards'
+                                            : 'none',
+                                    transformOrigin: 'center center',
+                                }}
+                                aria-label="Vis décorative"
+                            >
+                                <div className="w-full h-[1px] bg-gray-600 rotate-45 pointer-events-none"></div>
+                            </button>
+                        );
+                    })}
 
                     {/* Civilians Display - Digital Readout */}
                     <div className="bg-black/60 rounded-lg p-3 flex items-center justify-between border-2 border-gray-700 mb-4 relative overflow-hidden shadow-inner">
@@ -138,6 +170,7 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
                             <option value="pop-culture" className="bg-gray-900 text-white">Culture Pop</option>
                             <option value="abstract" className="bg-gray-900 text-white">Concepts Abstraits</option>
                             <option value="animals" className="bg-gray-900 text-white">Règne Animal</option>
+                            <option value="random" className="bg-gray-900 text-spy-lime font-bold">🎲 Aléatoire (WTF)</option>
                             <option value="custom" className="bg-gray-900 text-spy-orange font-bold">{`>>> MOTS PERSO <<<`}</option>
                         </select>
                         <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/40">▼</div>
