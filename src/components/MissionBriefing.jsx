@@ -68,10 +68,10 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
 
             <div className="z-10 mb-6 text-center flex-none animate-slide-up bg-black/50 px-8 py-2 rounded-full border border-white/20 shadow-lg backdrop-blur-md">
                 <h2 className="text-2xl font-black text-white uppercase tracking-tighter drop-shadow-md font-display">
-                    ACCESS GRANTED
+                    ACCÈS AUTORISÉ
                 </h2>
                 <p className="text-spy-lime text-[10px] font-bold uppercase tracking-[0.2em] animate-pulse">
-                    System Ready
+                    Système Prêt
                 </p>
             </div>
 
@@ -125,7 +125,7 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
                 {/* Word Pack Selection - Module */}
                 <div className="bg-gray-800 rounded-lg p-4 border border-gray-600 shadow-lg flex-none relative">
                     <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gray-700 px-3 py-1 rounded text-[10px] uppercase font-bold text-white border border-gray-500">
-                        Mission Data
+                        Données Mission
                     </div>
 
                     <div className="relative mt-1">
@@ -134,11 +134,11 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
                             onChange={(e) => setWordPack(e.target.value)}
                             className="w-full bg-black/40 border-2 border-gray-600 rounded-lg px-4 py-3 text-white font-mono font-bold text-center appearance-none focus:border-spy-lime focus:outline-none transition-all shadow-inner text-sm uppercase tracking-wider"
                         >
-                            <option value="standard" className="bg-gray-900 text-white">Standard Pack</option>
-                            <option value="pop-culture" className="bg-gray-900 text-white">Pop Culture</option>
-                            <option value="abstract" className="bg-gray-900 text-white">Abstract Concepts</option>
-                            <option value="animals" className="bg-gray-900 text-white">Animal Kingdom</option>
-                            <option value="custom" className="bg-gray-900 text-spy-orange font-bold">{`>>> CUSTOM INPUT <<<`}</option>
+                            <option value="standard" className="bg-gray-900 text-white">Pack Standard</option>
+                            <option value="pop-culture" className="bg-gray-900 text-white">Culture Pop</option>
+                            <option value="abstract" className="bg-gray-900 text-white">Concepts Abstraits</option>
+                            <option value="animals" className="bg-gray-900 text-white">Règne Animal</option>
+                            <option value="custom" className="bg-gray-900 text-spy-orange font-bold">{`>>> MOTS PERSO <<<`}</option>
                         </select>
                         <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/40">▼</div>
                     </div>
@@ -147,20 +147,20 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
                     {wordPack === 'custom' && (
                         <div className="mt-4 space-y-2 animate-pop-in">
                             <div className="space-y-1">
-                                <label className="text-[9px] uppercase font-bold text-gray-400 pl-1">Target 1 (Innocent)</label>
+                                <label className="text-[9px] uppercase font-bold text-gray-400 pl-1">Cible 1 (Innocent)</label>
                                 <input
                                     type="text"
-                                    placeholder="Enter Keyword..."
+                                    placeholder="Entrez un mot..."
                                     value={customWords.innocent}
                                     onChange={(e) => setCustomWords({ ...customWords, innocent: e.target.value })}
                                     className="w-full bg-black/60 border border-spy-lime/50 rounded px-3 py-2 text-spy-lime font-mono text-sm focus:border-spy-lime focus:outline-none transition-colors placeholder:text-gray-600"
                                 />
                             </div>
                             <div className="space-y-1">
-                                <label className="text-[9px] uppercase font-bold text-gray-400 pl-1">Target 2 (Spy)</label>
+                                <label className="text-[9px] uppercase font-bold text-gray-400 pl-1">Cible 2 (Espion)</label>
                                 <input
                                     type="text"
-                                    placeholder="Enter Keyword..."
+                                    placeholder="Entrez un mot..."
                                     value={customWords.spy}
                                     onChange={(e) => setCustomWords({ ...customWords, spy: e.target.value })}
                                     className="w-full bg-black/60 border border-spy-orange/50 rounded px-3 py-2 text-spy-orange font-mono text-sm focus:border-spy-orange focus:outline-none transition-colors placeholder:text-gray-600"
@@ -174,13 +174,13 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
                 <div className="mt-2 flex-none">
                     {!isRoleCountValid && (
                         <div className="bg-red-500/20 border border-red-500/30 text-red-400 text-[10px] font-bold p-2 rounded text-center animate-shake font-mono">
-                            [ERROR] INSUFFICIENT INNOCENTS (MIN 2)
+                            [ERREUR] PAS ASSEZ D'INNOCENTS (MIN 2)
                         </div>
                     )}
 
                     {wordPack === 'custom' && !isCustomValid && (
                         <div className="bg-spy-orange/20 border border-spy-orange/30 text-spy-orange text-[10px] font-bold p-2 rounded text-center animate-shake font-mono">
-                            [WARNING] DATA INCOMPLETE
+                            [ALERTE] DONNÉES INCOMPLÈTES
                         </div>
                     )}
                 </div>
@@ -204,7 +204,7 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
                 >
                     <span className="relative z-10 flex items-center justify-center gap-2">
                         <span className="text-2xl animate-pulse">☢</span>
-                        START MISSION
+                        LANCER LA MISSION
                         <span className="text-2xl animate-pulse">☢</span>
                     </span>
                     <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjMDAwIiBmaWxsLW9wYWNpdHk9IjAuMSIvPgo8L3N2Zz4=')] opacity-30"></div>

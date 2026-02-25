@@ -43,7 +43,7 @@ const IdentifyAgents = ({ players, onUpdatePlayers, onConfirm, onBack, onOpenSet
                     Identifiez les Agents
                 </h2>
                 <p className="text-white/60 text-sm font-bold mt-2 uppercase tracking-wider animate-slide-up" style={{ animationDelay: '0.1s' }}>
-                    Tapez sur une badge pour modifier
+                    Tapez sur un badge pour modifier
                 </p>
             </div>
 

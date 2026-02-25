@@ -89,7 +89,7 @@ const HowToPlay = ({ onBack, onOpenSettings }) => {
                                         <span className="text-4xl bg-white/10 p-2 rounded-2xl border border-white/20 shadow-[0_0_15px_rgba(255,255,255,0.2)]">🐻‍❄️</span>
                                         <div>
                                             <h3 className="font-black text-2xl text-white uppercase tracking-tight">Mr. Blanc</h3>
-                                            <span className="text-[10px] bg-white text-spy-blue px-2 py-0.5 rounded-full font-bold uppercase tracking-widest">Solo</span>
+                                            <span className="text-[10px] bg-white text-spy-blue px-2 py-0.5 rounded-full font-bold uppercase tracking-widest">Solitaire</span>
                                         </div>
                                     </div>
                                     <p className="text-white/80 text-sm font-medium leading-relaxed bg-black/20 p-3 rounded-xl border border-white/5">

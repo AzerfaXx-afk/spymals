@@ -121,7 +121,7 @@ const Leaderboard = ({ onBack, onOpenSettings }) => {
                                     onClick={handleReset}
                                     className="flex-1 py-3 rounded-2xl bg-red-600/80 border border-red-500 text-white font-black uppercase text-xs tracking-widest hover:bg-red-600 active:scale-95 transition-all shadow-lg"
                                 >
-                                    ⚠️ Confirmer Reset
+                                    ⚠️ Confirmer la suppression
                                 </button>
                             </div>
                         ) : (
