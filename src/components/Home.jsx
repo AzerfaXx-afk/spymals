@@ -22,17 +22,22 @@ const Home = ({ onStartGame, onOpenSettings, onOpenHowToPlay, onOpenLeaderboard 
             <div className="z-10 flex flex-col items-center mb-10 relative w-full mt-8 md:mt-12">
 
                 {/* Conteneur de l'image unique combinée */}
-                <div className="relative w-full max-w-[500px] mx-auto flex items-center justify-center">
-                    {/* IMPORTANT : C'est ici que tu mets ton image combinée.
-                       Nomme ton fichier 'logo-spymals-fox.png' et mets-le dans le dossier public.
-                    */}
-                    <img
-                        src="/renard.png"
-                        alt="Logo SpyMals avec le Renard Détective"
-                        // Classes pour le responsive : prend toute la largeur dispo jusqu'à 500px, 
-                        // et ajoute une belle ombre portée 3D.
-                        className="w-full h-auto object-contain drop-shadow-2xl scale-125 md:scale-110 translate-y-2"
-                    />
+                <div className="relative w-full max-w-[420px] mx-auto flex items-center justify-center">
+                    <picture>
+                        {/* WebP — modern browsers (52KB vs 6.5MB original) */}
+                        <source srcSet="/renard.webp" type="image/webp" />
+                        {/* PNG fallback for older browsers */}
+                        <img
+                            src="/renard.png"
+                            alt="Logo SpyMals avec le Renard Détective"
+                            width={800}
+                            height={800}
+                            fetchpriority="high"
+                            decoding="async"
+                            className="w-full h-auto object-contain drop-shadow-2xl translate-y-2"
+                            style={{ maxHeight: '42dvh' }}
+                        />
+                    </picture>
                 </div>
 
                 {/* Badge Sous-titre "Démasquez l'imposteur" */}

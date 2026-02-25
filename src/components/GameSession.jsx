@@ -6,14 +6,17 @@ import { wordPacks } from '../data/wordPacks';
 import SettingsGear from './SettingsGear';
 
 const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) => {
-    const [gameState, setGameState] = useState('distributing'); // distributing, playing, voting, reveal
+    // States: distributing | playing | voting | reveal | mrwhite_guess
+    const [gameState, setGameState] = useState('distributing');
     const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
     const [isRevealed, setIsRevealed] = useState(false);
     const [assignedRoles, setAssignedRoles] = useState([]);
     const [targetWord, setTargetWord] = useState(null);
     const [votedPlayer, setVotedPlayer] = useState(null);
     const [eliminatedPlayers, setEliminatedPlayers] = useState([]);
-
+    // Speaking order for discussion phase
+    const [speakingOrder, setSpeakingOrder] = useState([]);
+    const [currentSpeakerIndex, setCurrentSpeakerIndex] = useState(0);
 
     // Initialize Game
     useEffect(() => {
@@ -21,6 +24,27 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
             assignRoles();
         }
     }, [gameState, assignedRoles.length]);
+
+    // Generate a fresh random speaking order every time we enter the playing state
+    useEffect(() => {
+        if (gameState === 'playing' && assignedRoles.length > 0) {
+            const alivePlayers = shuffle(
+                assignedRoles.filter(p => !eliminatedPlayers.includes(p.id))
+            );
+            setSpeakingOrder(alivePlayers);
+            setCurrentSpeakerIndex(0);
+        }
+    }, [gameState]);
+
+    // ── True uniform shuffle (Fisher-Yates) ──────────────────────────────────
+    const shuffle = (arr) => {
+        const a = [...arr];
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+    };
 
     const assignRoles = () => {
         const { undercoverCount, whiteCount, wordPack, customWords } = config;
@@ -36,7 +60,6 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
             wordPair = pack[Math.floor(Math.random() * pack.length)];
         }
 
-        // Create roles array
         let roles = [];
         for (let i = 0; i < undercoverCount; i++) roles.push({ role: 'Undercover', word: wordPair.undercover });
         for (let i = 0; i < whiteCount; i++) roles.push({ role: 'Mr. White', word: null });
@@ -44,17 +67,33 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
         const civilianCount = players.length - undercoverCount - whiteCount;
         for (let i = 0; i < civilianCount; i++) roles.push({ role: 'Civilian', word: wordPair.civilian });
 
-        // Shuffle roles
-        roles = roles.sort(() => Math.random() - 0.5);
+        // Shuffle roles uniformly (Fisher-Yates via shuffle helper)
+        const shuffledRoles = shuffle(roles);
 
-        // Assign to players
+        // Assign roles to players
         const assignments = players.map((player, index) => ({
             ...player,
-            role: roles[index].role,
-            word: roles[index].word,
+            role: shuffledRoles[index].role,
+            word: shuffledRoles[index].word,
         }));
 
-        setAssignedRoles(assignments);
+        // Shuffle the REVEAL ORDER independently — fully random
+        const shuffled = shuffle(assignments);
+
+        // Only constraint: Mr. White must NOT be first (no word = instant exposure)
+        const firstMrWhiteIdx = shuffled.findIndex(p => p.role === 'Mr. White');
+        if (firstMrWhiteIdx === 0) {
+            // Swap with a random non-first, non-Mr.-White position
+            const candidates = shuffled
+                .map((p, i) => i)
+                .filter(i => i > 0 && shuffled[i].role !== 'Mr. White');
+            if (candidates.length > 0) {
+                const pick = candidates[Math.floor(Math.random() * candidates.length)];
+                [shuffled[0], shuffled[pick]] = [shuffled[pick], shuffled[0]];
+            }
+        }
+
+        setAssignedRoles(shuffled);
         setTargetWord(wordPair);
     };
 
@@ -76,29 +115,79 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
         setGameState('reveal');
     };
 
-    const handleContinue = () => {
-        // If it was a civilian, add to eliminated and continue
-        if (votedPlayer?.role === 'Civilian') {
-            setEliminatedPlayers([...eliminatedPlayers, votedPlayer.id]);
+    // ─────────────────────────────────────────────
+    // WIN CONDITION CHECK
+    // Returns 'Civilian', 'Impostors', or null
+    // ─────────────────────────────────────────────
+    const checkWinConditions = (eliminatedIds) => {
+        const alive = assignedRoles.filter(p => !eliminatedIds.includes(p.id));
+
+        const aliveImpostors = alive.filter(p => p.role === 'Undercover' || p.role === 'Mr. White').length;
+        const aliveCivilians = alive.filter(p => p.role === 'Civilian').length;
+
+        // Civilians win: no impostors left alive
+        if (aliveImpostors === 0) return 'Civilian';
+
+        // Impostors win by survival: only 1 (or 0) civilian left alive
+        if (aliveCivilians <= 1) return 'Impostors';
+
+        return null;
+    };
+
+    // ─────────────────────────────────────────────
+    // ELIMINATE A PLAYER (called from reveal screen)
+    // ─────────────────────────────────────────────
+    const handleEliminatePlayer = () => {
+        if (!votedPlayer) return;
+
+        const newEliminated = [...eliminatedPlayers, votedPlayer.id];
+        setEliminatedPlayers(newEliminated);
+
+        // Mr. White gets a last-chance guess before the standard win check
+        if (votedPlayer.role === 'Mr. White') {
+            setGameState('mrwhite_guess');
+            return;
+        }
+
+        // Standard win check for everyone else
+        const winner = checkWinConditions(newEliminated);
+        if (winner) {
+            triggerGameEnd(winner);
+        } else {
             setVotedPlayer(null);
             setGameState('playing');
-        } else {
-            // Should not happen via "Continue" button if logic is correct, but fallback
-            onEndGame();
         }
     };
 
-    const currentPlayer = assignedRoles[currentPlayerIndex];
+    // ─────────────────────────────────────────────
+    // MR. WHITE LAST CHANCE OUTCOMES
+    // ─────────────────────────────────────────────
+    const handleMrWhiteSuccess = () => {
+        // Mr. White guessed correctly → Impostors win immediately
+        triggerGameEnd('Impostors');
+    };
 
+    const handleMrWhiteFail = () => {
+        // Mr. White definitively eliminated – run standard win check
+        // eliminatedPlayers already includes Mr. White (set in handleEliminatePlayer)
+        const winner = checkWinConditions(eliminatedPlayers);
+        if (winner) {
+            triggerGameEnd(winner);
+        } else {
+            setVotedPlayer(null);
+            setGameState('playing');
+        }
+    };
+
+    // ─────────────────────────────────────────────
+    // TRIGGER GAME END
+    // ─────────────────────────────────────────────
     const triggerGameEnd = (winningTeam) => {
-        // winningTeam: 'Civilian' or 'Impostors'
-        // Create a map of player roles to pass back
         const playerRoles = {};
         assignedRoles.forEach(p => {
             playerRoles[p.id] = p.role;
         });
 
-        // Victory Confetti!
         confetti({
             particleCount: 150,
             spread: 70,
@@ -109,53 +198,230 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
         onEndGame(winningTeam, playerRoles);
     };
 
-    // Tap to Reveal Logic
     const handleReveal = () => {
         if (!isRevealed) setIsRevealed(true);
     };
 
-    // --- RENDER STATES ---
+    const currentPlayer = assignedRoles[currentPlayerIndex];
 
-    if (gameState === 'playing') {
+    // ─────────────────────────────────────────────
+    // MR. WHITE LAST CHANCE MODAL
+    // ─────────────────────────────────────────────
+    if (gameState === 'mrwhite_guess') {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-spy-blue text-center relative overflow-hidden">
                 <SettingsGear onClick={onOpenSettings} />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-spy-lime opacity-10 rounded-full blur-[100px] animate-pulse-slow pointer-events-none"></div>
+                <div className="absolute inset-0 bg-black/85 backdrop-blur-sm z-0" />
 
                 <motion.div
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    className="z-10 flex flex-col items-center w-full max-w-md"
+                    initial={{ y: 100, opacity: 0, scale: 0.9 }}
+                    animate={{ y: 0, opacity: 1, scale: 1 }}
+                    transition={{ type: 'spring', stiffness: 280, damping: 22 }}
+                    className="z-10 w-full max-w-md"
                 >
-                    <div className="text-8xl mb-6 filter drop-shadow-[0_0_30px_rgba(255,255,255,0.3)] animate-bounce-slow">
-                        🕵️‍♂️
+                    {/* Icon + Title */}
+                    <div className="mb-6">
+                        <div className="text-8xl mb-4 animate-bounce-slow filter drop-shadow-[0_0_40px_rgba(255,255,255,0.15)]">
+                            🤫
+                        </div>
+                        <h2 className="text-3xl font-black text-white uppercase tracking-tight leading-tight mb-1">
+                            La Dernière Chance de
+                        </h2>
+                        <h2 className="text-4xl font-black text-spy-lime uppercase tracking-tight">
+                            Mr. Blanc
+                        </h2>
                     </div>
-                    <h1 className="text-5xl font-black text-white mb-6 drop-shadow-lg uppercase tracking-tighter">
-                        Mission<br /><span className="text-spy-lime">Lancée !</span>
-                    </h1>
-                    <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 border border-white/10 shadow-xl w-full mb-12">
-                        <p className="text-lg text-white/90 font-bold leading-relaxed">
-                            {eliminatedPlayers.length > 0
-                                ? `${eliminatedPlayers.length} agent(s) éliminé(s). Continuez l'enquête !`
-                                : "Tous les agents ont leur mot secret. Discutez et trouvez les imposteurs !"}
+
+                    {/* Info card */}
+                    <div className="bg-white/10 backdrop-blur-xl rounded-[32px] p-6 border border-white/15 shadow-2xl mb-8">
+                        <p className="text-white/90 font-bold text-base leading-relaxed">
+                            <span className="text-spy-lime font-black">{votedPlayer?.name}</span> a été éliminé·e.
+                            <br />
+                            Donne-lui une chance : s'il/elle devine le <span className="text-white font-black">mot secret des Civils</span>,
+                            les imposteurs <span className="text-spy-orange font-black">remportent la victoire !</span>
                         </p>
+                        <div className="mt-4 pt-4 border-t border-white/10">
+                            <p className="text-white/50 text-xs font-bold uppercase tracking-widest">
+                                Le groupe vote s'il a trouvé le bon mot
+                            </p>
+                        </div>
                     </div>
 
-                    <BouncyButton onClick={handleStartVote} className="w-full py-6 text-xl shadow-spy-orange/30 shadow-2xl">
-                        PASSER AU VOTE
-                    </BouncyButton>
+                    {/* Action buttons */}
+                    <div className="flex flex-col gap-4">
+                        {/* SUCCESS – Impostors win */}
+                        <motion.button
+                            whileTap={{ scale: 0.95 }}
+                            onClick={handleMrWhiteSuccess}
+                            className="w-full py-5 rounded-2xl border border-green-400/40 bg-green-400/10 text-green-400 font-black uppercase tracking-widest text-lg backdrop-blur-md shadow-lg shadow-green-900/20 active:bg-green-400/20 transition-all"
+                        >
+                            ✅ Il a trouvé le mot !
+                        </motion.button>
 
-                    <button
-                        onClick={onAbort}
-                        className="mt-6 text-white/40 text-sm font-bold uppercase tracking-widest hover:text-white transition-colors"
-                    >
-                        Annuler la mission
-                    </button>
+                        {/* FAIL – Mr. White definitively out */}
+                        <motion.button
+                            whileTap={{ scale: 0.95 }}
+                            onClick={handleMrWhiteFail}
+                            className="w-full py-5 rounded-2xl border border-red-400/40 bg-red-400/10 text-red-400 font-black uppercase tracking-widest text-lg backdrop-blur-md shadow-lg shadow-red-900/20 active:bg-red-400/20 transition-all"
+                        >
+                            ❌ Mauvais mot...
+                        </motion.button>
+                    </div>
                 </motion.div>
             </div>
         );
     }
 
+    // ─────────────────────────────────────────────
+    // PLAYING STATE — Discussion / Speaking Order
+    // ─────────────────────────────────────────────
+    if (gameState === 'playing') {
+        const currentSpeaker = speakingOrder[currentSpeakerIndex];
+        const allSpoken = speakingOrder.length > 0 && currentSpeakerIndex >= speakingOrder.length;
+        const isLoading = speakingOrder.length === 0;
+        const roundNumber = Math.floor(eliminatedPlayers.length) + 1;
+
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-spy-blue text-center relative overflow-hidden">
+                <SettingsGear onClick={onOpenSettings} />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-spy-lime opacity-5 rounded-full blur-[120px] animate-pulse-slow pointer-events-none" />
+
+                <div className="z-10 flex flex-col items-center w-full max-w-md gap-5">
+
+                    {/* Round label */}
+                    <div className="text-white/30 font-black uppercase tracking-[0.3em] text-[10px]">
+                        Manche {roundNumber} · Discussion
+                    </div>
+
+                    <AnimatePresence mode="wait">
+                        {isLoading ? (
+                            /* Loading — speakingOrder not ready yet */
+                            <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full">
+                                <div className="bg-white/10 backdrop-blur-xl rounded-[32px] p-8 border border-white/15 shadow-2xl flex items-center justify-center gap-3">
+                                    <div className="w-2 h-2 rounded-full bg-spy-lime animate-bounce" style={{ animationDelay: '0ms' }} />
+                                    <div className="w-2 h-2 rounded-full bg-spy-lime animate-bounce" style={{ animationDelay: '150ms' }} />
+                                    <div className="w-2 h-2 rounded-full bg-spy-lime animate-bounce" style={{ animationDelay: '300ms' }} />
+                                </div>
+                            </motion.div>
+                        ) : !allSpoken && currentSpeaker ? (
+                            /* ── CURRENT SPEAKER CARD ── */
+                            <motion.div
+                                key={`speaker-${currentSpeakerIndex}`}
+                                initial={{ y: 40, opacity: 0, scale: 0.95 }}
+                                animate={{ y: 0, opacity: 1, scale: 1 }}
+                                exit={{ y: -40, opacity: 0, scale: 0.95 }}
+                                transition={{ type: 'spring', stiffness: 300, damping: 26 }}
+                                className="w-full"
+                            >
+                                {/* Big speaker highlight */}
+                                <div className="bg-white/10 backdrop-blur-xl rounded-[32px] p-8 border border-white/15 shadow-2xl mb-5 flex flex-col items-center gap-4">
+                                    <p className="text-white/40 font-black uppercase tracking-[0.25em] text-[10px]">
+                                        À qui de parler
+                                    </p>
+                                    <div className="w-24 h-24 rounded-full bg-spy-lime/10 border-2 border-spy-lime/50 flex items-center justify-center text-5xl shadow-[0_0_30px_rgba(204,255,0,0.15)]">
+                                        {currentSpeaker.avatar.type === 'image'
+                                            ? <img src={currentSpeaker.avatar.value} alt={currentSpeaker.name} className="w-full h-full object-cover rounded-full" />
+                                            : <span>{currentSpeaker.avatar.value}</span>
+                                        }
+                                    </div>
+                                    <div>
+                                        <h2 className="text-3xl font-black text-white uppercase tracking-tight">
+                                            {currentSpeaker.name}
+                                        </h2>
+                                        <p className="text-white/40 text-sm font-bold mt-1">
+                                            Donne un indice sur ton mot sans le dire
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Progress dots */}
+                                <div className="flex items-center justify-center gap-2 mb-5">
+                                    {speakingOrder.map((_, i) => (
+                                        <div
+                                            key={i}
+                                            className={`rounded-full transition-all duration-300 ${i < currentSpeakerIndex
+                                                ? 'w-2 h-2 bg-spy-lime'
+                                                : i === currentSpeakerIndex
+                                                    ? 'w-4 h-3 bg-spy-lime'
+                                                    : 'w-2 h-2 bg-white/20'
+                                                }`}
+                                        />
+                                    ))}
+                                </div>
+
+                                {/* Who's spoken already (mini list) */}
+                                {currentSpeakerIndex > 0 && (
+                                    <div className="flex flex-wrap justify-center gap-2 mb-4">
+                                        {speakingOrder.slice(0, currentSpeakerIndex).map(p => (
+                                            <div key={p.id} className="flex items-center gap-1.5 bg-white/5 rounded-full px-3 py-1 border border-white/10">
+                                                <span className="text-sm">{p.avatar.value}</span>
+                                                <span className="text-white/40 font-bold text-xs uppercase">{p.name}</span>
+                                                <span className="text-spy-lime text-xs">✓</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+
+                                <BouncyButton
+                                    onClick={() => setCurrentSpeakerIndex(i => i + 1)}
+                                    className="w-full py-5 text-lg"
+                                >
+                                    {currentSpeakerIndex < speakingOrder.length - 1
+                                        ? `SUIVANT →`
+                                        : `DERNIER JOUEUR ✓`}
+                                </BouncyButton>
+                            </motion.div>
+                        ) : (
+                            /* ── ALL SPOKEN — VOTE UNLOCKED ── */
+                            <motion.div
+                                key="vote-ready"
+                                initial={{ y: 40, opacity: 0, scale: 0.95 }}
+                                animate={{ y: 0, opacity: 1, scale: 1 }}
+                                transition={{ type: 'spring', stiffness: 300, damping: 26 }}
+                                className="w-full flex flex-col items-center gap-5"
+                            >
+                                <div className="text-6xl animate-bounce-slow">🗳️</div>
+                                <div className="bg-white/10 backdrop-blur-xl rounded-[32px] p-6 border border-white/15 shadow-2xl w-full">
+                                    <h2 className="text-3xl font-black text-white uppercase tracking-tight mb-2">
+                                        Tout le monde a parlé !
+                                    </h2>
+                                    <p className="text-white/60 font-bold text-sm">
+                                        Qui est l'imposteur parmi vous ?
+                                    </p>
+                                </div>
+
+                                {/* All speakers recap */}
+                                <div className="flex flex-wrap justify-center gap-2">
+                                    {speakingOrder.map(p => (
+                                        <div key={p.id} className="flex items-center gap-1.5 bg-white/5 rounded-full px-3 py-1.5 border border-spy-lime/20">
+                                            <span className="text-sm">{p.avatar.value}</span>
+                                            <span className="text-white/60 font-bold text-xs uppercase">{p.name}</span>
+                                            <span className="text-spy-lime text-xs">✓</span>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <BouncyButton onClick={handleStartVote} className="w-full py-6 text-xl shadow-spy-orange/30 shadow-2xl">
+                                    🗳️ PASSER AU VOTE
+                                </BouncyButton>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
+                    <button
+                        onClick={onAbort}
+                        className="text-white/30 text-xs font-bold uppercase tracking-widest hover:text-white transition-colors"
+                    >
+                        Annuler la mission
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    // ─────────────────────────────────────────────
+    // VOTING STATE
+    // ─────────────────────────────────────────────
     if (gameState === 'voting') {
         return (
             <div className="min-h-screen flex flex-col items-center p-6 bg-spy-blue relative overflow-hidden">
@@ -211,13 +477,19 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
         );
     }
 
+    // ─────────────────────────────────────────────
+    // REVEAL STATE
+    // ─────────────────────────────────────────────
     if (gameState === 'reveal' && votedPlayer) {
         const isCivilian = votedPlayer.role === 'Civilian';
+        const isMrWhite = votedPlayer.role === 'Mr. White';
+        const isUndercover = votedPlayer.role === 'Undercover';
+        const isImpostor = isMrWhite || isUndercover;
 
         return (
             <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-spy-blue text-center relative overflow-hidden">
                 <SettingsGear onClick={onOpenSettings} />
-                <div className="absolute inset-0 bg-black/80 backdrop-blur-sm z-0"></div>
+                <div className="absolute inset-0 bg-black/80 backdrop-blur-sm z-0" />
 
                 <motion.div
                     initial={{ y: 100, opacity: 0 }}
@@ -236,60 +508,65 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
 
                     <div className="bg-white/10 backdrop-blur-xl rounded-[40px] p-8 border border-white/10 shadow-2xl mb-8 transform hover:scale-105 transition-transform duration-500">
                         <h3 className="text-5xl font-black uppercase drop-shadow-lg mb-2">
-                            {votedPlayer.role === 'Civilian' ? (
+                            {isCivilian ? (
                                 <span className="text-spy-lime">Innocent</span>
-                            ) : votedPlayer.role === 'Undercover' ? (
+                            ) : isUndercover ? (
                                 <span className="text-spy-orange">Espion</span>
                             ) : (
                                 <span className="text-white">Mr. Blanc</span>
                             )}
                         </h3>
-                        {!isCivilian ? (
-                            <p className="text-white/80 font-bold mt-4">
-                                Bien joué agents !<br />L'imposteur est démasqué.
-                            </p>
-                        ) : (
+
+                        {isCivilian && (
                             <p className="text-spy-orange font-bold mt-4 animate-pulse">
                                 Oups ! Vous avez éliminé un innocent...<br />L'imposteur est toujours là.
+                            </p>
+                        )}
+                        {isUndercover && (
+                            <p className="text-white/80 font-bold mt-4">
+                                Bien joué agents !<br />L'espion est démasqué.
+                            </p>
+                        )}
+                        {isMrWhite && (
+                            <p className="text-spy-lime font-bold mt-4">
+                                Mr. Blanc est éliminé...<br />
+                                <span className="text-white/70 text-sm">Mais il a une dernière chance !</span>
                             </p>
                         )}
                     </div>
 
                     <div className="grid grid-cols-1 gap-4">
-                        {isCivilian ? (
-                            <>
-                                <BouncyButton onClick={handleContinue} className="w-full py-4 text-lg">
-                                    CONTINUER L'ENQUÊTE
-                                </BouncyButton>
-                                <button
-                                    onClick={() => triggerGameEnd('Impostors')}
-                                    className="text-spy-orange/80 hover:text-spy-orange font-bold uppercase text-xs tracking-widest py-2 transition-colors"
-                                >
-                                    Les Imposteurs ont gagné (Abandon)
-                                </button>
-                            </>
-                        ) : (
-                            <BouncyButton onClick={() => triggerGameEnd('Civilian')} className="w-full py-5 text-lg shadow-spy-lime/50 shadow-2xl">
-                                MISSION ACCOMPLIE (Menu)
-                            </BouncyButton>
-                        )}
+                        {/* For ALL roles: elimination triggers the central handler */}
+                        <BouncyButton
+                            onClick={handleEliminatePlayer}
+                            className={`w-full py-5 text-lg ${isCivilian
+                                ? 'shadow-spy-orange/30 shadow-2xl'
+                                : isImpostor
+                                    ? 'shadow-spy-lime/30 shadow-2xl'
+                                    : ''
+                                }`}
+                        >
+                            {isCivilian && 'CONTINUER L\'ENQUÊTE'}
+                            {isUndercover && 'VÉRIFIER LA VICTOIRE'}
+                            {isMrWhite && 'DERNIÈRE CHANCE →'}
+                        </BouncyButton>
                     </div>
                 </motion.div>
             </div>
         );
     }
 
-    // Distributing State - Loading
+    // ─────────────────────────────────────────────
+    // DISTRIBUTING STATE (tap to reveal word)
+    // ─────────────────────────────────────────────
     if (!currentPlayer) return <div className="text-white">Initialisation...</div>;
 
-    // Distributing State - Tap to Reveal
     return (
         <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center relative overflow-hidden bg-black">
             <SettingsGear onClick={onOpenSettings} />
 
-            {/* Subtle background glow */}
             <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#0f172a_0%,_#000_100%)]"></div>
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#0f172a_0%,_#000_100%)]" />
             </div>
 
             <div className="z-10 flex flex-col items-center w-full max-w-sm gap-6">
@@ -334,7 +611,7 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                             className="w-full bg-black border border-white/10 rounded-3xl overflow-hidden shadow-2xl"
                         >
-                            {/* TOP SECRET badge - subtle, top of card */}
+                            {/* TOP SECRET badge */}
                             <div className="flex items-center justify-center gap-2 py-2 border-b border-white/5">
                                 <span className="text-[9px] font-black uppercase tracking-[0.4em] text-red-500/60">⬛ Top Secret ⬛</span>
                             </div>
@@ -343,22 +620,19 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                             <div className="flex flex-col items-center justify-center py-10 px-6 gap-3">
                                 {currentPlayer.role !== 'Mr. White' ? (
                                     <>
-                                        <p className="text-white/30 text-[10px] font-bold uppercase tracking-[0.3em]">Ton mot</p>
+                                        <p className="text-white/30 text-[10px] font-bold uppercase tracking-[0.3em]">Ton mot secret</p>
                                         <p className="text-5xl font-black text-white tracking-tight leading-tight break-words text-center">
                                             {currentPlayer.word ? currentPlayer.word : '???'}
                                         </p>
-                                        <div className={`mt-1 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${currentPlayer.role === 'Undercover'
-                                            ? 'bg-spy-orange/20 text-spy-orange border border-spy-orange/30'
-                                            : 'bg-spy-lime/20 text-spy-lime border border-spy-lime/30'
-                                            }`}>
-                                            {currentPlayer.role === 'Undercover' ? '🦊 Espion' : '🕵️ Innocent'}
-                                        </div>
+                                        <p className="text-white/25 text-[10px] font-bold uppercase tracking-widest mt-1">
+                                            Ne dis pas ton mot à voix haute
+                                        </p>
                                     </>
                                 ) : (
                                     <>
                                         <p className="text-white/30 text-[10px] font-bold uppercase tracking-[0.3em]">Ton rôle</p>
                                         <p className="text-4xl font-black text-white uppercase tracking-tight">Mr. Blanc</p>
-                                        <p className="text-white/40 text-sm font-bold mt-1">Tu n'as aucun mot.</p>
+                                        <p className="text-white/40 text-sm font-bold mt-1">Tu n'as aucun mot. Bluff !</p>
                                         <div className="mt-1 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-white/10 text-white/60 border border-white/10">
                                             🐻‍❄️ Bluffeur
                                         </div>
