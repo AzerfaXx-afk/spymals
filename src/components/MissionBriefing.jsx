@@ -1,4 +1,5 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
+import confetti from 'canvas-confetti';
 import BouncyButton from './BouncyButton';
 import RoleStepper from './RoleStepper';
 import BackArrow from './BackArrow';
@@ -12,11 +13,34 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
 
     // Easter egg: screw animation
     const [unscrewedScrews, setUnscrewedScrews] = useState({});
+    const allFourTriggered = useRef(false);
     const handleScrewClick = useCallback((id) => {
         if (unscrewedScrews[id]) return; // already animating
-        setUnscrewedScrews(prev => ({ ...prev, [id]: true }));
+        const next = { ...unscrewedScrews, [id]: true };
+        setUnscrewedScrews(next);
+
+        // Check if all 4 screws are unscrewed at the same time
+        const allPositions = ['tl', 'tr', 'bl', 'br'];
+        if (allPositions.every(p => next[p] === true) && !allFourTriggered.current) {
+            allFourTriggered.current = true;
+            confetti({
+                particleCount: 60,
+                spread: 50,
+                startVelocity: 20,
+                scalar: 0.8,
+                gravity: 0.8,
+                origin: { y: 0.5 },
+                colors: ['#CCFF00', '#FF6600', '#38bdf8', '#ffffff'],
+            });
+        }
+
         setTimeout(() => {
-            setUnscrewedScrews(prev => ({ ...prev, [id]: false }));
+            setUnscrewedScrews(prev => {
+                const updated = { ...prev, [id]: false };
+                // Reset the confetti trigger when any screw rescrews
+                allFourTriggered.current = false;
+                return updated;
+            });
         }, 2000);
     }, [unscrewedScrews]);
 
@@ -169,8 +193,8 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
                             <option value="standard" className="bg-gray-900 text-white">Pack Standard</option>
                             <option value="pop-culture" className="bg-gray-900 text-white">Culture Pop</option>
                             <option value="abstract" className="bg-gray-900 text-white">Concepts Abstraits</option>
-                            <option value="animals" className="bg-gray-900 text-white">Règne Animal</option>
-                            <option value="random" className="bg-gray-900 text-spy-lime font-bold">🎲 Aléatoire (WTF)</option>
+                            <option value="animals" className="bg-gray-900 text-white">Animaux</option>
+                            <option value="random" className="bg-gray-900 text-white">Aléatoire</option>
                             <option value="custom" className="bg-gray-900 text-spy-orange font-bold">{`>>> MOTS PERSO <<<`}</option>
                         </select>
                         <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/40">▼</div>
