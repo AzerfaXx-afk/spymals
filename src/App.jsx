@@ -101,18 +101,25 @@ function App() {
     // rolesMap: { playerId: 'Civilian' | 'Undercover' | 'Mr. White' }
   };
 
+  // Official Undercover scoring barème
+  const getPoints = (winningTeam, role) => {
+    if (winningTeam === 'Civilian' && role === 'Civilian') return 2;
+    if (winningTeam === 'Impostors' && role === 'Undercover') return 10;
+    if (winningTeam === 'Impostors' && role === 'Mr. White') return 6;
+    return 0;
+  };
+
   // Revised handleGameEnd to accept winners info properly
   const handleScoreUpdate = (winningTeam, playerRoles) => {
     setWinners(winningTeam === 'Civilian' ? ['Civilian'] : ['Impostors']);
 
     setPlayers(prevPlayers => prevPlayers.map(p => {
       const role = playerRoles[p.id];
-      const isWinner = (winningTeam === 'Civilian' && role === 'Civilian') ||
-        (winningTeam === 'Impostors' && (role === 'Undercover' || role === 'Mr. White'));
+      const pts = getPoints(winningTeam, role);
 
       return {
         ...p,
-        score: (p.score || 0) + (isWinner ? 1 : 0)
+        score: (p.score || 0) + pts
       };
     }));
 
@@ -123,13 +130,11 @@ function App() {
       const stored = localStorage.getItem('spyMals_leaderboard');
       let leaderboard = stored ? JSON.parse(stored) : {};
 
-      const currentPlayers = [...players]; // Use the players state from before this update for names/avatars
-      // actually we need to combine the update calculation with the persistence
+      const currentPlayers = [...players];
 
       currentPlayers.forEach(p => {
         const role = playerRoles[p.id];
-        const isWinner = (winningTeam === 'Civilian' && role === 'Civilian') ||
-          (winningTeam === 'Impostors' && (role === 'Undercover' || role === 'Mr. White'));
+        const pts = getPoints(winningTeam, role);
 
         const key = p.name.toLowerCase().trim();
 
@@ -145,8 +150,8 @@ function App() {
 
         // Update stats
         leaderboard[key].games += 1;
-        if (isWinner) {
-          leaderboard[key].score += 1; // 1 point per win
+        leaderboard[key].score += pts;
+        if (pts > 0) {
           leaderboard[key].wins += 1;
         }
         // Update avatar to latest used
