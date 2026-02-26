@@ -22,6 +22,21 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
 
     const { switchMusic, playSfx } = useAudio();
 
+    // Tombstone animation state
+    const [showTombstone, setShowTombstone] = useState(false);
+
+    // Auto trigger tombstone animation when entering reveal screen
+    useEffect(() => {
+        if (gameState === 'reveal') {
+            setShowTombstone(false); // reset first
+            const timer = setTimeout(() => {
+                setShowTombstone(true);
+                playSfx('/sons/button.mp3', { volumeMultiplier: 1.5, pitch: 0.5 }); // Deep thud
+            }, 800);
+            return () => clearTimeout(timer);
+        }
+    }, [gameState, playSfx]);
+
     // Initialize Game & Manage Music
     useEffect(() => {
         if (gameState === 'distributing') {
@@ -608,16 +623,6 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
         const isMrWhite = votedPlayer.role === 'Mr. White';
         const isUndercover = votedPlayer.role === 'Undercover';
         const isImpostor = isMrWhite || isUndercover;
-
-        // Auto trigger the tombstone animation shortly after entering reveal screen
-        const [showTombstone, setShowTombstone] = useState(false);
-        useEffect(() => {
-            const timer = setTimeout(() => {
-                setShowTombstone(true);
-                playSfx('/sons/button.mp3', { volumeMultiplier: 1.5, pitch: 0.5 }); // Deep thud sound
-            }, 800);
-            return () => clearTimeout(timer);
-        }, []);
 
         return (
             <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-spy-blue text-center relative overflow-hidden">
