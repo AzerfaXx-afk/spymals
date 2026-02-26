@@ -4,7 +4,6 @@ import BackArrow from './BackArrow';
 import SettingsGear from './SettingsGear';
 import { format, isToday, isYesterday, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { fr } from 'date-fns/locale';
 
 const History = ({ history, onUpdateHistory, onReplayTeam, onBack, onOpenSettings }) => {
     const [confirmDeleteAll, setConfirmDeleteAll] = useState(false);
