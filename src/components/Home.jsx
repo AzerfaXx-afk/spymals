@@ -2,7 +2,7 @@ import React from 'react';
 import BouncyButton from './BouncyButton';
 // Assure-toi que le chemin vers ton composant BouncyButton est correct
 
-const Home = ({ onStartGame, onOpenSettings, onOpenHowToPlay, onOpenLeaderboard }) => {
+const Home = ({ hasHistory, onStartGame, onOpenSettings, onOpenHowToPlay, onOpenLeaderboard, onOpenHistory }) => {
     return (
         // Conteneur principal avec le fond bleu et les effets
         <div className="flex flex-col items-center justify-center min-h-[100dvh] p-6 text-center relative overflow-hidden bg-spy-blue touch-none" style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}>
@@ -91,6 +91,20 @@ const Home = ({ onStartGame, onOpenSettings, onOpenHowToPlay, onOpenLeaderboard 
                         <span className="text-[9px] md:text-xs font-bold tracking-wide opacity-80">OPTS</span>
                     </BouncyButton>
                 </div>
+
+                {/* Historique Bouton (Seulement si des parties ont été jouées) */}
+                {hasHistory && (
+                    <div className="mt-4 pt-4 border-t border-white/10 animate-fade-in">
+                        <BouncyButton
+                            variant="custom"
+                            onClick={onOpenHistory}
+                            className="bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl w-full py-4 flex flex-col items-center justify-center gap-1 transition-colors"
+                        >
+                            <div className="text-xl md:text-2xl drop-shadow-md">🕒</div>
+                            <span className="text-[10px] md:text-xs font-bold tracking-widest text-white/70 uppercase">HISTORIQUE DES ÉQUIPES</span>
+                        </BouncyButton>
+                    </div>
+                )}
             </div>
         </div>
     );

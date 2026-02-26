@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Home from './components/Home';
 import PlayerSetup from './components/PlayerSetup';
 import IdentifyAgents from './components/IdentifyAgents';
@@ -8,6 +8,7 @@ import Scoreboard from './components/Scoreboard';
 import HowToPlay from './components/HowToPlay';
 import Settings from './components/Settings';
 import Leaderboard from './components/Leaderboard';
+import History from './components/History';
 
 import { AudioProvider } from './contexts/AudioContext';
 
@@ -16,8 +17,20 @@ function App() {
   const [players, setPlayers] = useState([]);
   const [gameConfig, setGameConfig] = useState(null);
   const [winners, setWinners] = useState(null); // 'Civilian' or 'Impostors'
-
   const [showSettings, setShowSettings] = useState(false);
+  const [gameHistory, setGameHistory] = useState([]);
+
+  // Load history on mount
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('spyMals_history');
+      if (stored) {
+        setGameHistory(JSON.parse(stored));
+      }
+    } catch (e) {
+      console.error("Failed to load history", e);
+    }
+  }, []);
 
   const startNewMission = () => {
     setCurrentScreen('setup');
@@ -160,6 +173,20 @@ function App() {
 
       localStorage.setItem('spyMals_leaderboard', JSON.stringify(leaderboard));
 
+      // ── UPDATE HISTORY ──
+      try {
+        const historyEntry = {
+          id: Date.now(),
+          date: new Date().toISOString(),
+          players: [...players]
+        };
+        const updatedHistory = [historyEntry, ...gameHistory].slice(0, 20); // Keep last 20
+        setGameHistory(updatedHistory);
+        localStorage.setItem('spyMals_history', JSON.stringify(updatedHistory));
+      } catch (historyErr) {
+        console.error("Failed to save history", historyErr);
+      }
+
     } catch (e) {
       console.error("Failed to save leaderboard", e);
     }
@@ -179,10 +206,12 @@ function App() {
       <div className="antialiased text-gray-900 bg-spy-blue min-h-screen relative">
         {currentScreen === 'home' && (
           <Home
+            hasHistory={gameHistory.length > 0}
             onStartGame={startNewMission}
             onOpenHowToPlay={() => setCurrentScreen('how-to-play')}
             onOpenSettings={() => setShowSettings(true)}
             onOpenLeaderboard={() => setCurrentScreen('leaderboard')}
+            onOpenHistory={() => setCurrentScreen('history')}
           />
         )}
         {currentScreen === 'how-to-play' && (
@@ -235,6 +264,17 @@ function App() {
         )}
         {currentScreen === 'leaderboard' && (
           <Leaderboard
+            onBack={() => setCurrentScreen('home')}
+            onOpenSettings={() => setShowSettings(true)}
+          />
+        )}
+        {currentScreen === 'history' && (
+          <History
+            history={gameHistory}
+            onReplayTeam={(teamPlayers) => {
+              setPlayers(teamPlayers);
+              setCurrentScreen('identify');
+            }}
             onBack={() => setCurrentScreen('home')}
             onOpenSettings={() => setShowSettings(true)}
           />
