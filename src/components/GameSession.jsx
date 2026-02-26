@@ -20,7 +20,7 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
     const [speakingOrder, setSpeakingOrder] = useState([]);
     const [currentSpeakerIndex, setCurrentSpeakerIndex] = useState(0);
 
-    const { switchMusic } = useAudio();
+    const { switchMusic, playSfx } = useAudio();
 
     // Initialize Game & Manage Music
     useEffect(() => {
@@ -30,12 +30,13 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                 assignRoles();
             }
         } else if (gameState === 'game_over_reveal') {
-            switchMusic(finalWinningTeam === 'Civilian' ? 'win.mp3' : 'lose.mp3');
+            switchMusic('music.mp3'); // Keep original music playing in background
+            playSfx(finalWinningTeam === 'Civilian' ? '/sons/win.mp3' : '/sons/lose.mp3', { volumeMultiplier: 1.5 });
         } else {
             // Once we start playing or finish, revert to standard music
             switchMusic('music.mp3');
         }
-    }, [gameState, assignedRoles.length, switchMusic, finalWinningTeam]);
+    }, [gameState, assignedRoles.length, switchMusic, finalWinningTeam, playSfx]);
 
     // Generate a fresh random speaking order every time we enter the playing state
     useEffect(() => {
@@ -204,6 +205,9 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
             origin: { y: 0.6 },
             colors: winningTeam === 'Civilian' ? ['#CCFF00', '#ffffff'] : ['#FF6600', '#000000']
         });
+
+        // Play 🎉 sound
+        playSfx('/sons/confetti.mp3', { volumeMultiplier: 0.8 });
     };
 
     const proceedToScoreboard = () => {

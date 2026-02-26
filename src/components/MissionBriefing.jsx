@@ -4,8 +4,10 @@ import BouncyButton from './BouncyButton';
 import RoleStepper from './RoleStepper';
 import BackArrow from './BackArrow';
 import SettingsGear from './SettingsGear';
+import { useAudio } from '../contexts/AudioContext';
 
 const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) => {
+    const { playSfx } = useAudio();
     const [undercoverCount, setUndercoverCount] = useState(1);
     const [whiteCount, setWhiteCount] = useState(0);
     const [wordPack, setWordPack] = useState('standard');
@@ -42,6 +44,7 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
                 origin: { y: 0.5 },
                 colors: ['#CCFF00', '#FF6600', '#38bdf8', '#ffffff'],
             });
+            playSfx('/sons/confetti.mp3', { volumeMultiplier: 0.7 });
         }
 
         setTimeout(() => {
