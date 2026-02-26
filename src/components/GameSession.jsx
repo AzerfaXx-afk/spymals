@@ -14,6 +14,7 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
     const [targetWord, setTargetWord] = useState(null);
     const [votedPlayer, setVotedPlayer] = useState(null);
     const [eliminatedPlayers, setEliminatedPlayers] = useState([]);
+    const [finalWinningTeam, setFinalWinningTeam] = useState(null);
     // Speaking order for discussion phase
     const [speakingOrder, setSpeakingOrder] = useState([]);
     const [currentSpeakerIndex, setCurrentSpeakerIndex] = useState(0);
@@ -183,10 +184,8 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
     // TRIGGER GAME END
     // ─────────────────────────────────────────────
     const triggerGameEnd = (winningTeam) => {
-        const playerRoles = {};
-        assignedRoles.forEach(p => {
-            playerRoles[p.id] = p.role;
-        });
+        setFinalWinningTeam(winningTeam);
+        setGameState('game_over_reveal');
 
         confetti({
             particleCount: 150,
@@ -194,8 +193,14 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
             origin: { y: 0.6 },
             colors: winningTeam === 'Civilian' ? ['#CCFF00', '#ffffff'] : ['#FF6600', '#000000']
         });
+    };
 
-        onEndGame(winningTeam, playerRoles);
+    const proceedToScoreboard = () => {
+        const playerRoles = {};
+        assignedRoles.forEach(p => {
+            playerRoles[p.id] = p.role;
+        });
+        onEndGame(finalWinningTeam, playerRoles);
     };
 
     const handleReveal = () => {
@@ -203,6 +208,109 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
     };
 
     const currentPlayer = assignedRoles[currentPlayerIndex];
+
+    // ─────────────────────────────────────────────
+    // GAME OVER REVEAL MODAL
+    // ─────────────────────────────────────────────
+    if (gameState === 'game_over_reveal') {
+        const isCivilianWin = finalWinningTeam === 'Civilian';
+
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-spy-blue text-center relative overflow-hidden">
+                <SettingsGear onClick={onOpenSettings} />
+                <div className="absolute inset-0 bg-black/80 backdrop-blur-md z-0" />
+
+                <motion.div
+                    initial={{ scale: 0.8, opacity: 0, y: 50 }}
+                    animate={{ scale: 1, opacity: 1, y: 0 }}
+                    transition={{ type: 'spring', stiffness: 200, damping: 25 }}
+                    className="z-10 w-full max-w-md flex flex-col items-center"
+                >
+                    {/* Header Celebration */}
+                    <div className="mb-6 relative w-full">
+                        <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ delay: 0.2, type: 'spring' }}
+                            className="text-7xl mb-2 drop-shadow-[0_0_50px_rgba(255,255,255,0.3)] animate-bounce-slow"
+                        >
+                            {isCivilianWin ? '🎉' : '🎭'}
+                        </motion.div>
+                        <h2 className="text-3xl font-black text-white uppercase tracking-tight mb-1">
+                            Mission Terminée
+                        </h2>
+                        <h3 className={`text-4xl font-black uppercase tracking-widest ${isCivilianWin ? 'text-spy-lime' : 'text-spy-orange'} filter drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]`}>
+                            {isCivilianWin ? 'Innocents' : 'Imposteurs'}
+                        </h3>
+                    </div>
+
+                    {/* Words Reveal Card */}
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.6, duration: 0.4 }}
+                        className="w-full bg-white/10 backdrop-blur-2xl rounded-[40px] p-8 border border-white/20 shadow-2xl mb-8 relative"
+                    >
+                        <p className="text-white/50 text-[10px] font-black uppercase tracking-[0.3em] mb-6">
+                            Déclassification des mots
+                        </p>
+
+                        <div className="flex flex-col gap-5">
+                            {/* Civilian Word */}
+                            <motion.div
+                                initial={{ x: -20, opacity: 0 }}
+                                animate={{ x: 0, opacity: 1 }}
+                                transition={{ delay: 1 }}
+                                className="bg-spy-lime/10 border border-spy-lime/30 rounded-3xl p-5 relative overflow-hidden group"
+                            >
+                                <div className="absolute top-0 right-0 w-24 h-24 bg-spy-lime/20 rounded-full blur-2xl transform translate-x-1/2 -translate-y-1/2 group-hover:bg-spy-lime/30 transition-colors" />
+                                <div className="flex flex-col items-center">
+                                    <span className="text-spy-lime/60 text-[10px] font-bold uppercase tracking-[0.2em] mb-1">
+                                        Mot des Innocents
+                                    </span>
+                                    <span className="text-4xl font-black text-white break-words">
+                                        {targetWord?.civilian || '???'}
+                                    </span>
+                                </div>
+                            </motion.div>
+
+                            {/* Undercover Word */}
+                            <motion.div
+                                initial={{ x: 20, opacity: 0 }}
+                                animate={{ x: 0, opacity: 1 }}
+                                transition={{ delay: 1.5 }}
+                                className="bg-spy-orange/10 border border-spy-orange/30 rounded-3xl p-5 relative overflow-hidden group"
+                            >
+                                <div className="absolute top-0 left-0 w-24 h-24 bg-spy-orange/20 rounded-full blur-2xl transform -translate-x-1/2 -translate-y-1/2 group-hover:bg-spy-orange/30 transition-colors" />
+                                <div className="flex flex-col items-center">
+                                    <span className="text-spy-orange/60 text-[10px] font-bold uppercase tracking-[0.2em] mb-1">
+                                        Mot de l'Espion
+                                    </span>
+                                    <span className="text-4xl font-black text-white break-words">
+                                        {targetWord?.undercover || '???'}
+                                    </span>
+                                </div>
+                            </motion.div>
+                        </div>
+                    </motion.div>
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 2.2 }}
+                        className="w-full"
+                    >
+                        <BouncyButton
+                            onClick={proceedToScoreboard}
+                            className="w-full py-5 text-xl tracking-widest"
+                        >
+                            VOIR LES SCORES →
+                        </BouncyButton>
+                    </motion.div>
+                </motion.div>
+            </div>
+        );
+    }
 
     // ─────────────────────────────────────────────
     // MR. WHITE LAST CHANCE MODAL

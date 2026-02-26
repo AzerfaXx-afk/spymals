@@ -9,7 +9,17 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
     const [undercoverCount, setUndercoverCount] = useState(1);
     const [whiteCount, setWhiteCount] = useState(0);
     const [wordPack, setWordPack] = useState('standard');
+    const [isPackDropdownOpen, setIsPackDropdownOpen] = useState(false);
     const [customWords, setCustomWords] = useState({ innocent: '', spy: '' });
+
+    const packOptions = [
+        { id: 'standard', label: 'Pack Standard', icon: '📁' },
+        { id: 'pop-culture', label: 'Culture Pop', icon: '🍿' },
+        { id: 'abstract', label: 'Concepts Abstraits', icon: '🧠' },
+        { id: 'animals', label: 'Animaux', icon: '🦁' },
+        { id: 'random', label: 'Aléatoire', icon: '🎲' },
+        { id: 'custom', label: '>>> Mots Perso <<<', icon: '✏️', special: true },
+    ];
 
     // Easter egg: screw animation
     const [unscrewedScrews, setUnscrewedScrews] = useState({});
@@ -76,56 +86,41 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
     };
 
     return (
-        <div className="min-h-screen h-[100dvh] flex flex-col items-center p-4 pt-20 relative overflow-hidden bg-gray-900">
+        <div className="min-h-screen h-[100dvh] flex flex-col items-center p-4 pt-20 relative overflow-hidden bg-spy-blue">
             <BackArrow onClick={onBack} />
             <SettingsGear onClick={onOpenSettings} />
 
-            {/* Background Decor - Command Center Grid */}
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px]"></div>
-            <div className="absolute inset-0 bg-radial-gradient(circle_at_center,transparent,rgba(0,0,0,0.8))"></div>
-
-            {/* Rotating Gears Decor */}
-            <div className="absolute top-20 right-[-50px] opacity-10 pointer-events-none">
-                <svg width="200" height="200" viewBox="0 0 24 24" fill="currentColor" className="text-white gear-spin">
-                    <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
-                    <path fillRule="evenodd" d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 010-1.113zM17.25 12a5.25 5.25 0 11-10.5 0 5.25 5.25 0 011.5 0z" />
-                    {/* Simplified gear representation for brevity, effectively using the gear icon logic or similar shape */}
-                    <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z" />
-                </svg>
-            </div>
-            <div className="absolute bottom-20 left-[-30px] opacity-10 pointer-events-none">
-                <svg width="150" height="150" viewBox="0 0 24 24" fill="currentColor" className="text-white gear-spin-reverse">
-                    <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z" />
-                </svg>
+            {/* Background Decor */}
+            <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+                <div className="absolute top-[-10%] right-[-20%] w-[600px] h-[600px] bg-spy-lime opacity-[0.05] rounded-full blur-[100px] animate-pulse-slow"></div>
+                <div className="absolute bottom-[-10%] left-[-20%] w-[500px] h-[500px] bg-spy-orange opacity-[0.05] rounded-full blur-[100px] animate-pulse-slow delay-700"></div>
             </div>
 
-
-            <div className="z-10 mb-6 text-center flex-none animate-slide-up bg-black/50 px-8 py-2 rounded-full border border-white/20 shadow-lg backdrop-blur-md">
-                <h2 className="text-2xl font-black text-white uppercase tracking-tighter drop-shadow-md font-display">
+            <div className="z-10 mb-6 text-center flex-none animate-slide-up bg-white/10 px-8 py-3 rounded-full border border-white/15 shadow-2xl backdrop-blur-xl">
+                <h2 className="text-2xl font-black text-white uppercase tracking-tighter drop-shadow-md">
                     ACCÈS AUTORISÉ
                 </h2>
-                <p className="text-spy-lime text-[10px] font-bold uppercase tracking-[0.2em] animate-pulse">
+                <p className="text-spy-lime text-[10px] font-black uppercase tracking-[0.2em] animate-pulse mt-0.5">
                     Système Prêt
                 </p>
             </div>
 
-            <div className="w-full max-w-sm flex-1 flex flex-col min-h-0 z-10 animate-slide-up space-y-4" style={{ animationDelay: '0.1s' }}>
+            <div className="w-full max-w-md flex-1 flex flex-col min-h-0 z-10 animate-slide-up space-y-4 px-4" style={{ animationDelay: '0.1s' }}>
 
-                {/* Main Stats Card - Command Panel */}
-                <div className="command-panel rounded-lg p-4 flex-none relative">
+                <div className="bg-white/10 backdrop-blur-xl rounded-[32px] p-6 border border-white/15 shadow-2xl flex-none relative w-full">
                     {/* Decorative Screws — Easter Egg! */}
                     {['tl', 'tr', 'bl', 'br'].map((pos) => {
-                        const posClass = pos === 'tl' ? 'top-2 left-2'
-                            : pos === 'tr' ? 'top-2 right-2'
-                                : pos === 'bl' ? 'bottom-2 left-2'
-                                    : 'bottom-2 right-2';
+                        const posClass = pos === 'tl' ? 'top-4 left-4'
+                            : pos === 'tr' ? 'top-4 right-4'
+                                : pos === 'bl' ? 'bottom-4 left-4'
+                                    : 'bottom-4 right-4';
                         const isUnscrewed = unscrewedScrews[pos];
                         return (
                             <button
                                 key={pos}
                                 type="button"
                                 onClick={() => handleScrewClick(pos)}
-                                className={`absolute ${posClass} w-5 h-5 rounded-full bg-gray-400 shadow-inner flex items-center justify-center cursor-pointer z-20 hover:bg-gray-300 active:scale-90 transition-colors`}
+                                className={`absolute ${posClass} w-5 h-5 rounded-full bg-gradient-to-br from-gray-300 to-gray-500 border border-gray-600 shadow-[inset_0_-1px_2px_rgba(255,255,255,0.5),inset_0_2px_4px_rgba(0,0,0,0.4),0_1px_2px_rgba(0,0,0,0.5)] flex items-center justify-center cursor-pointer z-20 hover:from-gray-200 hover:to-gray-400 active:scale-90 transition-colors pointer-events-auto`}
                                 style={{
                                     animation: isUnscrewed === true
                                         ? 'unscrew 0.6s ease-out forwards'
@@ -136,21 +131,25 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
                                 }}
                                 aria-label="Vis décorative"
                             >
-                                <div className="w-full h-[1px] bg-gray-600 rotate-45 pointer-events-none"></div>
+                                {/* Screw head indent curve */}
+                                <div className="absolute inset-[2px] rounded-full bg-gradient-to-br from-gray-500 to-gray-300 shadow-inner"></div>
+                                {/* Philips Cross */}
+                                <div className="w-2.5 h-[1.5px] bg-gray-700/80 rotate-45 absolute shadow-[0_1px_0_rgba(255,255,255,0.3)]"></div>
+                                <div className="w-2.5 h-[1.5px] bg-gray-700/80 rotate-135 absolute shadow-[0_1px_0_rgba(255,255,255,0.3)]"></div>
                             </button>
                         );
                     })}
 
                     {/* Civilians Display - Digital Readout */}
-                    <div className="bg-black/60 rounded-lg p-3 flex items-center justify-between border-2 border-gray-700 mb-4 relative overflow-hidden shadow-inner">
+                    <div className="bg-black/20 rounded-2xl p-4 flex items-center justify-between border border-white/10 mb-5 relative overflow-hidden shadow-inner">
                         <div className="absolute left-0 top-0 w-1 h-full bg-spy-lime opacity-50"></div>
-                        <div className="relative z-10 flex items-center gap-3 w-full justify-between px-2">
+                        <div className="relative z-10 flex items-center gap-3 w-full justify-between">
                             <div className="flex flex-col">
-                                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">PERSONNEL</span>
-                                <span className="text-sm font-bold uppercase tracking-widest text-white">Innocents</span>
+                                <span className="text-[10px] font-black uppercase tracking-widest text-white/40">PERSONNEL</span>
+                                <span className="text-sm font-black uppercase tracking-widest text-white">Innocents</span>
                             </div>
-                            <div className="digital-counter px-4 py-1 rounded">
-                                <span className="text-2xl font-bold leading-none">{civilianCount.toString().padStart(2, '0')}</span>
+                            <div className="bg-black/40 border border-white/5 rounded-xl px-4 py-2 flex items-center justify-center shadow-inner">
+                                <span className="text-3xl font-display font-black leading-none text-spy-lime">{civilianCount.toString().padStart(2, '0')}</span>
                             </div>
                         </div>
                     </div>
@@ -179,48 +178,79 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
                 </div>
 
                 {/* Word Pack Selection - Module */}
-                <div className="bg-gray-800 rounded-lg p-4 border border-gray-600 shadow-lg flex-none relative">
-                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gray-700 px-3 py-1 rounded text-[10px] uppercase font-bold text-white border border-gray-500">
+                <div className="bg-white/10 backdrop-blur-xl rounded-[32px] p-6 border border-white/15 shadow-2xl flex-none relative w-full mb-2 mt-4">
+                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-spy-blue px-4 py-1 rounded-full text-[10px] uppercase font-black text-white/50 border border-white/15 tracking-widest shadow-lg">
                         Données Mission
                     </div>
 
-                    <div className="relative mt-1">
-                        <select
-                            value={wordPack}
-                            onChange={(e) => setWordPack(e.target.value)}
-                            className="w-full bg-black/40 border-2 border-gray-600 rounded-lg px-4 py-3 text-white font-mono font-bold text-center appearance-none focus:border-spy-lime focus:outline-none transition-all shadow-inner text-sm uppercase tracking-wider"
+                    <div className="relative mt-2">
+                        {/* Custom Dropdown Toggle */}
+                        <button
+                            type="button"
+                            onClick={() => setIsPackDropdownOpen(!isPackDropdownOpen)}
+                            className="w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-4 flex items-center justify-between text-white font-black focus:outline-none transition-all shadow-inner hover:bg-black/50"
                         >
-                            <option value="standard" className="bg-gray-900 text-white">Pack Standard</option>
-                            <option value="pop-culture" className="bg-gray-900 text-white">Culture Pop</option>
-                            <option value="abstract" className="bg-gray-900 text-white">Concepts Abstraits</option>
-                            <option value="animals" className="bg-gray-900 text-white">Animaux</option>
-                            <option value="random" className="bg-gray-900 text-white">Aléatoire</option>
-                            <option value="custom" className="bg-gray-900 text-spy-orange font-bold">{`>>> MOTS PERSO <<<`}</option>
-                        </select>
-                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/40">▼</div>
+                            <div className="flex items-center gap-3">
+                                <span className="text-xl">{packOptions.find(p => p.id === wordPack)?.icon}</span>
+                                <span className={`text-sm uppercase tracking-wider ${wordPack === 'custom' ? 'text-spy-orange' : 'text-white'}`}>
+                                    {packOptions.find(p => p.id === wordPack)?.label}
+                                </span>
+                            </div>
+                            <div className={`transition-transform duration-300 ${isPackDropdownOpen ? 'rotate-180 text-spy-lime' : 'text-white/30'}`}>
+                                ▼
+                            </div>
+                        </button>
+
+                        {/* Custom Dropdown Menu */}
+                        {isPackDropdownOpen && (
+                            <div className="absolute top-full left-0 w-full mt-2 bg-[#1a213A]/95 backdrop-blur-2xl border border-white/20 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.8)] z-50 overflow-hidden animate-slide-up origin-top">
+                                <div className="max-h-[220px] overflow-y-auto no-scrollbar scroll-smooth">
+                                    {packOptions.map((pack, index) => (
+                                        <button
+                                            key={pack.id}
+                                            onClick={() => {
+                                                setWordPack(pack.id);
+                                                setIsPackDropdownOpen(false);
+                                            }}
+                                            className={`w-full text-left px-5 py-4 flex items-center gap-3 transition-colors border-b border-white/5 last:border-0 hover:bg-white/10 ${wordPack === pack.id ? 'bg-spy-lime/10' : ''
+                                                }`}
+                                        >
+                                            <span className="text-xl flex-none">{pack.icon}</span>
+                                            <span className={`text-sm font-black uppercase tracking-wider flex-1 ${pack.special ? 'text-spy-orange' : wordPack === pack.id ? 'text-spy-lime' : 'text-white/80'
+                                                }`}>
+                                                {pack.label}
+                                            </span>
+                                            {wordPack === pack.id && (
+                                                <span className="text-spy-lime text-lg">✓</span>
+                                            )}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* Custom Word Inputs */}
                     {wordPack === 'custom' && (
-                        <div className="mt-4 space-y-2 animate-pop-in">
+                        <div className="mt-4 space-y-3 animate-pop-in">
                             <div className="space-y-1">
-                                <label className="text-[9px] uppercase font-bold text-gray-400 pl-1">Cible 1 (Innocent)</label>
+                                <label className="text-[9px] uppercase font-black tracking-widest text-white/40 pl-2">Cible 1 (Innocent)</label>
                                 <input
                                     type="text"
                                     placeholder="Entrez un mot..."
                                     value={customWords.innocent}
                                     onChange={(e) => setCustomWords({ ...customWords, innocent: e.target.value })}
-                                    className="w-full bg-black/60 border border-spy-lime/50 rounded px-3 py-2 text-spy-lime font-mono text-sm focus:border-spy-lime focus:outline-none transition-colors placeholder:text-gray-600"
+                                    className="w-full bg-black/30 border border-spy-lime/30 rounded-xl px-4 py-3 text-spy-lime font-black text-sm focus:border-spy-lime focus:outline-none transition-colors placeholder:text-white/20 shadow-inner"
                                 />
                             </div>
                             <div className="space-y-1">
-                                <label className="text-[9px] uppercase font-bold text-gray-400 pl-1">Cible 2 (Espion)</label>
+                                <label className="text-[9px] uppercase font-black tracking-widest text-white/40 pl-2">Cible 2 (Espion)</label>
                                 <input
                                     type="text"
                                     placeholder="Entrez un mot..."
                                     value={customWords.spy}
                                     onChange={(e) => setCustomWords({ ...customWords, spy: e.target.value })}
-                                    className="w-full bg-black/60 border border-spy-orange/50 rounded px-3 py-2 text-spy-orange font-mono text-sm focus:border-spy-orange focus:outline-none transition-colors placeholder:text-gray-600"
+                                    className="w-full bg-black/30 border border-spy-orange/30 rounded-xl px-4 py-3 text-spy-orange font-black text-sm focus:border-spy-orange focus:outline-none transition-colors placeholder:text-white/20 shadow-inner"
                                 />
                             </div>
                         </div>
@@ -228,43 +258,35 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
                 </div>
 
                 {/* Validation Warning */}
-                <div className="mt-2 flex-none">
+                <div className="mt-2 flex-none px-2 mb-4">
                     {!isRoleCountValid && (
-                        <div className="bg-red-500/20 border border-red-500/30 text-red-400 text-[10px] font-bold p-2 rounded text-center animate-shake font-mono">
-                            [ERREUR] PAS ASSEZ D'INNOCENTS (MIN 2)
+                        <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-black p-3 rounded-xl text-center animate-shake uppercase tracking-widest shadow-inner">
+                            ⚠️ Pas assez d'innocents (Min 2)
                         </div>
                     )}
 
                     {wordPack === 'custom' && !isCustomValid && (
-                        <div className="bg-spy-orange/20 border border-spy-orange/30 text-spy-orange text-[10px] font-bold p-2 rounded text-center animate-shake font-mono">
-                            [ALERTE] DONNÉES INCOMPLÈTES
+                        <div className="bg-spy-orange/10 border border-spy-orange/20 text-spy-orange text-[10px] font-black p-3 rounded-xl text-center animate-shake uppercase tracking-widest shadow-inner mt-2">
+                            ⚠️ Données incomplètes
                         </div>
                     )}
                 </div>
 
             </div>
 
-            {/* Wire Decor */}
-            <div className="absolute bottom-24 left-10 w-px h-20 bg-gray-600 z-0 opacity-50"></div>
-            <div className="absolute bottom-24 right-10 w-px h-20 bg-gray-600 z-0 opacity-50"></div>
-
             {/* Start Button Area */}
-            <div className="w-full max-w-sm mt-auto z-20 pt-4 pb-8 relative" style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}>
-                {/* Safety Cover Visual */}
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-yellow-500/20 rounded-full blur-sm"></div>
+            <div className="w-full max-w-md mt-auto z-20 pt-4 pb-8 px-4 relative flex justify-center" style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}>
+                <div className="absolute top-0 left-1/4 right-1/4 h-px bg-gradient-to-r from-transparent via-spy-lime/30 to-transparent" />
 
                 <BouncyButton
-                    variant="custom"
+                    variant="primary"
                     onClick={() => onStartGame({ undercoverCount, whiteCount, wordPack, customWords })}
-                    className="launch-button w-full text-xl py-6 rounded-lg tracking-widest relative overflow-hidden group"
+                    className="w-full text-xl py-6 rounded-2xl tracking-widest relative overflow-hidden group shadow-spy-lime/30 shadow-2xl"
                     disabled={!isValid}
                 >
                     <span className="relative z-10 flex items-center justify-center gap-2">
-                        <span className="text-2xl animate-pulse">☢</span>
                         LANCER LA MISSION
-                        <span className="text-2xl animate-pulse">☢</span>
                     </span>
-                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjMDAwIiBmaWxsLW9wYWNpdHk9IjAuMSIvPgo8L3N2Zz4=')] opacity-30"></div>
                 </BouncyButton>
             </div>
 
