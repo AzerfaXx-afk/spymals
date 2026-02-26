@@ -108,7 +108,7 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
                 </p>
             </div>
 
-            <div className="w-full max-w-md flex-1 flex flex-col min-h-0 z-10 animate-slide-up space-y-4 px-4" style={{ animationDelay: '0.1s' }}>
+            <div className="w-full max-w-md flex-1 overflow-y-auto no-scrollbar z-10 animate-slide-up space-y-4 px-4 pb-6" style={{ animationDelay: '0.1s' }}>
 
                 <div className="bg-white/10 backdrop-blur-xl rounded-[32px] p-6 border border-white/15 shadow-2xl flex-none relative w-full">
                     {/* Decorative Screws — Easter Egg! */}
@@ -206,7 +206,7 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
 
                         {/* Custom Dropdown Menu */}
                         {isPackDropdownOpen && (
-                            <div className="absolute top-full left-0 w-full mt-2 bg-[#1a213A]/95 backdrop-blur-2xl border border-white/20 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.8)] z-50 overflow-hidden animate-slide-up origin-top">
+                            <div className="w-full mt-2 bg-[#1a213A]/95 backdrop-blur-2xl border border-white/20 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.8)] overflow-hidden animate-slide-up origin-top">
                                 <div className="max-h-[220px] overflow-y-auto no-scrollbar scroll-smooth">
                                     {packOptions.map((pack, index) => (
                                         <button

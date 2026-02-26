@@ -10,7 +10,7 @@ const RoleStepper = ({ label, count, onIncrement, onDecrement, color = 'text-whi
                 <div className="flex items-center justify-between w-full gap-2 px-2">
                     <BouncyButton
                         onClick={onDecrement}
-                        className="w-10 h-10 text-xl font-bold !rounded-full"
+                        className="w-12 h-12 text-2xl font-bold !rounded-full shadow-lg"
                         variant="secondary"
                         disabled={count <= 0}
                         soundOptions={soundOptions}
@@ -33,7 +33,7 @@ const RoleStepper = ({ label, count, onIncrement, onDecrement, color = 'text-whi
 
                     <BouncyButton
                         onClick={onIncrement}
-                        className="w-10 h-10 text-xl font-bold !rounded-full"
+                        className="w-12 h-12 text-2xl font-bold !rounded-full shadow-lg"
                         variant="secondary"
                         soundOptions={soundOptions}
                     >
