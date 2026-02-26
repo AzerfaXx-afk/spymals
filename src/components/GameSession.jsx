@@ -609,6 +609,16 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
         const isUndercover = votedPlayer.role === 'Undercover';
         const isImpostor = isMrWhite || isUndercover;
 
+        // Auto trigger the tombstone animation shortly after entering reveal screen
+        const [showTombstone, setShowTombstone] = useState(false);
+        useEffect(() => {
+            const timer = setTimeout(() => {
+                setShowTombstone(true);
+                playSfx('/sons/button.mp3', { volumeMultiplier: 1.5, pitch: 0.5 }); // Deep thud sound
+            }, 800);
+            return () => clearTimeout(timer);
+        }, []);
+
         return (
             <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-spy-blue text-center relative overflow-hidden">
                 <SettingsGear onClick={onOpenSettings} />
@@ -619,13 +629,30 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                     animate={{ y: 0, opacity: 1 }}
                     className="z-10 w-full max-w-md"
                 >
-                    <div className="mb-8 relative">
-                        <div className="text-9xl mb-4 animate-bounce-slow filter drop-shadow-[0_0_50px_rgba(255,255,255,0.2)]">
+                    <div className="mb-8 relative h-40 flex flex-col items-center justify-end">
+
+                        {/* The Tombstone falling from above */}
+                        {showTombstone && (
+                            <div className="absolute top-[-20px] left-1/2 -translate-x-1/2 text-9xl z-20 animate-drop-tombstone filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)]">
+                                🪦
+                            </div>
+                        )}
+
+                        {/* The Avatar that gets squished */}
+                        <div className={`text-9xl relative z-10 filter drop-shadow-[0_0_50px_rgba(255,255,255,0.2)] origin-bottom ${showTombstone ? 'animate-squish-avatar' : 'animate-bounce-slow'}`}>
                             {votedPlayer.avatar.value}
                         </div>
+
+                    </div>
+                    <div className="mb-8 relative">
                         <h2 className={`text-4xl font-black uppercase tracking-wider mb-2 ${votedPlayer.pseudoColor || 'text-white'}`}>
                             {votedPlayer.name}
                         </h2>
+                        {showTombstone && (
+                            <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-red-500 font-black text-xl tracking-[0.3em] animate-pulse">
+                                R.I.P
+                            </span>
+                        )}
                         <p className="text-white/60 font-bold uppercase tracking-widest text-sm">était...</p>
                     </div>
 
