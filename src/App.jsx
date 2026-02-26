@@ -141,7 +141,7 @@ function App() {
         if (!leaderboard[key]) {
           leaderboard[key] = {
             name: p.name,
-            avatar: p.avatar.value,
+            avatar: p.avatar,
             score: 0,
             games: 0,
             wins: 0
@@ -155,7 +155,7 @@ function App() {
           leaderboard[key].wins += 1;
         }
         // Update avatar to latest used
-        leaderboard[key].avatar = p.avatar.value;
+        leaderboard[key].avatar = p.avatar;
       });
 
       localStorage.setItem('spyMals_leaderboard', JSON.stringify(leaderboard));

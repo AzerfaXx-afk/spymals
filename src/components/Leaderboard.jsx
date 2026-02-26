@@ -80,7 +80,15 @@ const Leaderboard = ({ onBack, onOpenSettings }) => {
                                         <div className="w-8 h-8 flex items-center justify-center font-bold text-xl">
                                             {getMedal(index) || <span className="text-white/30 text-sm">#{index + 1}</span>}
                                         </div>
-                                        <div className="text-2xl">{player.avatar || '🕵️‍♂️'}</div>
+                                        <div className="w-8 h-8 flex items-center justify-center text-2xl">
+                                            {typeof player.avatar === 'object' && player.avatar?.type === 'image' ? (
+                                                <img src={player.avatar.value} alt={player.name} className="w-full h-full object-cover rounded-full shadow-md" />
+                                            ) : typeof player.avatar === 'string' && player.avatar.startsWith('data:image/') ? (
+                                                <img src={player.avatar} alt={player.name} className="w-full h-full object-cover rounded-full shadow-md" />
+                                            ) : (
+                                                typeof player.avatar === 'object' ? player.avatar.value : (player.avatar || '🕵️‍♂️')
+                                            )}
+                                        </div>
                                         <div className="flex flex-col">
                                             <span className={`font-bold text-sm ${index === 0 ? 'text-spy-yellow' : 'text-white'}`}>
                                                 {player.name}

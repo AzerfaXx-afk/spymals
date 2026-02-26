@@ -492,7 +492,11 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                                     <div className="flex flex-wrap justify-center gap-2 mb-4">
                                         {speakingOrder.slice(0, currentSpeakerIndex).map(p => (
                                             <div key={p.id} className="flex items-center gap-1.5 bg-white/5 rounded-full px-3 py-1 border border-white/10">
-                                                <span className="text-sm">{p.avatar.value}</span>
+                                                {p.avatar.type === 'image' ? (
+                                                    <img src={p.avatar.value} alt={p.name} className="w-5 h-5 object-cover rounded-full" />
+                                                ) : (
+                                                    <span className="text-sm">{p.avatar.value}</span>
+                                                )}
                                                 <span className={`${p.pseudoColor ? p.pseudoColor.replace('text-', 'text-').concat('/40') : 'text-white/40'} font-bold text-xs uppercase`}>{p.name}</span>
                                                 <span className="text-spy-lime text-xs">✓</span>
                                             </div>
@@ -532,7 +536,11 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                                 <div className="flex flex-wrap justify-center gap-2">
                                     {speakingOrder.map(p => (
                                         <div key={p.id} className="flex items-center gap-1.5 bg-white/5 rounded-full px-3 py-1.5 border border-spy-lime/20">
-                                            <span className="text-sm">{p.avatar.value}</span>
+                                            {p.avatar.type === 'image' ? (
+                                                <img src={p.avatar.value} alt={p.name} className="w-5 h-5 object-cover rounded-full" />
+                                            ) : (
+                                                <span className="text-sm">{p.avatar.value}</span>
+                                            )}
                                             <span className={`${p.pseudoColor ? p.pseudoColor.replace('text-', 'text-').concat('/60') : 'text-white/60'} font-bold text-xs uppercase`}>{p.name}</span>
                                             <span className="text-spy-lime text-xs">✓</span>
                                         </div>
@@ -596,7 +604,13 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                                                 : 'active:scale-95 hover:bg-white/20'}
                                         `}
                                     >
-                                        <div className="text-4xl mb-2 filter drop-shadow-md">{player.avatar.value}</div>
+                                        <div className="w-16 h-16 mb-2 flex items-center justify-center filter drop-shadow-md">
+                                            {player.avatar.type === 'image' ? (
+                                                <img src={player.avatar.value} alt={player.name} className="w-full h-full object-cover rounded-full shadow-lg" />
+                                            ) : (
+                                                <span className="text-4xl">{player.avatar.value}</span>
+                                            )}
+                                        </div>
                                         <span className={`font-bold uppercase text-sm tracking-wide ${player.pseudoColor || 'text-white'}`}>
                                             {player.name}
                                             {isEliminated && <span className="block text-xs text-red-400 mt-1 drop-shadow-sm font-black">(Éliminé)</span>}
@@ -647,8 +661,12 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                         )}
 
                         {/* The Avatar that gets squished */}
-                        <div className={`text-9xl relative z-10 filter drop-shadow-[0_0_50px_rgba(255,255,255,0.2)] origin-bottom ${showTombstone ? 'animate-squish-avatar' : 'animate-bounce-slow'}`}>
-                            {votedPlayer.avatar.value}
+                        <div className={`w-32 h-32 relative z-10 flex items-center justify-center origin-bottom ${showTombstone ? 'animate-squish-avatar' : 'animate-bounce-slow filter drop-shadow-[0_0_50px_rgba(255,255,255,0.2)]'}`}>
+                            {votedPlayer.avatar.type === 'image' ? (
+                                <img src={votedPlayer.avatar.value} alt={votedPlayer.name} className="w-full h-full object-cover rounded-full shadow-2xl" />
+                            ) : (
+                                <span className="text-9xl">{votedPlayer.avatar.value}</span>
+                            )}
                         </div>
 
                     </div>
