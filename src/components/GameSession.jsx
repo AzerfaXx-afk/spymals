@@ -31,7 +31,7 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
             setShowTombstone(false); // reset first
             const timer = setTimeout(() => {
                 setShowTombstone(true);
-                playSfx('/sons/button.mp3', { volumeMultiplier: 1.5, pitch: 0.5 }); // Deep thud
+                playSfx('/sons/mort.mp3', { volumeMultiplier: 1.0 }); // Death sound
             }, 800);
             return () => clearTimeout(timer);
         }
@@ -638,8 +638,11 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
 
                         {/* The Tombstone falling from above */}
                         {showTombstone && (
-                            <div className="absolute top-[-20px] left-1/2 -translate-x-1/2 text-9xl z-20 animate-drop-tombstone filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)]">
+                            <div className="absolute top-[-20px] left-1/2 -translate-x-1/2 text-9xl z-20 animate-drop-tombstone filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)] flex flex-col items-center justify-center">
                                 🪦
+                                <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-4 text-red-500 font-black text-xl tracking-[0.2em] animate-pulse shadow-black drop-shadow-md bg-black/50 px-2 rounded-lg">
+                                    R.I.P
+                                </span>
                             </div>
                         )}
 
@@ -653,11 +656,6 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                         <h2 className={`text-4xl font-black uppercase tracking-wider mb-2 ${votedPlayer.pseudoColor || 'text-white'}`}>
                             {votedPlayer.name}
                         </h2>
-                        {showTombstone && (
-                            <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-red-500 font-black text-xl tracking-[0.3em] animate-pulse">
-                                R.I.P
-                            </span>
-                        )}
                         <p className="text-white/60 font-bold uppercase tracking-widest text-sm">était...</p>
                     </div>
 
