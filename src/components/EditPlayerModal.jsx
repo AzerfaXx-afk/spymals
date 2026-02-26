@@ -13,41 +13,39 @@ const PRESET_AVATARS = [
 ];
 
 const EditPlayerModal = ({ player, onSave, onCancel }) => {
-    const [name, setName] = useState(player.name);
+    const getDefaultName = (av) => {
+        if (av.type === 'emoji') {
+            const animal = PRESET_AVATARS.find(a => a.emoji === av.value);
+            // Ignore the number suffix since we just want the base animal placeholder
+            if (animal) return `Agent ${animal.name}`;
+        }
+        return 'Agent Secret';
+    };
+
+    const [name, setName] = useState(player.isCustom ? player.name : '');
     const [avatar, setAvatar] = useState(player.avatar);
     const [isCustomName, setIsCustomName] = useState(player.isCustom || false);
     const [isEditingAvatar, setIsEditingAvatar] = useState(false);
     const fileInputRef = useRef(null);
 
     const handleSave = () => {
-        const currentDefaultName = avatar.type === 'emoji'
-            ? `Agent ${PRESET_AVATARS.find(a => a.emoji === avatar.value)?.name || 'Inconnu'}`
-            : null;
-
-        const finalIsCustom = name !== currentDefaultName;
-        onSave({ ...player, name, avatar, isCustom: finalIsCustom });
+        const finalName = name.trim() !== '' ? name.trim() : player.name; // Keep original default name with numbers if they didn't type
+        const finalIsCustom = name.trim() !== '';
+        onSave({ ...player, name: finalIsCustom ? finalName : getDefaultName(avatar), avatar, isCustom: finalIsCustom });
     };
 
     const handleNameChange = (e) => {
         setName(e.target.value);
-        setIsCustomName(true);
+        setIsCustomName(e.target.value.trim() !== '');
     };
 
     const resetToDefault = () => {
-        if (avatar.type === 'emoji') {
-            const animal = PRESET_AVATARS.find(a => a.emoji === avatar.value);
-            if (animal) {
-                setName(`Agent ${animal.name}`);
-                setIsCustomName(false);
-            }
-        }
+        setName('');
+        setIsCustomName(false);
     };
 
     const handleAvatarSelect = (animal) => {
         setAvatar({ type: 'emoji', value: animal.emoji });
-        if (!isCustomName) {
-            setName(`Agent ${animal.name}`);
-        }
         setIsEditingAvatar(false);
     };
 
@@ -98,6 +96,15 @@ const EditPlayerModal = ({ player, onSave, onCancel }) => {
                             <span className="filter drop-shadow-md">{avatar.value}</span>
                         )}
                     </div>
+
+                    {/* Visual Hint to Edit Avatar */}
+                    <div
+                        onClick={() => setIsEditingAvatar(!isEditingAvatar)}
+                        className="absolute bottom-0 -right-2 bg-spy-lime border-4 border-[#1a2c4e] shadow-lg rounded-full w-10 h-10 flex items-center justify-center cursor-pointer hover:scale-110 active:scale-95 transition-all z-10"
+                        title="Modifier l'avatar"
+                    >
+                        <span className="text-xl">✏️</span>
+                    </div>
                 </div>
 
                 {/* Avatar Selection Grid (Collapse/Expand) */}
@@ -142,7 +149,8 @@ const EditPlayerModal = ({ player, onSave, onCancel }) => {
                         type="text"
                         value={name}
                         onChange={handleNameChange}
-                        className="w-full bg-black/20 border-2 border-white/10 rounded-2xl px-6 py-4 text-white font-bold text-center text-xl focus:border-spy-lime focus:outline-none transition-all shadow-inner focus:bg-black/40"
+                        placeholder={getDefaultName(avatar)}
+                        className="w-full bg-black/20 border-2 border-white/10 rounded-2xl px-6 py-4 text-white font-bold text-center text-xl focus:border-spy-lime focus:outline-none transition-all shadow-inner focus:bg-black/40 placeholder:text-white/30"
                         autoFocus
                     />
                     {isCustomName && (
