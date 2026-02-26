@@ -4,6 +4,7 @@ import confetti from 'canvas-confetti';
 import BouncyButton from './BouncyButton';
 import { wordPacks } from '../data/wordPacks';
 import SettingsGear from './SettingsGear';
+import { useAudio } from '../contexts/AudioContext';
 
 const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) => {
     // States: distributing | playing | voting | reveal | mrwhite_guess
@@ -19,12 +20,20 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
     const [speakingOrder, setSpeakingOrder] = useState([]);
     const [currentSpeakerIndex, setCurrentSpeakerIndex] = useState(0);
 
-    // Initialize Game
+    const { switchMusic } = useAudio();
+
+    // Initialize Game & Manage Music
     useEffect(() => {
-        if (gameState === 'distributing' && assignedRoles.length === 0) {
-            assignRoles();
+        if (gameState === 'distributing') {
+            switchMusic('game.mp3');
+            if (assignedRoles.length === 0) {
+                assignRoles();
+            }
+        } else {
+            // Once we start playing or finish, revert to standard music
+            switchMusic('music.mp3');
         }
-    }, [gameState, assignedRoles.length]);
+    }, [gameState, assignedRoles.length, switchMusic]);
 
     // Generate a fresh random speaking order every time we enter the playing state
     useEffect(() => {
@@ -433,7 +442,7 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                                         }
                                     </div>
                                     <div>
-                                        <h2 className="text-3xl font-black text-white uppercase tracking-tight">
+                                        <h2 className={`text-3xl font-black uppercase tracking-tight ${currentSpeaker.pseudoColor || 'text-white'}`}>
                                             {currentSpeaker.name}
                                         </h2>
                                         <p className="text-white/40 text-sm font-bold mt-1">
@@ -463,7 +472,7 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                                         {speakingOrder.slice(0, currentSpeakerIndex).map(p => (
                                             <div key={p.id} className="flex items-center gap-1.5 bg-white/5 rounded-full px-3 py-1 border border-white/10">
                                                 <span className="text-sm">{p.avatar.value}</span>
-                                                <span className="text-white/40 font-bold text-xs uppercase">{p.name}</span>
+                                                <span className={`${p.pseudoColor ? p.pseudoColor.replace('text-', 'text-').concat('/40') : 'text-white/40'} font-bold text-xs uppercase`}>{p.name}</span>
                                                 <span className="text-spy-lime text-xs">✓</span>
                                             </div>
                                         ))}
@@ -503,7 +512,7 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                                     {speakingOrder.map(p => (
                                         <div key={p.id} className="flex items-center gap-1.5 bg-white/5 rounded-full px-3 py-1.5 border border-spy-lime/20">
                                             <span className="text-sm">{p.avatar.value}</span>
-                                            <span className="text-white/60 font-bold text-xs uppercase">{p.name}</span>
+                                            <span className={`${p.pseudoColor ? p.pseudoColor.replace('text-', 'text-').concat('/60') : 'text-white/60'} font-bold text-xs uppercase`}>{p.name}</span>
                                             <span className="text-spy-lime text-xs">✓</span>
                                         </div>
                                     ))}
@@ -567,7 +576,7 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                                         `}
                                     >
                                         <div className="text-4xl mb-2 filter drop-shadow-md">{player.avatar.value}</div>
-                                        <span className="font-bold text-white uppercase text-sm tracking-wide">
+                                        <span className={`font-bold uppercase text-sm tracking-wide ${player.pseudoColor || 'text-white'}`}>
                                             {player.name}
                                             {isEliminated && <span className="block text-xs text-red-400 mt-1 drop-shadow-sm font-black">(Éliminé)</span>}
                                         </span>
@@ -608,7 +617,7 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                         <div className="text-9xl mb-4 animate-bounce-slow filter drop-shadow-[0_0_50px_rgba(255,255,255,0.2)]">
                             {votedPlayer.avatar.value}
                         </div>
-                        <h2 className="text-4xl font-black text-white uppercase tracking-wider mb-2">
+                        <h2 className={`text-4xl font-black uppercase tracking-wider mb-2 ${votedPlayer.pseudoColor || 'text-white'}`}>
                             {votedPlayer.name}
                         </h2>
                         <p className="text-white/60 font-bold uppercase tracking-widest text-sm">était...</p>
@@ -688,7 +697,7 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                             <span>{currentPlayer.avatar.value}</span>
                         )}
                     </div>
-                    <h2 className="text-2xl font-black text-white uppercase tracking-widest">
+                    <h2 className={`text-2xl font-black uppercase tracking-widest ${currentPlayer.pseudoColor || 'text-white'}`}>
                         {currentPlayer.name}
                     </h2>
                     <p className="text-white/30 font-bold uppercase tracking-[0.3em] text-[10px]">

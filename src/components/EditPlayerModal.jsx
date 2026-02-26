@@ -24,14 +24,24 @@ const EditPlayerModal = ({ player, onSave, onCancel }) => {
 
     const [name, setName] = useState(player.isCustom ? player.name : '');
     const [avatar, setAvatar] = useState(player.avatar);
+    const [pseudoColor, setPseudoColor] = useState(player.pseudoColor || 'text-white');
     const [isCustomName, setIsCustomName] = useState(player.isCustom || false);
     const [isEditingAvatar, setIsEditingAvatar] = useState(false);
     const fileInputRef = useRef(null);
 
+    const COLOR_PALETTE = [
+        { class: 'text-white', bgClass: 'bg-white' },
+        { class: 'text-spy-lime', bgClass: 'bg-spy-lime' },
+        { class: 'text-spy-orange', bgClass: 'bg-spy-orange' },
+        { class: 'text-cyan-400', bgClass: 'bg-cyan-400' },
+        { class: 'text-purple-400', bgClass: 'bg-purple-400' },
+        { class: 'text-pink-400', bgClass: 'bg-pink-400' },
+    ];
+
     const handleSave = () => {
         const finalName = name.trim() !== '' ? name.trim() : player.name; // Keep original default name with numbers if they didn't type
         const finalIsCustom = name.trim() !== '';
-        onSave({ ...player, name: finalIsCustom ? finalName : getDefaultName(avatar), avatar, isCustom: finalIsCustom });
+        onSave({ ...player, name: finalIsCustom ? finalName : getDefaultName(avatar), avatar, isCustom: finalIsCustom, pseudoColor });
     };
 
     const handleNameChange = (e) => {
@@ -150,9 +160,22 @@ const EditPlayerModal = ({ player, onSave, onCancel }) => {
                         value={name}
                         onChange={handleNameChange}
                         placeholder={getDefaultName(avatar)}
-                        className="w-full bg-black/20 border-2 border-white/10 rounded-2xl px-6 py-4 text-white font-bold text-center text-xl focus:border-spy-lime focus:outline-none transition-all shadow-inner focus:bg-black/40 placeholder:text-white/30"
+                        className={`w-full bg-black/20 border-2 border-white/10 rounded-2xl px-6 py-4 font-black text-center text-xl focus:border-spy-lime focus:outline-none transition-all shadow-inner focus:bg-black/40 placeholder:text-white/30 ${pseudoColor}`}
                         autoFocus
                     />
+
+                    {/* Color Picker Palette */}
+                    <div className="flex justify-center gap-3 mt-4 animate-fade-in">
+                        {COLOR_PALETTE.map((color) => (
+                            <button
+                                key={color.class}
+                                onClick={() => setPseudoColor(color.class)}
+                                className={`w-8 h-8 rounded-full ${color.bgClass} border-2 transition-all 
+                                    ${pseudoColor === color.class ? 'scale-125 border-white shadow-[0_0_15px_rgba(255,255,255,0.5)]' : 'border-black/50 hover:scale-110'}`}
+                                title="Choisir cette couleur"
+                            />
+                        ))}
+                    </div>
                     {isCustomName && (
                         <button
                             onClick={resetToDefault}

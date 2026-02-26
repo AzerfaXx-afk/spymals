@@ -55,6 +55,28 @@ export const AudioProvider = ({ children }) => {
         };
     }, []);
 
+    // Switch background music track
+    const switchMusic = async (trackName) => {
+        if (!musicRef.current) return;
+
+        // Prevent unnecessary reloads
+        if (musicRef.current.src.endsWith(trackName)) return;
+
+        try {
+            musicRef.current.pause();
+            musicRef.current.src = `/sons/${trackName}`;
+            musicRef.current.load();
+
+            // Only play if we are allowed to (prevents autoplay errors if user hasn't interacted)
+            const playPromise = musicRef.current.play();
+            if (playPromise !== undefined) {
+                await playPromise;
+            }
+        } catch (error) {
+            console.warn("Could not switch music (autoplay blocked or file missing):", error);
+        }
+    };
+
     // Update music volume when state changes
     useEffect(() => {
         if (musicRef.current) {
@@ -99,7 +121,8 @@ export const AudioProvider = ({ children }) => {
         setMusicVolume,
         sfxVolume,
         setSfxVolume,
-        playSfx
+        playSfx,
+        switchMusic
     };
 
     return (

@@ -32,8 +32,8 @@ const PlayerCard = ({ player, onClick }) => {
             </div>
 
             {/* Name */}
-            <p className="text-white font-bold text-xs uppercase tracking-wider text-center
-                          break-words w-full leading-tight group-hover:text-spy-lime transition-colors">
+            <p className={`${player.pseudoColor || 'text-white'} font-bold text-xs uppercase tracking-wider text-center
+                          break-words w-full leading-tight group-hover:drop-shadow-[0_0_5px_currentColor] transition-all`}>
                 {name}
             </p>
         </button>
