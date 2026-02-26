@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import BouncyButton from './BouncyButton';
 import BackArrow from './BackArrow';
 import SettingsGear from './SettingsGear';
 import { format, isToday, isYesterday, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { fr } from 'date-fns/locale';
 
-const History = ({ history, onReplayTeam, onBack, onOpenSettings }) => {
+const History = ({ history, onUpdateHistory, onReplayTeam, onBack, onOpenSettings }) => {
+    const [confirmDeleteAll, setConfirmDeleteAll] = useState(false);
+    const [confirmDeleteDay, setConfirmDeleteDay] = useState(null);
 
     // Group history by relative day
     const groupedHistory = history.reduce((acc, session) => {
@@ -28,7 +31,23 @@ const History = ({ history, onReplayTeam, onBack, onOpenSettings }) => {
             console.error("Invalid date in history", session.date);
         }
         return acc;
+        return acc;
     }, {});
+
+    const handleDeleteEntry = (id) => {
+        onUpdateHistory(history.filter(session => session.id !== id));
+    };
+
+    const handleDeleteDay = (daySessions) => {
+        const idsToDelete = daySessions.map(s => s.id);
+        onUpdateHistory(history.filter(session => !idsToDelete.includes(session.id)));
+        setConfirmDeleteDay(null);
+    };
+
+    const handleDeleteAll = () => {
+        onUpdateHistory([]);
+        setConfirmDeleteAll(false);
+    };
 
 
     return (
@@ -62,13 +81,31 @@ const History = ({ history, onReplayTeam, onBack, onOpenSettings }) => {
                     ) : (
                         <div className="space-y-6">
                             {Object.entries(groupedHistory).map(([dayLabel, sessions]) => (
-                                <div key={dayLabel} className="space-y-3">
-                                    <h2 className="text-white/60 font-bold uppercase tracking-widest text-xs sticky top-0 bg-spy-blue/90 backdrop-blur-sm p-2 rounded-lg z-10 text-center shadow-sm">
-                                        {dayLabel}
-                                    </h2>
+                                <div key={dayLabel} className="space-y-3 relative">
+                                    <div className="sticky top-0 bg-spy-blue/90 backdrop-blur-sm p-2 rounded-lg z-10 flex items-center justify-between shadow-sm">
+                                        <h2 className="text-white/60 font-bold uppercase tracking-widest text-xs ml-2">
+                                            {dayLabel}
+                                        </h2>
+                                        {confirmDeleteDay === dayLabel ? (
+                                            <div className="flex gap-2 mr-1 animate-fade-in">
+                                                <button onClick={() => setConfirmDeleteDay(null)} className="text-[10px] text-white/50 px-2 py-1 uppercase font-bold tracking-widest hover:text-white transition-colors">Annuler</button>
+                                                <button onClick={() => handleDeleteDay(sessions)} className="text-[10px] bg-red-500/80 hover:bg-red-500 border border-red-500 text-white rounded-lg px-2 py-1 uppercase font-black tracking-widest transition-all shadow-lg active:scale-95">Confirmer</button>
+                                            </div>
+                                        ) : (
+                                            <button onClick={() => setConfirmDeleteDay(dayLabel)} className="text-white/30 hover:text-red-400 p-2 rounded-full hover:bg-white/5 transition-all text-sm flex items-center justify-center mr-1" title="Supprimer ce jour">🗑️</button>
+                                        )}
+                                    </div>
 
                                     {sessions.map((session, index) => (
-                                        <div key={session.id || index} className="bg-black/20 rounded-xl p-4 border border-white/5 hover:border-white/20 transition-colors flex flex-col gap-3">
+                                        <div key={session.id || index} className="bg-black/20 rounded-xl p-4 border border-white/5 hover:border-white/20 transition-colors flex flex-col gap-3 relative group">
+
+                                            <button
+                                                onClick={() => handleDeleteEntry(session.id)}
+                                                className="absolute top-2 right-2 text-white/20 hover:text-red-400 transition-colors p-1.5 rounded-full hover:bg-white/10 z-10"
+                                                title="Supprimer cette partie"
+                                            >
+                                                ✕
+                                            </button>
 
                                             {/* Player avatars */}
                                             <div className="flex flex-wrap gap-2 justify-center">
@@ -107,10 +144,36 @@ const History = ({ history, onReplayTeam, onBack, onOpenSettings }) => {
                 </div>
 
                 {/* Footer Action */}
-                <div className="mt-auto">
+                <div className="mt-auto flex flex-col gap-3">
                     <BouncyButton onClick={onBack} variant="secondary" className="w-full py-4 text-sm">
                         RETOUR ACCUEIL
                     </BouncyButton>
+
+                    {history.length > 0 && (
+                        confirmDeleteAll ? (
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={() => setConfirmDeleteAll(false)}
+                                    className="flex-1 py-3 rounded-2xl border border-white/20 text-white/50 font-bold uppercase text-xs tracking-widest hover:border-white/40 transition-all"
+                                >
+                                    Annuler
+                                </button>
+                                <button
+                                    onClick={handleDeleteAll}
+                                    className="flex-1 py-3 rounded-2xl bg-red-600/80 border border-red-500 text-white font-black uppercase text-xs tracking-widest hover:bg-red-600 active:scale-95 transition-all shadow-lg"
+                                >
+                                    ⚠️ TOUT SUPPRIMER
+                                </button>
+                            </div>
+                        ) : (
+                            <button
+                                onClick={() => setConfirmDeleteAll(true)}
+                                className="w-full py-3 rounded-2xl border border-red-500/30 text-red-500/70 font-bold uppercase text-xs tracking-widest hover:border-red-500/60 hover:text-red-400 transition-all"
+                            >
+                                🗑 Vider l'historique
+                            </button>
+                        )
+                    )}
                 </div>
             </div>
         </div>

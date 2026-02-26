@@ -20,6 +20,11 @@ function App() {
   const [showSettings, setShowSettings] = useState(false);
   const [gameHistory, setGameHistory] = useState([]);
 
+  const handleUpdateHistory = (newHistory) => {
+    setGameHistory(newHistory);
+    localStorage.setItem('spyMals_history', JSON.stringify(newHistory));
+  };
+
   // Load history on mount
   useEffect(() => {
     try {
@@ -271,6 +276,7 @@ function App() {
         {currentScreen === 'history' && (
           <History
             history={gameHistory}
+            onUpdateHistory={handleUpdateHistory}
             onReplayTeam={(teamPlayers) => {
               setPlayers(teamPlayers);
               setCurrentScreen('identify');
