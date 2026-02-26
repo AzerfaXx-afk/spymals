@@ -29,11 +29,13 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
             if (assignedRoles.length === 0) {
                 assignRoles();
             }
+        } else if (gameState === 'game_over_reveal') {
+            switchMusic(finalWinningTeam === 'Civilian' ? 'win.mp3' : 'lose.mp3');
         } else {
             // Once we start playing or finish, revert to standard music
             switchMusic('music.mp3');
         }
-    }, [gameState, assignedRoles.length, switchMusic]);
+    }, [gameState, assignedRoles.length, switchMusic, finalWinningTeam]);
 
     // Generate a fresh random speaking order every time we enter the playing state
     useEffect(() => {
