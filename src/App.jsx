@@ -67,8 +67,13 @@ function App() {
       }
     });
 
-    return () => subscription.unsubscribe();
   }, []);
+
+  // Update dynamic body theme
+  useEffect(() => {
+    const activeTheme = profileData?.equipped_theme || 'safari';
+    document.body.className = `theme-${activeTheme}`;
+  }, [profileData?.equipped_theme]);
 
   const fetchProfile = async (userId, userMetadata = null) => {
     try {
@@ -91,7 +96,8 @@ function App() {
           level: 1,
           unlocked_items: ['default'],
           equipped_color: 'default',
-          equipped_banner: 'default'
+          equipped_banner: 'default',
+          equipped_theme: 'safari'
         };
 
         const { data: inserted, error: insertError } = await supabase
@@ -149,7 +155,8 @@ function App() {
           games_won: 0,
           unlocked_items: ['default'],
           equipped_color: 'default',
-          equipped_banner: 'default'
+          equipped_banner: 'default',
+          equipped_theme: 'safari'
         };
         setProfileData(defaultGuest);
         localStorage.setItem('spyMals_guest_profile', JSON.stringify(defaultGuest));
@@ -465,132 +472,201 @@ function App() {
     );
   }
 
+  const isMenuScreen = ['home', 'leaderboard', 'how-to-play', 'profile', 'shop', 'history'].includes(currentScreen);
+
   return (
     <AudioProvider>
-      <div className="antialiased text-gray-900 bg-spy-blue min-h-screen relative">
-        {currentScreen === 'home' && (
-          <Home
-            profileData={profileData}
-            hasHistory={gameHistory.length > 0}
-            onStartGame={startNewMission}
-            onOpenHowToPlay={() => setCurrentScreen('how-to-play')}
-            onOpenSettings={() => setShowSettings(true)}
-            onOpenLeaderboard={() => setCurrentScreen('leaderboard')}
-            onOpenHistory={() => setCurrentScreen('history')}
-            onOpenProfile={() => setCurrentScreen('profile')}
-            onOpenMultiplayer={() => setCurrentScreen('multiplayer-lobby')}
-          />
+      <div className="antialiased text-gray-900 bg-spy-blue min-h-screen relative overflow-x-hidden">
+        
+        {/* Top Header for Menu Screens */}
+        {isMenuScreen && (
+          <div className="fixed top-0 left-0 right-0 h-16 bg-spy-blue/45 backdrop-blur-md border-b border-white/10 px-4 z-40 flex items-center justify-between max-w-md mx-auto rounded-b-xl">
+            {/* Top Left: Boutique */}
+            <button
+              onClick={() => setCurrentScreen('shop')}
+              className={`w-10 h-10 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:text-spy-lime flex items-center justify-center text-lg transition-all cursor-pointer active:scale-95 ${currentScreen === 'shop' ? 'border-spy-lime text-spy-lime bg-spy-lime/5' : 'text-white/60'}`}
+              title="Boutique"
+            >
+              🛒
+            </button>
+
+            {/* Center: Coin Counter */}
+            <div className="bg-black/35 border border-white/5 px-3 py-1.5 rounded-full flex items-center gap-1.5 text-xs font-black text-white shadow-inner select-none">
+              <span>🐾</span>
+              <span className="text-spy-lime">{profileData?.coins || 0}</span>
+            </div>
+
+            {/* Top Right: Profil */}
+            <button
+              onClick={() => setCurrentScreen('profile')}
+              className={`w-10 h-10 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 flex items-center justify-center overflow-hidden transition-all cursor-pointer active:scale-95 ${currentScreen === 'profile' ? 'border-spy-lime' : ''}`}
+              title="Profil"
+            >
+              {profileData?.avatar_emoji && (profileData.avatar_emoji.startsWith('data:image/') || profileData.avatar_emoji.startsWith('http')) ? (
+                <img src={profileData.avatar_emoji} alt="Avatar" className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-xl leading-none">{profileData?.avatar_emoji || '👤'}</span>
+              )}
+            </button>
+          </div>
         )}
-        {currentScreen === 'how-to-play' && (
-          <HowToPlay
-            onBack={() => setCurrentScreen('home')}
-            onOpenSettings={() => setShowSettings(true)}
-          />
-        )}
-        {currentScreen === 'setup' && (
-          <PlayerSetup
-            onNext={confirmPlayerCount}
-            onBack={() => setCurrentScreen('home')}
-            onOpenSettings={() => setShowSettings(true)}
-          />
-        )}
-        {currentScreen === 'identify' && (
-          <IdentifyAgents
-            players={players}
-            onUpdatePlayers={setPlayers}
-            onConfirm={confirmTeam}
-            onBack={() => setCurrentScreen('setup')}
-            onOpenSettings={() => setShowSettings(true)}
-          />
-        )}
-        {currentScreen === 'briefing' && (
-          <MissionBriefing
-            totalPlayers={players.length}
-            onStartGame={startGame}
-            onBack={() => setCurrentScreen('identify')}
-            onOpenSettings={() => setShowSettings(true)}
-          />
-        )}
-        {currentScreen === 'game' && (
-          <GameSession
-            players={players}
-            config={gameConfig}
-            onEndGame={handleScoreUpdate}
-            onAbort={() => setCurrentScreen('home')}
-            onOpenSettings={() => setShowSettings(true)}
-          />
-        )}
-        {currentScreen === 'scoreboard' && (
-          <Scoreboard
-            players={players}
-            winners={winners}
-            onReplay={replayGame}
-            onHome={() => setCurrentScreen('home')}
-            onOpenSettings={() => setShowSettings(true)}
-          />
-        )}
-        {currentScreen === 'leaderboard' && (
-          <Leaderboard
-            onBack={() => setCurrentScreen('home')}
-            onOpenSettings={() => setShowSettings(true)}
-          />
-        )}
-        {currentScreen === 'history' && (
-          <History
-            history={gameHistory}
-            onUpdateHistory={handleUpdateHistory}
-            onReplayTeam={(teamPlayers) => {
-              setPlayers(teamPlayers);
-              setCurrentScreen('identify');
-            }}
-            onBack={() => setCurrentScreen('home')}
-            onOpenSettings={() => setShowSettings(true)}
-          />
-        )}
-        {currentScreen === 'profile' && (
-          <Profile
-            user={user}
-            profileData={profileData}
-            onUpdateProfile={handleUpdateProfile}
-            onLogout={handleLogout}
-            onBack={() => setCurrentScreen('home')}
-            onOpenShop={() => setCurrentScreen('shop')}
-          />
-        )}
-        {currentScreen === 'shop' && (
-          <Shop
-            user={user}
-            profileData={profileData}
-            onUpdateProfile={handleUpdateProfile}
-            onBack={() => setCurrentScreen('profile')}
-          />
-        )}
-        {currentScreen === 'multiplayer-lobby' && (
-          <MultiplayerLobby
-            user={user}
-            profileData={profileData}
-            onBack={() => setCurrentScreen('home')}
-            onStartMultiplayerGame={(roomData) => {
-              setMultiplayerRoom(roomData);
-              setCurrentScreen('multiplayer-game');
-            }}
-            onLoginRedirect={() => {
-              setAuthSkipped(false);
-              setCurrentScreen('home');
-            }}
-          />
-        )}
-        {currentScreen === 'multiplayer-game' && (
-          <MultiplayerGame
-            user={user}
-            profileData={profileData}
-            initialRoom={multiplayerRoom}
-            onUpdateProfile={handleUpdateProfile}
-            onLeave={() => {
-              setMultiplayerRoom(null);
-              setCurrentScreen('multiplayer-lobby');
-            }}
-          />
+
+        <div className={isMenuScreen ? "pb-24 pt-20" : ""}>
+          {currentScreen === 'home' && (
+            <Home
+              profileData={profileData}
+              hasHistory={gameHistory.length > 0}
+              onStartGame={startNewMission}
+              onOpenHowToPlay={() => setCurrentScreen('how-to-play')}
+              onOpenSettings={() => setShowSettings(true)}
+              onOpenLeaderboard={() => setCurrentScreen('leaderboard')}
+              onOpenHistory={() => setCurrentScreen('history')}
+              onOpenProfile={() => setCurrentScreen('profile')}
+              onOpenMultiplayer={() => setCurrentScreen('multiplayer-lobby')}
+            />
+          )}
+          {currentScreen === 'how-to-play' && (
+            <HowToPlay
+              onBack={() => setCurrentScreen('home')}
+              onOpenSettings={() => setShowSettings(true)}
+            />
+          )}
+          {currentScreen === 'setup' && (
+            <PlayerSetup
+              onNext={confirmPlayerCount}
+              onBack={() => setCurrentScreen('home')}
+              onOpenSettings={() => setShowSettings(true)}
+            />
+          )}
+          {currentScreen === 'identify' && (
+            <IdentifyAgents
+              players={players}
+              onUpdatePlayers={setPlayers}
+              onConfirm={confirmTeam}
+              onBack={() => setCurrentScreen('setup')}
+              onOpenSettings={() => setShowSettings(true)}
+            />
+          )}
+          {currentScreen === 'briefing' && (
+            <MissionBriefing
+              totalPlayers={players.length}
+              onStartGame={startGame}
+              onBack={() => setCurrentScreen('identify')}
+              onOpenSettings={() => setShowSettings(true)}
+            />
+          )}
+          {currentScreen === 'game' && (
+            <GameSession
+              players={players}
+              config={gameConfig}
+              onEndGame={handleScoreUpdate}
+              onAbort={() => setCurrentScreen('home')}
+              onOpenSettings={() => setShowSettings(true)}
+            />
+          )}
+          {currentScreen === 'scoreboard' && (
+            <Scoreboard
+              players={players}
+              winners={winners}
+              onReplay={replayGame}
+              onHome={() => setCurrentScreen('home')}
+              onOpenSettings={() => setShowSettings(true)}
+            />
+          )}
+          {currentScreen === 'leaderboard' && (
+            <Leaderboard
+              onBack={() => setCurrentScreen('home')}
+              onOpenSettings={() => setShowSettings(true)}
+            />
+          )}
+          {currentScreen === 'history' && (
+            <History
+              history={gameHistory}
+              onUpdateHistory={handleUpdateHistory}
+              onReplayTeam={(teamPlayers) => {
+                setPlayers(teamPlayers);
+                setCurrentScreen('identify');
+              }}
+              onBack={() => setCurrentScreen('home')}
+              onOpenSettings={() => setShowSettings(true)}
+            />
+          )}
+          {currentScreen === 'profile' && (
+            <Profile
+              user={user}
+              profileData={profileData}
+              onUpdateProfile={handleUpdateProfile}
+              onLogout={handleLogout}
+              onBack={() => setCurrentScreen('home')}
+              onOpenShop={() => setCurrentScreen('shop')}
+            />
+          )}
+          {currentScreen === 'shop' && (
+            <Shop
+              user={user}
+              profileData={profileData}
+              onUpdateProfile={handleUpdateProfile}
+              onBack={() => setCurrentScreen('profile')}
+            />
+          )}
+          {currentScreen === 'multiplayer-lobby' && (
+            <MultiplayerLobby
+              user={user}
+              profileData={profileData}
+              onBack={() => setCurrentScreen('home')}
+              onStartMultiplayerGame={(roomData) => {
+                setMultiplayerRoom(roomData);
+                setCurrentScreen('multiplayer-game');
+              }}
+              onLoginRedirect={() => {
+                setAuthSkipped(false);
+                setCurrentScreen('home');
+              }}
+            />
+          )}
+          {currentScreen === 'multiplayer-game' && (
+            <MultiplayerGame
+              user={user}
+              profileData={profileData}
+              initialRoom={multiplayerRoom}
+              onUpdateProfile={handleUpdateProfile}
+              onLeave={() => {
+                setMultiplayerRoom(null);
+                setCurrentScreen('multiplayer-lobby');
+              }}
+            />
+          )}
+        </div>
+
+        {/* Bottom Navbar for Menu Screens */}
+        {isMenuScreen && (
+          <div className="fixed bottom-0 left-0 right-0 nav-bottom-bar p-3 z-40 flex items-center justify-around max-w-md mx-auto rounded-t-3xl border-x border-t border-white/10 pb-6">
+            {/* Tab 1: Classement */}
+            <button
+              onClick={() => setCurrentScreen('leaderboard')}
+              className={`flex flex-col items-center gap-1 transition-all cursor-pointer active:scale-95 ${currentScreen === 'leaderboard' ? 'text-spy-lime scale-105 font-black' : 'text-white/60 hover:text-white'}`}
+            >
+              <span className="text-xl">🏆</span>
+              <span className="text-[9px] uppercase tracking-wider font-black">Classement</span>
+            </button>
+
+            {/* Tab 2: Accueil (Gros Bouton) */}
+            <button
+              onClick={() => setCurrentScreen('home')}
+              className={`w-14 h-14 rounded-full bg-spy-lime border-[3px] border-black flex items-center justify-center shadow-[0_4px_0_#000] active:translate-y-1 active:shadow-none transition-all cursor-pointer translate-y-[-14px]`}
+            >
+              <span className="text-2xl select-none">🎮</span>
+            </button>
+
+            {/* Tab 3: Guide */}
+            <button
+              onClick={() => setCurrentScreen('how-to-play')}
+              className={`flex flex-col items-center gap-1 transition-all cursor-pointer active:scale-95 ${currentScreen === 'how-to-play' ? 'text-spy-lime scale-105 font-black' : 'text-white/60 hover:text-white'}`}
+            >
+              <span className="text-xl">📖</span>
+              <span className="text-[9px] uppercase tracking-wider font-black">Guide</span>
+            </button>
+          </div>
         )}
 
         {/* Settings Overlay */}
@@ -601,6 +677,7 @@ function App() {
             />
           </div>
         )}
+        
         {/* Force profile setup for new Google logins */}
         {showSetupModal && (
           <EditProfileModal

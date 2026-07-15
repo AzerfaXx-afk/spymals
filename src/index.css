@@ -555,21 +555,154 @@ h6 {
         0px 25px 30px rgba(0, 0, 0, 0.2);
 }
 
-/* 3D Bubble/Clay Typography - Orange (Mals) - Super Inflated */
-.text-clay-orange {
-    color: #ff9f1c;
-    text-shadow:
-        /* Top Highlight - Strong Plastic Shine */
-        0px -3px 0px rgba(255, 255, 255, 0.5),
-        /* Soft Rim Light */
-        3px -3px 0px rgba(255, 220, 150, 0.6),
-        /* Depth Stack - Thicker */
-        0px 3px 0px #ff8c00,
-        0px 6px 0px #e67e00,
-        0px 9px 0px #cc7000,
-        0px 12px 0px #b36200,
-        0px 15px 0px #995400,
-        /* Deep Soft Shadows for floating effect */
-        0px 15px 20px rgba(0, 0, 0, 0.3),
-        0px 25px 30px rgba(0, 0, 0, 0.2);
+/* ──────────────────────────────────────────────────────────────────────────
+   CARTOON NEOBRUTALISM & THEMES STYLING (AWWWARDS REDESIGN)
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* Theme 1: Safari Classique (Jungle / Warm) */
+.theme-safari {
+    --color-spy-bg-start: #2d3b1b;
+    --color-spy-bg-end: #0f1604;
+    --card-bg: #fffcf0;
+    --card-border: #1a1a1a;
+    --card-text: #2c2514;
+    --card-shadow: #1a1a1a;
+    --highlight-color: #aadd00;
+}
+
+/* Theme 2: Cyber Renard (Neon / Cyberpunk) */
+.theme-cyber {
+    --color-spy-bg-start: #1c0b30;
+    --color-spy-bg-end: #05020a;
+    --card-bg: #110d1f;
+    --card-border: #00ffff;
+    --card-text: #ffffff;
+    --card-shadow: #ff00ff;
+    --highlight-color: #00ffff;
+}
+
+/* Theme 3: Banquise Furtive (Polar / Cool) */
+.theme-polar {
+    --color-spy-bg-start: #0c2035;
+    --color-spy-bg-end: #030a14;
+    --card-bg: #f0f7ff;
+    --card-border: #1a3a60;
+    --card-text: #0b1a30;
+    --card-shadow: #3b82f6;
+    --highlight-color: #60a5fa;
+}
+
+/* Base Body settings for active theme */
+body.theme-safari {
+    background-image: radial-gradient(circle at center top, var(--color-spy-bg-start) 0%, var(--color-spy-bg-end) 100%);
+}
+body.theme-cyber {
+    background-image: radial-gradient(circle at center top, var(--color-spy-bg-start) 0%, var(--color-spy-bg-end) 100%);
+}
+body.theme-polar {
+    background-image: radial-gradient(circle at center top, var(--color-spy-bg-start) 0%, var(--color-spy-bg-end) 100%);
+}
+
+/* Neobrutalism Cartoon Card */
+.card-cartoon {
+    background-color: var(--card-bg, #fffcf0);
+    border: 3.5px solid var(--card-border, #1a1a1a);
+    color: var(--card-text, #2c2514);
+    box-shadow: 6px 6px 0px 0px var(--card-shadow, #1a1a1a);
+    border-radius: 24px;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.card-cartoon:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0px 0px var(--card-shadow, #1a1a1a);
+}
+
+/* Neobrutalism Cartoon Button */
+.btn-cartoon-primary {
+    background: linear-gradient(to bottom, #d4ff00, #aadd00);
+    border: 3.5px solid #1a1a1a;
+    color: #1a1a1a;
+    box-shadow: 5px 5px 0px 0px #1a1a1a;
+    border-radius: 20px;
+    font-family: var(--font-display);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.1s ease;
+}
+
+.btn-cartoon-primary:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 6px 6px 0px 0px #1a1a1a;
+    background: linear-gradient(to bottom, #deff1a, #b3e600);
+}
+
+.btn-cartoon-primary:active {
+    transform: translate(3px, 3px);
+    box-shadow: 2px 2px 0px 0px #1a1a1a;
+}
+
+.btn-cartoon-secondary {
+    background: #ffffff;
+    border: 3px solid #1a1a1a;
+    color: #1a1a1a;
+    box-shadow: 4px 4px 0px 0px #1a1a1a;
+    border-radius: 18px;
+    font-family: var(--font-display);
+    font-weight: 800;
+    text-transform: uppercase;
+    transition: all 0.1s ease;
+}
+
+.btn-cartoon-secondary:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 5px 5px 0px 0px #1a1a1a;
+    background: #f7f7f7;
+}
+
+.btn-cartoon-secondary:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px 0px #1a1a1a;
+}
+
+/* Sticky Bottom Navbar style */
+.nav-bottom-bar {
+    background: rgba(10, 31, 61, 0.45);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1.5px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Cyber Theme glowing inputs override */
+.theme-cyber input, .theme-cyber select {
+    border-color: rgba(0, 255, 255, 0.2) !important;
+    background: rgba(0, 0, 0, 0.4) !important;
+}
+.theme-cyber input:focus, .theme-cyber select:focus {
+    border-color: #00ffff !important;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.3) !important;
+}
+
+/* Polar Theme inputs override */
+.theme-polar input, .theme-polar select {
+    border-color: rgba(59, 130, 246, 0.2) !important;
+    background: rgba(255, 255, 255, 0.8) !important;
+    color: #0b1a30 !important;
+}
+.theme-polar input::placeholder {
+    color: rgba(11, 26, 48, 0.4) !important;
+}
+.theme-polar input:focus, .theme-polar select:focus {
+    border-color: #3b82f6 !important;
+}
+
+/* Animations */
+@keyframes emojiJump {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+.emoji-bounce {
+    animation: emojiJump 1.5s ease infinite;
 }

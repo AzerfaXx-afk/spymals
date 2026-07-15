@@ -24,6 +24,43 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
     const [isReady, setIsReady] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
     const [loading, setLoading] = useState(false);
+    const [chatText, setChatText] = useState('');
+
+    const QUICK_EMOTES = ['🦊', '🕵️‍♂️', '🚨', '🤫', '💥', '👀', '🏆', '👑', '🎉', '🔥'];
+
+    const handleSendChatMessage = async (textToSend = null) => {
+        const messageStr = textToSend || chatText;
+        if (!messageStr || !messageStr.trim() || !room) return;
+
+        const currentMessages = room.game_state?.chat_messages || [];
+        const newMsg = {
+            id: Math.random().toString(),
+            sender_id: user?.id || `guest_${Date.now()}`,
+            sender_name: profileData?.username || 'Agent',
+            sender_avatar: profileData?.avatar_emoji || '🦁',
+            text: messageStr.trim(),
+            timestamp: new Date().toISOString()
+        };
+
+        const newMessages = [...currentMessages, newMsg].slice(-50);
+
+        try {
+            await supabase
+                .from('spymals_rooms')
+                .update({
+                    game_state: {
+                        ...room.game_state,
+                        chat_messages: newMessages
+                    }
+                })
+                .eq('id', room.id);
+            
+            if (!textToSend) setChatText('');
+            playSfx('/sons/click.mp3');
+        } catch (err) {
+            console.error("Failed to send message:", err);
+        }
+    };
     
     // Game Settings state (for host)
     const [settings, setSettings] = useState({
@@ -617,6 +654,75 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
                                     </div>
                                 </div>
                             ))}
+                        </div>
+                    </div>
+
+                    {/* Chat & Émotes en Direct */}
+                    <div className="bg-white/5 border border-white/10 rounded-[32px] p-6 shadow-xl space-y-4 text-left">
+                        <h3 className="text-xs font-black uppercase tracking-widest text-white border-b border-white/10 pb-2">
+                            💬 Chat & Émotes du Salon
+                        </h3>
+
+                        {/* Message Box */}
+                        <div className="h-44 bg-black/40 border border-white/5 rounded-2xl p-3 overflow-y-auto space-y-2.5 flex flex-col scrollbar-thin">
+                            {(room?.game_state?.chat_messages || []).length === 0 ? (
+                                <p className="text-[10px] text-white/30 uppercase tracking-wider text-center my-auto font-black select-none">
+                                    Aucun message. Lancez la discussion !
+                                </p>
+                            ) : (
+                                (room?.game_state?.chat_messages || []).map((msg) => {
+                                    const isMe = msg.sender_id === (user?.id || players.find(x => x.username === profileData?.username)?.id);
+                                    return (
+                                        <div 
+                                            key={msg.id} 
+                                            className={`flex items-start gap-2.5 max-w-[85%] ${isMe ? 'self-end flex-row-reverse' : 'self-start'}`}
+                                        >
+                                            <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center overflow-hidden border border-white/10 flex-none select-none">
+                                                {msg.sender_avatar && (msg.sender_avatar.startsWith('data:image/') || msg.sender_avatar.startsWith('http')) ? (
+                                                    <img src={msg.sender_avatar} alt="Avatar" className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <span className="text-sm">{msg.sender_avatar || '🦊'}</span>
+                                                )}
+                                            </div>
+                                            <div className={`p-2.5 rounded-2xl text-xs font-bold leading-relaxed ${isMe ? 'bg-spy-lime text-black rounded-tr-none' : 'bg-white/10 text-white rounded-tl-none'}`}>
+                                                {!isMe && <span className="block text-[9px] font-black text-spy-lime/80 uppercase mb-0.5">{msg.sender_name}</span>}
+                                                <span className="break-all">{msg.text}</span>
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            )}
+                        </div>
+
+                        {/* Quick Emotes Panel */}
+                        <div className="flex flex-wrap gap-1.5 justify-between bg-black/25 p-2 rounded-xl border border-white/5">
+                            {QUICK_EMOTES.map(emote => (
+                                <button
+                                    key={emote}
+                                    onClick={() => handleSendChatMessage(emote)}
+                                    className="w-8 h-8 rounded-lg hover:bg-white/10 active:scale-95 transition-all text-lg flex items-center justify-center cursor-pointer select-none"
+                                >
+                                    {emote}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Message Send Form */}
+                        <div className="flex gap-2">
+                            <input
+                                type="text"
+                                value={chatText}
+                                onChange={(e) => setChatText(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleSendChatMessage()}
+                                placeholder="Écrire un message..."
+                                className="flex-1 bg-black/45 border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-white/20 focus:outline-none focus:border-spy-lime"
+                            />
+                            <button
+                                onClick={() => handleSendChatMessage()}
+                                className="px-4 py-2 bg-spy-lime border-2 border-black text-black font-black uppercase text-xs rounded-xl hover:bg-spy-lime/90 active:translate-y-0.5 active:shadow-none transition-all shadow-[2px_2px_0_#000] cursor-pointer"
+                            >
+                                Envoi
+                            </button>
                         </div>
                     </div>
 

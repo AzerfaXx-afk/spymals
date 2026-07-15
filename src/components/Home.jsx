@@ -1,135 +1,119 @@
-import React from 'react';
+import React, { useState } from 'react';
 import BouncyButton from './BouncyButton';
-// Assure-toi que le chemin vers ton composant BouncyButton est correct
 
-const Home = ({ profileData, hasHistory, onStartGame, onOpenSettings, onOpenHowToPlay, onOpenLeaderboard, onOpenHistory, onOpenProfile, onOpenMultiplayer }) => {
-    const profileEmoji = profileData?.avatar_emoji || '👤';
+const Home = ({ 
+    profileData, 
+    hasHistory, 
+    onStartGame, 
+    onOpenSettings, 
+    onOpenHowToPlay, 
+    onOpenLeaderboard, 
+    onOpenHistory, 
+    onOpenProfile, 
+    onOpenMultiplayer 
+}) => {
+    const [showPlayOptions, setShowPlayOptions] = useState(false);
+
     return (
-        // Conteneur principal avec le fond bleu et les effets
-        <div className="flex flex-col items-center justify-center min-h-[100dvh] p-6 text-center relative overflow-hidden bg-spy-blue touch-none" style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}>
-
-            {/* --- Décors d'arrière-plan (Motifs subtils) --- */}
-            <div className="absolute inset-0 opacity-10 pointer-events-none" style={{
-                backgroundImage: `radial-gradient(circle at 20% 30%, rgba(255,255,255,0.05) 0%, transparent 5%), 
-                                  radial-gradient(circle at 80% 70%, rgba(255,255,255,0.05) 0%, transparent 5%)`,
-                backgroundSize: '100px 100px'
-            }}></div>
-
-            {/* --- Effets de lumière douce et pulsante --- */}
-            <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-purple-500/20 rounded-full blur-[120px] mix-blend-screen animate-pulse-slow"></div>
-            <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] bg-blue-500/20 rounded-full blur-[120px] mix-blend-screen animate-pulse-slow delay-700"></div>
-
-            {/* --- Section Centrale : LOGO et SOUS-TITRE --- */}
-            <div className="z-10 flex flex-col items-center mb-10 relative w-full mt-8 md:mt-12">
-
-                {/* Conteneur de l'image unique combinée */}
-                <div className="relative w-full max-w-[420px] mx-auto flex items-center justify-center">
+        <div className="flex flex-col items-center justify-center min-h-[80vh] p-6 text-center relative overflow-hidden">
+            
+            {/* Decors & Mascot */}
+            <div className="z-10 flex flex-col items-center mb-8 relative w-full mt-4">
+                <div className="relative w-full max-w-[320px] mx-auto flex items-center justify-center">
                     <picture>
-                        {/* WebP — modern browsers (52KB vs 6.5MB original) */}
                         <source srcSet="/renard.webp" type="image/webp" />
-                        {/* PNG fallback for older browsers */}
                         <img
                             src="/renard.png"
                             alt="Logo SpyMals avec le Renard Détective"
-                            width={800}
-                            height={800}
+                            width={500}
+                            height={500}
                             fetchpriority="high"
                             decoding="async"
-                            className="w-full h-auto object-contain drop-shadow-2xl translate-y-2"
-                            style={{ maxHeight: '42dvh' }}
+                            className="w-full h-auto object-contain drop-shadow-[0_15px_15px_rgba(0,0,0,0.4)] animate-bounce-slow"
+                            style={{ maxHeight: '38dvh' }}
                         />
                     </picture>
                 </div>
 
-                {/* Badge Sous-titre "Démasquez l'imposteur" */}
-                <div className="bg-black/30 backdrop-blur-md px-6 py-2 md:px-8 md:py-3 rounded-full border border-white/10 shadow-lg mt-6">
-                    <p className="text-white/90 font-bold text-[10px] md:text-sm tracking-[0.2em] uppercase whitespace-nowrap">
+                {/* Subtitle Badge */}
+                <div className="mt-6 bg-black/40 backdrop-blur-md px-6 py-2 rounded-full border border-white/10 shadow-lg">
+                    <p className="text-white font-black text-xs tracking-[0.2em] uppercase">
                         Démasquez l'imposteur
                     </p>
                 </div>
             </div>
 
-            {/* --- Section des Boutons d'Action --- */}
-            <div className="z-10 w-full max-w-sm space-y-5 md:space-y-6">
+            {/* Giant Play Button */}
+            <div className="z-10 w-full max-w-xs space-y-4">
+                <button
+                    onClick={() => setShowPlayOptions(true)}
+                    className="btn-cartoon-primary w-full text-2xl py-5 px-6 font-black uppercase tracking-wider shadow-[0_8px_0_#000] cursor-pointer"
+                >
+                    🚀 JOUER !
+                </button>
 
-                {/* Gros Boutons Principaux */}
-                <div className="space-y-4">
-                    <BouncyButton
-                        variant="custom"
-                        onClick={onStartGame}
-                        className="btn-glass-primary w-full text-lg md:text-2xl py-4 md:py-5 tracking-wide shadow-[0_10px_20px_-5px_rgba(164,246,0,0.35)]"
-                    >
-                        🎮 JEU LOCAL (1 TÉL)
-                    </BouncyButton>
-
-                    <BouncyButton
-                        variant="custom"
-                        onClick={onOpenMultiplayer}
-                        className="btn-glass-secondary w-full text-lg md:text-2xl py-4 md:py-5 tracking-wide border border-spy-lime/30 shadow-[0_10px_20px_-5px_rgba(0,186,255,0.2)] text-white hover:border-spy-lime/60"
-                    >
-                        🌐 JOUER EN LIGNE
-                    </BouncyButton>
-                </div>
-
-                {/* Grille des 4 boutons secondaires */}
-                <div className="grid grid-cols-2 gap-3 md:gap-4">
-                    <BouncyButton
-                        variant="custom"
-                        onClick={onOpenHowToPlay}
-                        className="btn-glass-secondary flex items-center justify-center p-3 gap-2.5 rounded-2xl"
-                    >
-                        <div className="text-xl md:text-2xl drop-shadow-md">📖</div>
-                        <span className="text-[10px] md:text-xs font-bold tracking-wider opacity-85 uppercase">GUIDE</span>
-                    </BouncyButton>
-
-                    <BouncyButton
-                        variant="custom"
-                        onClick={onOpenLeaderboard}
-                        className="btn-glass-secondary flex items-center justify-center p-3 gap-2.5 rounded-2xl"
-                    >
-                        <div className="text-xl md:text-2xl drop-shadow-md">🏆</div>
-                        <span className="text-[10px] md:text-xs font-bold tracking-wider opacity-85 uppercase">CLASSEMENT</span>
-                    </BouncyButton>
-
-                    <BouncyButton
-                        variant="custom"
-                        onClick={onOpenSettings}
-                        className="btn-glass-secondary flex items-center justify-center p-3 gap-2.5 rounded-2xl"
-                    >
-                        <div className="text-xl md:text-2xl drop-shadow-md">⚙️</div>
-                        <span className="text-[10px] md:text-xs font-bold tracking-wider opacity-85 uppercase">OPTIONS</span>
-                    </BouncyButton>
-
-                    <BouncyButton
-                        variant="custom"
-                        onClick={onOpenProfile}
-                        className="btn-glass-secondary flex items-center justify-center p-3 gap-2.5 rounded-2xl"
-                    >
-                        <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-white/10 flex items-center justify-center overflow-hidden border border-white/15 select-none pointer-events-none drop-shadow-md flex-none">
-                            {profileData?.avatar_emoji && (profileData.avatar_emoji.startsWith('data:image/') || profileData.avatar_emoji.startsWith('http')) ? (
-                                <img src={profileData.avatar_emoji} alt="Avatar" className="w-full h-full object-cover" />
-                            ) : (
-                                <span className="text-lg md:text-xl leading-none">{profileData?.avatar_emoji || '👤'}</span>
-                            )}
-                        </div>
-                        <span className="text-[10px] md:text-xs font-bold tracking-wider opacity-85 uppercase">PROFIL</span>
-                    </BouncyButton>
-                </div>
-
-                {/* Historique Bouton (Seulement si des parties ont été jouées) */}
+                {/* Optional History button */}
                 {hasHistory && (
-                    <div className="mt-4 pt-4 border-t border-white/10 animate-fade-in">
-                        <BouncyButton
-                            variant="custom"
-                            onClick={onOpenHistory}
-                            className="bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl w-full py-4 flex flex-col items-center justify-center gap-1 transition-colors"
-                        >
-                            <div className="text-xl md:text-2xl drop-shadow-md">🕒</div>
-                            <span className="text-[10px] md:text-xs font-bold tracking-widest text-white/70 uppercase">HISTORIQUE DES ÉQUIPES</span>
-                        </BouncyButton>
-                    </div>
+                    <button
+                        onClick={onOpenHistory}
+                        className="btn-cartoon-secondary w-full py-3.5 text-xs font-black uppercase tracking-wider shadow-[0_5px_0_#000] cursor-pointer"
+                    >
+                        🕒 Historique des équipes
+                    </button>
                 )}
             </div>
+
+            {/* Play Options Modal Overlay */}
+            {showPlayOptions && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-6 animate-fade-in">
+                    <div className="card-cartoon w-full max-w-sm p-6 relative flex flex-col items-center">
+                        {/* Close button */}
+                        <button
+                            onClick={() => setShowPlayOptions(false)}
+                            className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/10 border-2 border-black flex items-center justify-center text-sm font-black hover:bg-black/20 cursor-pointer active:scale-90"
+                        >
+                            ✕
+                        </button>
+
+                        <div className="text-3xl mb-3 emoji-bounce">🕵️‍♂️</div>
+                        <h2 className="text-xl font-black uppercase tracking-tight text-center mb-6">
+                            Choisissez votre Mission
+                        </h2>
+
+                        <div className="w-full space-y-4">
+                            {/* Mode Local */}
+                            <button
+                                onClick={() => {
+                                    setShowPlayOptions(false);
+                                    onStartGame();
+                                }}
+                                className="w-full bg-[#ffc300] hover:bg-[#ffb000] text-black border-[3.5px] border-black rounded-2xl p-4 text-left font-black flex items-center gap-4 transition-all shadow-[4px_4px_0_#000] active:translate-x-1 active:translate-y-1 active:shadow-[1px_1px_0_#000] cursor-pointer"
+                            >
+                                <span className="text-3xl">📱</span>
+                                <div>
+                                    <div className="uppercase text-sm tracking-wide">Mode Local</div>
+                                    <div className="text-[10px] opacity-75 font-bold uppercase mt-0.5">Sur 1 seul téléphone</div>
+                                </div>
+                            </button>
+
+                            {/* Mode En Ligne */}
+                            <button
+                                onClick={() => {
+                                    setShowPlayOptions(false);
+                                    onOpenMultiplayer();
+                                }}
+                                className="w-full bg-[#00f5d4] hover:bg-[#00e0c2] text-black border-[3.5px] border-black rounded-2xl p-4 text-left font-black flex items-center gap-4 transition-all shadow-[4px_4px_0_#000] active:translate-x-1 active:translate-y-1 active:shadow-[1px_1px_0_#000] cursor-pointer"
+                            >
+                                <span className="text-3xl">🌐</span>
+                                <div>
+                                    <div className="uppercase text-sm tracking-wide">Mode En Ligne</div>
+                                    <div className="text-[10px] opacity-75 font-bold uppercase mt-0.5">Jouez à distance</div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
