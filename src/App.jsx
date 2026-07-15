@@ -14,6 +14,7 @@ import Profile from './components/Profile';
 import Shop from './components/Shop';
 import MultiplayerLobby from './components/MultiplayerLobby';
 import MultiplayerGame from './components/MultiplayerGame';
+import EditProfileModal from './components/EditProfileModal';
 
 import { AudioProvider } from './contexts/AudioContext';
 import { supabase } from './utils/supabaseClient';
@@ -30,6 +31,19 @@ function App() {
   const [profileData, setProfileData] = useState(null);
   const [authSkipped, setAuthSkipped] = useState(false);
   const [multiplayerRoom, setMultiplayerRoom] = useState(null);
+  const [showSetupModal, setShowSetupModal] = useState(false);
+
+  // Trigger profile setup modal for new Google OAuth logins
+  useEffect(() => {
+    if (user && profileData) {
+      const isGoogleLogin = user.app_metadata?.provider === 'google' || user.identities?.some(id => id.provider === 'google');
+      const hasCustomized = profileData.unlocked_items?.includes('profile_customized');
+      
+      if (isGoogleLogin && !hasCustomized && currentScreen === 'home') {
+        setShowSetupModal(true);
+      }
+    }
+  }, [user, profileData, currentScreen]);
 
   // Check auth session on mount
   useEffect(() => {
@@ -94,6 +108,28 @@ function App() {
       }
     } catch (e) {
       console.error("Failed to fetch/create profile", e);
+    }
+  };
+
+  const handleSaveSetupProfile = async (updatedData) => {
+    const currentUnlocked = updatedData.unlocked_items || [];
+    const newUnlocked = currentUnlocked.includes('profile_customized') 
+      ? currentUnlocked 
+      : [...currentUnlocked, 'profile_customized'];
+
+    const finalData = { ...updatedData, unlocked_items: newUnlocked };
+    setProfileData(finalData);
+    setShowSetupModal(false);
+
+    if (user) {
+      await supabase
+        .from('spymals_profiles')
+        .update({
+          username: finalData.username,
+          avatar_emoji: finalData.avatar_emoji,
+          unlocked_items: finalData.unlocked_items
+        })
+        .eq('id', user.id);
     }
   };
 
@@ -564,6 +600,15 @@ function App() {
               onBack={() => setShowSettings(false)}
             />
           </div>
+        )}
+        {/* Force profile setup for new Google logins */}
+        {showSetupModal && (
+          <EditProfileModal
+            profileData={profileData}
+            onSave={handleSaveSetupProfile}
+            onClose={() => setShowSetupModal(false)}
+            isForce={true}
+          />
         )}
       </div>
     </AudioProvider>

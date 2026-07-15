@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import BouncyButton from './BouncyButton';
 import BackArrow from './BackArrow';
 import { supabase } from '../utils/supabaseClient';
+import EditProfileModal from './EditProfileModal';
 
 export const USERNAME_COLORS = [
     { id: 'default', label: 'Blanc Classique', class: 'text-white', price: 0 },
@@ -36,6 +37,21 @@ const Profile = ({ user, profileData, onUpdateProfile, onLogout, onBack, onOpenS
     const [equippedColor, setEquippedColor] = useState('default');
     const [equippedBanner, setEquippedBanner] = useState('default');
     const [unlockedItems, setUnlockedItems] = useState(['default']);
+    const [showEditModal, setShowEditModal] = useState(false);
+
+    const handleSaveProfile = async (updatedData) => {
+        onUpdateProfile(updatedData);
+        setShowEditModal(false);
+        if (!isGuest) {
+            await supabase
+                .from('spymals_profiles')
+                .update({
+                    username: updatedData.username,
+                    avatar_emoji: updatedData.avatar_emoji
+                })
+                .eq('id', user.id);
+        }
+    };
 
     // Fetch equipped cosmetics and unlocked list
     useEffect(() => {
@@ -101,18 +117,26 @@ const Profile = ({ user, profileData, onUpdateProfile, onLogout, onBack, onOpenS
             {/* Profile Card */}
             <div className={`z-10 w-full max-w-md border rounded-[32px] p-6 shadow-2xl backdrop-blur-2xl transition-all duration-500 mb-6 ${selectedBannerClass}`}>
                 
-                {/* Header (Avatar & Username & Title) */}
-                <div className="flex items-center gap-4 mb-6">
-                    <div className="w-20 h-20 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-4xl shadow-inner overflow-hidden select-none flex-none">
+                {/* Header (Avatar & Username & Title) - Clickable to edit profile */}
+                <div 
+                    onClick={() => setShowEditModal(true)}
+                    className="flex items-center gap-4 mb-6 cursor-pointer hover:bg-white/5 p-2 rounded-2xl transition-all group"
+                    title="Modifier le profil"
+                >
+                    <div className="w-20 h-20 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-4xl shadow-inner overflow-hidden select-none flex-none relative group-hover:scale-105 transition-all">
                         {profileData?.avatar_emoji && (profileData.avatar_emoji.startsWith('data:image/') || profileData.avatar_emoji.startsWith('http')) ? (
-                            <img src={profileData.avatar_emoji} alt="Avatar" className="w-full h-full object-cover" />
+                            <img src={profileData.avatar_emoji} alt="Avatar" className="w-full h-full object-cover animate-pop-in" />
                         ) : (
                             profileData?.avatar_emoji || '🦁'
                         )}
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all rounded-full">
+                            <span className="text-xs">✏️</span>
+                        </div>
                     </div>
-                    <div className="flex-1">
-                        <h3 className={`text-2xl font-black uppercase tracking-tight break-all leading-tight ${selectedColorClass}`}>
+                    <div className="flex-1 min-w-0 text-left">
+                        <h3 className={`text-2xl font-black uppercase tracking-tight break-all leading-tight group-hover:text-spy-lime transition-all flex items-center gap-1.5 ${selectedColorClass}`}>
                             {profileData?.username || 'Agent Invité'}
+                            <span className="text-xs opacity-50 group-hover:opacity-100 transition-opacity">✏️</span>
                         </h3>
                         <p className="text-spy-lime text-xs font-black uppercase tracking-wider mt-1">
                             {getLevelTitle(profileData?.level || 1)}
@@ -237,6 +261,15 @@ const Profile = ({ user, profileData, onUpdateProfile, onLogout, onBack, onOpenS
                         </div>
                     </div>
                 </div>
+            )}
+
+            {/* Edit Profile Modal */}
+            {showEditModal && (
+                <EditProfileModal
+                    profileData={profileData}
+                    onSave={handleSaveProfile}
+                    onClose={() => setShowEditModal(false)}
+                />
             )}
         </div>
     );

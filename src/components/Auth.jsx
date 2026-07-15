@@ -16,6 +16,7 @@ const Auth = ({ onAuthSuccess, onSkip }) => {
     
     // Email verification state
     const [verificationSent, setVerificationSent] = useState(false);
+    const [showAnimalModal, setShowAnimalModal] = useState(false);
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -189,8 +190,9 @@ const Auth = ({ onAuthSuccess, onSkip }) => {
     return (
         <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-spy-blue relative overflow-hidden">
             {/* Ambient background glows */}
-            <div className="absolute top-[-10%] right-[-15%] w-[450px] h-[450px] bg-spy-lime opacity-[0.08] rounded-full blur-[100px] animate-pulse-slow"></div>
-            <div className="absolute bottom-[-10%] left-[-15%] w-[450px] h-[450px] bg-spy-orange opacity-[0.08] rounded-full blur-[100px] animate-pulse-slow delay-1000"></div>
+            <div className="absolute top-[10%] left-[5%] w-[350px] h-[350px] bg-spy-lime opacity-[0.12] rounded-full blur-[120px] pointer-events-none select-none animate-pulse-slow"></div>
+            <div className="absolute bottom-[15%] right-[5%] w-[350px] h-[350px] bg-spy-orange opacity-[0.1] rounded-full blur-[120px] pointer-events-none select-none animate-pulse-slow delay-1000"></div>
+            <div className="absolute top-[40%] left-[30%] w-[400px] h-[400px] bg-indigo-500 opacity-[0.05] rounded-full blur-[150px] pointer-events-none select-none"></div>
 
             {verificationSent ? (
                 // 📬 VERIFICATION CARD
@@ -229,6 +231,18 @@ const Auth = ({ onAuthSuccess, onSkip }) => {
             ) : (
                 // 🛡️ AUTH CARD
                 <div className="w-full max-w-md bg-white/10 backdrop-blur-2xl border border-white/15 rounded-[36px] p-8 shadow-2xl z-10 animate-slide-up relative">
+                    
+                    {/* Close Button */}
+                    <button
+                        type="button"
+                        onClick={onSkip}
+                        className="absolute top-6 right-6 w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/55 hover:text-white hover:bg-white/10 active:scale-95 transition-all z-20 cursor-pointer"
+                        title="Continuer sans compte"
+                    >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
                     
                     {/* Header */}
                     <div className="text-center mb-8">
@@ -310,12 +324,40 @@ const Auth = ({ onAuthSuccess, onSkip }) => {
                         {/* Avatar Picker (Emoji OR Gallery Import) */}
                         {isSignUp && (
                             <div className="space-y-2 pt-2">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-white/40 pl-2">
-                                    Choisissez votre avatar (animal ou photo)
+                                <label className="text-[10px] font-black uppercase tracking-widest text-white/40 pl-2 block">
+                                    Avatar de l'agent
                                 </label>
-                                <div className="flex gap-2.5 overflow-x-auto no-scrollbar py-2 px-1">
-                                    {/* Gallery Upload Button */}
-                                    <label className={`flex-none w-12 h-12 rounded-xl flex items-center justify-center cursor-pointer transition-all border ${selectedAvatar.startsWith('data:image/') ? 'bg-spy-lime/20 border-spy-lime scale-110 shadow-lg shadow-spy-lime/10' : 'bg-black/20 border-white/10 hover:border-white/20'}`}>
+                                
+                                <div className="grid grid-cols-2 gap-4">
+                                    {/* Card 1: Animaux Agents */}
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowAnimalModal(true)}
+                                        className={`rounded-2xl p-4 flex flex-col items-center justify-center gap-2 cursor-pointer border transition-all duration-300 min-h-[96px] ${
+                                            !selectedAvatar.startsWith('data:image/')
+                                                ? 'bg-spy-lime/10 border-spy-lime shadow-lg shadow-spy-lime/5'
+                                                : 'bg-black/25 border-white/10 hover:border-white/20'
+                                        }`}
+                                    >
+                                        <div className="text-3xl filter drop-shadow-md select-none">
+                                            {!selectedAvatar.startsWith('data:image/') ? selectedAvatar : '🦁'}
+                                        </div>
+                                        <div className="text-center">
+                                            <span className={`text-[10px] font-black uppercase tracking-wider block ${!selectedAvatar.startsWith('data:image/') ? 'text-spy-lime' : 'text-white/60'}`}>
+                                                Animaux Agents
+                                            </span>
+                                            <span className="text-[8px] text-white/30 block mt-0.5">Modifier l'animal</span>
+                                        </div>
+                                    </button>
+
+                                    {/* Card 2: Photo Galerie */}
+                                    <label
+                                        className={`rounded-2xl p-4 flex flex-col items-center justify-center gap-2 cursor-pointer border transition-all duration-300 min-h-[96px] relative overflow-hidden ${
+                                            selectedAvatar.startsWith('data:image/')
+                                                ? 'bg-spy-lime/10 border-spy-lime shadow-lg shadow-spy-lime/5'
+                                                : 'bg-black/25 border-white/10 hover:border-white/20'
+                                        }`}
+                                    >
                                         <input
                                             type="file"
                                             accept="image/*"
@@ -323,23 +365,27 @@ const Auth = ({ onAuthSuccess, onSkip }) => {
                                             className="hidden"
                                         />
                                         {selectedAvatar.startsWith('data:image/') ? (
-                                            <img src={selectedAvatar} alt="Photo" className="w-full h-full rounded-xl object-cover" />
+                                            <>
+                                                <img src={selectedAvatar} alt="Photo" className="w-10 h-10 rounded-full object-cover border border-white/15" />
+                                                <div className="text-center">
+                                                    <span className="text-[10px] font-black uppercase tracking-wider text-spy-lime block">
+                                                        Photo Galerie
+                                                    </span>
+                                                    <span className="text-[8px] text-white/30 block mt-0.5">Changer l'image</span>
+                                                </div>
+                                            </>
                                         ) : (
-                                            <span className="text-xl">📷</span>
+                                            <>
+                                                <div className="text-3xl text-white/40">📷</div>
+                                                <div className="text-center">
+                                                    <span className="text-[10px] font-black uppercase tracking-wider text-white/60 block">
+                                                        Photo Galerie
+                                                    </span>
+                                                    <span className="text-[8px] text-white/30 block mt-0.5">Importer une photo</span>
+                                                </div>
+                                            </>
                                         )}
                                     </label>
-
-                                    {/* Predefined Emojis */}
-                                    {STARTER_AVATARS.map((emoji) => (
-                                        <button
-                                            key={emoji}
-                                            type="button"
-                                            onClick={() => setSelectedAvatar(emoji)}
-                                            className={`flex-none w-12 h-12 rounded-xl flex items-center justify-center text-2xl transition-all border ${selectedAvatar === emoji ? 'bg-spy-lime/20 border-spy-lime scale-110 shadow-lg shadow-spy-lime/20' : 'bg-black/20 border-white/10 hover:border-white/20'}`}
-                                        >
-                                            {emoji}
-                                        </button>
-                                    ))}
                                 </div>
                             </div>
                         )}
@@ -374,17 +420,66 @@ const Auth = ({ onAuthSuccess, onSkip }) => {
                         Continuer avec Google
                     </BouncyButton>
 
-                    {/* Sans compte (Skip) link */}
-                    <div className="mt-6 pt-6 border-t border-white/10 text-center">
+                    {/* Sans compte (Skip) Link Redesigned */}
+                    <div className="mt-6 pt-6 border-t border-white/10 text-center space-y-3">
+                        <p className="text-[10px] text-white/40 leading-relaxed max-w-xs mx-auto">
+                            Vous pouvez jouer immédiatement sans compte d'agent, mais la création de dossier est recommandée pour sauvegarder vos statistiques, vos cosmétiques et jouer en ligne.
+                        </p>
                         <button
                             type="button"
                             onClick={onSkip}
-                            className="text-white/45 hover:text-spy-lime text-xs font-black uppercase tracking-widest transition-colors"
+                            className="w-full py-3.5 rounded-2xl bg-white/5 border border-white/10 hover:bg-spy-lime/10 hover:border-spy-lime hover:text-spy-lime text-white text-xs font-black uppercase tracking-widest transition-all active:scale-[0.98] cursor-pointer"
                         >
-                            ⚡ SANS COMPTE
+                            Continuer sans compte
                         </button>
                     </div>
 
+                </div>
+            )}
+
+            {/* Animal Selection Modal */}
+            {showAnimalModal && (
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-pop-in">
+                    <div className="bg-spy-blue/90 border border-white/15 rounded-[32px] p-6 max-w-sm w-full shadow-2xl relative">
+                        {/* Header */}
+                        <div className="text-center mb-6">
+                            <h3 className="text-xl font-black text-white uppercase tracking-tight">Sélectionner un Animal</h3>
+                            <p className="text-[9px] font-black text-spy-lime uppercase tracking-widest mt-0.5">
+                                Choisis ton avatar d'agent
+                            </p>
+                        </div>
+
+                        {/* Grid */}
+                        <div className="grid grid-cols-5 gap-3.5 mb-6">
+                            {STARTER_AVATARS.map((emoji) => (
+                                <button
+                                    key={emoji}
+                                    type="button"
+                                    onClick={() => {
+                                        setSelectedAvatar(emoji);
+                                        setShowAnimalModal(false);
+                                    }}
+                                    className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl transition-all border cursor-pointer ${
+                                        selectedAvatar === emoji
+                                            ? 'bg-spy-lime/20 border-spy-lime scale-110 shadow-lg shadow-spy-lime/20'
+                                            : 'bg-black/35 border-white/10 hover:border-white/20 active:scale-95'
+                                    }`}
+                                >
+                                    {emoji}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Close button */}
+                        <BouncyButton
+                            type="button"
+                            onClick={() => setShowAnimalModal(false)}
+                            variant="secondary"
+                            className="w-full py-4 text-xs font-black uppercase tracking-wider"
+                        >
+                            Fermer
+                        </BouncyButton>
+                    </div>
                 </div>
             )}
         </div>

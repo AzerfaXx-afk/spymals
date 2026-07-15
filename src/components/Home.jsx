@@ -105,7 +105,13 @@ const Home = ({ profileData, hasHistory, onStartGame, onOpenSettings, onOpenHowT
                         onClick={onOpenProfile}
                         className="btn-glass-secondary flex items-center justify-center p-3 gap-2.5 rounded-2xl"
                     >
-                        <div className="text-xl md:text-2xl drop-shadow-md">{profileEmoji}</div>
+                        <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-white/10 flex items-center justify-center overflow-hidden border border-white/15 select-none pointer-events-none drop-shadow-md flex-none">
+                            {profileData?.avatar_emoji && (profileData.avatar_emoji.startsWith('data:image/') || profileData.avatar_emoji.startsWith('http')) ? (
+                                <img src={profileData.avatar_emoji} alt="Avatar" className="w-full h-full object-cover" />
+                            ) : (
+                                <span className="text-lg md:text-xl leading-none">{profileData?.avatar_emoji || '👤'}</span>
+                            )}
+                        </div>
                         <span className="text-[10px] md:text-xs font-bold tracking-wider opacity-85 uppercase">PROFIL</span>
                     </BouncyButton>
                 </div>
