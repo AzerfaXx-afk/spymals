@@ -594,7 +594,7 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
                                 <div key={p.id} className="flex items-center justify-between bg-black/20 rounded-xl p-3 border border-white/5">
                                     <div className="flex items-center gap-3">
                                         <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center overflow-hidden border border-white/10 flex-none">
-                                            {p.avatar_emoji && p.avatar_emoji.startsWith('data:image/') ? (
+                                            {p.avatar_emoji && (p.avatar_emoji.startsWith('data:image/') || p.avatar_emoji.startsWith('http')) ? (
                                                 <img src={p.avatar_emoji} alt="Avatar" className="w-full h-full object-cover" />
                                             ) : (
                                                 <span className="text-lg">{p.avatar_emoji}</span>

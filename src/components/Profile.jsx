@@ -104,7 +104,7 @@ const Profile = ({ user, profileData, onUpdateProfile, onLogout, onBack, onOpenS
                 {/* Header (Avatar & Username & Title) */}
                 <div className="flex items-center gap-4 mb-6">
                     <div className="w-20 h-20 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-4xl shadow-inner overflow-hidden select-none flex-none">
-                        {profileData?.avatar_emoji && profileData.avatar_emoji.startsWith('data:image/') ? (
+                        {profileData?.avatar_emoji && (profileData.avatar_emoji.startsWith('data:image/') || profileData.avatar_emoji.startsWith('http')) ? (
                             <img src={profileData.avatar_emoji} alt="Avatar" className="w-full h-full object-cover" />
                         ) : (
                             profileData?.avatar_emoji || '🦁'

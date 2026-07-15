@@ -503,7 +503,7 @@ const MultiplayerGame = ({ user, profileData, initialRoom, onUpdateProfile, onLe
                         {currentTurnPlayer ? (
                             <div className="py-6">
                                 <div className="w-16 h-16 mx-auto rounded-full bg-white/10 flex items-center justify-center overflow-hidden border border-white/15 mb-3">
-                                    {currentTurnPlayer.avatar_emoji && currentTurnPlayer.avatar_emoji.startsWith('data:image/') ? (
+                                    {currentTurnPlayer.avatar_emoji && (currentTurnPlayer.avatar_emoji.startsWith('data:image/') || currentTurnPlayer.avatar_emoji.startsWith('http')) ? (
                                         <img src={currentTurnPlayer.avatar_emoji} alt="Avatar" className="w-full h-full object-cover" />
                                     ) : (
                                         <span className="text-4xl leading-none">{currentTurnPlayer.avatar_emoji}</span>
@@ -553,7 +553,7 @@ const MultiplayerGame = ({ user, profileData, initialRoom, onUpdateProfile, onLe
                                     className={`rounded-2xl p-3 border flex items-center gap-2.5 transition-all ${!p.is_alive ? 'bg-black/40 border-white/5 opacity-30' : p.id === currentTurnPlayer?.id ? 'bg-spy-lime/10 border-spy-lime' : 'bg-black/20 border-white/5'}`}
                                 >
                                     <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center overflow-hidden border border-white/10 flex-none select-none">
-                                        {p.avatar_emoji && p.avatar_emoji.startsWith('data:image/') ? (
+                                        {p.avatar_emoji && (p.avatar_emoji.startsWith('data:image/') || p.avatar_emoji.startsWith('http')) ? (
                                             <img src={p.avatar_emoji} alt="Avatar" className="w-full h-full object-cover" />
                                         ) : (
                                             <span className="text-lg">{p.avatar_emoji}</span>
@@ -613,7 +613,7 @@ const MultiplayerGame = ({ user, profileData, initialRoom, onUpdateProfile, onLe
                                     >
                                         <div className="flex items-center gap-3">
                                             <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center overflow-hidden border border-white/10 flex-none">
-                                                {p.avatar_emoji && p.avatar_emoji.startsWith('data:image/') ? (
+                                                {p.avatar_emoji && (p.avatar_emoji.startsWith('data:image/') || p.avatar_emoji.startsWith('http')) ? (
                                                     <img src={p.avatar_emoji} alt="Avatar" className="w-full h-full object-cover" />
                                                 ) : (
                                                     <span className="text-lg">{p.avatar_emoji}</span>
@@ -748,7 +748,7 @@ const MultiplayerGame = ({ user, profileData, initialRoom, onUpdateProfile, onLe
                                         <div key={p.id} className="flex justify-between items-center bg-black/15 border border-white/5 rounded-xl p-2.5">
                                             <div className="flex items-center gap-2">
                                                 <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center overflow-hidden border border-white/10 flex-none">
-                                                    {p.avatar_emoji && p.avatar_emoji.startsWith('data:image/') ? (
+                                                    {p.avatar_emoji && (p.avatar_emoji.startsWith('data:image/') || p.avatar_emoji.startsWith('http')) ? (
                                                         <img src={p.avatar_emoji} alt="Avatar" className="w-full h-full object-cover" />
                                                     ) : (
                                                         <span className="text-xs">{p.avatar_emoji}</span>

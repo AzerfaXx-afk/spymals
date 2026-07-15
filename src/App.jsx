@@ -36,7 +36,7 @@ function App() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         setUser(session.user);
-        fetchProfile(session.user.id);
+        fetchProfile(session.user.id, session.user.user_metadata);
       } else {
         loadLocalProfile();
       }
@@ -45,7 +45,7 @@ function App() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) {
         setUser(session.user);
-        fetchProfile(session.user.id);
+        fetchProfile(session.user.id, session.user.user_metadata);
       } else {
         setUser(null);
         setProfileData(null);
@@ -56,7 +56,7 @@ function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  const fetchProfile = async (userId) => {
+  const fetchProfile = async (userId, userMetadata = null) => {
     try {
       const { data, error } = await supabase
         .from('spymals_profiles')
@@ -66,9 +66,34 @@ function App() {
       
       if (data && !error) {
         setProfileData(data);
+      } else {
+        // Create default profile for OAuth/Google login if not exists
+        const defaultProfile = {
+          id: userId,
+          username: userMetadata?.full_name || userMetadata?.name || "Agent Mystère",
+          avatar_emoji: userMetadata?.avatar_url || '🦁',
+          coins: 150,
+          xp: 0,
+          level: 1,
+          unlocked_items: ['default'],
+          equipped_color: 'default',
+          equipped_banner: 'default'
+        };
+
+        const { data: inserted, error: insertError } = await supabase
+          .from('spymals_profiles')
+          .insert(defaultProfile)
+          .select()
+          .single();
+
+        if (inserted && !insertError) {
+          setProfileData(inserted);
+        } else {
+          setProfileData(defaultProfile);
+        }
       }
     } catch (e) {
-      console.error("Failed to fetch profile", e);
+      console.error("Failed to fetch/create profile", e);
     }
   };
 
