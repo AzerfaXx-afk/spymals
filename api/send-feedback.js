@@ -31,7 +31,7 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        from: 'SpyMals <onboarding@resend.dev>',
+        from: 'onboarding@resend.dev',
         to: 'adambox06@gmail.com',
         subject: `🕵️‍♂️ Nouveau Feedback Spymals - ${username}`,
         html: `
