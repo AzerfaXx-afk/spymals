@@ -2,7 +2,8 @@ import React from 'react';
 import BouncyButton from './BouncyButton';
 // Assure-toi que le chemin vers ton composant BouncyButton est correct
 
-const Home = ({ hasHistory, onStartGame, onOpenSettings, onOpenHowToPlay, onOpenLeaderboard, onOpenHistory }) => {
+const Home = ({ profileData, hasHistory, onStartGame, onOpenSettings, onOpenHowToPlay, onOpenLeaderboard, onOpenHistory, onOpenProfile }) => {
+    const profileEmoji = profileData?.avatar_emoji || '👤';
     return (
         // Conteneur principal avec le fond bleu et les effets
         <div className="flex flex-col items-center justify-center min-h-[100dvh] p-6 text-center relative overflow-hidden bg-spy-blue touch-none" style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}>
@@ -61,34 +62,42 @@ const Home = ({ hasHistory, onStartGame, onOpenSettings, onOpenHowToPlay, onOpen
                     NOUVELLE MISSION
                 </BouncyButton>
 
-                {/* Grille des 3 petits boutons secondaires */}
-                <div className="grid grid-cols-3 gap-3 md:gap-4">
+                {/* Grille des 4 boutons secondaires */}
+                <div className="grid grid-cols-2 gap-3 md:gap-4">
                     <BouncyButton
                         variant="custom"
                         onClick={onOpenHowToPlay}
-                        // btn-glass-secondary pour le style bleu foncé translucide
-                        className="btn-glass-secondary flex flex-col items-center justify-center p-2 md:p-3 gap-1 aspect-square"
+                        className="btn-glass-secondary flex items-center justify-center p-3 gap-2.5 rounded-2xl"
                     >
-                        <div className="text-2xl md:text-3xl drop-shadow-md">📖</div>
-                        <span className="text-[9px] md:text-xs font-bold tracking-wide opacity-80">GUIDE</span>
+                        <div className="text-xl md:text-2xl drop-shadow-md">📖</div>
+                        <span className="text-[10px] md:text-xs font-bold tracking-wider opacity-85 uppercase">GUIDE</span>
                     </BouncyButton>
 
                     <BouncyButton
                         variant="custom"
                         onClick={onOpenLeaderboard}
-                        className="btn-glass-secondary flex flex-col items-center justify-center p-2 md:p-3 gap-1 aspect-square"
+                        className="btn-glass-secondary flex items-center justify-center p-3 gap-2.5 rounded-2xl"
                     >
-                        <div className="text-2xl md:text-3xl drop-shadow-md">🏆</div>
-                        <span className="text-[9px] md:text-xs font-bold tracking-wide opacity-80">TOP</span>
+                        <div className="text-xl md:text-2xl drop-shadow-md">🏆</div>
+                        <span className="text-[10px] md:text-xs font-bold tracking-wider opacity-85 uppercase">CLASSEMENT</span>
                     </BouncyButton>
 
                     <BouncyButton
                         variant="custom"
                         onClick={onOpenSettings}
-                        className="btn-glass-secondary flex flex-col items-center justify-center p-2 md:p-3 gap-1 aspect-square"
+                        className="btn-glass-secondary flex items-center justify-center p-3 gap-2.5 rounded-2xl"
                     >
-                        <div className="text-2xl md:text-3xl drop-shadow-md">⚙️</div>
-                        <span className="text-[9px] md:text-xs font-bold tracking-wide opacity-80">OPTS</span>
+                        <div className="text-xl md:text-2xl drop-shadow-md">⚙️</div>
+                        <span className="text-[10px] md:text-xs font-bold tracking-wider opacity-85 uppercase">OPTIONS</span>
+                    </BouncyButton>
+
+                    <BouncyButton
+                        variant="custom"
+                        onClick={onOpenProfile}
+                        className="btn-glass-secondary flex items-center justify-center p-3 gap-2.5 rounded-2xl"
+                    >
+                        <div className="text-xl md:text-2xl drop-shadow-md">{profileEmoji}</div>
+                        <span className="text-[10px] md:text-xs font-bold tracking-wider opacity-85 uppercase">PROFIL</span>
                     </BouncyButton>
                 </div>
 

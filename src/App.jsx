@@ -9,8 +9,12 @@ import HowToPlay from './components/HowToPlay';
 import Settings from './components/Settings';
 import Leaderboard from './components/Leaderboard';
 import History from './components/History';
+import Auth from './components/Auth';
+import Profile from './components/Profile';
+import Shop from './components/Shop';
 
 import { AudioProvider } from './contexts/AudioContext';
+import { supabase } from './utils/supabaseClient';
 
 function App() {
   const [currentScreen, setCurrentScreen] = useState('home');
@@ -19,6 +23,93 @@ function App() {
   const [winners, setWinners] = useState(null); // 'Civilian' or 'Impostors'
   const [showSettings, setShowSettings] = useState(false);
   const [gameHistory, setGameHistory] = useState([]);
+
+  const [user, setUser] = useState(null);
+  const [profileData, setProfileData] = useState(null);
+  const [authSkipped, setAuthSkipped] = useState(false);
+
+  // Check auth session on mount
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        setUser(session.user);
+        fetchProfile(session.user.id);
+      } else {
+        loadLocalProfile();
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        setUser(session.user);
+        fetchProfile(session.user.id);
+      } else {
+        setUser(null);
+        setProfileData(null);
+        loadLocalProfile();
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const fetchProfile = async (userId) => {
+    try {
+      const { data, error } = await supabase
+        .from('spymals_profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+      
+      if (data && !error) {
+        setProfileData(data);
+      }
+    } catch (e) {
+      console.error("Failed to fetch profile", e);
+    }
+  };
+
+  const loadLocalProfile = () => {
+    try {
+      const stored = localStorage.getItem('spyMals_guest_profile');
+      if (stored) {
+        setProfileData(JSON.parse(stored));
+      } else {
+        const defaultGuest = {
+          username: "Agent Invité",
+          avatar_emoji: "🦊",
+          coins: 100,
+          xp: 0,
+          level: 1,
+          games_played: 0,
+          games_won: 0,
+          unlocked_items: ['default'],
+          equipped_color: 'default',
+          equipped_banner: 'default'
+        };
+        setProfileData(defaultGuest);
+        localStorage.setItem('spyMals_guest_profile', JSON.stringify(defaultGuest));
+      }
+    } catch (e) {
+      console.error("Failed to load local guest profile", e);
+    }
+  };
+
+  const handleUpdateProfile = (updatedProfile) => {
+    setProfileData(updatedProfile);
+    if (!user) {
+      localStorage.setItem('spyMals_guest_profile', JSON.stringify(updatedProfile));
+    }
+  };
+
+  const handleLogout = async () => {
+    if (user) {
+      await supabase.auth.signOut();
+    } else {
+      // Guest clicking "Connect" -> show Auth screen again
+      setAuthSkipped(false);
+    }
+  };
 
   const handleUpdateHistory = (newHistory) => {
     setGameHistory(newHistory);
@@ -195,6 +286,76 @@ function App() {
     } catch (e) {
       console.error("Failed to save leaderboard", e);
     }
+
+    // ── GAMIFICATION REWARDS ──
+    if (profileData) {
+      let earnedXp = 50;
+      let earnedCoins = 20;
+      let won = false;
+
+      // Check if user's profile username is one of the players
+      const userPlayer = players.find(p => p.name.toLowerCase().trim() === profileData.username.toLowerCase().trim());
+      if (userPlayer) {
+        const role = playerRoles[userPlayer.id];
+        const pts = getPoints(winningTeam, role);
+        if (pts > 0) {
+          won = true;
+          earnedXp = 100;
+          earnedCoins = 40;
+        } else {
+          won = false;
+          earnedXp = 50;
+          earnedCoins = 20;
+        }
+      } else {
+        // Default rewards if not directly in the list
+        won = winningTeam === 'Civilian';
+        earnedXp = won ? 80 : 40;
+        earnedCoins = won ? 30 : 15;
+      }
+
+      // Calculate level up
+      let newXp = (profileData.xp || 0) + earnedXp;
+      let newLevel = profileData.level || 1;
+      let newCoins = (profileData.coins || 0) + earnedCoins;
+      
+      let xpNeeded = newLevel * 150;
+
+      while (newXp >= xpNeeded) {
+        newXp -= xpNeeded;
+        newLevel += 1;
+        newCoins += 100; // Level up bonus!
+        xpNeeded = newLevel * 150;
+      }
+
+      const updatedProfile = {
+        ...profileData,
+        xp: newXp,
+        level: newLevel,
+        coins: newCoins,
+        games_played: (profileData.games_played || 0) + 1,
+        games_won: (profileData.games_won || 0) + (won ? 1 : 0)
+      };
+
+      handleUpdateProfile(updatedProfile);
+
+      // Save to Supabase if logged in
+      if (user) {
+        supabase
+          .from('spymals_profiles')
+          .update({
+            xp: newXp,
+            level: newLevel,
+            coins: newCoins,
+            games_played: updatedProfile.games_played,
+            games_won: updatedProfile.games_won
+          })
+          .eq('id', user.id)
+          .then(({ error }) => {
+            if (error) console.error("Error updating profile stats on Supabase:", error.message);
+          });
+      }
+    }
   };
 
   const replayGame = () => {
@@ -206,17 +367,34 @@ function App() {
     setCurrentScreen('briefing');
   };
 
+  if (!user && !authSkipped) {
+    return (
+      <AudioProvider>
+        <Auth 
+          onAuthSuccess={(userData) => { 
+            setUser(userData); 
+            setAuthSkipped(true);
+            fetchProfile(userData.id); 
+          }} 
+          onSkip={() => setAuthSkipped(true)} 
+        />
+      </AudioProvider>
+    );
+  }
+
   return (
     <AudioProvider>
       <div className="antialiased text-gray-900 bg-spy-blue min-h-screen relative">
         {currentScreen === 'home' && (
           <Home
+            profileData={profileData}
             hasHistory={gameHistory.length > 0}
             onStartGame={startNewMission}
             onOpenHowToPlay={() => setCurrentScreen('how-to-play')}
             onOpenSettings={() => setShowSettings(true)}
             onOpenLeaderboard={() => setCurrentScreen('leaderboard')}
             onOpenHistory={() => setCurrentScreen('history')}
+            onOpenProfile={() => setCurrentScreen('profile')}
           />
         )}
         {currentScreen === 'how-to-play' && (
@@ -283,6 +461,24 @@ function App() {
             }}
             onBack={() => setCurrentScreen('home')}
             onOpenSettings={() => setShowSettings(true)}
+          />
+        )}
+        {currentScreen === 'profile' && (
+          <Profile
+            user={user}
+            profileData={profileData}
+            onUpdateProfile={handleUpdateProfile}
+            onLogout={handleLogout}
+            onBack={() => setCurrentScreen('home')}
+            onOpenShop={() => setCurrentScreen('shop')}
+          />
+        )}
+        {currentScreen === 'shop' && (
+          <Shop
+            user={user}
+            profileData={profileData}
+            onUpdateProfile={handleUpdateProfile}
+            onBack={() => setCurrentScreen('profile')}
           />
         )}
 

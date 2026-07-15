@@ -656,4 +656,333 @@ export const wordPacks = {
         { civilian: "Gomme", undercover: "Tsunami" },
         { civilian: "Compote", undercover: "Viking" },
     ]
+,
+    geek: [
+        {
+                "civilian": "Console",
+                "undercover": "PC"
+        },
+        {
+                "civilian": "Clavier",
+                "undercover": "Souris"
+        },
+        {
+                "civilian": "Nintendo",
+                "undercover": "Sega"
+        },
+        {
+                "civilian": "Zelda",
+                "undercover": "Link"
+        },
+        {
+                "civilian": "Minecraft",
+                "undercover": "Roblox"
+        },
+        {
+                "civilian": "Fortnite",
+                "undercover": "PUBG"
+        },
+        {
+                "civilian": "Pokémon",
+                "undercover": "Digimon"
+        },
+        {
+                "civilian": "PlayStation",
+                "undercover": "Xbox"
+        },
+        {
+                "civilian": "Steve Jobs",
+                "undercover": "Bill Gates"
+        },
+        {
+                "civilian": "Google",
+                "undercover": "Apple"
+        },
+        {
+                "civilian": "Netflix",
+                "undercover": "Disney+"
+        },
+        {
+                "civilian": "Instagram",
+                "undercover": "TikTok"
+        },
+        {
+                "civilian": "YouTube",
+                "undercover": "Twitch"
+        },
+        {
+                "civilian": "Écran OLED",
+                "undercover": "Écran LCD"
+        },
+        {
+                "civilian": "Casque VR",
+                "undercover": "Lunettes AR"
+        },
+        {
+                "civilian": "Cyborg",
+                "undercover": "Robot"
+        },
+        {
+                "civilian": "Hacker",
+                "undercover": "Pirate"
+        },
+        {
+                "civilian": "Intelligence Artificielle",
+                "undercover": "Robotique"
+        },
+        {
+                "civilian": "Disquette",
+                "undercover": "Clé USB"
+        },
+        {
+                "civilian": "Code source",
+                "undercover": "Algorithme"
+        }
+],
+    travel: [
+        {
+                "civilian": "Paris",
+                "undercover": "Londres"
+        },
+        {
+                "civilian": "France",
+                "undercover": "Italie"
+        },
+        {
+                "civilian": "Espagne",
+                "undercover": "Portugal"
+        },
+        {
+                "civilian": "Plage",
+                "undercover": "Piscine"
+        },
+        {
+                "civilian": "Montagne",
+                "undercover": "Campagne"
+        },
+        {
+                "civilian": "Métro",
+                "undercover": "Tramway"
+        },
+        {
+                "civilian": "Avion",
+                "undercover": "Train"
+        },
+        {
+                "civilian": "Valise",
+                "undercover": "Sac à dos"
+        },
+        {
+                "civilian": "Hôtel",
+                "undercover": "Camping"
+        },
+        {
+                "civilian": "Passeport",
+                "undercover": "Carte d'identité"
+        },
+        {
+                "civilian": "Carte",
+                "undercover": "Boussole"
+        },
+        {
+                "civilian": "Valise",
+                "undercover": "Bagage à main"
+        },
+        {
+                "civilian": "Randonnée",
+                "undercover": "Escalade"
+        },
+        {
+                "civilian": "Tour Eiffel",
+                "undercover": "Arc de Triomphe"
+        },
+        {
+                "civilian": "Désert",
+                "undercover": "Savane"
+        },
+        {
+                "civilian": "Île",
+                "undercover": "Presqu'île"
+        },
+        {
+                "civilian": "Croisière",
+                "undercover": "Voilier"
+        },
+        {
+                "civilian": "Guide touristique",
+                "undercover": "GPS"
+        },
+        {
+                "civilian": "Souvenir",
+                "undercover": "Carte postale"
+        },
+        {
+                "civilian": "Valise à roulettes",
+                "undercover": "Sac de voyage"
+        }
+],
+    food: [
+        {
+                "civilian": "Pizza",
+                "undercover": "Lasagne"
+        },
+        {
+                "civilian": "Hamburger",
+                "undercover": "Hot-dog"
+        },
+        {
+                "civilian": "Frites",
+                "undercover": "Chips"
+        },
+        {
+                "civilian": "Sushi",
+                "undercover": "Sashimi"
+        },
+        {
+                "civilian": "Chocolat noir",
+                "undercover": "Chocolat au lait"
+        },
+        {
+                "civilian": "Crêpe",
+                "undercover": "Gaufre"
+        },
+        {
+                "civilian": "Croissant",
+                "undercover": "Pain au chocolat"
+        },
+        {
+                "civilian": "Coca-Cola",
+                "undercover": "Pepsi"
+        },
+        {
+                "civilian": "Café",
+                "undercover": "Thé"
+        },
+        {
+                "civilian": "Sel",
+                "undercover": "Poivre"
+        },
+        {
+                "civilian": "Beurre",
+                "undercover": "Margarine"
+        },
+        {
+                "civilian": "Miel",
+                "undercover": "Sirop d'érable"
+        },
+        {
+                "civilian": "Fromage",
+                "undercover": "Yaourt"
+        },
+        {
+                "civilian": "Kebab",
+                "undercover": "Tacos"
+        },
+        {
+                "civilian": "Crème brûlée",
+                "undercover": "Flan"
+        },
+        {
+                "civilian": "Pâtes",
+                "undercover": "Riz"
+        },
+        {
+                "civilian": "Bière",
+                "undercover": "Cidre"
+        },
+        {
+                "civilian": "Soupe",
+                "undercover": "Velouté"
+        },
+        {
+                "civilian": "Pomme",
+                "undercover": "Poire"
+        },
+        {
+                "civilian": "Orange",
+                "undercover": "Clémentine"
+        }
+],
+    fun: [
+        {
+                "civilian": "Chaussette",
+                "undercover": "Caleçon"
+        },
+        {
+                "civilian": "Dentifrice",
+                "undercover": "Mayonnaise"
+        },
+        {
+                "civilian": "Licorne",
+                "undercover": "Pégase"
+        },
+        {
+                "civilian": "Slip",
+                "undercover": "Boxer"
+        },
+        {
+                "civilian": "Pyjama",
+                "undercover": "Chemise de nuit"
+        },
+        {
+                "civilian": "Perruque",
+                "undercover": "Postiche"
+        },
+        {
+                "civilian": "Clown",
+                "undercover": "Mime"
+        },
+        {
+                "civilian": "Poubelle",
+                "undercover": "Benne"
+        },
+        {
+                "civilian": "Aspirateur",
+                "undercover": "Balai"
+        },
+        {
+                "civilian": "Brosse à dents",
+                "undercover": "Cure-dent"
+        },
+        {
+                "civilian": "Crayon",
+                "undercover": "Stylo"
+        },
+        {
+                "civilian": "Gomme",
+                "undercover": "Correcteur"
+        },
+        {
+                "civilian": "Papier toilette",
+                "undercover": "Essuie-tout"
+        },
+        {
+                "civilian": "Bonnet de douche",
+                "undercover": "Casque de vélo"
+        },
+        {
+                "civilian": "Chausson",
+                "undercover": "Pantoufle"
+        },
+        {
+                "civilian": "Moustache",
+                "undercover": "Barbe"
+        },
+        {
+                "civilian": "Salade",
+                "undercover": "Épinard"
+        },
+        {
+                "civilian": "Escargot",
+                "undercover": "Limace"
+        },
+        {
+                "civilian": "Grenouille",
+                "undercover": "Crapaud"
+        },
+        {
+                "civilian": "Coussin",
+                "undercover": "Oreiller"
+        }
+]
 };

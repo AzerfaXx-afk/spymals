@@ -19,6 +19,10 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
         { id: 'pop-culture', label: 'Culture Pop', icon: '🍿' },
         { id: 'abstract', label: 'Concepts Abstraits', icon: '🧠' },
         { id: 'animals', label: 'Animaux', icon: '🦁' },
+        { id: 'geek', label: 'Jeux Vidéo & Geek', icon: '🎮' },
+        { id: 'travel', label: 'Voyage & Pays', icon: '✈️' },
+        { id: 'food', label: 'Gourmand / Nourriture', icon: '🍔' },
+        { id: 'fun', label: 'Absurde & Fun', icon: '🤪' },
         { id: 'random', label: 'Aléatoire', icon: '🎲' },
         { id: 'custom', label: '>>> Mots Perso <<<', icon: '✏️', special: true },
     ];

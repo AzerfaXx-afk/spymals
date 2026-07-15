@@ -35,7 +35,7 @@ const IdentifyAgents = ({ players, onUpdatePlayers, onConfirm, onBack, onOpenSet
             </div>
 
             {/* Header */}
-            <div className="flex-none p-6 text-center z-10 pt-24 pb-8">
+            <div className="flex-none p-6 text-center z-10 pt-24 pb-8 max-w-md w-full mx-auto">
                 <h2 className="text-3xl font-black text-white uppercase tracking-tighter drop-shadow-lg animate-slide-up">
                     Identifiez les Agents
                 </h2>
@@ -45,7 +45,7 @@ const IdentifyAgents = ({ players, onUpdatePlayers, onConfirm, onBack, onOpenSet
             </div>
 
             {/* Grid - Scrollable area */}
-            <div className="flex-grow overflow-y-auto px-4 pb-40 z-10 no-scrollbar mask-image-b" style={{ paddingBottom: 'calc(10rem + env(safe-area-inset-bottom))' }}>
+            <div className="flex-grow overflow-y-auto px-4 pb-40 z-10 no-scrollbar mask-image-b max-w-md w-full mx-auto" style={{ paddingBottom: 'calc(10rem + env(safe-area-inset-bottom))' }}>
                 <div className="grid grid-cols-2 gap-4 pb-4 animate-slide-up" style={{ animationDelay: '0.2s' }}>
                     {players.map((player, index) => (
                         <div key={player.id} className="animate-pop-in" style={{ animationDelay: `${index * 0.05}s` }}>

@@ -5,6 +5,7 @@ import BouncyButton from './BouncyButton';
 import { wordPacks } from '../data/wordPacks';
 import SettingsGear from './SettingsGear';
 import { useAudio } from '../contexts/AudioContext';
+import { supabase } from '../utils/supabaseClient';
 
 const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) => {
     // States: distributing | playing | voting | reveal | mrwhite_guess
@@ -74,7 +75,7 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
         return a;
     };
 
-    const assignRoles = () => {
+    const assignRoles = async () => {
         const { undercoverCount, whiteCount, wordPack, customWords } = config;
 
         let wordPair;
@@ -84,7 +85,30 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                 undercover: customWords.spy
             };
         } else {
-            const pack = wordPacks[wordPack] || wordPacks.standard;
+            let pack = null;
+            try {
+                // Fetch words for this pack from Supabase
+                const { data, error } = await supabase
+                    .from('spymals_words')
+                    .select('civilian, undercover')
+                    .eq('pack_name', wordPack);
+
+                if (data && data.length > 0 && !error) {
+                    pack = data;
+                    console.log(`Fetched ${data.length} words from Supabase for pack: ${wordPack}`);
+                } else if (error) {
+                    console.error("Supabase query error:", error.message);
+                }
+            } catch (err) {
+                console.error("Failed to query Supabase:", err);
+            }
+
+            // Fallback to local
+            if (!pack || pack.length === 0) {
+                console.log("Using local word packs fallback");
+                pack = wordPacks[wordPack] || wordPacks.standard;
+            }
+
             wordPair = pack[Math.floor(Math.random() * pack.length)];
         }
 
