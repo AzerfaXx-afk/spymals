@@ -20,7 +20,25 @@ if (!client) {
   // A mock client that won't throw when methods are chained
   const mockHandler = {
     get(target, prop) {
-      // For database tables: supabase.from('table').select()...
+      if (prop === 'auth') {
+        return {
+          getSession: () => Promise.resolve({ data: { session: null } }),
+          onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+          signOut: () => Promise.resolve({ error: null })
+        };
+      }
+      
+      const channelMock = {
+        on: () => channelMock,
+        subscribe: () => ({ unsubscribe: () => {} }),
+        track: () => Promise.resolve(),
+        send: () => Promise.resolve()
+      };
+      
+      if (prop === 'channel') {
+        return () => channelMock;
+      }
+
       const dbChain = () => {
         const dummyPromise = Promise.resolve({ data: [], error: new Error("Supabase non configuré.") });
         const proxy = new Proxy(dummyPromise, {

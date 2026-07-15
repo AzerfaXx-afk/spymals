@@ -12,6 +12,8 @@ import History from './components/History';
 import Auth from './components/Auth';
 import Profile from './components/Profile';
 import Shop from './components/Shop';
+import MultiplayerLobby from './components/MultiplayerLobby';
+import MultiplayerGame from './components/MultiplayerGame';
 
 import { AudioProvider } from './contexts/AudioContext';
 import { supabase } from './utils/supabaseClient';
@@ -27,6 +29,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [profileData, setProfileData] = useState(null);
   const [authSkipped, setAuthSkipped] = useState(false);
+  const [multiplayerRoom, setMultiplayerRoom] = useState(null);
 
   // Check auth session on mount
   useEffect(() => {
@@ -395,6 +398,7 @@ function App() {
             onOpenLeaderboard={() => setCurrentScreen('leaderboard')}
             onOpenHistory={() => setCurrentScreen('history')}
             onOpenProfile={() => setCurrentScreen('profile')}
+            onOpenMultiplayer={() => setCurrentScreen('multiplayer-lobby')}
           />
         )}
         {currentScreen === 'how-to-play' && (
@@ -479,6 +483,29 @@ function App() {
             profileData={profileData}
             onUpdateProfile={handleUpdateProfile}
             onBack={() => setCurrentScreen('profile')}
+          />
+        )}
+        {currentScreen === 'multiplayer-lobby' && (
+          <MultiplayerLobby
+            user={user}
+            profileData={profileData}
+            onBack={() => setCurrentScreen('home')}
+            onStartMultiplayerGame={(roomData) => {
+              setMultiplayerRoom(roomData);
+              setCurrentScreen('multiplayer-game');
+            }}
+          />
+        )}
+        {currentScreen === 'multiplayer-game' && (
+          <MultiplayerGame
+            user={user}
+            profileData={profileData}
+            initialRoom={multiplayerRoom}
+            onUpdateProfile={handleUpdateProfile}
+            onLeave={() => {
+              setMultiplayerRoom(null);
+              setCurrentScreen('multiplayer-lobby');
+            }}
           />
         )}
 

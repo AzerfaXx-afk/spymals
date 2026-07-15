@@ -2,7 +2,7 @@ import React from 'react';
 import BouncyButton from './BouncyButton';
 // Assure-toi que le chemin vers ton composant BouncyButton est correct
 
-const Home = ({ profileData, hasHistory, onStartGame, onOpenSettings, onOpenHowToPlay, onOpenLeaderboard, onOpenHistory, onOpenProfile }) => {
+const Home = ({ profileData, hasHistory, onStartGame, onOpenSettings, onOpenHowToPlay, onOpenLeaderboard, onOpenHistory, onOpenProfile, onOpenMultiplayer }) => {
     const profileEmoji = profileData?.avatar_emoji || '👤';
     return (
         // Conteneur principal avec le fond bleu et les effets
@@ -52,15 +52,24 @@ const Home = ({ profileData, hasHistory, onStartGame, onOpenSettings, onOpenHowT
             {/* --- Section des Boutons d'Action --- */}
             <div className="z-10 w-full max-w-sm space-y-5 md:space-y-6">
 
-                {/* Gros Bouton Principal */}
-                <BouncyButton
-                    variant="custom"
-                    onClick={onStartGame}
-                    // btn-glass-primary doit être défini dans ton CSS personnalisé pour la couleur verte
-                    className="btn-glass-primary w-full text-xl md:text-3xl py-5 md:py-7 tracking-wide shadow-[0_10px_20px_-5px_rgba(164,246,0,0.4)]"
-                >
-                    NOUVELLE MISSION
-                </BouncyButton>
+                {/* Gros Boutons Principaux */}
+                <div className="space-y-4">
+                    <BouncyButton
+                        variant="custom"
+                        onClick={onStartGame}
+                        className="btn-glass-primary w-full text-lg md:text-2xl py-4 md:py-5 tracking-wide shadow-[0_10px_20px_-5px_rgba(164,246,0,0.35)]"
+                    >
+                        🎮 JEU LOCAL (1 TÉL)
+                    </BouncyButton>
+
+                    <BouncyButton
+                        variant="custom"
+                        onClick={onOpenMultiplayer}
+                        className="btn-glass-secondary w-full text-lg md:text-2xl py-4 md:py-5 tracking-wide border border-spy-lime/30 shadow-[0_10px_20px_-5px_rgba(0,186,255,0.2)] text-white hover:border-spy-lime/60"
+                    >
+                        🌐 JOUER EN LIGNE
+                    </BouncyButton>
+                </div>
 
                 {/* Grille des 4 boutons secondaires */}
                 <div className="grid grid-cols-2 gap-3 md:gap-4">
