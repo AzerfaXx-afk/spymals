@@ -502,7 +502,13 @@ const MultiplayerGame = ({ user, profileData, initialRoom, onUpdateProfile, onLe
 
                         {currentTurnPlayer ? (
                             <div className="py-6">
-                                <div className="text-5xl mb-2">{currentTurnPlayer.avatar_emoji}</div>
+                                <div className="w-16 h-16 mx-auto rounded-full bg-white/10 flex items-center justify-center overflow-hidden border border-white/15 mb-3">
+                                    {currentTurnPlayer.avatar_emoji && currentTurnPlayer.avatar_emoji.startsWith('data:image/') ? (
+                                        <img src={currentTurnPlayer.avatar_emoji} alt="Avatar" className="w-full h-full object-cover" />
+                                    ) : (
+                                        <span className="text-4xl leading-none">{currentTurnPlayer.avatar_emoji}</span>
+                                    )}
+                                </div>
                                 <h3 className="text-2xl font-black text-white uppercase tracking-tight">
                                     {currentTurnPlayer.username}
                                 </h3>
@@ -546,7 +552,13 @@ const MultiplayerGame = ({ user, profileData, initialRoom, onUpdateProfile, onLe
                                     key={p.id} 
                                     className={`rounded-2xl p-3 border flex items-center gap-2.5 transition-all ${!p.is_alive ? 'bg-black/40 border-white/5 opacity-30' : p.id === currentTurnPlayer?.id ? 'bg-spy-lime/10 border-spy-lime' : 'bg-black/20 border-white/5'}`}
                                 >
-                                    <span className="text-2xl select-none">{p.avatar_emoji}</span>
+                                    <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center overflow-hidden border border-white/10 flex-none select-none">
+                                        {p.avatar_emoji && p.avatar_emoji.startsWith('data:image/') ? (
+                                            <img src={p.avatar_emoji} alt="Avatar" className="w-full h-full object-cover" />
+                                        ) : (
+                                            <span className="text-lg">{p.avatar_emoji}</span>
+                                        )}
+                                    </div>
                                     <div className="min-w-0">
                                         <span className={`text-xs font-bold block truncate text-white`}>
                                             {p.username}
@@ -600,7 +612,13 @@ const MultiplayerGame = ({ user, profileData, initialRoom, onUpdateProfile, onLe
                                         className={`w-full rounded-2xl p-3 border flex items-center justify-between text-left transition-all ${isSelf ? 'bg-black/35 border-white/5 opacity-55 cursor-not-allowed' : 'bg-black/20 border-white/5 hover:border-spy-lime active:scale-[0.98]'}`}
                                     >
                                         <div className="flex items-center gap-3">
-                                            <span className="text-2xl">{p.avatar_emoji}</span>
+                                            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center overflow-hidden border border-white/10 flex-none">
+                                                {p.avatar_emoji && p.avatar_emoji.startsWith('data:image/') ? (
+                                                    <img src={p.avatar_emoji} alt="Avatar" className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <span className="text-lg">{p.avatar_emoji}</span>
+                                                )}
+                                            </div>
                                             <span className="text-xs font-bold text-white uppercase">{p.username}</span>
                                         </div>
                                         {isSelf && (
@@ -729,7 +747,13 @@ const MultiplayerGame = ({ user, profileData, initialRoom, onUpdateProfile, onLe
                                     return (
                                         <div key={p.id} className="flex justify-between items-center bg-black/15 border border-white/5 rounded-xl p-2.5">
                                             <div className="flex items-center gap-2">
-                                                <span>{p.avatar_emoji}</span>
+                                                <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center overflow-hidden border border-white/10 flex-none">
+                                                    {p.avatar_emoji && p.avatar_emoji.startsWith('data:image/') ? (
+                                                        <img src={p.avatar_emoji} alt="Avatar" className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        <span className="text-xs">{p.avatar_emoji}</span>
+                                                    )}
+                                                </div>
                                                 <span className="text-xs font-bold text-white">{p.username}</span>
                                             </div>
                                             <div className="flex items-center gap-2">

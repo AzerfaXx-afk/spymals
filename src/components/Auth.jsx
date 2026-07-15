@@ -5,13 +5,50 @@ import BouncyButton from './BouncyButton';
 const STARTER_AVATARS = ['🦁', '🦊', '🐨', '🐼', '🐯', '🐻', '🦉', '🐱', '🐶', '🐸'];
 
 const Auth = ({ onAuthSuccess, onSkip }) => {
-    const [isSignUp, setIsSignUp] = useState(false);
+    // Inscription (Sign Up) in first position by default
+    const [isSignUp, setIsSignUp] = useState(true);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
     const [selectedAvatar, setSelectedAvatar] = useState(STARTER_AVATARS[0]);
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
+    
+    // Email verification state
+    const [verificationSent, setVerificationSent] = useState(false);
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 128;
+                const MAX_HEIGHT = 128;
+                let width = img.width;
+                let height = img.height;
+
+                // Crop to square
+                const size = Math.min(width, height);
+                const xOffset = (width - size) / 2;
+                const yOffset = (height - size) / 2;
+
+                canvas.width = MAX_WIDTH;
+                canvas.height = MAX_HEIGHT;
+
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, xOffset, yOffset, size, size, 0, 0, MAX_WIDTH, MAX_HEIGHT);
+
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.85); // high quality compressed jpeg
+                setSelectedAvatar(dataUrl);
+            };
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    };
 
     const handleAuth = async (e) => {
         e.preventDefault();
@@ -25,11 +62,12 @@ const Auth = ({ onAuthSuccess, onSkip }) => {
                     throw new Error("Le pseudo doit contenir au moins 3 caractères.");
                 }
 
-                // Sign up in Supabase Auth
+                // Sign up in Supabase Auth with dynamic redirect
                 const { data, error } = await supabase.auth.signUp({
                     email,
                     password,
                     options: {
+                        emailRedirectTo: window.location.origin, // Dynamic redirect back to localhost or Vercel
                         data: {
                             username: trimmedUsername,
                             avatar_emoji: selectedAvatar
@@ -49,15 +87,22 @@ const Auth = ({ onAuthSuccess, onSkip }) => {
                             avatar_emoji: selectedAvatar,
                             coins: 150, // Starter coins
                             xp: 0,
-                            level: 1
+                            level: 1,
+                            unlocked_items: ['default'],
+                            equipped_color: 'default',
+                            equipped_banner: 'default'
                         });
 
                     if (profileError) {
-                        // Profile might already exist or trigger issues
                         console.error("Profile creation error:", profileError);
                     }
 
-                    if (onAuthSuccess) onAuthSuccess(data.user);
+                    // Check if confirmation is required (session is null)
+                    if (!data.session) {
+                        setVerificationSent(true);
+                    } else {
+                        if (onAuthSuccess) onAuthSuccess(data.user);
+                    }
                 }
             } else {
                 // Sign In
@@ -86,7 +131,10 @@ const Auth = ({ onAuthSuccess, onSkip }) => {
                                 avatar_emoji: data.user.user_metadata?.avatar_emoji || '🦁',
                                 coins: 150,
                                 xp: 0,
-                                level: 1
+                                level: 1,
+                                unlocked_items: ['default'],
+                                equipped_color: 'default',
+                                equipped_banner: 'default'
                             });
                     }
 
@@ -101,126 +149,203 @@ const Auth = ({ onAuthSuccess, onSkip }) => {
         }
     };
 
+    const handleCheckVerification = async () => {
+        setLoading(true);
+        setErrorMsg('');
+        try {
+            const { data: { session }, error } = await supabase.auth.getSession();
+            if (error) throw error;
+            
+            if (session) {
+                if (onAuthSuccess) onAuthSuccess(session.user);
+            } else {
+                setErrorMsg("Aucune session trouvée. Avez-vous validé le lien dans l'email ?");
+            }
+        } catch (err) {
+            setErrorMsg("Erreur lors de la vérification de l'activation.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-spy-blue relative overflow-hidden">
-            {/* Background effects */}
-            <div className="absolute top-[-10%] right-[-10%] w-[350px] h-[350px] bg-spy-lime opacity-10 rounded-full blur-[80px] animate-pulse-slow"></div>
-            <div className="absolute bottom-[-10%] left-[-10%] w-[350px] h-[350px] bg-spy-orange opacity-10 rounded-full blur-[80px] animate-pulse-slow delay-1000"></div>
+            {/* Ambient background glows */}
+            <div className="absolute top-[-10%] right-[-15%] w-[450px] h-[450px] bg-spy-lime opacity-[0.08] rounded-full blur-[100px] animate-pulse-slow"></div>
+            <div className="absolute bottom-[-10%] left-[-15%] w-[450px] h-[450px] bg-spy-orange opacity-[0.08] rounded-full blur-[100px] animate-pulse-slow delay-1000"></div>
 
-            <div className="w-full max-w-md bg-white/10 backdrop-blur-xl border border-white/15 rounded-[32px] p-8 shadow-2xl z-10 animate-slide-up">
-                
-                {/* Logo & Title */}
-                <div className="text-center mb-8">
-                    <div className="text-5xl mb-2 filter drop-shadow-md">🕵️‍♂️🐾</div>
-                    <h2 className="text-3xl font-black text-white uppercase tracking-tight">SpyMals HQ</h2>
-                    <p className="text-white/50 text-xs font-bold uppercase tracking-widest mt-1">
-                        Accès au centre d'agents
-                    </p>
-                </div>
-
-                {/* Tabs */}
-                <div className="flex bg-black/30 rounded-xl p-1 mb-6 border border-white/5">
-                    <button
-                        type="button"
-                        onClick={() => { setIsSignUp(false); setErrorMsg(''); }}
-                        className={`flex-1 py-3 text-xs font-black uppercase tracking-wider rounded-lg transition-all ${!isSignUp ? 'bg-spy-lime text-spy-blue shadow-lg' : 'text-white/60 hover:text-white'}`}
-                    >
-                        Connexion
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => { setIsSignUp(true); setErrorMsg(''); }}
-                        className={`flex-1 py-3 text-xs font-black uppercase tracking-wider rounded-lg transition-all ${isSignUp ? 'bg-spy-lime text-spy-blue shadow-lg' : 'text-white/60 hover:text-white'}`}
-                    >
-                        Inscription
-                    </button>
-                </div>
-
-                {/* Errors */}
-                {errorMsg && (
-                    <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 mb-6 flex items-start gap-3 animate-pop-in">
-                        <span className="text-red-500 text-lg">⚠️</span>
-                        <p className="text-red-400 text-xs font-bold leading-normal">{errorMsg}</p>
+            {verificationSent ? (
+                // 📬 VERIFICATION CARD
+                <div className="w-full max-w-md bg-white/10 backdrop-blur-2xl border border-white/15 rounded-[36px] p-8 shadow-2xl z-10 text-center space-y-6 animate-pop-in">
+                    <div className="w-20 h-20 bg-spy-lime/10 border border-spy-lime/20 rounded-full flex items-center justify-center mx-auto text-4xl shadow-inner select-none">
+                        📬
                     </div>
-                )}
+                    <div>
+                        <h2 className="text-2xl font-black text-white uppercase tracking-tight">Vérification Requise</h2>
+                        <p className="text-spy-lime text-[10px] font-black uppercase tracking-[0.2em] mt-1">Dossier en attente</p>
+                    </div>
 
-                {/* Auth Form */}
-                <form onSubmit={handleAuth} className="space-y-4">
-                    {isSignUp && (
-                        <div className="space-y-1">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-white/40 pl-2">Pseudo Agent</label>
+                    <div className="bg-black/35 border border-white/5 rounded-2xl p-5 text-left space-y-3">
+                        <p className="text-xs text-white/80 leading-relaxed">
+                            Un e-mail de confirmation contenant votre badge d'activation a été envoyé à :
+                        </p>
+                        <p className="text-sm font-black text-white text-center break-all">{email}</p>
+                        <p className="text-[10px] text-white/50 leading-relaxed text-center italic">
+                            (Pensez à regarder dans vos courriers indésirables / spams)
+                        </p>
+                    </div>
+
+                    <div className="space-y-3 pt-2">
+                        <BouncyButton onClick={handleCheckVerification} className="w-full py-4 text-sm" disabled={loading}>
+                            {loading ? "Vérification..." : "J'ai validé mon e-mail"}
+                        </BouncyButton>
+                        <button
+                            type="button"
+                            onClick={() => setVerificationSent(false)}
+                            className="text-white/40 hover:text-white text-xs font-bold uppercase tracking-wider transition-all block mx-auto"
+                        >
+                            ← Retour au formulaire
+                        </button>
+                    </div>
+                </div>
+            ) : (
+                // 🛡️ AUTH CARD
+                <div className="w-full max-w-md bg-white/10 backdrop-blur-2xl border border-white/15 rounded-[36px] p-8 shadow-2xl z-10 animate-slide-up relative">
+                    
+                    {/* Header */}
+                    <div className="text-center mb-8">
+                        <div className="w-16 h-16 bg-white/10 border border-white/15 rounded-2xl flex items-center justify-center mx-auto text-3xl shadow-inner select-none mb-3">
+                            🕵️‍♂️
+                        </div>
+                        <h2 className="text-3xl font-black text-white uppercase tracking-tighter">SpyMals HQ</h2>
+                        <p className="text-spy-lime text-[10px] font-black uppercase tracking-[0.25em] mt-1">
+                            Accès au centre d'agents
+                        </p>
+                    </div>
+
+                    {/* Tabs (Inscription default left, Connexion right) */}
+                    <div className="flex bg-black/35 rounded-2xl p-1.5 mb-6 border border-white/5 shadow-inner">
+                        <button
+                            type="button"
+                            onClick={() => { setIsSignUp(true); setErrorMsg(''); }}
+                            className={`flex-1 py-3.5 text-xs font-black uppercase tracking-wider rounded-xl transition-all ${isSignUp ? 'bg-spy-lime text-spy-blue shadow-lg shadow-spy-lime/10' : 'text-white/55 hover:text-white'}`}
+                        >
+                            Inscription
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => { setIsSignUp(false); setErrorMsg(''); }}
+                            className={`flex-1 py-3.5 text-xs font-black uppercase tracking-wider rounded-xl transition-all ${!isSignUp ? 'bg-spy-lime text-spy-blue shadow-lg shadow-spy-lime/10' : 'text-white/55 hover:text-white'}`}
+                        >
+                            Connexion
+                        </button>
+                    </div>
+
+                    {/* Error Alerts */}
+                    {errorMsg && (
+                        <div className="bg-red-500/10 border border-red-500/25 rounded-2xl p-4 mb-6 flex items-start gap-3 animate-pop-in">
+                            <span className="text-red-500 text-lg flex-none select-none">⚠️</span>
+                            <p className="text-red-400 text-xs font-black uppercase tracking-wide leading-relaxed">{errorMsg}</p>
+                        </div>
+                    )}
+
+                    {/* Form */}
+                    <form onSubmit={handleAuth} className="space-y-4">
+                        {isSignUp && (
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-white/40 pl-2">Pseudo Agent</label>
+                                <input
+                                    type="text"
+                                    required
+                                    placeholder="ex: Agent Renard"
+                                    value={username}
+                                    onChange={(e) => setUsername(e.target.value)}
+                                    className="w-full bg-black/25 border border-white/10 rounded-2xl px-4 py-3.5 text-white font-bold text-sm focus:border-spy-lime focus:outline-none transition-colors shadow-inner"
+                                />
+                            </div>
+                        )}
+
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-white/40 pl-2">Email</label>
                             <input
-                                type="text"
+                                type="email"
                                 required
-                                placeholder="ex: Agent Renard"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                                className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-white font-bold text-sm focus:border-spy-lime focus:outline-none transition-colors shadow-inner"
+                                placeholder="agent@spymals.com"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="w-full bg-black/25 border border-white/10 rounded-2xl px-4 py-3.5 text-white font-bold text-sm focus:border-spy-lime focus:outline-none transition-colors shadow-inner"
                             />
                         </div>
-                    )}
 
-                    <div className="space-y-1">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-white/40 pl-2">Email</label>
-                        <input
-                            type="email"
-                            required
-                            placeholder="agent@spymals.com"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-white font-bold text-sm focus:border-spy-lime focus:outline-none transition-colors shadow-inner"
-                        />
-                    </div>
-
-                    <div className="space-y-1">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-white/40 pl-2">Mot de passe</label>
-                        <input
-                            type="password"
-                            required
-                            placeholder="••••••••"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-white font-bold text-sm focus:border-spy-lime focus:outline-none transition-colors shadow-inner"
-                        />
-                    </div>
-
-                    {isSignUp && (
-                        <div className="space-y-2 pt-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-white/40 pl-2">Choisissez votre Avatar de départ</label>
-                            <div className="flex gap-2 overflow-x-auto no-scrollbar py-2 px-1">
-                                {STARTER_AVATARS.map((emoji) => (
-                                    <button
-                                        key={emoji}
-                                        type="button"
-                                        onClick={() => setSelectedAvatar(emoji)}
-                                        className={`flex-none w-12 h-12 rounded-xl flex items-center justify-center text-2xl transition-all border ${selectedAvatar === emoji ? 'bg-spy-lime/20 border-spy-lime scale-110 shadow-lg shadow-spy-lime/20' : 'bg-black/20 border-white/10 hover:border-white/20'}`}
-                                    >
-                                        {emoji}
-                                    </button>
-                                ))}
-                            </div>
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-white/40 pl-2">Mot de passe</label>
+                            <input
+                                type="password"
+                                required
+                                placeholder="••••••••"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="w-full bg-black/25 border border-white/10 rounded-2xl px-4 py-3.5 text-white font-bold text-sm focus:border-spy-lime focus:outline-none transition-colors shadow-inner"
+                            />
                         </div>
-                    )}
 
-                    <div className="pt-4">
-                        <BouncyButton type="submit" disabled={loading} className="w-full py-4 text-sm">
-                            {loading ? "Accès en cours..." : isSignUp ? "Créer mon Dossier" : "Connexion Sécurisée"}
-                        </BouncyButton>
+                        {/* Avatar Picker (Emoji OR Gallery Import) */}
+                        {isSignUp && (
+                            <div className="space-y-2 pt-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-white/40 pl-2">
+                                    Choisissez votre avatar (animal ou photo)
+                                </label>
+                                <div className="flex gap-2.5 overflow-x-auto no-scrollbar py-2 px-1">
+                                    {/* Gallery Upload Button */}
+                                    <label className={`flex-none w-12 h-12 rounded-xl flex items-center justify-center cursor-pointer transition-all border ${selectedAvatar.startsWith('data:image/') ? 'bg-spy-lime/20 border-spy-lime scale-110 shadow-lg shadow-spy-lime/10' : 'bg-black/20 border-white/10 hover:border-white/20'}`}>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleFileChange}
+                                            className="hidden"
+                                        />
+                                        {selectedAvatar.startsWith('data:image/') ? (
+                                            <img src={selectedAvatar} alt="Photo" className="w-full h-full rounded-xl object-cover" />
+                                        ) : (
+                                            <span className="text-xl">📷</span>
+                                        )}
+                                    </label>
+
+                                    {/* Predefined Emojis */}
+                                    {STARTER_AVATARS.map((emoji) => (
+                                        <button
+                                            key={emoji}
+                                            type="button"
+                                            onClick={() => setSelectedAvatar(emoji)}
+                                            className={`flex-none w-12 h-12 rounded-xl flex items-center justify-center text-2xl transition-all border ${selectedAvatar === emoji ? 'bg-spy-lime/20 border-spy-lime scale-110 shadow-lg shadow-spy-lime/20' : 'bg-black/20 border-white/10 hover:border-white/20'}`}
+                                        >
+                                            {emoji}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="pt-4">
+                            <BouncyButton type="submit" disabled={loading} className="w-full py-4.5 text-sm uppercase tracking-wider font-black">
+                                {loading ? "Accès en cours..." : isSignUp ? "Créer mon dossier" : "Connexion sécurisée"}
+                            </BouncyButton>
+                        </div>
+                    </form>
+
+                    {/* Sans compte (Skip) link */}
+                    <div className="mt-6 pt-6 border-t border-white/10 text-center">
+                        <button
+                            type="button"
+                            onClick={onSkip}
+                            className="text-white/45 hover:text-spy-lime text-xs font-black uppercase tracking-widest transition-colors"
+                        >
+                            ⚡ SANS COMPTE
+                        </button>
                     </div>
-                </form>
 
-                {/* Skip option */}
-                <div className="mt-6 pt-6 border-t border-white/10 text-center">
-                    <button
-                        type="button"
-                        onClick={onSkip}
-                        className="text-white/40 hover:text-white text-xs font-black uppercase tracking-wider transition-colors"
-                    >
-                        🔑 Jouer en mode Invité (sans compte)
-                    </button>
                 </div>
-
-            </div>
+            )}
         </div>
     );
 };

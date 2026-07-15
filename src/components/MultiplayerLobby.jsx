@@ -13,7 +13,7 @@ const generateRoomCode = () => {
     return code;
 };
 
-const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame }) => {
+const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, onLoginRedirect }) => {
     const { playSfx } = useAudio();
     const [view, setView] = useState('select'); // 'select', 'lobby'
     const [roomCode, setRoomCode] = useState('');
@@ -383,6 +383,33 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame })
         }
     };
 
+    if (!user) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-spy-blue relative overflow-hidden">
+                {/* Background effects */}
+                <div className="absolute top-[-10%] right-[-10%] w-[350px] h-[350px] bg-spy-lime opacity-10 rounded-full blur-[80px] animate-pulse-slow"></div>
+                <div className="absolute bottom-[-10%] left-[-10%] w-[350px] h-[350px] bg-spy-orange opacity-10 rounded-full blur-[80px] animate-pulse-slow delay-1000"></div>
+
+                <div className="w-full max-w-md bg-white/10 backdrop-blur-xl border border-white/15 rounded-[32px] p-8 shadow-2xl z-10 text-center space-y-6 animate-slide-up">
+                    <div className="text-5xl filter drop-shadow-md">🔒</div>
+                    <h2 className="text-2xl font-black text-white uppercase tracking-tight">Mode En Ligne Verrouillé</h2>
+                    <p className="text-white/60 text-xs font-bold leading-relaxed">
+                        Créez un compte gratuitement en 10 secondes pour héberger des salons privés, générer des QR Codes et jouer avec vos amis sur vos propres téléphones !
+                    </p>
+                    
+                    <div className="space-y-3 pt-4">
+                        <BouncyButton onClick={onLoginRedirect} className="w-full py-4 text-sm">
+                            🔑 Créer un compte / Se connecter
+                        </BouncyButton>
+                        <BouncyButton onClick={onBack} variant="secondary" className="w-full py-3.5 text-xs">
+                            Retour à l'accueil
+                        </BouncyButton>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen flex flex-col items-center justify-start p-4 pt-20 bg-spy-blue relative overflow-y-auto no-scrollbar pb-10">
             {view === 'select' && <BackArrow onClick={onBack} />}
@@ -566,7 +593,13 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame })
                             {players.map((p) => (
                                 <div key={p.id} className="flex items-center justify-between bg-black/20 rounded-xl p-3 border border-white/5">
                                     <div className="flex items-center gap-3">
-                                        <span className="text-xl">{p.avatar_emoji}</span>
+                                        <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center overflow-hidden border border-white/10 flex-none">
+                                            {p.avatar_emoji && p.avatar_emoji.startsWith('data:image/') ? (
+                                                <img src={p.avatar_emoji} alt="Avatar" className="w-full h-full object-cover" />
+                                            ) : (
+                                                <span className="text-lg">{p.avatar_emoji}</span>
+                                            )}
+                                        </div>
                                         <div>
                                             <span className="text-xs font-bold text-white block">
                                                 {p.username}

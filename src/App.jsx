@@ -165,6 +165,25 @@ function App() {
     // Generate players with unique animals
     const newPlayers = Array.from({ length: count }, (_, i) => {
       const animal = shuffledAnimals[i % shuffledAnimals.length];
+      
+      // Inject device profile owner as Player 1
+      if (i === 0 && profileData) {
+        const isImage = profileData.avatar_emoji?.startsWith('data:image/');
+        return {
+          id: i + 1,
+          name: profileData.username || 'Agent Secret',
+          avatar: { 
+            type: isImage ? 'image' : 'emoji', 
+            value: profileData.avatar_emoji || '🦁' 
+          },
+          isCustom: true,
+          score: 0,
+          pseudoColor: profileData.equipped_color && profileData.equipped_color !== 'default'
+            ? `text-${profileData.equipped_color === 'lime' ? 'spy-lime' : profileData.equipped_color === 'orange' ? 'spy-orange' : profileData.equipped_color === 'pink' ? 'pink-400' : profileData.equipped_color === 'cyan' ? 'cyan-400' : 'yellow-400 font-extrabold shadow-glow'}`
+            : 'text-white'
+        };
+      }
+
       return {
         id: i + 1,
         // If we run out of unique names, append number (unlikely with 20 animals and max 20 players)
@@ -493,6 +512,10 @@ function App() {
             onStartMultiplayerGame={(roomData) => {
               setMultiplayerRoom(roomData);
               setCurrentScreen('multiplayer-game');
+            }}
+            onLoginRedirect={() => {
+              setAuthSkipped(false);
+              setCurrentScreen('home');
             }}
           />
         )}
