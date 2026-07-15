@@ -141,7 +141,8 @@ const Profile = ({ user, profileData, onUpdateProfile, onLogout, onBack, onOpenS
 
         setSendingFeedback(true);
         try {
-            const { error } = await supabase
+            // 1. Save to Supabase (Backup & log)
+            const { error: dbError } = await supabase
                 .from('spymals_feedback')
                 .insert({
                     username: profileData?.username || 'Agent Invité',
@@ -150,8 +151,8 @@ const Profile = ({ user, profileData, onUpdateProfile, onLogout, onBack, onOpenS
                     created_at: new Date().toISOString()
                 });
 
-            if (error) {
-                console.warn("Could not write to spymals_feedback, storing locally:", error);
+            if (dbError) {
+                console.warn("Could not save feedback to Supabase, saving to local storage fallback:", dbError);
                 const saved = JSON.parse(localStorage.getItem('spyMals_local_feedbacks') || '[]');
                 saved.push({
                     username: profileData?.username || 'Agent Invité',
@@ -161,12 +162,28 @@ const Profile = ({ user, profileData, onUpdateProfile, onLogout, onBack, onOpenS
                 });
                 localStorage.setItem('spyMals_local_feedbacks', JSON.stringify(saved));
             }
+
+            // 2. Trigger Vercel Serverless Function to send email via Resend
+            const emailRes = await fetch('/api/send-feedback', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: profileData?.username || 'Agent Invité',
+                    email: feedbackEmail || 'non-renseigne',
+                    message: feedbackMessage
+                })
+            });
+
+            if (!emailRes.ok) {
+                const errData = await emailRes.json();
+                console.error("Vercel Email delivery failed:", errData);
+            }
             
             setFeedbackSent(true);
             setFeedbackMessage('');
             setTimeout(() => setFeedbackSent(false), 5000);
         } catch (err) {
-            console.error("Feedback submission error", err);
+            console.error("Feedback submission error:", err);
         } finally {
             setSendingFeedback(false);
         }
