@@ -2,6 +2,7 @@ import React from 'react';
 import { useAudio } from '../contexts/AudioContext';
 import BouncyButton from './BouncyButton';
 import BackArrow from './BackArrow';
+import { Music, Volume2 } from 'lucide-react';
 
 const Settings = ({ onBack }) => {
     const { musicVolume, setMusicVolume, sfxVolume, setSfxVolume } = useAudio();
@@ -24,7 +25,7 @@ const Settings = ({ onBack }) => {
                 <div className="mb-6 bg-black/20 rounded-3xl p-6 border border-white/5">
                     <div className="flex justify-between items-center mb-6">
                         <div className="flex items-center">
-                            <span className="text-2xl mr-3">🎵</span>
+                            <Music className="w-5 h-5 text-spy-lime mr-3" />
                             <span className="text-white font-bold uppercase tracking-widest text-sm">Musique</span>
                         </div>
                         <span className="text-spy-lime font-black text-xl bg-spy-lime/10 px-3 py-1 rounded-lg min-w-[3ch] text-center">
@@ -54,7 +55,7 @@ const Settings = ({ onBack }) => {
                 <div className="mb-12 bg-black/20 rounded-3xl p-6 border border-white/5">
                     <div className="flex justify-between items-center mb-6">
                         <div className="flex items-center">
-                            <span className="text-2xl mr-3">🔊</span>
+                            <Volume2 className="w-5 h-5 text-spy-lime mr-3" />
                             <span className="text-white font-bold uppercase tracking-widest text-sm">Effets Sonores</span>
                         </div>
                         <span className="text-spy-lime font-black text-xl bg-spy-lime/10 px-3 py-1 rounded-lg min-w-[3ch] text-center">

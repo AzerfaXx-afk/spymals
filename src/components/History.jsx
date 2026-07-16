@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { Trash2, AlertTriangle, X, RotateCcw, ArrowRight } from 'lucide-react';
 import BouncyButton from './BouncyButton';
 import BackArrow from './BackArrow';
 import SettingsGear from './SettingsGear';
+import { CartoonAvatar } from './CartoonAvatars';
 import { format, isToday, isYesterday, parseISO } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
@@ -30,7 +32,6 @@ const History = ({ history, onUpdateHistory, onReplayTeam, onBack, onOpenSetting
             console.error("Invalid date in history", session.date);
         }
         return acc;
-        return acc;
     }, {});
 
     const handleDeleteEntry = (id) => {
@@ -50,7 +51,7 @@ const History = ({ history, onUpdateHistory, onReplayTeam, onBack, onOpenSetting
 
 
     return (
-        <div className="min-h-screen flex flex-col items-center p-6 pt-20 bg-spy-blue relative overflow-hidden">
+        <div className="min-h-screen flex flex-col items-center p-6 pt-20 bg-transparent relative overflow-hidden max-w-md mx-auto">
             <BackArrow onClick={onBack} />
             <SettingsGear onClick={onOpenSettings} />
 
@@ -60,79 +61,77 @@ const History = ({ history, onUpdateHistory, onReplayTeam, onBack, onOpenSetting
                 <div className="absolute bottom-[-20%] left-[-20%] w-[500px] h-[500px] bg-spy-blue-light opacity-[0.05] rounded-full blur-[100px] animate-pulse-slow delay-700"></div>
             </div>
 
-            <div className="z-10 w-full max-w-md animate-slide-up flex flex-col h-full">
+            <div className="z-10 w-full animate-slide-up flex flex-col h-full">
 
                 {/* Header */}
-                <div className="text-center mb-8">
-                    <h1 className="text-4xl font-black text-white uppercase tracking-tighter drop-shadow-lg mb-2">
+                <div className="text-center mb-6">
+                    <h1 className="text-3xl font-black text-white uppercase tracking-tighter drop-shadow-lg mb-2">
                         Historique
                     </h1>
-                    <div className="w-16 h-1 bg-spy-orange mx-auto rounded-full"></div>
+                    <div className="w-16 h-1.5 bg-spy-orange mx-auto rounded-full border border-black shadow-[1px_1px_0_#000]"></div>
                 </div>
 
                 {/* History List */}
-                <div className="bg-white/5 backdrop-blur-md rounded-3xl p-4 border border-white/10 shadow-xl flex-grow overflow-y-auto mb-6 custom-scrollbar">
+                <div className="card-cartoon p-4 flex-grow overflow-y-auto mb-6 no-scrollbar bg-black/45 text-white border-3 border-black min-h-[50dvh]">
 
                     {Object.keys(groupedHistory).length === 0 ? (
-                        <div className="text-center text-white/40 py-10 font-bold uppercase tracking-widest text-sm">
-                            Aucune partie passée
+                        <div className="text-center text-white/30 py-20 font-black uppercase tracking-widest text-xs">
+                            Aucune partie enregistrée
                         </div>
                     ) : (
                         <div className="space-y-6">
                             {Object.entries(groupedHistory).map(([dayLabel, sessions]) => (
                                 <div key={dayLabel} className="space-y-3 relative">
-                                    <div className="sticky top-0 bg-spy-blue/90 backdrop-blur-sm p-2 rounded-lg z-10 flex items-center justify-between shadow-sm">
-                                        <h2 className="text-white/60 font-bold uppercase tracking-widest text-xs ml-2">
+                                    <div className="sticky top-0 bg-black/60 backdrop-blur-sm p-2.5 rounded-xl z-10 flex items-center justify-between border border-white/5">
+                                        <h2 className="text-white/50 font-black uppercase tracking-widest text-[10px] ml-1">
                                             {dayLabel}
                                         </h2>
                                         {confirmDeleteDay === dayLabel ? (
-                                            <div className="flex gap-2 mr-1 animate-fade-in">
-                                                <button onClick={() => setConfirmDeleteDay(null)} className="text-[10px] text-white/50 px-2 py-1 uppercase font-bold tracking-widest hover:text-white transition-colors">Annuler</button>
-                                                <button onClick={() => handleDeleteDay(sessions)} className="text-[10px] bg-red-500/80 hover:bg-red-500 border border-red-500 text-white rounded-lg px-2 py-1 uppercase font-black tracking-widest transition-all shadow-lg active:scale-95">Confirmer</button>
+                                            <div className="flex gap-2 mr-1 animate-pop-in">
+                                                <button onClick={() => setConfirmDeleteDay(null)} className="text-[9px] text-white/50 px-2 py-1 uppercase font-black tracking-widest hover:text-white transition-colors cursor-pointer">Annuler</button>
+                                                <button onClick={() => handleDeleteDay(sessions)} className="text-[9px] bg-rose-600 border-2 border-black text-white rounded-lg px-2 py-1 uppercase font-black tracking-widest transition-all shadow-[1px_1px_0_#000] active:scale-95 cursor-pointer">Confirmer</button>
                                             </div>
                                         ) : (
-                                            <button onClick={() => setConfirmDeleteDay(dayLabel)} className="text-white/30 hover:text-red-400 p-2 rounded-full hover:bg-white/5 transition-all text-sm flex items-center justify-center mr-1" title="Supprimer ce jour">🗑️</button>
+                                            <button onClick={() => setConfirmDeleteDay(dayLabel)} className="text-white/25 hover:text-rose-400 p-1.5 rounded-lg hover:bg-white/5 transition-all cursor-pointer" title="Supprimer ce jour">
+                                                <Trash2 className="w-3.5 h-3.5" />
+                                            </button>
                                         )}
                                     </div>
 
                                     {sessions.map((session, index) => (
-                                        <div key={session.id || index} className="bg-black/20 rounded-xl p-4 border border-white/5 hover:border-white/20 transition-colors flex flex-col gap-3 relative group">
+                                        <div key={session.id || index} className="bg-black/25 rounded-2xl p-4 border-2 border-black hover:border-white/20 transition-colors flex flex-col gap-3 relative group shadow-[2px_2px_0_#000]">
 
                                             <button
                                                 onClick={() => handleDeleteEntry(session.id)}
-                                                className="absolute top-2 right-2 text-white/20 hover:text-red-400 transition-colors p-1.5 rounded-full hover:bg-white/10 z-10"
+                                                className="absolute top-2.5 right-2.5 text-white/15 hover:text-rose-400 transition-colors p-1.5 rounded-lg hover:bg-white/5 z-10 cursor-pointer"
                                                 title="Supprimer cette partie"
                                             >
-                                                ✕
+                                                <X className="w-3.5 h-3.5" />
                                             </button>
 
                                             {/* Player avatars */}
                                             <div className="flex flex-wrap gap-2 justify-center">
-                                                {session.players.map(p => (
-                                                    <div key={p.id} className="flex flex-col items-center gap-1">
-                                                        <div className="w-10 h-10 flex items-center justify-center text-2xl bg-white/5 rounded-full border border-white/10 shadow-sm overflow-hidden">
-                                                            {typeof p.avatar === 'object' && p.avatar?.type === 'image' ? (
-                                                                <img src={p.avatar.value} alt={p.name} className="w-full h-full object-cover" />
-                                                            ) : typeof p.avatar === 'string' && p.avatar.startsWith('data:image/') ? (
-                                                                <img src={p.avatar} alt={p.name} className="w-full h-full object-cover" />
-                                                            ) : (
-                                                                typeof p.avatar === 'object' ? p.avatar.value : (p.avatar || '🕵️‍♂️')
-                                                            )}
+                                                {session.players.map(p => {
+                                                    const rawAvatar = typeof p.avatar === 'object' ? p.avatar?.value : p.avatar;
+                                                    return (
+                                                        <div key={p.id} className="flex flex-col items-center gap-1">
+                                                            <CartoonAvatar id={rawAvatar} className="w-10 h-10 border-none shadow-none" />
+                                                            <span className="text-[8px] text-white/50 uppercase font-black tracking-wider max-w-[50px] truncate">
+                                                                {p.name}
+                                                            </span>
                                                         </div>
-                                                        <span className="text-[9px] text-white/60 uppercase font-black tracking-widest max-w-[50px] truncate">
-                                                            {p.name}
-                                                        </span>
-                                                    </div>
-                                                ))}
+                                                    );
+                                                })}
                                             </div>
 
                                             {/* Replay Button */}
                                             <button
                                                 onClick={() => onReplayTeam(session.players)}
-                                                className="mt-2 w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/20 active:scale-95 border border-white/10 text-white font-bold uppercase text-xs tracking-widest transition-all flex items-center justify-center gap-2"
+                                                className="mt-1 w-full py-2.5 rounded-xl bg-spy-lime/10 hover:bg-spy-lime/20 active:scale-95 border-2 border-black text-white font-black uppercase text-[9px] tracking-widest transition-all flex items-center justify-center gap-2 cursor-pointer shadow-[1px_1px_0_#000]"
                                             >
-                                                <span>Rejouer cette équipe</span>
-                                                <span className="text-spy-lime opacity-80 text-sm">→</span>
+                                                <RotateCcw className="w-3.5 h-3.5 text-spy-lime" />
+                                                <span>Rejouer cette mission</span>
+                                                <ArrowRight className="w-3.5 h-3.5 text-spy-lime/60" />
                                             </button>
                                         </div>
                                     ))}
@@ -144,7 +143,7 @@ const History = ({ history, onUpdateHistory, onReplayTeam, onBack, onOpenSetting
 
                 {/* Footer Action */}
                 <div className="mt-auto flex flex-col gap-3">
-                    <BouncyButton onClick={onBack} variant="secondary" className="w-full py-4 text-sm">
+                    <BouncyButton onClick={onBack} variant="secondary" className="w-full py-4 text-xs font-black shadow-[3px_3px_0_#000]">
                         RETOUR ACCUEIL
                     </BouncyButton>
 
@@ -153,23 +152,23 @@ const History = ({ history, onUpdateHistory, onReplayTeam, onBack, onOpenSetting
                             <div className="flex gap-3">
                                 <button
                                     onClick={() => setConfirmDeleteAll(false)}
-                                    className="flex-1 py-3 rounded-2xl border border-white/20 text-white/50 font-bold uppercase text-xs tracking-widest hover:border-white/40 transition-all"
+                                    className="flex-1 py-3 rounded-2xl border-2 border-black bg-white/5 text-white/50 font-black uppercase text-[10px] tracking-widest hover:bg-white/10 transition-all cursor-pointer flex items-center justify-center gap-1"
                                 >
-                                    Annuler
+                                    <X className="w-3.5 h-3.5" /> Annuler
                                 </button>
                                 <button
                                     onClick={handleDeleteAll}
-                                    className="flex-1 py-3 rounded-2xl bg-red-600/80 border border-red-500 text-white font-black uppercase text-xs tracking-widest hover:bg-red-600 active:scale-95 transition-all shadow-lg"
+                                    className="flex-1 py-3 rounded-2xl bg-rose-600 border-2 border-black text-white font-black uppercase text-[10px] tracking-widest hover:bg-rose-700 active:scale-95 transition-all shadow-[2px_2px_0_#000] flex items-center justify-center gap-1.5 cursor-pointer"
                                 >
-                                    ⚠️ TOUT SUPPRIMER
+                                    <AlertTriangle className="w-3.5 h-3.5" /> TOUT SUPPRIMER
                                 </button>
                             </div>
                         ) : (
                             <button
                                 onClick={() => setConfirmDeleteAll(true)}
-                                className="w-full py-3 rounded-2xl border border-red-500/30 text-red-500/70 font-bold uppercase text-xs tracking-widest hover:border-red-500/60 hover:text-red-400 transition-all"
+                                className="w-full py-3 rounded-2xl border-2 border-dashed border-rose-600/40 text-rose-500/70 font-black uppercase text-[9px] tracking-widest hover:border-rose-500/60 hover:text-rose-400 transition-all cursor-pointer flex items-center justify-center gap-1.5"
                             >
-                                🗑 Vider l'historique
+                                <Trash2 className="w-3.5 h-3.5" /> Vider l'historique
                             </button>
                         )
                     )}

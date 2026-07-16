@@ -1,31 +1,25 @@
 import React from 'react';
+import { Trophy, RotateCcw, Home } from 'lucide-react';
 import BouncyButton from './BouncyButton';
 import SettingsGear from './SettingsGear';
+import { CartoonAvatar } from './CartoonAvatars';
 
 const Scoreboard = ({ players, winners, onReplay, onHome, onOpenSettings }) => {
     // Sort players by score (descending)
     const sortedPlayers = [...players].sort((a, b) => (b.score || 0) - (a.score || 0));
 
-    const getMedal = (index) => {
-        if (index === 0) return '🥇';
-        if (index === 1) return '🥈';
-        if (index === 2) return '🥉';
-        return null;
-    };
-
-    const isWinner = (role) => {
-        if (!winners) return false;
-        // Map roles to teams
-        const team = role === 'Civilian' ? 'Civilian' : 'Impostors';
-        const winningTeam = winners.includes('Civilian') ? 'Civilian' : 'Impostors';
-        return team === winningTeam;
+    const renderRankBadge = (index) => {
+        if (index === 0) return <Trophy className="w-5 h-5 text-yellow-400 fill-yellow-400 drop-shadow-[0_2px_4px_rgba(250,204,21,0.4)]" />;
+        if (index === 1) return <Trophy className="w-5 h-5 text-slate-300 fill-slate-300" />;
+        if (index === 2) return <Trophy className="w-5 h-5 text-amber-600 fill-amber-600" />;
+        return <span className="text-white/35 text-xs font-bold font-display">#{index + 1}</span>;
     };
 
     const winningTeamText = winners.includes('Civilian') ? 'Les Innocents' : 'Les Imposteurs';
     const winningColor = winners.includes('Civilian') ? 'text-spy-lime' : 'text-spy-orange';
 
     return (
-        <div className="min-h-screen flex flex-col items-center p-6 pt-20 bg-spy-blue relative overflow-hidden">
+        <div className="min-h-screen flex flex-col items-center p-6 pt-20 bg-transparent relative overflow-hidden max-w-md mx-auto">
             <SettingsGear onClick={onOpenSettings} />
 
             {/* Background Decor */}
@@ -33,59 +27,66 @@ const Scoreboard = ({ players, winners, onReplay, onHome, onOpenSettings }) => {
                 <div className="absolute top-[-20%] right-[-20%] w-[500px] h-[500px] bg-white/5 rounded-full blur-[100px]"></div>
             </div>
 
-            <div className="z-10 w-full max-w-md animate-pop-in flex flex-col h-full">
+            <div className="z-10 w-full animate-pop-in flex flex-col h-full">
 
                 {/* Header */}
-                <div className="text-center mb-8">
-                    <h1 className="text-4xl font-black text-white uppercase tracking-tighter drop-shadow-lg mb-2">
+                <div className="text-center mb-6">
+                    <h1 className="text-3xl font-black text-white uppercase tracking-tighter drop-shadow-lg mb-2">
                         Victoire pour<br />
-                        <span className={`${winningColor} text-5xl`}>{winningTeamText} !</span>
+                        <span className={`${winningColor} text-4xl`}>{winningTeamText} !</span>
                     </h1>
+                    <div className="w-16 h-1.5 bg-spy-lime mx-auto rounded-full border border-black shadow-[1px_1px_0_#000]"></div>
                 </div>
 
                 {/* Scoreboard List */}
-                <div className="bg-white/5 backdrop-blur-md rounded-3xl p-4 border border-white/10 shadow-xl flex-grow overflow-y-auto mb-6 custom-scrollbar">
-                    <h2 className="text-white/60 font-bold uppercase tracking-widest text-xs text-center mb-4 sticky top-0 bg-spy-blue/80 backdrop-blur-sm p-2 rounded-lg z-10">
-                        Classement Général
+                <div className="card-cartoon p-4 flex-grow overflow-y-auto mb-6 no-scrollbar bg-black/45 text-white border-3 border-black">
+                    <h2 className="text-white/40 font-black uppercase tracking-widest text-[10px] text-center mb-4 sticky top-0 bg-black/60 backdrop-blur-sm p-2 rounded-xl z-10 border border-white/5">
+                        Classement de la Mission
                     </h2>
 
                     <div className="space-y-3">
-                        {sortedPlayers.map((player, index) => (
-                            <div
-                                key={player.id}
-                                className="flex items-center justify-between bg-black/20 rounded-xl p-3 border border-white/5"
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 flex items-center justify-center font-bold text-xl">
-                                        {getMedal(index) || <span className="text-white/30 text-sm">#{index + 1}</span>}
+                        {sortedPlayers.map((player, index) => {
+                            const rawAvatar = typeof player.avatar === 'object' ? player.avatar?.value : player.avatar;
+                            return (
+                                <div
+                                    key={player.id}
+                                    className={`flex items-center justify-between rounded-2xl p-3 border-2 border-black ${
+                                        index === 0 ? 'bg-gradient-to-r from-yellow-500/10 to-transparent border-yellow-500/50 shadow-[2px_2px_0_rgba(234,179,8,0.3)]' :
+                                        index === 1 ? 'bg-slate-300/5 border-slate-300/30' :
+                                        index === 2 ? 'bg-amber-600/5 border-amber-600/30' :
+                                        'bg-black/25 border-white/10'
+                                    }`}
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 flex items-center justify-center">
+                                            {renderRankBadge(index)}
+                                        </div>
+                                        <CartoonAvatar id={rawAvatar} className="w-9 h-9 border-none shadow-none" />
+                                        <div className="flex flex-col text-left">
+                                            <span className={`font-black text-sm uppercase tracking-wide ${index === 0 ? 'text-yellow-400' : 'text-white'}`}>
+                                                {player.name}
+                                            </span>
+                                        </div>
                                     </div>
-                                    <div className="w-8 h-8 flex items-center justify-center text-2xl">
-                                        {player.avatar.type === 'image' ? (
-                                            <img src={player.avatar.value} alt={player.name} className="w-full h-full object-cover rounded-full shadow-md" />
-                                        ) : (
-                                            player.avatar.value
-                                        )}
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <span className="font-bold text-white text-sm">{player.name}</span>
+                                    <div className="flex items-center gap-1.5">
+                                        <span className={`text-xl font-black font-display leading-none ${index === 0 ? 'text-yellow-400' : 'text-white'}`}>
+                                            {player.score || 0}
+                                        </span>
+                                        <span className="text-[9px] text-white/40 font-black uppercase">pts</span>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-2xl font-black text-white font-display">{player.score || 0}</span>
-                                    <span className="text-[10px] text-white/40 font-bold uppercase">pts</span>
-                                </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </div>
 
                 {/* Actions */}
-                <div className="grid grid-cols-1 gap-4 mt-auto">
-                    <BouncyButton onClick={onReplay} className="w-full py-5 text-xl shadow-spy-lime/20 shadow-2xl">
-                        REJOUER (Mêmes équipes)
+                <div className="grid grid-cols-1 gap-3 mt-auto">
+                    <BouncyButton onClick={onReplay} className="w-full py-4 text-sm font-black shadow-[4px_4px_0_#000] flex items-center justify-center gap-2">
+                        <RotateCcw className="w-4 h-4" /> REJOUER (MEMES EQUIPES)
                     </BouncyButton>
-                    <BouncyButton onClick={onHome} variant="secondary" className="w-full py-4 text-sm">
-                        RETOUR ACCUEIL
+                    <BouncyButton onClick={onHome} variant="secondary" className="w-full py-4 text-xs font-black shadow-[3px_3px_0_#000] flex items-center justify-center gap-2">
+                        <Home className="w-4 h-4" /> RETOUR ACCUEIL
                     </BouncyButton>
                 </div>
             </div>

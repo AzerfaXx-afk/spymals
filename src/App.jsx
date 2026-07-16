@@ -15,6 +15,7 @@ import Shop from './components/Shop';
 import MultiplayerLobby from './components/MultiplayerLobby';
 import MultiplayerGame from './components/MultiplayerGame';
 import EditProfileModal from './components/EditProfileModal';
+import PWAManager from './components/PWAManager';
 
 import { AudioProvider } from './contexts/AudioContext';
 import { supabase } from './utils/supabaseClient';
@@ -92,7 +93,7 @@ function App() {
         const defaultProfile = {
           id: userId,
           username: userMetadata?.full_name || userMetadata?.name || "Agent Mystère",
-          avatar_emoji: userMetadata?.avatar_url || '🦁',
+          avatar_emoji: userMetadata?.avatar_url || 'fox-detective',
           coins: 150,
           xp: 0,
           level: 1,
@@ -152,7 +153,7 @@ function App() {
       } else {
         const defaultGuest = {
           username: "Agent Invité",
-          avatar_emoji: "🦊",
+          avatar_emoji: 'fox-detective',
           coins: 100,
           xp: 0,
           level: 1,
@@ -247,7 +248,7 @@ function App() {
           name: profileData.username || 'Agent Secret',
           avatar: { 
             type: isImage ? 'image' : 'emoji', 
-            value: profileData.avatar_emoji || '🦁' 
+            value: profileData.avatar_emoji || 'fox-detective' 
           },
           isCustom: true,
           score: 0,
@@ -482,6 +483,7 @@ function App() {
   return (
     <AudioProvider>
       <div className="antialiased text-gray-900 bg-spy-blue min-h-screen relative overflow-x-hidden">
+        <PWAManager />
         
         {/* Top Header for Menu Screens */}
         {isMenuScreen && (

@@ -27,19 +27,19 @@ export const PROFILE_BANNERS = [
 ];
 
 export const THEMES_LIST = [
-    { id: 'safari', label: 'Safari', bg: 'bg-[#aadd00] text-black', icon: '🦁', price: 0 },
-    { id: 'cyber', label: 'Cyber', bg: 'bg-[#00ffff] text-black', icon: '🦝', price: 100 },
-    { id: 'polar', label: 'Polar', bg: 'bg-[#3b82f6] text-white', icon: '🐧', price: 150 },
-    { id: 'spooky', label: 'Spooky', bg: 'bg-[#ff7700] text-black', icon: '🎃', price: 200 },
-    { id: 'retro', label: 'Retro', bg: 'bg-[#8bac0f] text-black', icon: '👾', price: 250 }
+    { id: 'safari', label: 'Safari', bg: 'bg-[#aadd00] text-black', icon: '\ud83e\udd81', price: 0 },
+    { id: 'cyber', label: 'Cyber', bg: 'bg-[#00ffff] text-black', icon: '\ud83d\udc7e', price: 100 },
+    { id: 'polar', label: 'Polar', bg: 'bg-[#3b82f6] text-white', icon: '\u2744\ufe0f', price: 150 },
+    { id: 'spooky', label: 'Spooky', bg: 'bg-[#ff7700] text-black', icon: '\ud83c\udf19', price: 200 },
+    { id: 'retro', label: 'Retro', bg: 'bg-[#8bac0f] text-black', icon: '\ud83d\udd79\ufe0f', price: 250 }
 ];
 
 const getLevelTitle = (lvl) => {
-    if (lvl >= 15) return 'Maître Espion 🎖️';
-    if (lvl >= 10) return 'Agent d\'Élite 🌟';
-    if (lvl >= 5) return 'Détective Confirmé 🔍';
-    if (lvl >= 3) return 'Espion Junior 👟';
-    return 'Recrue Curieuse 🐾';
+    if (lvl >= 15) return 'Maître Espion';
+    if (lvl >= 10) return 'Agent d\'\u00c9lite';
+    if (lvl >= 5) return 'D\u00e9tective Confirm\u00e9';
+    if (lvl >= 3) return 'Espion Junior';
+    return 'Recrue Curieuse';
 };
 
 const getXPNeeded = (lvl) => lvl * 150;
@@ -460,7 +460,7 @@ const Profile = ({ user, profileData, onUpdateProfile, onLogout, onBack }) => {
                         <div className="p-5 border-t-2 border-black bg-black/45">
                             {feedbackSent ? (
                                 <div className="bg-emerald-500/10 border-2 border-emerald-500/40 p-4 rounded-2xl text-emerald-400 text-xs font-black text-center animate-pop-in">
-                                    🎉 Suggestion transmise avec succès, Agent !
+                                    Suggestion transmise avec succ\u00e8s, Agent !
                                 </div>
                             ) : (
                                 <form onSubmit={handleSendFeedback} className="space-y-4">

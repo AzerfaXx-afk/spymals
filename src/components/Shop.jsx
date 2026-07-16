@@ -252,9 +252,10 @@ const Shop = ({ user, profileData, onUpdateProfile, onBack }) => {
             </div>
 
             {isGuest && (
-                <div className="z-10 w-full max-w-md mt-8 bg-black/25 border-3 border-black rounded-2xl p-4 text-center">
-                    <p className="text-white/55 text-xs font-bold leading-relaxed">
-                        💡 **Note** : En mode Invité, les achats sont sauvegardés localement. Crée un compte pour ne pas les perdre en changeant d'appareil !
+                <div className="z-10 w-full max-w-md mt-8 bg-black/25 border-3 border-black rounded-2xl p-4 text-center flex items-start gap-3">
+                    <Lock className="w-4 h-4 text-white/40 flex-shrink-0 mt-0.5" />
+                    <p className="text-white/55 text-[10px] font-black leading-relaxed uppercase tracking-wider text-left">
+                        En mode Invité, les achats sont sauvegardés localement. Crée un compte pour ne pas les perdre en changeant d'appareil.
                     </p>
                 </div>
             )}
