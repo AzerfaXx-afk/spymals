@@ -1,8 +1,21 @@
 import React, { useState } from 'react';
 import { supabase } from '../utils/supabaseClient';
 import BouncyButton from './BouncyButton';
+import { CartoonAvatar } from './CartoonAvatars';
+import { Camera, AlertTriangle } from 'lucide-react';
 
-const STARTER_AVATARS = ['🦁', '🦊', '🐨', '🐼', '🐯', '🐻', '🦉', '🐱', '🐶', '🐸'];
+const STARTER_AVATARS = [
+  'fox-detective',
+  'spy-cat',
+  'koala-agent',
+  'panda-monocle',
+  'hacker-owl',
+  'ninja-frog',
+  'agent-dog',
+  'detective-lion',
+  'tiger-covert',
+  'penguin-secret'
+];
 
 const Auth = ({ onAuthSuccess, onSkip }) => {
     // Inscription (Sign Up) in first position by default
@@ -339,14 +352,12 @@ const Auth = ({ onAuthSuccess, onSkip }) => {
                                                 : 'bg-black/25 border-white/10 hover:border-white/20'
                                         }`}
                                     >
-                                        <div className="text-3xl filter drop-shadow-md select-none">
-                                            {!selectedAvatar.startsWith('data:image/') ? selectedAvatar : '🦁'}
-                                        </div>
+                                        <CartoonAvatar id={selectedAvatar} className="w-12 h-12 border-none shadow-none" />
                                         <div className="text-center">
                                             <span className={`text-[10px] font-black uppercase tracking-wider block ${!selectedAvatar.startsWith('data:image/') ? 'text-spy-lime' : 'text-white/60'}`}>
-                                                Animaux Agents
+                                                Mascottes Cartoon
                                             </span>
-                                            <span className="text-[8px] text-white/30 block mt-0.5">Modifier l'animal</span>
+                                            <span className="text-[8px] text-white/30 block mt-0.5">Modifier la mascotte</span>
                                         </div>
                                     </button>
 
@@ -376,7 +387,7 @@ const Auth = ({ onAuthSuccess, onSkip }) => {
                                             </>
                                         ) : (
                                             <>
-                                                <div className="text-3xl text-white/40">📷</div>
+                                                <Camera className="w-6 h-6 text-white/60" />
                                                 <div className="text-center">
                                                     <span className="text-[10px] font-black uppercase tracking-wider text-white/60 block">
                                                         Photo Galerie
@@ -451,21 +462,21 @@ const Auth = ({ onAuthSuccess, onSkip }) => {
 
                         {/* Grid */}
                         <div className="grid grid-cols-5 gap-3.5 mb-6">
-                            {STARTER_AVATARS.map((emoji) => (
+                            {STARTER_AVATARS.map((avatarId) => (
                                 <button
-                                    key={emoji}
+                                    key={avatarId}
                                     type="button"
                                     onClick={() => {
-                                        setSelectedAvatar(emoji);
+                                        setSelectedAvatar(avatarId);
                                         setShowAnimalModal(false);
                                     }}
-                                    className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl transition-all border cursor-pointer ${
-                                        selectedAvatar === emoji
+                                    className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all border cursor-pointer ${
+                                        selectedAvatar === avatarId
                                             ? 'bg-spy-lime/20 border-spy-lime scale-110 shadow-lg shadow-spy-lime/20'
                                             : 'bg-black/35 border-white/10 hover:border-white/20 active:scale-95'
                                     }`}
                                 >
-                                    {emoji}
+                                    <CartoonAvatar id={avatarId} className="w-10 h-10 border-none shadow-none" />
                                 </button>
                             ))}
                         </div>

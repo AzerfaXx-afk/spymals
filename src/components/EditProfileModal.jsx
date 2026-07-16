@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { Camera, AlertTriangle, X } from 'lucide-react';
 import BouncyButton from './BouncyButton';
-
-const STARTER_AVATARS = ['🦁', '🦊', '🐨', '🐼', '🐯', '🐻', '🦉', '🐱', '🐶', '🐸'];
+import { CartoonAvatar, CARTOON_AVATARS_LIST } from './CartoonAvatars';
 
 const EditProfileModal = ({ profileData, onSave, onClose, isForce = false }) => {
     const [username, setUsername] = useState('');
-    const [selectedAvatar, setSelectedAvatar] = useState('🦁');
+    const [selectedAvatar, setSelectedAvatar] = useState('fox-detective');
     const [showAnimalModal, setShowAnimalModal] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
 
     useEffect(() => {
         if (profileData) {
             setUsername(profileData.username || '');
-            setSelectedAvatar(profileData.avatar_emoji || '🦁');
+            setSelectedAvatar(profileData.avatar_emoji || 'fox-detective');
         }
     }, [profileData]);
 
@@ -71,87 +71,83 @@ const EditProfileModal = ({ profileData, onSave, onClose, isForce = false }) => 
     };
 
     return (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-pop-in">
-            <div className="bg-white/10 backdrop-blur-2xl border border-white/15 rounded-[36px] p-8 max-w-md w-full shadow-2xl relative text-left space-y-6">
+        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-pop-in">
+            <div className="card-cartoon max-w-sm w-full p-6 relative text-left space-y-5 bg-[#fffdf5] text-black">
                 
                 {/* Close button if not forced */}
                 {!isForce && (
                     <button
                         type="button"
                         onClick={onClose}
-                        className="absolute top-6 right-6 w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/55 hover:text-white hover:bg-white/10 active:scale-95 transition-all z-20 cursor-pointer"
+                        className="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/10 border-2 border-black flex items-center justify-center text-black hover:bg-black/20 active:scale-95 transition-all z-20 cursor-pointer"
                     >
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
+                        <X className="w-4 h-4" />
                     </button>
                 )}
 
                 {/* Header */}
                 <div className="text-center">
-                    <h3 className="text-2xl font-black text-white uppercase tracking-tight">
+                    <h3 className="text-xl font-black uppercase tracking-tight">
                         {isForce ? "Finaliser votre Profil" : "Modifier votre Profil"}
                     </h3>
-                    <p className="text-spy-lime text-[10px] font-black uppercase tracking-[0.2em] mt-1">
+                    <p className="text-spy-orange text-[10px] font-black uppercase tracking-[0.2em] mt-1">
                         Dossier d'agent secret
                     </p>
                 </div>
 
                 {errorMsg && (
-                    <div className="bg-red-500/10 border border-red-500/25 rounded-2xl p-4 flex items-start gap-3 animate-pop-in">
-                        <span className="text-red-500 text-lg flex-none select-none">⚠️</span>
-                        <p className="text-red-400 text-xs font-black uppercase tracking-wide leading-relaxed">{errorMsg}</p>
+                    <div className="bg-red-500/10 border-2 border-red-500 rounded-2xl p-4 flex items-start gap-3 animate-pop-in">
+                        <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0" />
+                        <p className="text-red-700 text-xs font-black uppercase tracking-wide leading-relaxed">{errorMsg}</p>
                     </div>
                 )}
 
                 <div className="space-y-4">
                     {/* Username input */}
-                    <div className="space-y-1.5">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-white/40 pl-2">Pseudo Agent</label>
+                    <div className="space-y-1">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-black/60 pl-1">Pseudo Agent</label>
                         <input
                             type="text"
                             required
                             placeholder="ex: Agent Cobra"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
-                            className="w-full bg-black/25 border border-white/10 rounded-2xl px-4 py-3.5 text-white font-bold text-sm focus:border-spy-lime focus:outline-none transition-colors shadow-inner"
+                            className="w-full bg-white border-3 border-black rounded-2xl px-4 py-3 text-black font-bold text-sm focus:outline-none transition-colors shadow-[2px_2px_0_#000]"
                         />
                     </div>
 
                     {/* Avatar selector cards */}
-                    <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-white/40 pl-2 block">
+                    <div className="space-y-1">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-black/60 pl-1 block">
                             Avatar de l'agent
                         </label>
                         
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-4 pt-1">
                             {/* Card 1: Predefined Animals */}
                             <button
                                 type="button"
                                 onClick={() => setShowAnimalModal(true)}
-                                className={`rounded-2xl p-4 flex flex-col items-center justify-center gap-2 cursor-pointer border transition-all duration-300 min-h-[96px] ${
+                                className={`rounded-2xl p-4 flex flex-col items-center justify-center gap-2 cursor-pointer border-3 transition-all duration-300 min-h-[96px] ${
                                     !selectedAvatar.startsWith('data:image/') && !selectedAvatar.startsWith('http')
-                                        ? 'bg-spy-lime/10 border-spy-lime shadow-lg shadow-spy-lime/5'
-                                        : 'bg-black/25 border-white/10 hover:border-white/20'
+                                        ? 'bg-spy-lime/25 border-black shadow-[3px_3px_0_#000] scale-102 font-black'
+                                        : 'bg-white border-black hover:bg-slate-50'
                                 }`}
                             >
-                                <div className="text-3xl filter drop-shadow-md select-none">
-                                    {!selectedAvatar.startsWith('data:image/') && !selectedAvatar.startsWith('http') ? selectedAvatar : '🦁'}
-                                </div>
+                                <CartoonAvatar id={selectedAvatar} className="w-12 h-12 border-none shadow-none" />
                                 <div className="text-center">
-                                    <span className={`text-[10px] font-black uppercase tracking-wider block ${!selectedAvatar.startsWith('data:image/') && !selectedAvatar.startsWith('http') ? 'text-spy-lime' : 'text-white/60'}`}>
-                                        Animaux Agents
+                                    <span className="text-[9px] font-black uppercase tracking-wider block">
+                                        Mascottes Cartoon
                                     </span>
-                                    <span className="text-[8px] text-white/30 block mt-0.5">Modifier l'animal</span>
+                                    <span className="text-[8px] opacity-60 block mt-0.5">Modifier la mascotte</span>
                                 </div>
                             </button>
 
-                            {/* Card 2: Gallery / Google Photo */}
+                            {/* Card 2: Gallery / Photo */}
                             <label
-                                className={`rounded-2xl p-4 flex flex-col items-center justify-center gap-2 cursor-pointer border transition-all duration-300 min-h-[96px] relative overflow-hidden ${
+                                className={`rounded-2xl p-4 flex flex-col items-center justify-center gap-2 cursor-pointer border-3 transition-all duration-300 min-h-[96px] relative overflow-hidden ${
                                     selectedAvatar.startsWith('data:image/') || selectedAvatar.startsWith('http')
-                                        ? 'bg-spy-lime/10 border-spy-lime shadow-lg shadow-spy-lime/5'
-                                        : 'bg-black/25 border-white/10 hover:border-white/20'
+                                        ? 'bg-spy-lime/25 border-black shadow-[3px_3px_0_#000] scale-102 font-black'
+                                        : 'bg-white border-black hover:bg-slate-50'
                                 }`}
                             >
                                 <input
@@ -162,22 +158,22 @@ const EditProfileModal = ({ profileData, onSave, onClose, isForce = false }) => 
                                 />
                                 {selectedAvatar.startsWith('data:image/') || selectedAvatar.startsWith('http') ? (
                                     <>
-                                        <img src={selectedAvatar} alt="Photo" className="w-10 h-10 rounded-full object-cover border border-white/15 animate-pop-in" />
+                                        <img src={selectedAvatar} alt="Photo" className="w-12 h-12 rounded-full object-cover border-2 border-black animate-pop-in" />
                                         <div className="text-center">
-                                            <span className="text-[10px] font-black uppercase tracking-wider text-spy-lime block">
+                                            <span className="text-[9px] font-black uppercase tracking-wider block">
                                                 Photo Profil
                                             </span>
-                                            <span className="text-[8px] text-white/30 block mt-0.5">Changer l'image</span>
+                                            <span className="text-[8px] opacity-60 block mt-0.5">Changer l'image</span>
                                         </div>
                                     </>
                                 ) : (
                                     <>
-                                        <div className="text-3xl text-white/40">📷</div>
+                                        <Camera className="w-8 h-8 text-black" />
                                         <div className="text-center">
-                                            <span className="text-[10px] font-black uppercase tracking-wider text-white/60 block">
+                                            <span className="text-[9px] font-black uppercase tracking-wider block">
                                                 Photo Galerie
                                             </span>
-                                            <span className="text-[8px] text-white/30 block mt-0.5">Importer une photo</span>
+                                            <span className="text-[8px] opacity-60 block mt-0.5">Importer photo</span>
                                         </div>
                                     </>
                                 )}
@@ -186,53 +182,55 @@ const EditProfileModal = ({ profileData, onSave, onClose, isForce = false }) => 
                     </div>
                 </div>
 
-                <div className="pt-4">
-                    <BouncyButton onClick={handleSave} className="w-full py-4 uppercase tracking-wider font-black">
+                <div className="pt-2">
+                    <button 
+                        onClick={handleSave} 
+                        className="btn-cartoon-primary w-full py-3.5 uppercase tracking-wider font-black text-sm shadow-[4px_4px_0_#000]"
+                    >
                         Sauvegarder le dossier
-                    </BouncyButton>
+                    </button>
                 </div>
 
             </div>
 
             {/* Animal Grid Modal */}
             {showAnimalModal && (
-                <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 z-[60] animate-pop-in">
-                    <div className="bg-spy-blue/90 border border-white/15 rounded-[32px] p-6 max-w-sm w-full shadow-2xl relative">
-                        <div className="text-center mb-6">
-                            <h3 className="text-xl font-black text-white uppercase tracking-tight">Sélectionner un Animal</h3>
-                            <p className="text-[9px] font-black text-spy-lime uppercase tracking-widest mt-0.5">
-                                Choisis ton avatar d'agent
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-[60] animate-pop-in">
+                    <div className="card-cartoon max-w-sm w-full p-6 relative bg-[#fffdf5] text-black">
+                        <div className="text-center mb-5">
+                            <h3 className="text-lg font-black uppercase tracking-tight">Sélectionner une Mascotte</h3>
+                            <p className="text-[9px] font-black text-spy-orange uppercase tracking-widest mt-0.5">
+                                Choisi ton avatar d'agent
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-5 gap-3.5 mb-6">
-                            {STARTER_AVATARS.map((emoji) => (
+                        <div className="grid grid-cols-5 gap-3 mb-6">
+                            {CARTOON_AVATARS_LIST.map((avatar) => (
                                 <button
-                                    key={emoji}
+                                    key={avatar.id}
                                     type="button"
                                     onClick={() => {
-                                        setSelectedAvatar(emoji);
+                                        setSelectedAvatar(avatar.id);
                                         setShowAnimalModal(false);
                                     }}
-                                    className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl transition-all border cursor-pointer ${
-                                        selectedAvatar === emoji
-                                            ? 'bg-spy-lime/20 border-spy-lime scale-110 shadow-lg shadow-spy-lime/20'
-                                            : 'bg-black/35 border-white/10 hover:border-white/20 active:scale-95'
+                                    className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all border-2 cursor-pointer ${
+                                        selectedAvatar === avatar.id
+                                            ? 'bg-spy-lime/25 border-black scale-110 shadow-[2px_2px_0_#000]'
+                                            : 'bg-white border-black/10 hover:border-black active:scale-95'
                                     }`}
                                 >
-                                    {emoji}
+                                    <CartoonAvatar id={avatar.id} className="w-10 h-10 border-none shadow-none" />
                                 </button>
                             ))}
                         </div>
 
-                        <BouncyButton
+                        <button
                             type="button"
                             onClick={() => setShowAnimalModal(false)}
-                            variant="secondary"
-                            className="w-full py-4 text-xs font-black uppercase tracking-wider"
+                            className="btn-cartoon-secondary w-full py-3 text-xs font-black uppercase tracking-wider shadow-[2px_2px_0_#000]"
                         >
                             Fermer
-                        </BouncyButton>
+                        </button>
                     </div>
                 </div>
             )}

@@ -559,40 +559,70 @@ h6 {
    CARTOON NEOBRUTALISM & THEMES STYLING (AWWWARDS REDESIGN)
    ────────────────────────────────────────────────────────────────────────── */
 
+/* ──────────────────────────────────────────────────────────────────────────
+   CARTOON NEOBRUTALISM & THEMES STYLING (AWWWARDS REDESIGN)
+   ────────────────────────────────────────────────────────────────────────── */
+
 /* Theme 1: Safari Classique (Jungle / Warm) */
 .theme-safari {
-    --color-spy-bg-start: #2d3b1b;
-    --color-spy-bg-end: #0f1604;
-    --card-bg: #fffcf0;
+    --color-spy-bg-start: #1e3512;
+    --color-spy-bg-end: #070d03;
+    --card-bg: #fffbf0;
     --card-border: #1a1a1a;
-    --card-text: #2c2514;
+    --card-text: #222222;
     --card-shadow: #1a1a1a;
     --highlight-color: #aadd00;
 }
 
 /* Theme 2: Cyber Renard (Neon / Cyberpunk) */
 .theme-cyber {
-    --color-spy-bg-start: #1c0b30;
-    --color-spy-bg-end: #05020a;
-    --card-bg: #110d1f;
+    --color-spy-bg-start: #17072b;
+    --color-spy-bg-end: #030008;
+    --card-bg: #0d091a;
     --card-border: #00ffff;
-    --card-text: #ffffff;
+    --card-text: #f0f0f5;
     --card-shadow: #ff00ff;
     --highlight-color: #00ffff;
 }
 
 /* Theme 3: Banquise Furtive (Polar / Cool) */
 .theme-polar {
-    --color-spy-bg-start: #0c2035;
-    --color-spy-bg-end: #030a14;
-    --card-bg: #f0f7ff;
-    --card-border: #1a3a60;
-    --card-text: #0b1a30;
+    --color-spy-bg-start: #0a1b2d;
+    --color-spy-bg-end: #02060d;
+    --card-bg: #f5f9ff;
+    --card-border: #1a3554;
+    --card-text: #1a2e40;
     --card-shadow: #3b82f6;
-    --highlight-color: #60a5fa;
+    --highlight-color: #3b82f6;
 }
 
-/* Base Body settings for active theme */
+/* Theme 4: Spooky Halloween (Cartoon Monster) */
+.theme-spooky {
+    --color-spy-bg-start: #190924;
+    --color-spy-bg-end: #08020d;
+    --card-bg: #150f1f;
+    --card-border: #ff7700;
+    --card-text: #f0f0f0;
+    --card-shadow: #8800ff;
+    --highlight-color: #ff7700;
+}
+
+/* Theme 5: Retro Game (Vibrant 8-Bit) */
+.theme-retro {
+    --color-spy-bg-start: #2d3b20;
+    --color-spy-bg-end: #0d120a;
+    --card-bg: #8bac0f;
+    --card-border: #0f380f;
+    --card-text: #0f380f;
+    --card-shadow: #306230;
+    --highlight-color: #306230;
+}
+
+/* Apply background changes smoothly to body */
+body {
+    transition: background-image 0.5s ease, background-color 0.5s ease;
+}
+
 body.theme-safari {
     background-image: radial-gradient(circle at center top, var(--color-spy-bg-start) 0%, var(--color-spy-bg-end) 100%);
 }
@@ -602,20 +632,26 @@ body.theme-cyber {
 body.theme-polar {
     background-image: radial-gradient(circle at center top, var(--color-spy-bg-start) 0%, var(--color-spy-bg-end) 100%);
 }
+body.theme-spooky {
+    background-image: radial-gradient(circle at center top, var(--color-spy-bg-start) 0%, var(--color-spy-bg-end) 100%);
+}
+body.theme-retro {
+    background-image: radial-gradient(circle at center top, var(--color-spy-bg-start) 0%, var(--color-spy-bg-end) 100%);
+}
 
-/* Neobrutalism Cartoon Card */
+/* Neobrutalism Cartoon Card (Adapts to theme) */
 .card-cartoon {
-    background-color: var(--card-bg, #fffcf0);
-    border: 3.5px solid var(--card-border, #1a1a1a);
-    color: var(--card-text, #2c2514);
-    box-shadow: 6px 6px 0px 0px var(--card-shadow, #1a1a1a);
-    border-radius: 24px;
+    background-color: var(--card-bg);
+    border: 3.5px solid var(--card-border);
+    color: var(--card-text);
+    box-shadow: 6px 6px 0px 0px var(--card-shadow);
+    border-radius: 28px;
     transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .card-cartoon:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 8px 8px 0px 0px var(--card-shadow, #1a1a1a);
+    box-shadow: 8px 8px 0px 0px var(--card-shadow);
 }
 
 /* Neobrutalism Cartoon Button */
@@ -629,7 +665,7 @@ body.theme-polar {
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    transition: all 0.1s ease;
+    transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .btn-cartoon-primary:hover {
@@ -652,7 +688,7 @@ body.theme-polar {
     font-family: var(--font-display);
     font-weight: 800;
     text-transform: uppercase;
-    transition: all 0.1s ease;
+    transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .btn-cartoon-secondary:hover {
@@ -668,40 +704,81 @@ body.theme-polar {
 
 /* Sticky Bottom Navbar style */
 .nav-bottom-bar {
-    background: rgba(10, 31, 61, 0.45);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-top: 1.5px solid rgba(255, 255, 255, 0.15);
-    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3);
+    background: rgba(10, 31, 61, 0.35);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border-top: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.4);
 }
 
-/* Cyber Theme glowing inputs override */
-.theme-cyber input, .theme-cyber select {
-    border-color: rgba(0, 255, 255, 0.2) !important;
-    background: rgba(0, 0, 0, 0.4) !important;
+/* Cyber Theme inputs override */
+.theme-cyber input, .theme-cyber select, .theme-cyber textarea {
+    border: 3px solid rgba(0, 255, 255, 0.3) !important;
+    background: rgba(13, 9, 26, 0.8) !important;
+    color: #f0f0f5 !important;
 }
-.theme-cyber input:focus, .theme-cyber select:focus {
+.theme-cyber input:focus, .theme-cyber select:focus, .theme-cyber textarea:focus {
     border-color: #00ffff !important;
-    box-shadow: 0 0 10px rgba(0, 255, 255, 0.3) !important;
+    box-shadow: 0 0 12px rgba(0, 255, 255, 0.4) !important;
 }
 
 /* Polar Theme inputs override */
-.theme-polar input, .theme-polar select {
-    border-color: rgba(59, 130, 246, 0.2) !important;
-    background: rgba(255, 255, 255, 0.8) !important;
-    color: #0b1a30 !important;
+.theme-polar input, .theme-polar select, .theme-polar textarea {
+    border: 3px solid rgba(59, 130, 246, 0.4) !important;
+    background: #ffffff !important;
+    color: #1a2e40 !important;
 }
-.theme-polar input::placeholder {
-    color: rgba(11, 26, 48, 0.4) !important;
+.theme-polar input::placeholder, .theme-polar textarea::placeholder {
+    color: rgba(26, 46, 64, 0.4) !important;
 }
-.theme-polar input:focus, .theme-polar select:focus {
+.theme-polar input:focus, .theme-polar select:focus, .theme-polar textarea:focus {
     border-color: #3b82f6 !important;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.2) !important;
+}
+
+/* Spooky Theme inputs override */
+.theme-spooky input, .theme-spooky select, .theme-spooky textarea {
+    border: 3px solid rgba(255, 119, 0, 0.4) !important;
+    background: rgba(21, 15, 31, 0.8) !important;
+    color: #f0f0f0 !important;
+}
+.theme-spooky input:focus, .theme-spooky select:focus, .theme-spooky textarea:focus {
+    border-color: #ff7700 !important;
+    box-shadow: 0 0 12px rgba(255, 119, 0, 0.4) !important;
+}
+
+/* Retro Theme inputs override */
+.theme-retro input, .theme-retro select, .theme-retro textarea {
+    border: 3px solid #0f380f !important;
+    background: #9bbc0f !important;
+    color: #0f380f !important;
+}
+.theme-retro input::placeholder, .theme-retro textarea::placeholder {
+    color: rgba(15, 56, 15, 0.5) !important;
+}
+.theme-retro input:focus, .theme-retro select:focus, .theme-retro textarea:focus {
+    border-color: #0f380f !important;
+    box-shadow: 0 0 8px rgba(15, 56, 15, 0.3) !important;
+}
+
+/* Accordion Animation & Custom classes */
+.accordion-item {
+    border: 3.5px solid var(--card-border, #1a1a1a);
+    box-shadow: 4px 4px 0px var(--card-shadow, #1a1a1a);
+    border-radius: 20px;
+    background-color: rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+.accordion-item:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 5px 5px 0px var(--card-shadow, #1a1a1a);
 }
 
 /* Animations */
 @keyframes emojiJump {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+    50% { transform: translateY(-8px); }
 }
 .emoji-bounce {
     animation: emojiJump 1.5s ease infinite;

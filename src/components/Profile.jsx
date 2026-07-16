@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import { 
+  ArrowLeft, Edit3, Award, Sparkles, Sliders, MessageSquare, 
+  HelpCircle, LogOut, LogIn, Volume2, Palette, Coins, Lock, CheckCircle2 
+} from 'lucide-react';
 import BouncyButton from './BouncyButton';
 import BackArrow from './BackArrow';
 import { supabase } from '../utils/supabaseClient';
 import EditProfileModal from './EditProfileModal';
 import { useAudio } from '../contexts/AudioContext';
+import { CartoonAvatar, CARTOON_AVATARS_LIST } from './CartoonAvatars';
 
 export const USERNAME_COLORS = [
     { id: 'default', label: 'Blanc Classique', class: 'text-white', price: 0 },
@@ -19,6 +24,14 @@ export const PROFILE_BANNERS = [
     { id: 'jungle', label: 'Jungle Secrète', class: 'bg-gradient-to-br from-emerald-950/90 via-slate-900/90 to-stone-950/90 border-emerald-500/25', previewClass: 'bg-emerald-950', price: 100 },
     { id: 'cyber', label: 'Néon Grid', class: 'bg-gradient-to-br from-purple-950/90 via-slate-900/90 to-indigo-950/90 border-pink-500/25', previewClass: 'bg-purple-950', price: 150 },
     { id: 'agent_gold', label: 'Élite Or', class: 'bg-gradient-to-br from-yellow-950/90 via-amber-900/90 to-stone-950/90 border-yellow-500/30', previewClass: 'bg-yellow-900', price: 300 },
+];
+
+export const THEMES_LIST = [
+    { id: 'safari', label: 'Safari', bg: 'bg-[#aadd00] text-black', icon: '🦁', price: 0 },
+    { id: 'cyber', label: 'Cyber', bg: 'bg-[#00ffff] text-black', icon: '🦝', price: 100 },
+    { id: 'polar', label: 'Polar', bg: 'bg-[#3b82f6] text-white', icon: '🐧', price: 150 },
+    { id: 'spooky', label: 'Spooky', bg: 'bg-[#ff7700] text-black', icon: '🎃', price: 200 },
+    { id: 'retro', label: 'Retro', bg: 'bg-[#8bac0f] text-black', icon: '👾', price: 250 }
 ];
 
 const getLevelTitle = (lvl) => {
@@ -37,8 +50,8 @@ const FAQ_ITEMS = [
         a: "Gagnez des points d'XP à chaque fin de partie ! Démasquer l'imposteur en tant que civil ou rester indétectable en tant qu'imposteur vous donne un bonus d'XP. Chaque niveau franchi vous rapporte 50 pièces."
     },
     {
-        q: "À quoi servent les pièces Spymals (🐾) ?",
-        a: "Vous pouvez dépenser vos pièces dans la Boutique pour débloquer de superbes bannières de dossier et des couleurs de pseudonyme exclusives."
+        q: "À quoi servent les Croquettes (🐾) ?",
+        a: "Vous pouvez dépenser vos Croquettes dans la Boutique pour débloquer de magnifiques bannières de dossier, des thèmes cartoon animés et des couleurs de pseudonyme exclusives."
     },
     {
         q: "Le mode En Ligne est-il gratuit ?",
@@ -50,7 +63,7 @@ const FAQ_ITEMS = [
     }
 ];
 
-const Profile = ({ user, profileData, onUpdateProfile, onLogout, onBack, onOpenShop }) => {
+const Profile = ({ user, profileData, onUpdateProfile, onLogout, onBack }) => {
     const isGuest = !user;
     const { musicVolume, setMusicVolume, sfxVolume, setSfxVolume } = useAudio();
 
@@ -59,6 +72,9 @@ const Profile = ({ user, profileData, onUpdateProfile, onLogout, onBack, onOpenS
     const [equippedTheme, setEquippedTheme] = useState('safari');
     const [unlockedItems, setUnlockedItems] = useState(['default']);
     const [showEditModal, setShowEditModal] = useState(false);
+
+    // Collapsible Accordion sections: 'custom', 'audio', 'feedback', 'faq' (null = all closed)
+    const [activeSection, setActiveSection] = useState('custom');
 
     // Feedback inputs
     const [feedbackEmail, setFeedbackEmail] = useState(isGuest ? '' : user.email || '');
@@ -97,6 +113,9 @@ const Profile = ({ user, profileData, onUpdateProfile, onLogout, onBack, onOpenS
     };
 
     const handleEquipTheme = async (themeId) => {
+        const isUnlocked = themeId === 'safari' || unlockedItems.includes(`theme-${themeId}`);
+        if (!isUnlocked) return;
+
         setEquippedTheme(themeId);
         const updated = { ...profileData, equipped_theme: themeId };
         onUpdateProfile(updated);
@@ -192,6 +211,10 @@ const Profile = ({ user, profileData, onUpdateProfile, onLogout, onBack, onOpenS
     const selectedBannerClass = PROFILE_BANNERS.find(b => b.id === equippedBanner)?.class || PROFILE_BANNERS[0].class;
     const selectedColorClass = USERNAME_COLORS.find(c => c.id === equippedColor)?.class || USERNAME_COLORS[0].class;
 
+    const toggleSection = (sectionName) => {
+        setActiveSection(activeSection === sectionName ? null : sectionName);
+    };
+
     return (
         <div className="flex flex-col items-center justify-start p-4 bg-transparent max-w-md mx-auto relative overflow-y-auto no-scrollbar pb-24">
             
@@ -201,7 +224,7 @@ const Profile = ({ user, profileData, onUpdateProfile, onLogout, onBack, onOpenS
                     Dossier Agent
                 </h2>
                 <p className="text-spy-lime text-[10px] font-black uppercase tracking-[0.2em] mt-1">
-                    Données d'identification
+                    Données d\'identification
                 </p>
             </div>
 
@@ -215,21 +238,18 @@ const Profile = ({ user, profileData, onUpdateProfile, onLogout, onBack, onOpenS
                     title="Modifier le profil"
                 >
                     <div className="w-20 h-20 rounded-full bg-white/10 border-2 border-black flex items-center justify-center text-4xl shadow-inner overflow-hidden select-none flex-none relative group-hover:scale-105 transition-all">
-                        {profileData?.avatar_emoji && (profileData.avatar_emoji.startsWith('data:image/') || profileData.avatar_emoji.startsWith('http')) ? (
-                            <img src={profileData.avatar_emoji} alt="Avatar" className="w-full h-full object-cover animate-pop-in" />
-                        ) : (
-                            profileData?.avatar_emoji || '🦁'
-                        )}
+                        <CartoonAvatar id={profileData?.avatar_emoji} className="w-full h-full border-none shadow-none" />
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all rounded-full">
-                            <span className="text-xs">✏️</span>
+                            <Edit3 className="w-5 h-5 text-white" />
                         </div>
                     </div>
                     <div className="flex-1 min-w-0 text-left">
                         <h3 className={`text-2xl font-black uppercase tracking-tight break-all leading-tight group-hover:text-spy-lime transition-all flex items-center gap-1.5 ${selectedColorClass}`}>
                             {profileData?.username || 'Agent Invité'}
-                            <span className="text-xs opacity-50 group-hover:opacity-100 transition-opacity">✏️</span>
+                            <Edit3 className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity" />
                         </h3>
-                        <p className="text-spy-lime text-xs font-black uppercase tracking-wider mt-1">
+                        <p className="text-spy-lime text-xs font-black uppercase tracking-wider mt-1 flex items-center gap-1">
+                            <Award className="w-3.5 h-3.5" />
                             {getLevelTitle(profileData?.level || 1)}
                         </p>
                         {isGuest && (
@@ -260,7 +280,7 @@ const Profile = ({ user, profileData, onUpdateProfile, onLogout, onBack, onOpenS
                     <div className="bg-black/25 rounded-2xl p-4 border border-white/5 flex flex-col items-center justify-center">
                         <span className="text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Croquettes</span>
                         <div className="flex items-center gap-1.5">
-                            <span className="text-xl">🐾</span>
+                            <Coins className="w-5 h-5 text-spy-lime" />
                             <span className="text-2xl font-black text-white font-display leading-none">{profileData?.coins || 0}</span>
                         </div>
                     </div>
@@ -286,208 +306,255 @@ const Profile = ({ user, profileData, onUpdateProfile, onLogout, onBack, onOpenS
                 </div>
             </div>
 
-            {/* Customization: Dynamic Theme Selector */}
-            <div className="z-10 w-full bg-white/10 backdrop-blur-xl border-3 border-black rounded-[32px] p-6 shadow-[5px_5px_0_#000] mb-6 space-y-4 text-left">
-                <h4 className="text-sm font-black uppercase tracking-widest text-white border-b border-white/10 pb-2">
-                    🖼️ Thème d'Ambiance (Cartoon)
-                </h4>
-                <div className="grid grid-cols-3 gap-2">
-                    {[
-                        { id: 'safari', label: 'Safari 🦁', bg: 'bg-[#aadd00] text-black' },
-                        { id: 'cyber', label: 'Cyber 🦝', bg: 'bg-[#ff00ff] text-white' },
-                        { id: 'polar', label: 'Polar 🐧', bg: 'bg-[#3b82f6] text-white' }
-                    ].map(theme => (
-                        <button
-                            key={theme.id}
-                            onClick={() => handleEquipTheme(theme.id)}
-                            className={`p-3 rounded-2xl text-xs font-black border-2 border-black flex flex-col items-center justify-center transition-all cursor-pointer ${equippedTheme === theme.id ? `${theme.bg} shadow-[2px_2px_0_#000]` : 'bg-black/35 text-white border-white/10 shadow-none'}`}
-                        >
-                            <span>{theme.label}</span>
-                        </button>
-                    ))}
+            {/* Accordion List container */}
+            <div className="w-full space-y-4 z-10 mb-6">
+                
+                {/* 1. PERSONNALISATION */}
+                <div className="accordion-item">
+                    <button
+                        onClick={() => toggleSection('custom')}
+                        className="w-full px-5 py-4 text-left font-black text-sm text-white flex items-center justify-between cursor-pointer hover:bg-white/5 active:bg-white/10"
+                    >
+                        <div className="flex items-center gap-2">
+                            <Palette className="w-5 h-5 text-spy-lime" />
+                            <span className="uppercase tracking-wider">Personnalisation</span>
+                        </div>
+                        <span className="text-spy-lime text-lg">{activeSection === 'custom' ? '−' : '＋'}</span>
+                    </button>
+                    {activeSection === 'custom' && (
+                        <div className="p-5 border-t-2 border-black space-y-6 bg-black/45">
+                            {/* Themes */}
+                            <div className="space-y-2.5">
+                                <span className="text-[10px] font-black uppercase tracking-widest text-white/50 block">Thèmes d\'Ambiance</span>
+                                <div className="grid grid-cols-2 gap-2">
+                                    {THEMES_LIST.map(theme => {
+                                        const isUnlocked = theme.id === 'safari' || unlockedItems.includes(`theme-${theme.id}`);
+                                        const isEquipped = equippedTheme === theme.id;
+                                        return (
+                                            <button
+                                                key={theme.id}
+                                                onClick={() => isUnlocked && handleEquipTheme(theme.id)}
+                                                className={`p-3 rounded-2xl text-xs font-black border-2 border-black flex items-center justify-between transition-all cursor-pointer ${
+                                                    isEquipped 
+                                                        ? `${theme.bg} shadow-[2px_2px_0_#000]` 
+                                                        : isUnlocked 
+                                                            ? 'bg-black/35 text-white border-white/10 hover:border-white/20' 
+                                                            : 'bg-black/50 text-white/30 border-white/5 cursor-not-allowed'
+                                                }`}
+                                                disabled={!isUnlocked}
+                                            >
+                                                <span className="flex items-center gap-1.5">
+                                                    <span>{theme.icon}</span>
+                                                    <span>{theme.label}</span>
+                                                </span>
+                                                {!isUnlocked && <Lock className="w-3.5 h-3.5 text-white/30" />}
+                                                {isEquipped && <CheckCircle2 className="w-4 h-4 ml-1" />}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* Pseudo colors */}
+                            <div className="space-y-2.5">
+                                <span className="text-[10px] font-black uppercase tracking-widest text-white/50 block">Couleurs de Pseudo</span>
+                                <div className="flex flex-wrap gap-2">
+                                    {USERNAME_COLORS.filter(c => unlockedItems.includes(c.id)).map(color => (
+                                        <button
+                                            key={color.id}
+                                            onClick={() => handleEquipColor(color.id)}
+                                            className={`px-3 py-2 rounded-xl text-xs font-black border-2 border-black transition-all cursor-pointer flex items-center gap-1 ${color.class} ${equippedColor === color.id ? 'bg-white/25 border-spy-lime shadow-[2px_2px_0_#000]' : 'bg-black/35 border-white/10 hover:border-white/20'}`}
+                                        >
+                                            {color.label}
+                                            {equippedColor === color.id && <CheckCircle2 className="w-3.5 h-3.5 text-spy-lime ml-1" />}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Banners */}
+                            <div className="space-y-2.5">
+                                <span className="text-[10px] font-black uppercase tracking-widest text-white/50 block">Bannières de Dossier</span>
+                                <div className="flex flex-wrap gap-2">
+                                    {PROFILE_BANNERS.filter(b => unlockedItems.includes(b.id)).map(banner => (
+                                        <button
+                                            key={banner.id}
+                                            onClick={() => handleEquipBanner(banner.id)}
+                                            className={`px-3 py-2 rounded-xl text-xs font-black border-2 border-black flex items-center gap-2 transition-all cursor-pointer ${equippedBanner === banner.id ? 'bg-white/25 border-spy-lime shadow-[2px_2px_0_#000]' : 'bg-black/35 border-white/10 hover:border-white/20'}`}
+                                        >
+                                            <div className={`w-3.5 h-3.5 rounded-full border border-black ${banner.previewClass}`}></div>
+                                            <span className="text-white">{banner.label}</span>
+                                            {equippedBanner === banner.id && <CheckCircle2 className="w-3.5 h-3.5 text-spy-lime ml-1" />}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
+
+                {/* 2. PARAMETRES AUDIO */}
+                <div className="accordion-item">
+                    <button
+                        onClick={() => toggleSection('audio')}
+                        className="w-full px-5 py-4 text-left font-black text-sm text-white flex items-center justify-between cursor-pointer hover:bg-white/5 active:bg-white/10"
+                    >
+                        <div className="flex items-center gap-2">
+                            <Sliders className="w-5 h-5 text-spy-lime" />
+                            <span className="uppercase tracking-wider">Paramètres Audio</span>
+                        </div>
+                        <span className="text-spy-lime text-lg">{activeSection === 'audio' ? '−' : '＋'}</span>
+                    </button>
+                    {activeSection === 'audio' && (
+                        <div className="p-5 border-t-2 border-black space-y-4 bg-black/45">
+                            {/* Music Volume */}
+                            <div className="space-y-1.5">
+                                <div className="flex justify-between text-xs font-black uppercase text-white/75">
+                                    <span>Musique</span>
+                                    <span>{Math.round(musicVolume * 100)}%</span>
+                                </div>
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max="1"
+                                    step="0.05"
+                                    value={musicVolume}
+                                    onChange={(e) => setMusicVolume(parseFloat(e.target.value))}
+                                    className="w-full h-2 rounded-lg bg-black/40 appearance-none cursor-pointer accent-[#aadd00]"
+                                />
+                            </div>
+
+                            {/* SFX Volume */}
+                            <div className="space-y-1.5">
+                                <div className="flex justify-between text-xs font-black uppercase text-white/75">
+                                    <span>Effets Sonores</span>
+                                    <span>{Math.round(sfxVolume * 100)}%</span>
+                                </div>
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max="1"
+                                    step="0.05"
+                                    value={sfxVolume}
+                                    onChange={(e) => setSfxVolume(parseFloat(e.target.value))}
+                                    className="w-full h-2 rounded-lg bg-black/40 appearance-none cursor-pointer accent-[#aadd00]"
+                                />
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {/* 3. SUGGESTIONS & RETOURS */}
+                <div className="accordion-item">
+                    <button
+                        onClick={() => toggleSection('feedback')}
+                        className="w-full px-5 py-4 text-left font-black text-sm text-white flex items-center justify-between cursor-pointer hover:bg-white/5 active:bg-white/10"
+                    >
+                        <div className="flex items-center gap-2">
+                            <MessageSquare className="w-5 h-5 text-spy-lime" />
+                            <span className="uppercase tracking-wider">Suggestions & Fiches</span>
+                        </div>
+                        <span className="text-spy-lime text-lg">{activeSection === 'feedback' ? '−' : '＋'}</span>
+                    </button>
+                    {activeSection === 'feedback' && (
+                        <div className="p-5 border-t-2 border-black bg-black/45">
+                            {feedbackSent ? (
+                                <div className="bg-emerald-500/10 border-2 border-emerald-500/40 p-4 rounded-2xl text-emerald-400 text-xs font-black text-center animate-pop-in">
+                                    🎉 Suggestion transmise avec succès, Agent !
+                                </div>
+                            ) : (
+                                <form onSubmit={handleSendFeedback} className="space-y-4">
+                                    <div>
+                                        <label className="block text-[9px] font-black uppercase tracking-wider text-white/50 mb-1 pl-1">Email de réponse</label>
+                                        <input 
+                                            type="email"
+                                            value={feedbackEmail}
+                                            onChange={(e) => setFeedbackEmail(e.target.value)}
+                                            className="w-full px-4 py-2.5 bg-black/35 text-white border-2 border-black rounded-xl text-xs font-black focus:outline-none"
+                                            placeholder="votre-email@exemple.com"
+                                            required
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[9px] font-black uppercase tracking-wider text-white/50 mb-1 pl-1">Message / Suggestion</label>
+                                        <textarea 
+                                            value={feedbackMessage}
+                                            onChange={(e) => setFeedbackMessage(e.target.value)}
+                                            className="w-full px-4 py-3 bg-black/35 text-white border-2 border-black rounded-xl text-xs font-black h-24 focus:outline-none resize-none"
+                                            placeholder="Comment pouvons-nous améliorer SpyMals ?"
+                                            required
+                                        />
+                                    </div>
+                                    <button
+                                        type="submit"
+                                        disabled={sendingFeedback}
+                                        className="btn-cartoon-primary w-full py-3 text-xs shadow-[3px_3px_0_#000] disabled:opacity-50 cursor-pointer flex items-center justify-center gap-1.5"
+                                    >
+                                        <MessageSquare className="w-4 h-4" /> {sendingFeedback ? "Envoi en cours..." : "ENVOYER LA FICHE 🚀"}
+                                    </button>
+                                </form>
+                            )}
+                        </div>
+                    )}
+                </div>
+
+                {/* 4. AIDE & FAQ */}
+                <div className="accordion-item">
+                    <button
+                        onClick={() => toggleSection('faq')}
+                        className="w-full px-5 py-4 text-left font-black text-sm text-white flex items-center justify-between cursor-pointer hover:bg-white/5 active:bg-white/10"
+                    >
+                        <div className="flex items-center gap-2">
+                            <HelpCircle className="w-5 h-5 text-spy-lime" />
+                            <span className="uppercase tracking-wider">Aide & FAQ</span>
+                        </div>
+                        <span className="text-spy-lime text-lg">{activeSection === 'faq' ? '−' : '＋'}</span>
+                    </button>
+                    {activeSection === 'faq' && (
+                        <div className="p-5 border-t-2 border-black space-y-3 bg-black/45">
+                            {FAQ_ITEMS.map((item, index) => (
+                                <div 
+                                    key={index} 
+                                    className="border-2 border-black rounded-2xl bg-black/35 overflow-hidden"
+                                >
+                                    <button
+                                        type="button"
+                                        onClick={() => setFaqOpenIndex(faqOpenIndex === index ? null : index)}
+                                        className="w-full px-4 py-3 text-left font-black text-xs text-white flex items-center justify-between cursor-pointer active:bg-white/5"
+                                    >
+                                        <span className="pr-4">{item.q}</span>
+                                        <span className="text-spy-lime text-base flex-none select-none">{faqOpenIndex === index ? '−' : '＋'}</span>
+                                    </button>
+                                    {faqOpenIndex === index && (
+                                        <div className="px-4 pb-4 pt-1 text-[11px] font-bold text-white/70 leading-relaxed border-t border-white/5 animate-slide-down">
+                                            {item.a}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
             </div>
 
-            {/* Audio Settings Panel */}
-            <div className="z-10 w-full bg-white/10 backdrop-blur-xl border-3 border-black rounded-[32px] p-6 shadow-[5px_5px_0_#000] mb-6 space-y-4 text-left">
-                <h4 className="text-sm font-black uppercase tracking-widest text-white border-b border-white/10 pb-2">
-                    🔊 Paramètres Audio
-                </h4>
-                <div className="space-y-4">
-                    {/* Music Volume */}
-                    <div className="space-y-1.5">
-                        <div className="flex justify-between text-xs font-black uppercase text-white/75">
-                            <span>Musique</span>
-                            <span>{Math.round(musicVolume * 100)}%</span>
-                        </div>
-                        <input
-                            type="range"
-                            min="0"
-                            max="1"
-                            step="0.05"
-                            value={musicVolume}
-                            onChange={(e) => setMusicVolume(parseFloat(e.target.value))}
-                            className="w-full h-2 rounded-lg bg-black/40 appearance-none cursor-pointer accent-[#aadd00]"
-                        />
-                    </div>
-
-                    {/* SFX Volume */}
-                    <div className="space-y-1.5">
-                        <div className="flex justify-between text-xs font-black uppercase text-white/75">
-                            <span>Effets Sonores</span>
-                            <span>{Math.round(sfxVolume * 100)}%</span>
-                        </div>
-                        <input
-                            type="range"
-                            min="0"
-                            max="1"
-                            step="0.05"
-                            value={sfxVolume}
-                            onChange={(e) => setSfxVolume(parseFloat(e.target.value))}
-                            className="w-full h-2 rounded-lg bg-black/40 appearance-none cursor-pointer accent-[#aadd00]"
-                        />
-                    </div>
-                </div>
-            </div>
-
-            {/* Shop & Logins Actions */}
-            <div className="z-10 w-full space-y-3 mb-6">
-                <button
-                    onClick={onOpenShop}
-                    className="btn-cartoon-primary w-full py-4 text-lg shadow-[4px_4px_0_#000] cursor-pointer"
-                >
-                    🛒 Visiter la Boutique 🐾
-                </button>
-
+            {/* Logins Actions */}
+            <div className="z-10 w-full mt-2">
                 {isGuest ? (
                     <button
                         onClick={onLogout}
-                        className="btn-cartoon-secondary w-full py-3.5 text-xs shadow-[3px_3px_0_#000] cursor-pointer"
+                        className="btn-cartoon-primary w-full py-4 text-xs shadow-[4px_4px_0_#000] cursor-pointer flex items-center justify-center gap-2 text-black"
                     >
-                        🔑 Créer un compte / Connexion
+                        <LogIn className="w-4 h-4 fill-current" /> Créer un compte / Connexion
                     </button>
                 ) : (
                     <button
                         onClick={onLogout}
-                        className="w-full py-3.5 bg-rose-600 hover:bg-rose-700 text-white font-black uppercase border-3 border-black rounded-2xl text-xs shadow-[3px_3px_0_#000] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all cursor-pointer"
+                        className="w-full py-4 bg-rose-600 hover:bg-rose-700 text-white font-black uppercase border-3 border-black rounded-2xl text-xs shadow-[3px_3px_0_#000] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all cursor-pointer flex items-center justify-center gap-2"
                     >
-                        🚪 Se déconnecter de la Centrale
+                        <LogOut className="w-4 h-4" /> Se déconnecter de la Centrale
                     </button>
                 )}
-            </div>
-
-            {/* Customization section */}
-            {unlockedItems.length > 1 && (
-                <div className="z-10 w-full bg-white/10 backdrop-blur-xl border-3 border-black rounded-[32px] p-6 shadow-[5px_5px_0_#000] mb-6 space-y-6 text-left">
-                    <h4 className="text-sm font-black uppercase tracking-widest text-white border-b border-white/10 pb-2">
-                        🎨 Personnalisation débloquée
-                    </h4>
-
-                    {/* Pseudo colors list */}
-                    <div className="space-y-2">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-white/50">Couleurs de Pseudo</span>
-                        <div className="flex flex-wrap gap-2">
-                            {USERNAME_COLORS.filter(c => unlockedItems.includes(c.id)).map(color => (
-                                <button
-                                    key={color.id}
-                                    onClick={() => handleEquipColor(color.id)}
-                                    className={`px-3 py-2 rounded-xl text-xs font-black border transition-all ${color.class} ${equippedColor === color.id ? 'bg-white/20 border-spy-lime' : 'bg-black/20 border-white/5 hover:border-white/15'}`}
-                                >
-                                    {color.label}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Banners list */}
-                    <div className="space-y-2">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-white/50">Bannières de Dossier</span>
-                        <div className="flex flex-wrap gap-2">
-                            {PROFILE_BANNERS.filter(b => unlockedItems.includes(b.id)).map(banner => (
-                                <button
-                                    key={banner.id}
-                                    onClick={() => handleEquipBanner(banner.id)}
-                                    className={`px-3 py-2 rounded-xl text-xs font-black border flex items-center gap-2 transition-all ${equippedBanner === banner.id ? 'bg-white/20 border-spy-lime' : 'bg-black/20 border-white/5 hover:border-white/15'}`}
-                                >
-                                    <div className={`w-3.5 h-3.5 rounded-full border border-white/10 ${banner.previewClass}`}></div>
-                                    <span className="text-white">{banner.label}</span>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Suggestions & Feedback Form */}
-            <div className="z-10 w-full bg-white/10 backdrop-blur-xl border-3 border-black rounded-[32px] p-6 shadow-[5px_5px_0_#000] mb-6 text-left">
-                <h4 className="text-sm font-black uppercase tracking-widest text-white border-b border-white/10 pb-2 mb-4">
-                    📬 Envoyer des suggestions
-                </h4>
-                
-                {feedbackSent ? (
-                    <div className="bg-emerald-500/10 border-2 border-emerald-500/40 p-4 rounded-2xl text-emerald-400 text-xs font-black text-center animate-pop-in">
-                        🎉 Suggestion transmise avec succès, Agent !
-                    </div>
-                ) : (
-                    <form onSubmit={handleSendFeedback} className="space-y-4">
-                        <div>
-                            <label className="block text-[9px] font-black uppercase tracking-wider text-white/50 mb-1">Email de réponse</label>
-                            <input 
-                                type="email"
-                                value={feedbackEmail}
-                                onChange={(e) => setFeedbackEmail(e.target.value)}
-                                className="w-full px-4 py-2.5 bg-black/35 text-white border-2 border-black rounded-xl text-xs font-black focus:outline-none"
-                                placeholder="votre-email@exemple.com"
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-[9px] font-black uppercase tracking-wider text-white/50 mb-1">Message / Suggestion</label>
-                            <textarea 
-                                value={feedbackMessage}
-                                onChange={(e) => setFeedbackMessage(e.target.value)}
-                                className="w-full px-4 py-3 bg-black/35 text-white border-2 border-black rounded-xl text-xs font-black h-24 focus:outline-none resize-none"
-                                placeholder="Comment pouvons-nous améliorer SpyMals ?"
-                                required
-                            />
-                        </div>
-                        <button
-                            type="submit"
-                            disabled={sendingFeedback}
-                            className="btn-cartoon-primary w-full py-3 text-xs shadow-[3px_3px_0_#000] disabled:opacity-50 cursor-pointer"
-                        >
-                            {sendingFeedback ? "Envoi en cours..." : "ENVOYER LA FICHE 🚀"}
-                        </button>
-                    </form>
-                )}
-            </div>
-
-            {/* Accordion FAQ Section */}
-            <div className="z-10 w-full bg-white/10 backdrop-blur-xl border-3 border-black rounded-[32px] p-6 shadow-[5px_5px_0_#000] mb-6 text-left">
-                <h4 className="text-sm font-black uppercase tracking-widest text-white border-b border-white/10 pb-2 mb-4">
-                    ❓ Foire Aux Questions (FAQ)
-                </h4>
-                <div className="space-y-3">
-                    {FAQ_ITEMS.map((item, index) => (
-                        <div 
-                            key={index} 
-                            className="border-2 border-black rounded-2xl bg-black/35 overflow-hidden"
-                        >
-                            <button
-                                onClick={() => setFaqOpenIndex(faqOpenIndex === index ? null : index)}
-                                className="w-full px-4 py-3 text-left font-black text-xs text-white flex items-center justify-between cursor-pointer active:bg-white/5"
-                            >
-                                <span className="pr-4">{item.q}</span>
-                                <span className="text-spy-lime text-base flex-none select-none">{faqOpenIndex === index ? '−' : '＋'}</span>
-                            </button>
-                            {faqOpenIndex === index && (
-                                <div className="px-4 pb-4 pt-1 text-[11px] font-bold text-white/70 leading-relaxed border-t border-white/5 animate-slide-down">
-                                    {item.a}
-                                </div>
-                            )}
-                        </div>
-                    ))}
-                </div>
             </div>
 
             {/* Edit Profile Modal */}

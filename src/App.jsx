@@ -18,6 +18,8 @@ import EditProfileModal from './components/EditProfileModal';
 
 import { AudioProvider } from './contexts/AudioContext';
 import { supabase } from './utils/supabaseClient';
+import { CartoonAvatar } from './components/CartoonAvatars';
+import { ShoppingCart, Trophy, Gamepad2, BookOpen, Coins } from 'lucide-react';
 
 function App() {
   const [currentScreen, setCurrentScreen] = useState('home');
@@ -37,7 +39,7 @@ function App() {
   useEffect(() => {
     if (user && profileData) {
       const isGoogleLogin = user.app_metadata?.provider === 'google' || user.identities?.some(id => id.provider === 'google');
-      const hasCustomized = profileData.unlocked_items?.includes('profile_customized');
+      const hasCustomized = profileData.unlocked_items?.includes('profile_customized') || localStorage.getItem('spyMals_profile_customized') === 'true';
       
       if (isGoogleLogin && !hasCustomized && currentScreen === 'home') {
         setShowSetupModal(true);
@@ -126,6 +128,9 @@ function App() {
     const finalData = { ...updatedData, unlocked_items: newUnlocked };
     setProfileData(finalData);
     setShowSetupModal(false);
+    
+    // Save to local storage as fallback/redundancy
+    localStorage.setItem('spyMals_profile_customized', 'true');
 
     if (user) {
       await supabase
@@ -484,16 +489,16 @@ function App() {
             {/* Top Left: Boutique */}
             <button
               onClick={() => setCurrentScreen('shop')}
-              className={`w-10 h-10 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:text-spy-lime flex items-center justify-center text-lg transition-all cursor-pointer active:scale-95 ${currentScreen === 'shop' ? 'border-spy-lime text-spy-lime bg-spy-lime/5' : 'text-white/60'}`}
+              className={`w-10 h-10 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:text-spy-lime flex items-center justify-center transition-all cursor-pointer active:scale-95 ${currentScreen === 'shop' ? 'border-spy-lime text-spy-lime bg-spy-lime/5' : 'text-white/60'}`}
               title="Boutique"
             >
-              🛒
+              <ShoppingCart className="w-5 h-5" />
             </button>
 
             {/* Center: Coin Counter */}
             <div className="bg-black/35 border border-white/5 px-3 py-1.5 rounded-full flex items-center gap-1.5 text-xs font-black text-white shadow-inner select-none">
-              <span>🐾</span>
-              <span className="text-spy-lime">{profileData?.coins || 0}</span>
+              <Coins className="w-4 h-4 text-spy-lime" />
+              <span className="text-spy-lime font-display">{profileData?.coins || 0}</span>
             </div>
 
             {/* Top Right: Profil */}
@@ -502,11 +507,7 @@ function App() {
               className={`w-10 h-10 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 flex items-center justify-center overflow-hidden transition-all cursor-pointer active:scale-95 ${currentScreen === 'profile' ? 'border-spy-lime' : ''}`}
               title="Profil"
             >
-              {profileData?.avatar_emoji && (profileData.avatar_emoji.startsWith('data:image/') || profileData.avatar_emoji.startsWith('http')) ? (
-                <img src={profileData.avatar_emoji} alt="Avatar" className="w-full h-full object-cover" />
-              ) : (
-                <span className="text-xl leading-none">{profileData?.avatar_emoji || '👤'}</span>
-              )}
+              <CartoonAvatar id={profileData?.avatar_emoji} className="w-full h-full border-none shadow-none" />
             </button>
           </div>
         )}
@@ -646,16 +647,16 @@ function App() {
               onClick={() => setCurrentScreen('leaderboard')}
               className={`flex flex-col items-center gap-1 transition-all cursor-pointer active:scale-95 ${currentScreen === 'leaderboard' ? 'text-spy-lime scale-105 font-black' : 'text-white/60 hover:text-white'}`}
             >
-              <span className="text-xl">🏆</span>
+              <Trophy className="w-5 h-5" />
               <span className="text-[9px] uppercase tracking-wider font-black">Classement</span>
             </button>
 
             {/* Tab 2: Accueil (Gros Bouton) */}
             <button
               onClick={() => setCurrentScreen('home')}
-              className={`w-14 h-14 rounded-full bg-spy-lime border-[3px] border-black flex items-center justify-center shadow-[0_4px_0_#000] active:translate-y-1 active:shadow-none transition-all cursor-pointer translate-y-[-14px]`}
+              className={`w-14 h-14 rounded-full bg-spy-lime border-[3.5px] border-black flex items-center justify-center shadow-[0_4px_0_#000] active:translate-y-1 active:shadow-none transition-all cursor-pointer translate-y-[-14px]`}
             >
-              <span className="text-2xl select-none">🎮</span>
+              <Gamepad2 className="w-7 h-7 text-spy-blue" />
             </button>
 
             {/* Tab 3: Guide */}
@@ -663,7 +664,7 @@ function App() {
               onClick={() => setCurrentScreen('how-to-play')}
               className={`flex flex-col items-center gap-1 transition-all cursor-pointer active:scale-95 ${currentScreen === 'how-to-play' ? 'text-spy-lime scale-105 font-black' : 'text-white/60 hover:text-white'}`}
             >
-              <span className="text-xl">📖</span>
+              <BookOpen className="w-5 h-5" />
               <span className="text-[9px] uppercase tracking-wider font-black">Guide</span>
             </button>
           </div>
