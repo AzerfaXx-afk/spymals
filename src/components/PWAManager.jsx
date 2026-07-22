@@ -19,15 +19,21 @@ const PWAManager = () => {
     // Check if running in standalone mode (already installed)
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
 
-    // ── Listen for SW update events ──
+    // ── Listen for SW update events & Auto-Check every 25 seconds ──
     useEffect(() => {
         let registration = null;
+        let updateInterval = null;
 
         const checkForUpdates = async () => {
             if ('serviceWorker' in navigator) {
                 try {
                     registration = await navigator.serviceWorker.getRegistration();
                     if (registration) {
+                        // Check if there's already a waiting worker
+                        if (registration.waiting && navigator.serviceWorker.controller) {
+                            setUpdateAvailable(true);
+                        }
+
                         registration.addEventListener('updatefound', () => {
                             const newWorker = registration.installing;
                             if (newWorker) {
@@ -38,6 +44,7 @@ const PWAManager = () => {
                                 });
                             }
                         });
+                        
                         registration.update().catch(() => {});
                     }
                 } catch (e) {
@@ -48,11 +55,20 @@ const PWAManager = () => {
 
         checkForUpdates();
 
+        // Periodically check for new version every 25 seconds
+        updateInterval = setInterval(() => {
+            checkForUpdates();
+        }, 25000);
+
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.addEventListener('controllerchange', () => {
                 window.location.reload();
             });
         }
+
+        return () => {
+            if (updateInterval) clearInterval(updateInterval);
+        };
     }, []);
 
     // ── Listen for Install Prompt ──
@@ -190,12 +206,14 @@ const PWAManager = () => {
 
             {/* Update available banner */}
             {updateAvailable && (
-                <div className="fixed top-3 left-1/2 -translate-x-1/2 z-[300] bg-spy-lime text-spy-blue text-xs font-black uppercase tracking-wider px-5 py-3 rounded-2xl border-2 border-black shadow-2xl flex items-center gap-3 animate-pop-in max-w-[90vw]">
-                    <RefreshCw className="w-4 h-4 flex-shrink-0" />
-                    <span>Nouvelle version disponible</span>
+                <div className="fixed top-3 left-1/2 -translate-x-1/2 z-[300] bg-slate-950/95 backdrop-blur-2xl border-2 border-spy-lime text-white text-xs font-black uppercase tracking-wider px-4 py-2.5 rounded-full shadow-[0_12px_35px_rgba(204,255,0,0.35)] flex items-center gap-3 animate-bounce-subtle max-w-[92vw]">
+                    <div className="w-7 h-7 rounded-full bg-spy-lime text-spy-blue flex items-center justify-center flex-shrink-0 animate-spin">
+                        <RefreshCw className="w-4 h-4" />
+                    </div>
+                    <span className="text-[10px] text-spy-lime font-black">Nouvelle mise à jour disponible !</span>
                     <button
                         onClick={handleUpdate}
-                        className="bg-spy-blue text-spy-lime px-3 py-1.5 rounded-xl border border-black text-[10px] font-black uppercase tracking-wider hover:bg-spy-blue/80 active:scale-95 transition-all cursor-pointer"
+                        className="bg-spy-lime text-spy-blue px-3.5 py-1.5 rounded-full border border-white text-[9px] font-black uppercase tracking-wider hover:bg-spy-lime/90 active:scale-95 transition-all cursor-pointer shadow-md flex-shrink-0"
                     >
                         Mettre à jour
                     </button>
