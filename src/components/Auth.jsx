@@ -41,6 +41,20 @@ const Auth = ({ onAuthSuccess, onSkip }) => {
     const [verificationSent, setVerificationSent] = useState(false);
     const [showAnimalModal, setShowAnimalModal] = useState(false);
 
+    // Auto check if user validates email in background tab
+    React.useEffect(() => {
+        let interval;
+        if (verificationSent) {
+            interval = setInterval(async () => {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session?.user) {
+                    onAuthSuccess?.();
+                }
+            }, 2500);
+        }
+        return () => clearInterval(interval);
+    }, [verificationSent, onAuthSuccess]);
+
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -245,7 +259,7 @@ const Auth = ({ onAuthSuccess, onSkip }) => {
                     </div>
 
                     <div className="space-y-3 pt-1">
-                        {/* Button 1: Open Webmail */}
+                        {/* Single Primary Action: Open Webmail */}
                         <BouncyButton 
                             type="button"
                             onClick={() => window.open(getWebmailUrl(email), '_blank')} 
@@ -254,21 +268,10 @@ const Auth = ({ onAuthSuccess, onSkip }) => {
                             <Mail className="w-5 h-5" /> OUVRIR MA BOÎTE MAIL <ExternalLink className="w-4 h-4 opacity-75" />
                         </BouncyButton>
 
-                        {/* Button 2: Recheck Session */}
-                        <BouncyButton 
-                            type="button"
-                            onClick={handleCheckVerification} 
-                            variant="secondary"
-                            className="w-full py-3.5 text-xs font-black flex items-center justify-center gap-2" 
-                            disabled={loading}
-                        >
-                            <CheckCircle className="w-4 h-4 text-spy-lime" /> {loading ? "Vérification..." : "J'AI VALIDÉ MON E-MAIL"}
-                        </BouncyButton>
-
                         <button
                             type="button"
                             onClick={() => setVerificationSent(false)}
-                            className="text-white/40 hover:text-white text-xs font-bold uppercase tracking-wider transition-all block mx-auto pt-1"
+                            className="text-white/40 hover:text-white text-xs font-bold uppercase tracking-wider transition-all block mx-auto pt-2"
                         >
                             ← Retour au formulaire
                         </button>
