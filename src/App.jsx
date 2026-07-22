@@ -213,9 +213,11 @@ function App() {
     const animals = [
       { id: 'fox-detective', name: 'Renard' },
       { id: 'spy-cat', name: 'Chat' },
+      { id: 'ninja-frog', name: 'Grenouille' },
       { id: 'panda-monocle', name: 'Panda' },
       { id: 'koala-agent', name: 'Koala' },
       { id: 'detective-lion', name: 'Lion' },
+      { id: 'tiger-covert', name: 'Tigre' },
       { id: 'hacker-owl', name: 'Chouette' },
       { id: 'agent-dog', name: 'Chien' },
       { id: 'penguin-secret', name: 'Pingouin' }
