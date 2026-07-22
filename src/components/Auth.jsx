@@ -2,7 +2,17 @@ import React, { useState } from 'react';
 import { supabase } from '../utils/supabaseClient';
 import BouncyButton from './BouncyButton';
 import { CartoonAvatar } from './CartoonAvatars';
-import { Camera, AlertTriangle } from 'lucide-react';
+import { Camera, AlertTriangle, ExternalLink, Mail, CheckCircle } from 'lucide-react';
+
+const getWebmailUrl = (emailStr) => {
+    const domain = (emailStr || '').split('@')[1]?.toLowerCase() || '';
+    if (domain.includes('gmail')) return 'https://mail.google.com/';
+    if (domain.includes('outlook') || domain.includes('hotmail') || domain.includes('live') || domain.includes('msn')) return 'https://outlook.live.com/';
+    if (domain.includes('yahoo')) return 'https://mail.yahoo.com/';
+    if (domain.includes('icloud') || domain.includes('me.com')) return 'https://www.icloud.com/mail';
+    if (domain.includes('proton')) return 'https://mail.proton.me/';
+    return 'https://mail.google.com/';
+};
 
 const STARTER_AVATARS = [
   'fox-detective',
@@ -208,34 +218,57 @@ const Auth = ({ onAuthSuccess, onSkip }) => {
             <div className="absolute top-[40%] left-[30%] w-[400px] h-[400px] bg-indigo-500 opacity-[0.05] rounded-full blur-[150px] pointer-events-none select-none"></div>
 
             {verificationSent ? (
-                // 📬 VERIFICATION CARD
-                <div className="w-full max-w-md bg-white/10 backdrop-blur-2xl border border-white/15 rounded-[32px] md:rounded-[36px] p-6 md:p-8 shadow-2xl z-10 text-center space-y-6 animate-pop-in max-h-[92dvh] overflow-y-auto custom-scrollbar">
-                    <div className="w-16 h-16 md:w-20 md:h-20 bg-spy-lime/10 border border-spy-lime/20 rounded-full flex items-center justify-center mx-auto text-3xl md:text-4xl shadow-inner select-none">
-                        📬
+                // ✉️ VERIFICATION CARD
+                <div className="w-full max-w-md bg-slate-900/90 backdrop-blur-2xl border border-white/15 rounded-[32px] md:rounded-[36px] p-6 md:p-8 shadow-2xl z-10 text-center space-y-5 animate-pop-in max-h-[92dvh] overflow-y-auto custom-scrollbar">
+                    <div className="w-20 h-20 mx-auto relative flex items-center justify-center">
+                        <div className="absolute inset-1 bg-spy-lime/20 rounded-full blur-xl animate-pulse-slow pointer-events-none" />
+                        <img 
+                            src="/top_secret_mail_badge.png" 
+                            alt="Dossier E-mail" 
+                            className="w-full h-full object-contain filter drop-shadow-[0_8px_12px_rgba(0,0,0,0.6)] hover:scale-110 transition-transform duration-300 relative z-10" 
+                        />
                     </div>
+
                     <div>
                         <h2 className="text-xl md:text-2xl font-black text-white uppercase tracking-tight">Vérification Requise</h2>
-                        <p className="text-spy-lime text-[10px] font-black uppercase tracking-[0.2em] mt-1">Dossier en attente</p>
+                        <p className="text-spy-lime text-[10px] font-black uppercase tracking-[0.2em] mt-1">Dossier en attente d'activation</p>
                     </div>
 
-                    <div className="bg-black/35 border border-white/5 rounded-2xl p-4 md:p-5 text-left space-y-3">
+                    <div className="bg-black/40 border border-white/10 rounded-2xl p-4 md:p-5 text-left space-y-2.5 shadow-inner">
                         <p className="text-xs text-white/80 leading-relaxed">
-                            Un e-mail de confirmation contenant votre badge d'activation a été envoyé à :
+                            Un e-mail de confirmation sécurisé a été envoyé à l'adresse :
                         </p>
-                        <p className="text-sm font-black text-white text-center break-all">{email}</p>
-                        <p className="text-[10px] text-white/50 leading-relaxed text-center italic">
-                            (Pensez à regarder dans vos courriers indésirables / spams)
+                        <p className="text-sm font-black text-spy-lime text-center break-all bg-black/40 py-2 px-3 rounded-xl border border-spy-lime/20">{email}</p>
+                        <p className="text-[10px] text-white/40 leading-relaxed text-center italic">
+                            (Cliquez sur le bouton ci-dessous pour ouvrir votre messagerie et valider votre dossier)
                         </p>
                     </div>
 
-                    <div className="space-y-3 pt-2">
-                        <BouncyButton onClick={handleCheckVerification} className="w-full py-4 text-sm" disabled={loading}>
-                            {loading ? "Vérification..." : "J'ai validé mon e-mail"}
+                    <div className="space-y-3 pt-1">
+                        {/* Button 1: Open Webmail */}
+                        <BouncyButton 
+                            type="button"
+                            onClick={() => window.open(getWebmailUrl(email), '_blank')} 
+                            className="w-full py-4 text-sm font-black shadow-lg shadow-spy-lime/20 flex items-center justify-center gap-2"
+                        >
+                            <Mail className="w-5 h-5" /> OUVRIR MA BOÎTE MAIL <ExternalLink className="w-4 h-4 opacity-75" />
                         </BouncyButton>
+
+                        {/* Button 2: Recheck Session */}
+                        <BouncyButton 
+                            type="button"
+                            onClick={handleCheckVerification} 
+                            variant="secondary"
+                            className="w-full py-3.5 text-xs font-black flex items-center justify-center gap-2" 
+                            disabled={loading}
+                        >
+                            <CheckCircle className="w-4 h-4 text-spy-lime" /> {loading ? "Vérification..." : "J'AI VALIDÉ MON E-MAIL"}
+                        </BouncyButton>
+
                         <button
                             type="button"
                             onClick={() => setVerificationSent(false)}
-                            className="text-white/40 hover:text-white text-xs font-bold uppercase tracking-wider transition-all block mx-auto"
+                            className="text-white/40 hover:text-white text-xs font-bold uppercase tracking-wider transition-all block mx-auto pt-1"
                         >
                             ← Retour au formulaire
                         </button>
