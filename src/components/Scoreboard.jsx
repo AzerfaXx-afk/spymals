@@ -19,7 +19,7 @@ const Scoreboard = ({ players, winners, onReplay, onHome, onOpenSettings }) => {
     const winningColor = winners.includes('Civilian') ? 'text-spy-lime' : 'text-spy-orange';
 
     return (
-        <div className="min-h-screen flex flex-col items-center p-6 pt-20 bg-transparent relative overflow-hidden max-w-md mx-auto">
+        <div className="min-h-screen min-h-[100dvh] flex flex-col items-center justify-between p-4 md:p-6 pt-16 md:pt-20 bg-transparent relative overflow-x-hidden max-w-md mx-auto">
             <SettingsGear onClick={onOpenSettings} />
 
             {/* Background Decor */}
@@ -27,19 +27,19 @@ const Scoreboard = ({ players, winners, onReplay, onHome, onOpenSettings }) => {
                 <div className="absolute top-[-20%] right-[-20%] w-[500px] h-[500px] bg-white/5 rounded-full blur-[100px]"></div>
             </div>
 
-            <div className="z-10 w-full animate-pop-in flex flex-col h-full">
+            <div className="z-10 w-full animate-pop-in flex flex-col flex-1 max-h-[88dvh] overflow-y-auto custom-scrollbar pb-4">
 
                 {/* Header */}
-                <div className="text-center mb-6">
-                    <h1 className="text-3xl font-black text-white uppercase tracking-tighter drop-shadow-lg mb-2">
+                <div className="text-center mb-5">
+                    <h1 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tighter drop-shadow-lg mb-2">
                         Victoire pour<br />
-                        <span className={`${winningColor} text-4xl`}>{winningTeamText} !</span>
+                        <span className={`${winningColor} text-3xl md:text-4xl`}>{winningTeamText} !</span>
                     </h1>
                     <div className="w-16 h-1.5 bg-spy-lime mx-auto rounded-full border border-black shadow-[1px_1px_0_#000]"></div>
                 </div>
 
                 {/* Scoreboard List */}
-                <div className="card-cartoon p-4 flex-grow overflow-y-auto mb-6 no-scrollbar bg-black/45 text-white border-3 border-black">
+                <div className="card-cartoon p-4 flex-grow overflow-y-auto mb-5 no-scrollbar bg-black/45 text-white border-3 border-black max-h-[350px]">
                     <h2 className="text-white/40 font-black uppercase tracking-widest text-[10px] text-center mb-4 sticky top-0 bg-black/60 backdrop-blur-sm p-2 rounded-xl z-10 border border-white/5">
                         Classement de la Mission
                     </h2>

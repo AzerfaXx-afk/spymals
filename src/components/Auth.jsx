@@ -201,7 +201,7 @@ const Auth = ({ onAuthSuccess, onSkip }) => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-spy-blue relative overflow-hidden">
+        <div className="min-h-screen min-h-[100dvh] flex flex-col items-center justify-center p-4 md:p-6 bg-spy-blue relative overflow-x-hidden">
             {/* Ambient background glows */}
             <div className="absolute top-[10%] left-[5%] w-[350px] h-[350px] bg-spy-lime opacity-[0.12] rounded-full blur-[120px] pointer-events-none select-none animate-pulse-slow"></div>
             <div className="absolute bottom-[15%] right-[5%] w-[350px] h-[350px] bg-spy-orange opacity-[0.1] rounded-full blur-[120px] pointer-events-none select-none animate-pulse-slow delay-1000"></div>
@@ -209,16 +209,16 @@ const Auth = ({ onAuthSuccess, onSkip }) => {
 
             {verificationSent ? (
                 // 📬 VERIFICATION CARD
-                <div className="w-full max-w-md bg-white/10 backdrop-blur-2xl border border-white/15 rounded-[36px] p-8 shadow-2xl z-10 text-center space-y-6 animate-pop-in">
-                    <div className="w-20 h-20 bg-spy-lime/10 border border-spy-lime/20 rounded-full flex items-center justify-center mx-auto text-4xl shadow-inner select-none">
+                <div className="w-full max-w-md bg-white/10 backdrop-blur-2xl border border-white/15 rounded-[32px] md:rounded-[36px] p-6 md:p-8 shadow-2xl z-10 text-center space-y-6 animate-pop-in max-h-[92dvh] overflow-y-auto custom-scrollbar">
+                    <div className="w-16 h-16 md:w-20 md:h-20 bg-spy-lime/10 border border-spy-lime/20 rounded-full flex items-center justify-center mx-auto text-3xl md:text-4xl shadow-inner select-none">
                         📬
                     </div>
                     <div>
-                        <h2 className="text-2xl font-black text-white uppercase tracking-tight">Vérification Requise</h2>
+                        <h2 className="text-xl md:text-2xl font-black text-white uppercase tracking-tight">Vérification Requise</h2>
                         <p className="text-spy-lime text-[10px] font-black uppercase tracking-[0.2em] mt-1">Dossier en attente</p>
                     </div>
 
-                    <div className="bg-black/35 border border-white/5 rounded-2xl p-5 text-left space-y-3">
+                    <div className="bg-black/35 border border-white/5 rounded-2xl p-4 md:p-5 text-left space-y-3">
                         <p className="text-xs text-white/80 leading-relaxed">
                             Un e-mail de confirmation contenant votre badge d'activation a été envoyé à :
                         </p>
@@ -243,7 +243,7 @@ const Auth = ({ onAuthSuccess, onSkip }) => {
                 </div>
             ) : (
                 // 🛡️ AUTH CARD
-                <div className="w-full max-w-md bg-white/10 backdrop-blur-2xl border border-white/15 rounded-[36px] p-8 shadow-2xl z-10 animate-slide-up relative">
+                <div className="w-full max-w-md bg-slate-900/80 backdrop-blur-2xl border border-white/15 rounded-[30px] md:rounded-[36px] p-5 md:p-8 shadow-2xl z-10 animate-slide-up relative max-h-[92dvh] overflow-y-auto custom-scrollbar">
                     
                     {/* Close Button */}
                     <button

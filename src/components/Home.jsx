@@ -16,11 +16,11 @@ const Home = ({
     const [showPlayOptions, setShowPlayOptions] = useState(false);
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-[75vh] p-6 text-center relative overflow-hidden max-w-md mx-auto">
+        <div className="flex flex-col items-center justify-center min-h-[70vh] md:min-h-[75vh] px-4 py-6 text-center relative overflow-x-hidden max-w-md mx-auto">
             
             {/* Decors & Mascot */}
-            <div className="z-10 flex flex-col items-center mb-6 relative w-full mt-2">
-                <div className="relative w-full max-w-[280px] mx-auto flex items-center justify-center transition-transform duration-300 hover:scale-105">
+            <div className="z-10 flex flex-col items-center mb-5 md:mb-6 relative w-full mt-1">
+                <div className="relative w-full max-w-[240px] md:max-w-[280px] mx-auto flex items-center justify-center transition-transform duration-300 hover:scale-105">
                     <picture>
                         <source srcSet="/renard.webp" type="image/webp" />
                         <img
@@ -30,25 +30,25 @@ const Home = ({
                             height={400}
                             fetchpriority="high"
                             decoding="async"
-                            className="w-full h-auto object-contain drop-shadow-[0_12px_12px_rgba(0,0,0,0.5)]"
-                            style={{ maxHeight: '35dvh' }}
+                            className="w-full h-auto object-contain drop-shadow-[0_12px_16px_rgba(0,0,0,0.6)]"
+                            style={{ maxHeight: '25dvh' }}
                         />
                     </picture>
                 </div>
 
                 {/* Subtitle Badge */}
-                <div className="mt-4 bg-black/45 backdrop-blur-md px-5 py-1.5 rounded-full border border-white/10 shadow-lg">
-                    <p className="text-white font-black text-[10px] tracking-[0.25em] uppercase">
+                <div className="mt-3 md:mt-4 bg-black/45 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/10 shadow-lg">
+                    <p className="text-spy-lime font-black text-[10px] tracking-[0.25em] uppercase">
                         Démasquez l'imposteur
                     </p>
                 </div>
             </div>
 
             {/* Giant Play Button */}
-            <div className="z-10 w-full max-w-xs space-y-4">
+            <div className="z-10 w-full max-w-xs space-y-3.5">
                 <button
                     onClick={() => setShowPlayOptions(true)}
-                    className="btn-cartoon-primary w-full text-2xl py-4.5 px-6 font-black uppercase tracking-wider shadow-[0_6px_0_#000] cursor-pointer flex items-center justify-center gap-2"
+                    className="btn-cartoon-primary w-full text-xl md:text-2xl py-3.5 md:py-4.5 px-6 font-black uppercase tracking-wider shadow-[0_6px_0_#000] cursor-pointer flex items-center justify-center gap-2 active:scale-95 transition-transform"
                 >
                     <Play className="w-6 h-6 fill-current" /> JOUER !
                 </button>
@@ -57,7 +57,7 @@ const Home = ({
                 {hasHistory && (
                     <button
                         onClick={onOpenHistory}
-                        className="btn-cartoon-secondary w-full py-3 text-xs font-black uppercase tracking-wider shadow-[0_4px_0_#000] cursor-pointer flex items-center justify-center gap-1.5"
+                        className="btn-cartoon-secondary w-full py-2.5 md:py-3 text-xs font-black uppercase tracking-wider shadow-[0_4px_0_#000] cursor-pointer flex items-center justify-center gap-1.5 active:scale-95 transition-transform"
                     >
                         <History className="w-4 h-4" /> Historique des équipes
                     </button>

@@ -594,14 +594,14 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
     // ─────────────────────────────────────────────
     if (gameState === 'voting') {
         return (
-            <div className="min-h-screen flex flex-col items-center p-6 bg-spy-blue relative overflow-hidden">
+            <div className="min-h-screen min-h-[100dvh] flex flex-col items-center justify-center p-4 md:p-6 bg-spy-blue relative overflow-x-hidden">
                 <SettingsGear onClick={onOpenSettings} />
-                <div className="w-full max-w-md z-10 animate-pop-in">
-                    <h2 className="text-3xl font-black text-white text-center mb-8 uppercase tracking-tighter">
+                <div className="w-full max-w-md z-10 animate-pop-in max-h-[88dvh] overflow-y-auto custom-scrollbar px-2 py-4">
+                    <h2 className="text-2xl md:text-3xl font-black text-white text-center mb-6 uppercase tracking-tighter">
                         Qui est <span className="text-spy-orange">l'imposteur ?</span>
                     </h2>
 
-                    <div className="grid grid-cols-2 gap-4 mb-8">
+                    <div className="grid grid-cols-2 gap-3 md:gap-4 mb-6">
                         <AnimatePresence>
                             {assignedRoles.map((player) => {
                                 const isEliminated = eliminatedPlayers.includes(player.id);
