@@ -119,7 +119,7 @@ const Leaderboard = () => {
   };
 
   return (
-    <div className="fixed inset-0 top-20 bottom-28 px-3.5 max-w-md mx-auto flex flex-col justify-between overflow-hidden pointer-events-auto select-none">
+    <div className="fixed inset-0 top-18 bottom-24 px-3.5 max-w-md mx-auto flex flex-col justify-between overflow-hidden pointer-events-auto select-none">
       
       {/* Background Glow */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
@@ -129,7 +129,7 @@ const Leaderboard = () => {
       <div className="z-10 w-full flex flex-col h-full overflow-hidden justify-between">
         
         {/* Title Header */}
-        <div className="text-center mb-1.5 flex-shrink-0">
+        <div className="text-center mb-1 flex-shrink-0">
           <div className="inline-flex items-center px-3 py-0.5 rounded-full bg-spy-lime/10 border border-spy-lime/30 text-spy-lime text-[8.5px] font-black uppercase tracking-widest mb-0.5">
             AGENTS ÉLITES
           </div>
@@ -215,10 +215,10 @@ const Leaderboard = () => {
 
         </div>
 
-        {/* INNER SCROLLABLE RANK LIST CONTAINER (Stops cleanly above bottom navbar) */}
-        <div className="w-full bg-slate-950/90 backdrop-blur-2xl border-2 border-white/15 rounded-3xl p-2.5 shadow-[0_16px_40px_rgba(0,0,0,0.85)] flex-1 flex flex-col overflow-hidden min-h-0">
+        {/* PERFECTLY ROUNDED RANK LIST CONTAINER (Fits items 4-10 without empty gaps) */}
+        <div className="w-full bg-slate-950/95 backdrop-blur-2xl border-2 border-white/15 rounded-[2.2rem] p-2.5 shadow-[0_16px_40px_rgba(0,0,0,0.85)] flex-1 flex flex-col overflow-hidden min-h-0">
           
-          <div className="flex items-center justify-between px-2 pb-1.5 mb-1 border-b border-white/10 text-[8px] font-black uppercase tracking-widest text-white/40 flex-shrink-0">
+          <div className="flex items-center justify-between px-2.5 pb-1.5 mb-1 border-b border-white/10 text-[8px] font-black uppercase tracking-widest text-white/40 flex-shrink-0">
             <span>RANG & AGENT</span>
             <span>RÉUSSITE & STATS</span>
           </div>
@@ -229,63 +229,68 @@ const Leaderboard = () => {
               <span className="text-[8.5px] font-black uppercase tracking-wider">Chargement des stats...</span>
             </div>
           ) : (
-            <div className="flex-1 overflow-y-auto pr-1 no-scrollbar space-y-1.5 pb-2">
-              {paginatedList.map((agent, index) => {
-                const rankNumber = index + 4;
-                return (
-                  <div
-                    key={agent.username + index}
-                    className="flex items-center justify-between bg-slate-900/80 border border-white/10 hover:border-spy-lime/40 rounded-2xl p-1.5 transition-all duration-300"
-                  >
-                    {/* Left: Rank + Avatar + Name */}
-                    <div className="flex items-center gap-2">
-                      <div className="w-5 h-5 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[8.5px] font-black text-white/70">
-                        #{rankNumber}
+            <div className="flex-1 overflow-y-auto pr-1 no-scrollbar space-y-1.5 flex flex-col">
+              
+              {/* List Items */}
+              <div className="space-y-1.5 flex-1">
+                {paginatedList.map((agent, index) => {
+                  const rankNumber = index + 4;
+                  return (
+                    <div
+                      key={agent.username + index}
+                      className="flex items-center justify-between bg-slate-900/80 border border-white/10 hover:border-spy-lime/40 rounded-2xl p-1.5 transition-all duration-300"
+                    >
+                      {/* Left: Rank + Avatar + Name */}
+                      <div className="flex items-center gap-2">
+                        <div className="w-5 h-5 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[8.5px] font-black text-white/70">
+                          #{rankNumber}
+                        </div>
+
+                        <div className="w-7.5 h-7.5 rounded-xl bg-slate-800 border border-white/20 overflow-hidden flex-shrink-0">
+                          <CartoonAvatar id={agent.avatar_emoji} className="w-full h-full border-none shadow-none" />
+                        </div>
+
+                        <div className="flex flex-col text-left">
+                          <span className="font-black text-[10.5px] text-white tracking-wide truncate max-w-[100px]">
+                            {agent.username}
+                          </span>
+                          <span className="text-[7.5px] text-spy-lime font-bold">
+                            {agent.title} • Niv.{agent.level}
+                          </span>
+                        </div>
                       </div>
 
-                      <div className="w-7.5 h-7.5 rounded-xl bg-slate-800 border border-white/20 overflow-hidden flex-shrink-0">
-                        <CartoonAvatar id={agent.avatar_emoji} className="w-full h-full border-none shadow-none" />
-                      </div>
-
-                      <div className="flex flex-col text-left">
-                        <span className="font-black text-[10.5px] text-white tracking-wide truncate max-w-[100px]">
-                          {agent.username}
+                      {/* Right: Win Rate % + Victoires / Défaites */}
+                      <div className="flex flex-col items-end">
+                        <span className="text-[10.5px] font-black text-spy-lime tracking-tight">
+                          {agent.winRate}% Réussite
                         </span>
-                        <span className="text-[7.5px] text-spy-lime font-bold">
-                          {agent.title} • Niv.{agent.level}
+                        <span className="text-[7.5px] text-white/70 font-bold">
+                          {agent.wins} Victoires • {agent.losses} Défaites
                         </span>
+                        <div className="flex items-center gap-1">
+                          <img src="/croquette_coin_3d.png" alt="coin" className="w-2.5 h-2.5 object-contain" />
+                          <span className="text-[7px] text-white/40 font-black">{agent.coins} Croquettes</span>
+                        </div>
                       </div>
                     </div>
+                  );
+                })}
+              </div>
 
-                    {/* Right: Win Rate % + Victoires / Défaites */}
-                    <div className="flex flex-col items-end">
-                      <span className="text-[10.5px] font-black text-spy-lime tracking-tight">
-                        {agent.winRate}% Réussite
-                      </span>
-                      <span className="text-[7.5px] text-white/70 font-bold">
-                        {agent.wins} Victoires • {agent.losses} Défaites
-                      </span>
-                      <div className="flex items-center gap-1">
-                        <img src="/croquette_coin_3d.png" alt="coin" className="w-2.5 h-2.5 object-contain" />
-                        <span className="text-[7px] text-white/40 font-black">{agent.coins} Croquettes</span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-
-              {/* VOIR PLUS BUTTON (Fully visible above floating navbar) */}
+              {/* VOIR PLUS BUTTON (Pinned at bottom of rounded card container) */}
               {hasMore && (
-                <div className="pt-1.5 pb-2 text-center">
+                <div className="pt-1.5 pb-0.5 mt-auto text-center flex-shrink-0">
                   <button
                     onClick={handleLoadMore}
-                    className="w-full py-2 bg-spy-lime/20 hover:bg-spy-lime/30 border-2 border-spy-lime rounded-xl text-spy-lime font-black uppercase text-[9.5px] tracking-wider transition-all duration-300 cursor-pointer flex items-center justify-center gap-1.5 active:scale-95 shadow-md"
+                    className="w-full py-2 bg-gradient-to-r from-spy-lime/20 via-spy-lime/30 to-spy-lime/20 hover:from-spy-lime/30 hover:to-spy-lime/30 border-2 border-spy-lime rounded-2xl text-spy-lime font-black uppercase text-[9.5px] tracking-widest transition-all duration-300 cursor-pointer flex items-center justify-center gap-1.5 active:scale-95 shadow-[0_4px_15px_rgba(204,255,0,0.25)]"
                   >
-                    <span>VOIR PLUS (+10)</span>
+                    <span>VOIR PLUS DE JOUEURS (+10)</span>
                     <ChevronDown className="w-3.5 h-3.5" />
                   </button>
                 </div>
               )}
+
             </div>
           )}
 
