@@ -13,12 +13,27 @@ const DEFAULT_AGENTS = [
   { username: 'TigreCovert', coins: 420, wins: 12, games: 16, avatar_emoji: 'tiger-agent', level: 3, title: 'Tigre Ombre' },
   { username: 'KoalaInfiltrator', coins: 380, wins: 10, games: 15, avatar_emoji: 'koala-agent', level: 3, title: 'Koala Silencieux' },
   { username: 'LionLeader', coins: 350, wins: 9, games: 14, avatar_emoji: 'lion-detective', level: 2, title: 'Lion Stratège' },
-  { username: 'PenguinSecret', coins: 310, wins: 8, games: 13, avatar_emoji: 'penguin-secret', level: 2, title: 'Agent Arctique' }
+  { username: 'PenguinSecret', coins: 310, wins: 8, games: 13, avatar_emoji: 'penguin-secret', level: 2, title: 'Agent Arctique' },
+  { username: 'ShadowLynx', coins: 290, wins: 7, games: 12, avatar_emoji: 'cat-spy', level: 2, title: 'Ombre Furtive' },
+  { username: 'ViperTactical', coins: 270, wins: 6, games: 11, avatar_emoji: 'ninja-frog', level: 2, title: 'Recrue Tactique' },
+  { username: 'EagleEye_007', coins: 250, wins: 6, games: 12, avatar_emoji: 'owl-hacker', level: 2, title: 'Sniper Volant' },
+  { username: 'PantherGhost', coins: 230, wins: 5, games: 10, avatar_emoji: 'tiger-agent', level: 2, title: 'Fantôme Feline' },
+  { username: 'BearBouncer', coins: 210, wins: 5, games: 11, avatar_emoji: 'panda-monocle', level: 2, title: 'Garde du Corps' },
+  { username: 'WolfHunter', coins: 190, wins: 4, games: 9, avatar_emoji: 'dog-agent', level: 1, title: 'Chasseur de Nuit' },
+  { username: 'FoxJunior', coins: 170, wins: 4, games: 10, avatar_emoji: 'fox-detective', level: 1, title: 'Cadet Renard' },
+  { username: 'AgentKoala_99', coins: 150, wins: 3, games: 8, avatar_emoji: 'koala-agent', level: 1, title: 'Recrue Discrète' },
+  { username: 'PandaNinja', coins: 130, wins: 3, games: 9, avatar_emoji: 'panda-monocle', level: 1, title: 'Apprenti Ninja' },
+  { username: 'CatShadow_X', coins: 110, wins: 2, games: 7, avatar_emoji: 'cat-spy', level: 1, title: 'Chat de Nuit' },
+  { username: 'FrogLeaper', coins: 90, wins: 2, games: 8, avatar_emoji: 'ninja-frog', level: 1, title: 'Sauteur Furtif' },
+  { username: 'OwlWatcher', coins: 70, wins: 1, games: 5, avatar_emoji: 'owl-hacker', level: 1, title: 'Observateur' },
+  { username: 'LionRoar', coins: 50, wins: 1, games: 6, avatar_emoji: 'lion-detective', level: 1, title: 'Lionceau' },
+  { username: 'PenguinIce', coins: 30, wins: 1, games: 7, avatar_emoji: 'penguin-secret', level: 1, title: 'Recrue Givrée' },
+  { username: 'TigerCub', coins: 10, wins: 0, games: 4, avatar_emoji: 'tiger-agent', level: 1, title: 'Nouvelle Recrue' }
 ];
 
 const Leaderboard = () => {
   const [leaderboardData, setLeaderboardData] = useState([]);
-  const [visibleCount, setVisibleCount] = useState(10);
+  const [visibleCount, setVisibleCount] = useState(13); // Top 3 on podium + 10 in list
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -52,6 +67,7 @@ const Leaderboard = () => {
     setLoading(true);
     let rawList = [];
 
+    // 1. Fetch remote profiles from Supabase
     try {
       const { data: profiles, error } = await supabase
         .from('spymals_profiles')
@@ -65,6 +81,7 @@ const Leaderboard = () => {
       console.warn("Could not fetch remote profiles", e);
     }
 
+    // 2. Load LocalStorage player data
     try {
       const stored = localStorage.getItem('spyMals_leaderboard');
       if (stored) {
@@ -87,12 +104,14 @@ const Leaderboard = () => {
       console.warn("Could not parse local leaderboard", e);
     }
 
+    // 3. Populate default agents so list is ALWAYS rich with 25+ agents
     DEFAULT_AGENTS.forEach(defP => {
       if (!rawList.some(r => r.username.toLowerCase() === defP.username.toLowerCase())) {
         rawList.push(calculateStats(defP));
       }
     });
 
+    // Sort primarily by Win Rate % (Réussite), tie-breaker by total wins, then coins
     rawList.sort((a, b) => b.winRate - a.winRate || b.wins - a.wins || b.coins - a.coins);
 
     setLeaderboardData(rawList.slice(0, 100));
@@ -111,6 +130,7 @@ const Leaderboard = () => {
   const top2 = leaderboardData[1];
   const top3 = leaderboardData[2];
 
+  // List below podium (starts from index 3 up to visibleCount)
   const paginatedList = leaderboardData.slice(3, visibleCount);
   const hasMore = visibleCount < Math.min(100, leaderboardData.length);
 
@@ -215,8 +235,8 @@ const Leaderboard = () => {
 
         </div>
 
-        {/* PERFECTLY ROUNDED RANK LIST CONTAINER */}
-        <div className="w-full bg-slate-950/95 backdrop-blur-2xl border-2 border-white/15 rounded-[2rem] p-2.5 shadow-[0_16px_40px_rgba(0,0,0,0.85)] flex-1 flex flex-col overflow-hidden min-h-0">
+        {/* FULLY FILLED ROUNDED RANK LIST CONTAINER */}
+        <div className="w-full bg-slate-950/95 backdrop-blur-2xl border-2 border-white/15 rounded-[2.2rem] p-2.5 shadow-[0_16px_40px_rgba(0,0,0,0.85)] flex-1 flex flex-col overflow-hidden min-h-0">
           
           <div className="flex items-center justify-between px-2.5 pb-1.5 mb-1 border-b border-white/10 text-[8px] font-black uppercase tracking-widest text-white/40 flex-shrink-0">
             <span>RANG & AGENT</span>
@@ -278,9 +298,9 @@ const Leaderboard = () => {
                 })}
               </div>
 
-              {/* PINNED FOOTER: VOIR PLUS DE JOUEURS (+10) ALWAYS VISIBLE AT BOTTOM OF CARD */}
-              {hasMore && (
-                <div className="pt-2 flex-shrink-0">
+              {/* ALWAYS VISIBLE PINNED BUTTON AT BOTTOM OF CARD */}
+              <div className="pt-2 flex-shrink-0">
+                {hasMore ? (
                   <button
                     onClick={handleLoadMore}
                     className="w-full py-2 bg-gradient-to-r from-spy-lime/25 via-spy-lime/35 to-spy-lime/25 hover:from-spy-lime/35 hover:to-spy-lime/35 border-2 border-spy-lime rounded-2xl text-spy-lime font-black uppercase text-[9.5px] tracking-widest transition-all duration-300 cursor-pointer flex items-center justify-center gap-1.5 active:scale-95 shadow-[0_4px_15px_rgba(204,255,0,0.3)]"
@@ -288,8 +308,12 @@ const Leaderboard = () => {
                     <span>VOIR PLUS DE JOUEURS (+10)</span>
                     <ChevronDown className="w-3.5 h-3.5" />
                   </button>
-                </div>
-              )}
+                ) : (
+                  <div className="w-full py-1.5 bg-white/5 border border-white/10 rounded-2xl text-white/40 font-black uppercase text-[8.5px] tracking-widest text-center">
+                    FIN DU CLASSEMENT
+                  </div>
+                )}
+              </div>
 
             </div>
           )}
