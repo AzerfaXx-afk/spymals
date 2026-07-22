@@ -13,14 +13,12 @@ const DEFAULT_AGENTS = [
   { username: 'TigreCovert', coins: 420, wins: 12, games: 16, avatar_emoji: 'tiger-agent', level: 3, title: 'Tigre Ombre' },
   { username: 'KoalaInfiltrator', coins: 380, wins: 10, games: 15, avatar_emoji: 'koala-agent', level: 3, title: 'Koala Silencieux' },
   { username: 'LionLeader', coins: 350, wins: 9, games: 14, avatar_emoji: 'lion-detective', level: 2, title: 'Lion Stratège' },
-  { username: 'PenguinSecret', coins: 310, wins: 8, games: 13, avatar_emoji: 'penguin-secret', level: 2, title: 'Agent Arctique' },
-  { username: 'ShadowLynx', coins: 280, wins: 7, games: 12, avatar_emoji: 'cat-spy', level: 2, title: 'Ombre Furtive' },
-  { username: 'ViperTactical', coins: 250, wins: 6, games: 11, avatar_emoji: 'ninja-frog', level: 1, title: 'Recrue Tactique' }
+  { username: 'PenguinSecret', coins: 310, wins: 8, games: 13, avatar_emoji: 'penguin-secret', level: 2, title: 'Agent Arctique' }
 ];
 
 const Leaderboard = () => {
   const [leaderboardData, setLeaderboardData] = useState([]);
-  const [visibleCount, setVisibleCount] = useState(10);
+  const [visibleCount, setVisibleCount] = useState(8);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -98,10 +96,10 @@ const Leaderboard = () => {
       }
     });
 
-    // Sort primarily by Win Rate % (Ratio Win/Loss), tie-breaker by total wins, then coins
+    // Sort primarily by Win Rate % (Réussite), tie-breaker by total wins, then coins
     rawList.sort((a, b) => b.winRate - a.winRate || b.wins - a.wins || b.coins - a.coins);
 
-    setLeaderboardData(rawList.slice(0, 100)); // Max top 100
+    setLeaderboardData(rawList.slice(0, 100));
     setLoading(false);
   };
 
@@ -126,70 +124,77 @@ const Leaderboard = () => {
   };
 
   return (
-    <div className="h-screen max-h-screen overflow-hidden flex flex-col justify-between p-4 pt-18 pb-24 max-w-md mx-auto relative select-none">
+    <div className="h-[100dvh] max-h-[100dvh] overflow-hidden flex flex-col pt-20 pb-28 px-3 max-w-md mx-auto relative select-none">
       
       {/* Background Glow */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-10 left-1/2 -translate-x-1/2 w-72 h-72 bg-spy-lime opacity-10 rounded-full blur-[90px]"></div>
+        <div className="absolute top-12 left-1/2 -translate-x-1/2 w-64 h-64 bg-spy-lime opacity-10 rounded-full blur-[80px]"></div>
       </div>
 
-      <div className="z-10 w-full flex flex-col h-full overflow-hidden">
+      <div className="z-10 w-full flex flex-col h-full overflow-hidden justify-between">
         
-        {/* Title Header (Clean, no stars) */}
-        <div className="text-center mb-3 flex-shrink-0">
-          <div className="inline-flex items-center px-4 py-1 rounded-full bg-spy-lime/10 border border-spy-lime/30 text-spy-lime text-[10px] font-black uppercase tracking-widest mb-1.5 shadow-sm">
+        {/* Title Header (Clean "CLASSEMENT") */}
+        <div className="text-center mb-2 flex-shrink-0">
+          <div className="inline-flex items-center px-3.5 py-1 rounded-full bg-spy-lime/10 border border-spy-lime/30 text-spy-lime text-[9px] font-black uppercase tracking-widest mb-1 shadow-sm">
             AGENTS ÉLITES
           </div>
           <h1 className="text-2xl font-black text-white uppercase tracking-tighter drop-shadow-md">
-            CLASSEMENT RATIO
+            CLASSEMENT
           </h1>
-          <div className="w-16 h-1 bg-gradient-to-r from-transparent via-spy-lime to-transparent mx-auto rounded-full mt-1"></div>
+          <div className="w-14 h-1 bg-gradient-to-r from-transparent via-spy-lime to-transparent mx-auto rounded-full mt-0.5"></div>
         </div>
 
-        {/* 3D PODIUM SECTION (Fixed, Non-Scrollable) */}
-        <div className="w-full grid grid-cols-3 gap-2 items-end mb-3 px-1 flex-shrink-0">
+        {/* 3D PODIUM SECTION (Enriched with full stats) */}
+        <div className="w-full grid grid-cols-3 gap-1.5 items-end mb-2.5 px-0.5 flex-shrink-0">
           
           {/* 2nd Place (Silver) */}
           {top2 && (
             <div className="flex flex-col items-center">
               <div className="relative mb-1 flex flex-col items-center">
-                <div className="w-6 h-6 rounded-full bg-slate-300 border border-white flex items-center justify-center text-[11px] font-black text-slate-900 shadow-lg -mb-2 z-20">
+                <div className="w-5 h-5 rounded-full bg-slate-300 border border-white flex items-center justify-center text-[10px] font-black text-slate-900 shadow-md -mb-2 z-20">
                   2
                 </div>
-                <div className="w-13 h-13 rounded-2xl bg-gradient-to-b from-slate-700 to-slate-900 border-2 border-slate-300 p-0.5 shadow-[0_6px_16px_rgba(0,0,0,0.5)] overflow-hidden">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-b from-slate-700 to-slate-900 border-2 border-slate-300 p-0.5 shadow-md overflow-hidden">
                   <CartoonAvatar id={top2.avatar_emoji} className="w-full h-full border-none shadow-none" />
                 </div>
               </div>
-              <span className="text-[10px] font-black text-white truncate max-w-[85px] text-center">{top2.username}</span>
-              <span className="text-[9px] font-black text-spy-lime">{top2.winRate}% Ratio</span>
+              <span className="text-[10px] font-black text-white truncate max-w-[80px] text-center">{top2.username}</span>
+              <span className="text-[8px] font-bold text-slate-400 truncate max-w-[80px]">{top2.title}</span>
+              <span className="text-[9px] font-black text-spy-lime mt-0.5">{top2.winRate}% Réussite</span>
               
               {/* Podium Pillar 2 */}
-              <div className="w-full h-16 mt-1 bg-gradient-to-b from-slate-800/90 to-slate-950/90 border-t-4 border-slate-300 rounded-t-2xl flex flex-col items-center justify-center shadow-lg">
-                <span className="text-xl font-black text-slate-400 opacity-60">2</span>
-                <span className="text-[7px] text-white/50 font-bold">{top2.wins}V - {top2.losses}D</span>
+              <div className="w-full h-15 mt-1 bg-gradient-to-b from-slate-800/90 to-slate-950/90 border-t-3 border-slate-300 rounded-t-2xl flex flex-col items-center justify-center shadow-lg p-1">
+                <span className="text-lg font-black text-slate-300 opacity-80">#2</span>
+                <span className="text-[7px] text-white/70 font-bold">{top2.wins} Victoires</span>
+                <span className="text-[7px] text-slate-400 font-medium">{top2.losses} Défaites</span>
               </div>
             </div>
           )}
 
           {/* 1st Place (Gold Hero) */}
           {top1 && (
-            <div className="flex flex-col items-center -translate-y-2">
+            <div className="flex flex-col items-center -translate-y-1.5">
               <div className="relative mb-1 flex flex-col items-center">
-                <div className="w-7 h-7 rounded-full bg-gradient-to-b from-amber-300 to-amber-500 border-2 border-white flex items-center justify-center text-slate-950 shadow-[0_0_15px_rgba(251,191,36,0.6)] -mb-2.5 z-20">
-                  <Crown className="w-4 h-4 fill-slate-950" />
+                <div className="w-6 h-6 rounded-full bg-gradient-to-b from-amber-300 to-amber-500 border-2 border-white flex items-center justify-center text-slate-950 shadow-[0_0_12px_rgba(251,191,36,0.6)] -mb-2 z-20">
+                  <Crown className="w-3.5 h-3.5 fill-slate-950" />
                 </div>
-                <div className="w-16 h-16 rounded-3xl bg-gradient-to-b from-amber-500/30 to-slate-900 border-3 border-amber-400 p-1 shadow-[0_8px_22px_rgba(251,191,36,0.4)] overflow-hidden">
+                <div className="w-15 h-15 rounded-2xl bg-gradient-to-b from-amber-500/30 to-slate-900 border-3 border-amber-400 p-1 shadow-[0_6px_20px_rgba(251,191,36,0.4)] overflow-hidden">
                   <CartoonAvatar id={top1.avatar_emoji} className="w-full h-full border-none shadow-none" />
                 </div>
               </div>
-              <span className="text-[11px] font-black text-amber-300 truncate max-w-[95px] text-center drop-shadow-sm">{top1.username}</span>
-              <span className="text-[10px] font-black text-spy-lime">{top1.winRate}% Ratio</span>
+              <span className="text-[11px] font-black text-amber-300 truncate max-w-[90px] text-center drop-shadow-sm">{top1.username}</span>
+              <span className="text-[8px] font-bold text-amber-200/80 truncate max-w-[90px]">{top1.title}</span>
+              <span className="text-[10px] font-black text-spy-lime mt-0.5">{top1.winRate}% Réussite</span>
               
               {/* Podium Pillar 1 */}
-              <div className="w-full h-22 mt-1 bg-gradient-to-b from-amber-500/20 to-slate-950/95 border-t-4 border-amber-400 rounded-t-2xl flex flex-col items-center justify-center shadow-2xl relative overflow-hidden">
+              <div className="w-full h-20 mt-1 bg-gradient-to-b from-amber-500/20 to-slate-950/95 border-t-4 border-amber-400 rounded-t-2xl flex flex-col items-center justify-center shadow-2xl relative overflow-hidden p-1">
                 <div className="absolute inset-0 bg-amber-400/5 animate-pulse"></div>
-                <span className="text-2xl font-black text-amber-400 opacity-90">1</span>
-                <span className="text-[7.5px] font-black uppercase tracking-wider text-amber-300">{top1.wins}V - {top1.losses}D</span>
+                <span className="text-xl font-black text-amber-400 opacity-90">#1 ÉLITE</span>
+                <span className="text-[7.5px] font-black text-amber-200">{top1.wins} Victoires • {top1.losses} Défaites</span>
+                <div className="flex items-center gap-1 mt-0.5">
+                  <img src="/croquette_coin_3d.png" alt="coin" className="w-3 h-3 object-contain" />
+                  <span className="text-[7.5px] font-black text-spy-lime">{top1.coins} Croquettes</span>
+                </div>
               </div>
             </div>
           )}
@@ -198,20 +203,22 @@ const Leaderboard = () => {
           {top3 && (
             <div className="flex flex-col items-center">
               <div className="relative mb-1 flex flex-col items-center">
-                <div className="w-6 h-6 rounded-full bg-amber-700 border border-white flex items-center justify-center text-[11px] font-black text-amber-100 shadow-lg -mb-2 z-20">
+                <div className="w-5 h-5 rounded-full bg-amber-700 border border-white flex items-center justify-center text-[10px] font-black text-amber-100 shadow-md -mb-2 z-20">
                   3
                 </div>
-                <div className="w-13 h-13 rounded-2xl bg-gradient-to-b from-amber-900/60 to-slate-900 border-2 border-amber-600 p-0.5 shadow-[0_6px_16px_rgba(0,0,0,0.5)] overflow-hidden">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-b from-amber-900/60 to-slate-900 border-2 border-amber-600 p-0.5 shadow-md overflow-hidden">
                   <CartoonAvatar id={top3.avatar_emoji} className="w-full h-full border-none shadow-none" />
                 </div>
               </div>
-              <span className="text-[10px] font-black text-white truncate max-w-[85px] text-center">{top3.username}</span>
-              <span className="text-[9px] font-black text-spy-lime">{top3.winRate}% Ratio</span>
+              <span className="text-[10px] font-black text-white truncate max-w-[80px] text-center">{top3.username}</span>
+              <span className="text-[8px] font-bold text-amber-500 truncate max-w-[80px]">{top3.title}</span>
+              <span className="text-[9px] font-black text-spy-lime mt-0.5">{top3.winRate}% Réussite</span>
               
               {/* Podium Pillar 3 */}
-              <div className="w-full h-14 mt-1 bg-gradient-to-b from-amber-950/80 to-slate-950/90 border-t-4 border-amber-700 rounded-t-2xl flex flex-col items-center justify-center shadow-lg">
-                <span className="text-xl font-black text-amber-600 opacity-60">3</span>
-                <span className="text-[7px] text-white/50 font-bold">{top3.wins}V - {top3.losses}D</span>
+              <div className="w-full h-14 mt-1 bg-gradient-to-b from-amber-950/80 to-slate-950/90 border-t-3 border-amber-700 rounded-t-2xl flex flex-col items-center justify-center shadow-lg p-1">
+                <span className="text-lg font-black text-amber-600 opacity-80">#3</span>
+                <span className="text-[7px] text-white/70 font-bold">{top3.wins} Victoires</span>
+                <span className="text-[7px] text-amber-600/80 font-medium">{top3.losses} Défaites</span>
               </div>
             </div>
           )}
@@ -219,20 +226,20 @@ const Leaderboard = () => {
         </div>
 
         {/* INNER SCROLLABLE RANK LIST CONTAINER */}
-        <div className="w-full bg-slate-950/90 backdrop-blur-2xl border-2 border-white/15 rounded-3xl p-3 shadow-[0_16px_40px_rgba(0,0,0,0.85)] flex-1 flex flex-col overflow-hidden min-h-0">
+        <div className="w-full bg-slate-950/90 backdrop-blur-2xl border-2 border-white/15 rounded-3xl p-2.5 shadow-[0_16px_40px_rgba(0,0,0,0.85)] flex-1 flex flex-col overflow-hidden min-h-0">
           
-          <div className="flex items-center justify-between px-2 pb-2 mb-1.5 border-b border-white/10 text-[9px] font-black uppercase tracking-widest text-white/40 flex-shrink-0">
+          <div className="flex items-center justify-between px-2 pb-1.5 mb-1 border-b border-white/10 text-[8.5px] font-black uppercase tracking-widest text-white/40 flex-shrink-0">
             <span>RANG & AGENT</span>
-            <span>RATIO & STATS</span>
+            <span>TAUX DE RÉUSSITE & STATS</span>
           </div>
 
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-10 text-spy-lime gap-2 flex-1">
-              <div className="w-7 h-7 border-3 border-spy-lime border-t-transparent rounded-full animate-spin"></div>
-              <span className="text-[10px] font-black uppercase tracking-wider">Chargement des stats...</span>
+            <div className="flex flex-col items-center justify-center py-8 text-spy-lime gap-2 flex-1">
+              <div className="w-6 h-6 border-3 border-spy-lime border-t-transparent rounded-full animate-spin"></div>
+              <span className="text-[9px] font-black uppercase tracking-wider">Chargement des stats...</span>
             </div>
           ) : (
-            <div className="flex-1 overflow-y-auto pr-1 no-scrollbar space-y-2">
+            <div className="flex-1 overflow-y-auto pr-1 no-scrollbar space-y-1.5">
               {paginatedList.map((agent, index) => {
                 const rankNumber = index + 4;
                 return (
@@ -241,17 +248,17 @@ const Leaderboard = () => {
                     className="flex items-center justify-between bg-slate-900/80 border border-white/10 hover:border-spy-lime/40 rounded-2xl p-2 transition-all duration-300"
                   >
                     {/* Left: Rank + Avatar + Name */}
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-6 h-6 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[10px] font-black text-white/70">
+                    <div className="flex items-center gap-2">
+                      <div className="w-5 h-5 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[9px] font-black text-white/70">
                         #{rankNumber}
                       </div>
 
-                      <div className="w-9 h-9 rounded-xl bg-slate-800 border border-white/20 overflow-hidden flex-shrink-0">
+                      <div className="w-8 h-8 rounded-xl bg-slate-800 border border-white/20 overflow-hidden flex-shrink-0">
                         <CartoonAvatar id={agent.avatar_emoji} className="w-full h-full border-none shadow-none" />
                       </div>
 
                       <div className="flex flex-col text-left">
-                        <span className="font-black text-xs text-white tracking-wide truncate max-w-[110px]">
+                        <span className="font-black text-[11px] text-white tracking-wide truncate max-w-[105px]">
                           {agent.username}
                         </span>
                         <span className="text-[8px] text-spy-lime font-bold">
@@ -260,14 +267,18 @@ const Leaderboard = () => {
                       </div>
                     </div>
 
-                    {/* Right: Win Rate % + Victories/Defeats */}
+                    {/* Right: Explicit Stats (Victoires / Défaites / Croquettes) */}
                     <div className="flex flex-col items-end">
-                      <span className="text-xs font-black text-spy-lime tracking-tight">
-                        {agent.winRate}% Ratio
+                      <span className="text-[11px] font-black text-spy-lime tracking-tight">
+                        {agent.winRate}% Réussite
                       </span>
-                      <span className="text-[8px] text-white/50 font-black uppercase">
-                        {agent.wins}V - {agent.losses}D ({agent.coins} pts)
+                      <span className="text-[8px] text-white/70 font-bold">
+                        {agent.wins} Victoires • {agent.losses} Défaites
                       </span>
+                      <div className="flex items-center gap-1">
+                        <img src="/croquette_coin_3d.png" alt="coin" className="w-2.5 h-2.5 object-contain" />
+                        <span className="text-[7.5px] text-white/40 font-black">{agent.coins} Croquettes</span>
+                      </div>
                     </div>
                   </div>
                 );
@@ -278,10 +289,10 @@ const Leaderboard = () => {
                 <div className="pt-1 pb-1 text-center">
                   <button
                     onClick={handleLoadMore}
-                    className="w-full py-2 bg-spy-lime/10 hover:bg-spy-lime/20 border border-spy-lime/40 rounded-xl text-spy-lime font-black uppercase text-[10px] tracking-wider transition-all duration-300 cursor-pointer flex items-center justify-center gap-1 active:scale-95 shadow-md"
+                    className="w-full py-1.5 bg-spy-lime/10 hover:bg-spy-lime/20 border border-spy-lime/40 rounded-xl text-spy-lime font-black uppercase text-[9px] tracking-wider transition-all duration-300 cursor-pointer flex items-center justify-center gap-1 active:scale-95 shadow-md"
                   >
                     <span>VOIR PLUS (+10)</span>
-                    <ChevronDown className="w-3.5 h-3.5" />
+                    <ChevronDown className="w-3 h-3" />
                   </button>
                 </div>
               )}
