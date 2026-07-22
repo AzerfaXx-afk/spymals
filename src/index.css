@@ -592,25 +592,25 @@ h6 {
    CARTOON NEOBRUTALISM & THEMES STYLING (AWWWARDS REDESIGN)
    ────────────────────────────────────────────────────────────────────────── */
 
-/* Theme 1: Safari Classique (Jungle / Warm) */
+/* Theme 1: Safari Classique (Dark Tactical Spy Theme) */
 .theme-safari {
-    --color-spy-bg-start: #1e3512;
-    --color-spy-bg-end: #070d03;
-    --card-bg: #fffbf0;
-    --card-border: #1a1a1a;
-    --card-text: #222222;
-    --card-shadow: #1a1a1a;
-    --highlight-color: #aadd00;
+    --color-spy-bg-start: #1e1b4b;
+    --color-spy-bg-end: #020617;
+    --card-bg: rgba(15, 23, 42, 0.9);
+    --card-border: rgba(255, 255, 255, 0.15);
+    --card-text: #ffffff;
+    --card-shadow: rgba(0, 0, 0, 0.6);
+    --highlight-color: #ccff00;
 }
 
 /* Theme 2: Cyber Renard (Neon / Cyberpunk) */
 .theme-cyber {
     --color-spy-bg-start: #17072b;
     --color-spy-bg-end: #030008;
-    --card-bg: #0d091a;
+    --card-bg: rgba(13, 9, 26, 0.92);
     --card-border: #00ffff;
     --card-text: #f0f0f5;
-    --card-shadow: #ff00ff;
+    --card-shadow: rgba(255, 0, 255, 0.4);
     --highlight-color: #00ffff;
 }
 
@@ -618,10 +618,10 @@ h6 {
 .theme-polar {
     --color-spy-bg-start: #0a1b2d;
     --color-spy-bg-end: #02060d;
-    --card-bg: #f5f9ff;
-    --card-border: #1a3554;
-    --card-text: #1a2e40;
-    --card-shadow: #3b82f6;
+    --card-bg: rgba(10, 27, 45, 0.92);
+    --card-border: rgba(59, 130, 246, 0.4);
+    --card-text: #ffffff;
+    --card-shadow: rgba(59, 130, 246, 0.3);
     --highlight-color: #3b82f6;
 }
 
@@ -629,10 +629,10 @@ h6 {
 .theme-spooky {
     --color-spy-bg-start: #190924;
     --color-spy-bg-end: #08020d;
-    --card-bg: #150f1f;
+    --card-bg: rgba(21, 15, 31, 0.92);
     --card-border: #ff7700;
     --card-text: #f0f0f0;
-    --card-shadow: #8800ff;
+    --card-shadow: rgba(136, 0, 255, 0.4);
     --highlight-color: #ff7700;
 }
 
@@ -640,11 +640,11 @@ h6 {
 .theme-retro {
     --color-spy-bg-start: #2d3b20;
     --color-spy-bg-end: #0d120a;
-    --card-bg: #8bac0f;
-    --card-border: #0f380f;
-    --card-text: #0f380f;
-    --card-shadow: #306230;
-    --highlight-color: #306230;
+    --card-bg: rgba(15, 30, 15, 0.95);
+    --card-border: #8bac0f;
+    --card-text: #9bbc0f;
+    --card-shadow: rgba(48, 98, 48, 0.5);
+    --highlight-color: #8bac0f;
 }
 
 /* Apply background changes smoothly to body */

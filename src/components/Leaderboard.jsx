@@ -60,10 +60,10 @@ const Leaderboard = ({ onBack, onOpenSettings }) => {
                 </div>
 
                 {/* Leaderboard List */}
-                <div className="card-cartoon p-4 flex-grow overflow-y-auto mb-6 no-scrollbar bg-black/45 text-white border-3 border-black min-h-[50dvh]">
+                <div className="bg-slate-900/90 backdrop-blur-xl border border-white/15 rounded-3xl p-5 shadow-2xl flex-grow overflow-y-auto mb-6 no-scrollbar min-h-[45dvh]">
 
                     {stats.length === 0 ? (
-                        <div className="text-center text-white/30 py-20 font-black uppercase tracking-widest text-xs">
+                        <div className="text-center text-white/40 py-20 font-black uppercase tracking-widest text-xs">
                             Aucune partie enregistrée
                         </div>
                     ) : (
@@ -73,11 +73,11 @@ const Leaderboard = ({ onBack, onOpenSettings }) => {
                                 return (
                                     <div
                                         key={player.name}
-                                        className={`flex items-center justify-between rounded-2xl p-3 border-2 border-black ${
-                                            index === 0 ? 'bg-gradient-to-r from-yellow-500/10 to-transparent border-yellow-500/50 shadow-[2px_2px_0_rgba(234,179,8,0.3)]' :
-                                            index === 1 ? 'bg-slate-300/5 border-slate-300/30' :
-                                            index === 2 ? 'bg-amber-600/5 border-amber-600/30' :
-                                            'bg-black/25 border-white/10'
+                                        className={`flex items-center justify-between rounded-2xl p-3 border ${
+                                            index === 0 ? 'bg-gradient-to-r from-yellow-500/15 to-transparent border-yellow-500/50 shadow-md shadow-yellow-500/10' :
+                                            index === 1 ? 'bg-slate-300/10 border-slate-300/30' :
+                                            index === 2 ? 'bg-amber-600/10 border-amber-600/30' :
+                                            'bg-black/30 border-white/10'
                                         }`}
                                     >
                                         <div className="flex items-center gap-3">

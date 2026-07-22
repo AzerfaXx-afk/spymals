@@ -167,13 +167,6 @@ const HowToPlay = ({ onBack, onOpenSettings }) => {
 
                 </div>
             </div>
-
-            {/* Floating Back Button */}
-            <div className="fixed bottom-0 left-0 w-full p-6 pb-8 bg-gradient-to-t from-spy-blue via-spy-blue/95 to-transparent z-20 backdrop-blur-[2px]" style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}>
-                <BouncyButton onClick={onBack} variant="secondary" className="w-full shadow-[4px_4px_0_#000] py-4 active:scale-95 transition-transform">
-                    RETOUR
-                </BouncyButton>
-            </div>
         </div>
     );
 };

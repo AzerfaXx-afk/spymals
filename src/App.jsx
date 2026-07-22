@@ -476,26 +476,26 @@ function App() {
         
         {/* Top Header for Menu Screens */}
         {isMenuScreen && (
-          <div className="fixed top-0 left-0 right-0 h-16 bg-spy-blue/45 backdrop-blur-md border-b border-white/10 px-4 z-40 flex items-center justify-between max-w-md mx-auto rounded-b-xl">
+          <div className="fixed top-0 left-0 right-0 h-16 bg-slate-950/80 backdrop-blur-xl border-b border-white/10 px-4 z-40 flex items-center justify-between max-w-md mx-auto shadow-lg">
             {/* Top Left: Boutique */}
             <button
               onClick={() => setCurrentScreen('shop')}
-              className={`w-10 h-10 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:text-spy-lime flex items-center justify-center transition-all cursor-pointer active:scale-95 ${currentScreen === 'shop' ? 'border-spy-lime text-spy-lime bg-spy-lime/5' : 'text-white/60'}`}
+              className={`w-10 h-10 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-spy-lime flex items-center justify-center transition-all cursor-pointer active:scale-95 shadow-md ${currentScreen === 'shop' ? 'border-spy-lime text-spy-lime bg-spy-lime/10' : 'text-white/70'}`}
               title="Boutique"
             >
               <ShoppingCart className="w-5 h-5" />
             </button>
 
-            {/* Center: Coin Counter */}
-            <div className="bg-black/35 border border-white/5 px-3 py-1.5 rounded-full flex items-center gap-1.5 text-xs font-black text-white shadow-inner select-none">
-              <Coins className="w-4 h-4 text-spy-lime" />
-              <span className="text-spy-lime font-display">{profileData?.coins || 0}</span>
+            {/* Center: 3D Croquette Coin Counter */}
+            <div className="bg-slate-900/90 border border-spy-lime/30 px-3.5 py-1.5 rounded-full flex items-center gap-2 text-xs font-black text-white shadow-[0_4px_12px_rgba(0,0,0,0.5)] select-none">
+              <img src="/croquette_coin_3d.png" alt="Croquette" className="w-5 h-5 object-contain filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" />
+              <span className="text-spy-lime font-black text-sm tracking-tight">{profileData?.coins || 0}</span>
             </div>
 
-            {/* Top Right: Profil */}
+            {/* Top Right: Profil Avatar */}
             <button
               onClick={() => setCurrentScreen('profile')}
-              className={`w-10 h-10 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 flex items-center justify-center overflow-hidden transition-all cursor-pointer active:scale-95 ${currentScreen === 'profile' ? 'border-spy-lime' : ''}`}
+              className={`w-10 h-10 rounded-full bg-slate-900 border-2 border-white/20 hover:border-spy-lime flex items-center justify-center overflow-hidden transition-all cursor-pointer active:scale-95 shadow-md ${currentScreen === 'profile' ? 'border-spy-lime shadow-spy-lime/20 shadow-lg' : ''}`}
               title="Profil"
             >
               <CartoonAvatar id={profileData?.avatar_emoji} className="w-full h-full border-none shadow-none" />
@@ -503,7 +503,7 @@ function App() {
           </div>
         )}
 
-        <div className={isMenuScreen ? "pb-24 pt-20" : ""}>
+        <div className={isMenuScreen ? "pb-36 pt-20" : ""}>
           {currentScreen === 'home' && (
             <Home
               profileData={profileData}
@@ -630,34 +630,37 @@ function App() {
           )}
         </div>
 
-        {/* Bottom Navbar for Menu Screens */}
+        {/* Bottom Floating Pill Navbar for Menu Screens */}
         {isMenuScreen && (
-          <div className="fixed bottom-0 left-0 right-0 nav-bottom-bar p-3 z-40 flex items-center justify-around max-w-md mx-auto rounded-t-3xl border-x border-t border-white/10 pb-6">
-            {/* Tab 1: Classement */}
-            <button
-              onClick={() => setCurrentScreen('leaderboard')}
-              className={`flex flex-col items-center gap-1 transition-all cursor-pointer active:scale-95 ${currentScreen === 'leaderboard' ? 'text-spy-lime scale-105 font-black' : 'text-white/60 hover:text-white'}`}
-            >
-              <Trophy className="w-5 h-5" />
-              <span className="text-[9px] uppercase tracking-wider font-black">Classement</span>
-            </button>
+          <div className="fixed bottom-4 left-4 right-4 z-40 max-w-md mx-auto">
+            <div className="bg-slate-950/90 backdrop-blur-2xl border border-white/15 rounded-full px-6 py-2 shadow-[0_12px_35px_rgba(0,0,0,0.8)] flex items-center justify-between">
+              {/* Tab 1: Classement */}
+              <button
+                onClick={() => setCurrentScreen('leaderboard')}
+                className={`flex flex-col items-center gap-1 transition-all cursor-pointer active:scale-95 ${currentScreen === 'leaderboard' ? 'text-spy-lime scale-105 font-black' : 'text-white/50 hover:text-white'}`}
+              >
+                <Trophy className="w-5 h-5" />
+                <span className="text-[9px] uppercase tracking-wider font-black">Classement</span>
+              </button>
 
-            {/* Tab 2: Accueil (Gros Bouton) */}
-            <button
-              onClick={() => setCurrentScreen('home')}
-              className={`w-14 h-14 rounded-full bg-spy-lime border-[3.5px] border-black flex items-center justify-center shadow-[0_4px_0_#000] active:translate-y-1 active:shadow-none transition-all cursor-pointer translate-y-[-14px]`}
-            >
-              <Gamepad2 className="w-7 h-7 text-spy-blue" />
-            </button>
+              {/* Tab 2: Accueil (Bouton Principal Élevé) */}
+              <button
+                onClick={() => setCurrentScreen('home')}
+                className="w-13 h-13 rounded-full bg-spy-lime border-2 border-white flex items-center justify-center shadow-[0_6px_20px_rgba(204,255,0,0.4)] active:scale-95 transition-all cursor-pointer -translate-y-3.5"
+                title="Jouer"
+              >
+                <Gamepad2 className="w-6 h-6 text-spy-blue" />
+              </button>
 
-            {/* Tab 3: Guide */}
-            <button
-              onClick={() => setCurrentScreen('how-to-play')}
-              className={`flex flex-col items-center gap-1 transition-all cursor-pointer active:scale-95 ${currentScreen === 'how-to-play' ? 'text-spy-lime scale-105 font-black' : 'text-white/60 hover:text-white'}`}
-            >
-              <BookOpen className="w-5 h-5" />
-              <span className="text-[9px] uppercase tracking-wider font-black">Guide</span>
-            </button>
+              {/* Tab 3: Guide */}
+              <button
+                onClick={() => setCurrentScreen('how-to-play')}
+                className={`flex flex-col items-center gap-1 transition-all cursor-pointer active:scale-95 ${currentScreen === 'how-to-play' ? 'text-spy-lime scale-105 font-black' : 'text-white/50 hover:text-white'}`}
+              >
+                <BookOpen className="w-5 h-5" />
+                <span className="text-[9px] uppercase tracking-wider font-black">Guide</span>
+              </button>
+            </div>
           </div>
         )}
 
