@@ -215,8 +215,8 @@ const Leaderboard = () => {
 
         </div>
 
-        {/* PERFECTLY ROUNDED RANK LIST CONTAINER (Fits items 4-10 without empty gaps) */}
-        <div className="w-full bg-slate-950/95 backdrop-blur-2xl border-2 border-white/15 rounded-[2.2rem] p-2.5 shadow-[0_16px_40px_rgba(0,0,0,0.85)] flex-1 flex flex-col overflow-hidden min-h-0">
+        {/* PERFECTLY ROUNDED RANK LIST CONTAINER */}
+        <div className="w-full bg-slate-950/95 backdrop-blur-2xl border-2 border-white/15 rounded-[2rem] p-2.5 shadow-[0_16px_40px_rgba(0,0,0,0.85)] flex-1 flex flex-col overflow-hidden min-h-0">
           
           <div className="flex items-center justify-between px-2.5 pb-1.5 mb-1 border-b border-white/10 text-[8px] font-black uppercase tracking-widest text-white/40 flex-shrink-0">
             <span>RANG & AGENT</span>
@@ -229,10 +229,10 @@ const Leaderboard = () => {
               <span className="text-[8.5px] font-black uppercase tracking-wider">Chargement des stats...</span>
             </div>
           ) : (
-            <div className="flex-1 overflow-y-auto pr-1 no-scrollbar space-y-1.5 flex flex-col">
+            <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
               
-              {/* List Items */}
-              <div className="space-y-1.5 flex-1">
+              {/* Scrollable list items ONLY */}
+              <div className="flex-1 overflow-y-auto pr-1 no-scrollbar space-y-1.5">
                 {paginatedList.map((agent, index) => {
                   const rankNumber = index + 4;
                   return (
@@ -278,12 +278,12 @@ const Leaderboard = () => {
                 })}
               </div>
 
-              {/* VOIR PLUS BUTTON (Pinned at bottom of rounded card container) */}
+              {/* PINNED FOOTER: VOIR PLUS DE JOUEURS (+10) ALWAYS VISIBLE AT BOTTOM OF CARD */}
               {hasMore && (
-                <div className="pt-1.5 pb-0.5 mt-auto text-center flex-shrink-0">
+                <div className="pt-2 flex-shrink-0">
                   <button
                     onClick={handleLoadMore}
-                    className="w-full py-2 bg-gradient-to-r from-spy-lime/20 via-spy-lime/30 to-spy-lime/20 hover:from-spy-lime/30 hover:to-spy-lime/30 border-2 border-spy-lime rounded-2xl text-spy-lime font-black uppercase text-[9.5px] tracking-widest transition-all duration-300 cursor-pointer flex items-center justify-center gap-1.5 active:scale-95 shadow-[0_4px_15px_rgba(204,255,0,0.25)]"
+                    className="w-full py-2 bg-gradient-to-r from-spy-lime/25 via-spy-lime/35 to-spy-lime/25 hover:from-spy-lime/35 hover:to-spy-lime/35 border-2 border-spy-lime rounded-2xl text-spy-lime font-black uppercase text-[9.5px] tracking-widest transition-all duration-300 cursor-pointer flex items-center justify-center gap-1.5 active:scale-95 shadow-[0_4px_15px_rgba(204,255,0,0.3)]"
                   >
                     <span>VOIR PLUS DE JOUEURS (+10)</span>
                     <ChevronDown className="w-3.5 h-3.5" />
