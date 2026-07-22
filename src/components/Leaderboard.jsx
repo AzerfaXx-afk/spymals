@@ -119,7 +119,7 @@ const Leaderboard = () => {
   };
 
   return (
-    <div className="fixed inset-0 top-18 bottom-20 px-3 max-w-md mx-auto flex flex-col justify-between overflow-hidden pointer-events-auto select-none">
+    <div className="fixed inset-0 top-20 bottom-28 px-3.5 max-w-md mx-auto flex flex-col justify-between overflow-hidden pointer-events-auto select-none">
       
       {/* Background Glow */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
@@ -139,7 +139,7 @@ const Leaderboard = () => {
           <div className="w-12 h-1 bg-gradient-to-r from-transparent via-spy-lime to-transparent mx-auto rounded-full"></div>
         </div>
 
-        {/* 3D CARTOON PODIUM SECTION (Ultra Compact & Stylish) */}
+        {/* 3D CARTOON PODIUM SECTION */}
         <div className="w-full grid grid-cols-3 gap-1.5 items-end mb-2 px-0.5 flex-shrink-0">
           
           {/* 2nd Place (Silver) */}
@@ -215,7 +215,7 @@ const Leaderboard = () => {
 
         </div>
 
-        {/* INNER SCROLLABLE RANK LIST CONTAINER (Only this scrolls) */}
+        {/* INNER SCROLLABLE RANK LIST CONTAINER (Stops cleanly above bottom navbar) */}
         <div className="w-full bg-slate-950/90 backdrop-blur-2xl border-2 border-white/15 rounded-3xl p-2.5 shadow-[0_16px_40px_rgba(0,0,0,0.85)] flex-1 flex flex-col overflow-hidden min-h-0">
           
           <div className="flex items-center justify-between px-2 pb-1.5 mb-1 border-b border-white/10 text-[8px] font-black uppercase tracking-widest text-white/40 flex-shrink-0">
@@ -229,7 +229,7 @@ const Leaderboard = () => {
               <span className="text-[8.5px] font-black uppercase tracking-wider">Chargement des stats...</span>
             </div>
           ) : (
-            <div className="flex-1 overflow-y-auto pr-1 no-scrollbar space-y-1.5">
+            <div className="flex-1 overflow-y-auto pr-1 no-scrollbar space-y-1.5 pb-2">
               {paginatedList.map((agent, index) => {
                 const rankNumber = index + 4;
                 return (
@@ -274,15 +274,15 @@ const Leaderboard = () => {
                 );
               })}
 
-              {/* VOIR PLUS BUTTON (Max Top 100) */}
+              {/* VOIR PLUS BUTTON (Fully visible above floating navbar) */}
               {hasMore && (
-                <div className="pt-1 pb-1 text-center">
+                <div className="pt-1.5 pb-2 text-center">
                   <button
                     onClick={handleLoadMore}
-                    className="w-full py-1.5 bg-spy-lime/10 hover:bg-spy-lime/20 border border-spy-lime/40 rounded-xl text-spy-lime font-black uppercase text-[8.5px] tracking-wider transition-all duration-300 cursor-pointer flex items-center justify-center gap-1 active:scale-95 shadow-md"
+                    className="w-full py-2 bg-spy-lime/20 hover:bg-spy-lime/30 border-2 border-spy-lime rounded-xl text-spy-lime font-black uppercase text-[9.5px] tracking-wider transition-all duration-300 cursor-pointer flex items-center justify-center gap-1.5 active:scale-95 shadow-md"
                   >
                     <span>VOIR PLUS (+10)</span>
-                    <ChevronDown className="w-3 h-3" />
+                    <ChevronDown className="w-3.5 h-3.5" />
                   </button>
                 </div>
               )}
