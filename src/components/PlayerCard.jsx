@@ -1,4 +1,5 @@
 import React from 'react';
+import { CartoonAvatar } from './CartoonAvatars';
 
 const PlayerCard = ({ player, onClick }) => {
     const { name, avatar } = player;
@@ -24,11 +25,7 @@ const PlayerCard = ({ player, onClick }) => {
             <div className="w-16 h-16 rounded-full flex items-center justify-center overflow-hidden
                             bg-black/20 border-2 border-white/10 group-hover:border-spy-lime/50
                             shadow-[0_0_20px_rgba(0,0,0,0.4)] transition-all duration-200">
-                {avatar?.type === 'image' ? (
-                    <img src={avatar.value} alt={name} className="w-full h-full object-cover" />
-                ) : (
-                    <span className="text-4xl leading-none">{avatar?.value ?? '🕵️'}</span>
-                )}
+                <CartoonAvatar id={avatar?.value} className="w-full h-full border-none shadow-none" />
             </div>
 
             {/* Name */}

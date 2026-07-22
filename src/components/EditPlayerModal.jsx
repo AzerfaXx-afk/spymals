@@ -1,23 +1,14 @@
 import React, { useState, useRef } from 'react';
 import BouncyButton from './BouncyButton';
+import { CartoonAvatar, CARTOON_AVATARS_LIST } from './CartoonAvatars';
 
-const PRESET_AVATARS = [
-    { emoji: '🦁', name: 'Lion' }, { emoji: '🦊', name: 'Renard' }, { emoji: '🐼', name: 'Panda' },
-    { emoji: '🐨', name: 'Koala' }, { emoji: '🐯', name: 'Tigre' }, { emoji: '🐵', name: 'Singe' },
-    { emoji: '🐸', name: 'Grenouille' }, { emoji: '🦉', name: 'Hibou' }, { emoji: '🦄', name: 'Licorne' },
-    { emoji: '🐲', name: 'Dragon' }, { emoji: '🐶', name: 'Chien' }, { emoji: '🐱', name: 'Chat' },
-    { emoji: '🐰', name: 'Lapin' }, { emoji: '🐙', name: 'Poulpe' }, { emoji: '🐮', name: 'Vache' },
-    { emoji: '🐷', name: 'Cochon' }, { emoji: '🐭', name: 'Souris' }, { emoji: '🐻', name: 'Ours' },
-    { emoji: '🦖', name: 'T-Rex' }, { emoji: '🦈', name: 'Requin' }, { emoji: '🦀', name: 'Crabe' },
-    { emoji: '🦋', name: 'Papillon' }
-];
+const PRESET_AVATARS = CARTOON_AVATARS_LIST;
 
 const EditPlayerModal = ({ player, onSave, onCancel }) => {
     const getDefaultName = (av) => {
         if (av.type === 'emoji') {
-            const animal = PRESET_AVATARS.find(a => a.emoji === av.value);
-            // Ignore the number suffix since we just want the base animal placeholder
-            if (animal) return `Agent ${animal.name}`;
+            const animal = PRESET_AVATARS.find(a => a.id === av.value);
+            if (animal) return `Agent ${animal.label}`;
         }
         return 'Agent Secret';
     };
@@ -120,15 +111,17 @@ const EditPlayerModal = ({ player, onSave, onCancel }) => {
                 {/* Avatar Selection Grid (Collapse/Expand) */}
                 {isEditingAvatar ? (
                     <div className="w-full bg-black/30 p-4 rounded-2xl animate-fade-in border border-white/5">
-                        <div className="grid grid-cols-6 gap-2 mb-4 max-h-40 overflow-y-auto no-scrollbar">
+                        <div className="grid grid-cols-4 gap-3 mb-4 max-h-48 overflow-y-auto custom-scrollbar p-1">
                             {PRESET_AVATARS.map((animal) => (
                                 <button
-                                    key={animal.emoji}
-                                    onClick={() => handleAvatarSelect(animal)}
-                                    className="text-2xl aspect-square flex items-center justify-center bg-white/5 rounded-xl hover:bg-spy-lime hover:scale-110 transition-all"
-                                    title={animal.name}
+                                    key={animal.id}
+                                    type="button"
+                                    onClick={() => handleAvatarSelect({ emoji: animal.id })}
+                                    className="p-1 flex flex-col items-center justify-center bg-white/5 rounded-2xl hover:bg-spy-lime/20 hover:scale-105 active:scale-95 transition-all border border-white/10"
+                                    title={animal.label}
                                 >
-                                    {animal.emoji}
+                                    <CartoonAvatar id={animal.id} className="w-12 h-12 border-none shadow-none" />
+                                    <span className="text-[9px] font-black text-white/70 mt-1 uppercase truncate max-w-[60px]">{animal.label}</span>
                                 </button>
                             ))}
                         </div>

@@ -21,19 +21,16 @@ const Home = ({
             {/* Decors & Mascot */}
             <div className="z-10 flex flex-col items-center mb-5 md:mb-6 relative w-full mt-1">
                 <div className="relative w-full max-w-[240px] md:max-w-[280px] mx-auto flex items-center justify-center transition-transform duration-300 hover:scale-105">
-                    <picture>
-                        <source srcSet="/renard.webp" type="image/webp" />
-                        <img
-                            src="/renard.png"
-                            alt="Logo SpyMals"
-                            width={400}
-                            height={400}
-                            fetchpriority="high"
-                            decoding="async"
-                            className="w-full h-auto object-contain drop-shadow-[0_12px_16px_rgba(0,0,0,0.6)]"
-                            style={{ maxHeight: '25dvh' }}
-                        />
-                    </picture>
+                    <img
+                        src="/detective_mascot.png"
+                        alt="Logo SpyMals"
+                        width={400}
+                        height={400}
+                        fetchpriority="high"
+                        decoding="async"
+                        className="w-full h-auto object-contain drop-shadow-[0_14px_20px_rgba(0,0,0,0.65)]"
+                        style={{ maxHeight: '26dvh' }}
+                    />
                 </div>
 
                 {/* Subtitle Badge */}

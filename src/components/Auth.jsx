@@ -243,13 +243,13 @@ const Auth = ({ onAuthSuccess, onSkip }) => {
                 </div>
             ) : (
                 // 🛡️ AUTH CARD
-                <div className="w-full max-w-md bg-slate-900/80 backdrop-blur-2xl border border-white/15 rounded-[30px] md:rounded-[36px] p-5 md:p-8 shadow-2xl z-10 animate-slide-up relative max-h-[92dvh] overflow-y-auto custom-scrollbar">
+                <div className="w-full max-w-md bg-slate-900/90 backdrop-blur-2xl border border-white/15 rounded-[30px] md:rounded-[36px] p-5 md:p-7 pr-3 md:pr-5 shadow-2xl z-10 animate-slide-up relative max-h-[92dvh] overflow-y-auto custom-scrollbar">
                     
                     {/* Close Button */}
                     <button
                         type="button"
                         onClick={onSkip}
-                        className="absolute top-6 right-6 w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/55 hover:text-white hover:bg-white/10 active:scale-95 transition-all z-20 cursor-pointer"
+                        className="absolute top-5 right-5 w-8 h-8 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/20 active:scale-95 transition-all z-20 cursor-pointer shadow-md"
                         title="Continuer sans compte"
                     >
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -258,12 +258,16 @@ const Auth = ({ onAuthSuccess, onSkip }) => {
                     </button>
                     
                     {/* Header */}
-                    <div className="text-center mb-8">
-                        <div className="w-16 h-16 bg-white/10 border border-white/15 rounded-2xl flex items-center justify-center mx-auto text-3xl shadow-inner select-none mb-3">
-                            🕵️‍♂️
+                    <div className="text-center mb-6">
+                        <div className="w-20 h-20 mx-auto mb-2 relative flex items-center justify-center">
+                            <img 
+                                src="/detective_mascot.png" 
+                                alt="Détective SpyMals" 
+                                className="w-full h-full object-contain filter drop-shadow-[0_8px_12px_rgba(0,0,0,0.5)] transform hover:scale-105 transition-transform" 
+                            />
                         </div>
-                        <h2 className="text-3xl font-black text-white uppercase tracking-tighter">SpyMals HQ</h2>
-                        <p className="text-spy-lime text-[10px] font-black uppercase tracking-[0.25em] mt-1">
+                        <h2 className="text-3xl font-black text-white uppercase tracking-tighter drop-shadow-md">SPYMALS</h2>
+                        <p className="text-spy-lime text-[10px] font-black uppercase tracking-[0.25em] mt-0.5">
                             Accès au centre d'agents
                         </p>
                     </div>

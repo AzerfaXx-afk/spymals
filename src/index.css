@@ -125,27 +125,31 @@ h6 {
 
 /* Custom Thin Scrollbar for Cards & Modals */
 .custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
+    background: transparent;
+    margin: 12px 0;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: rgba(204, 255, 0, 0.4);
-    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background 0.2s ease;
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: rgba(204, 255, 0, 0.8);
+.custom-scrollbar::-webkit-scrollbar-thumb:hover,
+.custom-scrollbar::-webkit-scrollbar-thumb:active {
+    background: rgba(204, 255, 0, 0.7);
+    box-shadow: 0 0 8px rgba(204, 255, 0, 0.5);
 }
 
 .custom-scrollbar {
     scrollbar-width: thin;
-    scrollbar-color: rgba(204, 255, 0, 0.4) rgba(0, 0, 0, 0.2);
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
 
 /* Juicy Button Style */

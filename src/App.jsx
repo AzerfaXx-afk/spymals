@@ -211,26 +211,14 @@ function App() {
 
   const confirmPlayerCount = (count) => {
     const animals = [
-      { emoji: '🦁', name: 'Lion' },
-      { emoji: '🦊', name: 'Renard' },
-      { emoji: '🐼', name: 'Panda' },
-      { emoji: '🐨', name: 'Koala' },
-      { emoji: '🐯', name: 'Tigre' },
-      { emoji: '🐵', name: 'Singe' },
-      { emoji: '🐸', name: 'Grenouille' },
-      { emoji: '🦉', name: 'Hibou' },
-      { emoji: '🦄', name: 'Licorne' },
-      { emoji: '🐙', name: 'Poulpe' },
-      { emoji: '🐮', name: 'Vache' },
-      { emoji: '🐷', name: 'Cochon' },
-      { emoji: '🐭', name: 'Souris' },
-      { emoji: '🐰', name: 'Lapin' },
-      { emoji: '🐻', name: 'Ours' },
-      { emoji: '🐲', name: 'Dragon' },
-      { emoji: '🦖', name: 'T-Rex' },
-      { emoji: '🦈', name: 'Requin' },
-      { emoji: '🦀', name: 'Crabe' },
-      { emoji: '🦋', name: 'Papillon' },
+      { id: 'fox-detective', name: 'Renard' },
+      { id: 'spy-cat', name: 'Chat' },
+      { id: 'panda-monocle', name: 'Panda' },
+      { id: 'koala-agent', name: 'Koala' },
+      { id: 'detective-lion', name: 'Lion' },
+      { id: 'hacker-owl', name: 'Chouette' },
+      { id: 'agent-dog', name: 'Chien' },
+      { id: 'penguin-secret', name: 'Pingouin' }
     ];
 
     // Shuffle animals for random assignment
@@ -260,9 +248,8 @@ function App() {
 
       return {
         id: i + 1,
-        // If we run out of unique names, append number (unlikely with 20 animals and max 20 players)
         name: `Agent ${animal.name}${i >= shuffledAnimals.length ? ` ${Math.floor(i / shuffledAnimals.length) + 1}` : ''}`,
-        avatar: { type: 'emoji', value: animal.emoji },
+        avatar: { type: 'emoji', value: animal.id },
         isCustom: false,
         score: 0,
       };
