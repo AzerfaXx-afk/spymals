@@ -295,7 +295,7 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                         }`} />
 
                         <img 
-                            src={isCivilianWin ? '/victory_civilians_3d.png' : '/victory_impostors_3d.png'} 
+                            src={isCivilianWin ? '/victory_civilians_cutout_3d.png' : '/victory_impostors_cutout_3d.png'} 
                             alt={isCivilianWin ? 'Victoire des Innocents' : 'Victoire des Imposteurs'} 
                             className="w-full h-full object-contain filter drop-shadow-[0_15px_25px_rgba(0,0,0,0.9)] z-10 transform hover:scale-105 transition-transform duration-300" 
                         />
