@@ -73,12 +73,17 @@ function App() {
   const [touchStartX, setTouchStartX] = useState(null);
   const [touchEndX, setTouchEndX] = useState(null);
   const [slideDirection, setSlideDirection] = useState(0); // 1 = right-to-left, -1 = left-to-right, 0 = fade
+  const [previousMenuScreen, setPreviousMenuScreen] = useState('home');
 
   const NAVBAR_TABS = ['leaderboard', 'home', 'how-to-play'];
 
   const navigateToScreen = (newScreen) => {
     const prevIdx = NAVBAR_TABS.indexOf(currentScreen);
     const nextIdx = NAVBAR_TABS.indexOf(newScreen);
+
+    if (NAVBAR_TABS.includes(currentScreen)) {
+      setPreviousMenuScreen(currentScreen);
+    }
 
     if (prevIdx !== -1 && nextIdx !== -1 && prevIdx !== nextIdx) {
       setSlideDirection(nextIdx > prevIdx ? 1 : -1);
@@ -566,7 +571,7 @@ function App() {
               <div className="bg-slate-950/95 backdrop-blur-2xl border-2 border-white/15 rounded-2xl h-14 px-3 flex items-center justify-between shadow-[0_12px_35px_rgba(0,0,0,0.85)]">
                 {/* Top Left: Boutique (Caddie 3D) */}
                 <button
-                  onClick={() => setCurrentScreen('shop')}
+                  onClick={() => navigateToScreen('shop')}
                   className={`flex items-center gap-1.5 px-3 py-1 rounded-full border transition-all duration-200 transform active:scale-95 cursor-pointer shadow-md group ${
                     currentScreen === 'shop'
                       ? 'bg-spy-lime text-spy-blue border-white shadow-spy-lime/40 font-black scale-105'
@@ -586,7 +591,7 @@ function App() {
 
                 {/* Top Right: Agent Profile Button (Enlarged Avatar) */}
                 <button
-                  onClick={() => setCurrentScreen('profile')}
+                  onClick={() => navigateToScreen('profile')}
                   className={`flex items-center gap-1.5 p-0.5 pr-2.5 rounded-full border transition-all duration-200 transform active:scale-95 cursor-pointer shadow-md group ${
                     currentScreen === 'profile'
                       ? 'bg-spy-lime/20 border-spy-lime text-spy-lime shadow-spy-lime/30 scale-105'
@@ -705,8 +710,8 @@ function App() {
                   profileData={profileData}
                   onUpdateProfile={handleUpdateProfile}
                   onLogout={handleLogout}
-                  onBack={() => setCurrentScreen('home')}
-                  onOpenShop={() => setCurrentScreen('shop')}
+                  onBack={() => navigateToScreen(previousMenuScreen)}
+                  onOpenShop={() => navigateToScreen('shop')}
                 />
               )}
               {currentScreen === 'shop' && (
@@ -714,7 +719,7 @@ function App() {
                   user={user}
                   profileData={profileData}
                   onUpdateProfile={handleUpdateProfile}
-                  onBack={() => setCurrentScreen('home')}
+                  onBack={() => navigateToScreen(previousMenuScreen)}
                 />
               )}
               {currentScreen === 'multiplayer-lobby' && (
