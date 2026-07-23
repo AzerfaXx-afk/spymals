@@ -577,22 +577,138 @@ function App() {
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-                setCurrentScreen('home');
-              }}
-            />
-          )}
-          {currentScreen === 'multiplayer-game' && (
-            <MultiplayerGame
-              user={user}
-              profileData={profileData}
-              initialRoom={multiplayerRoom}
-              onUpdateProfile={handleUpdateProfile}
-              onLeave={() => {
-                setMultiplayerRoom(null);
-                setCurrentScreen('multiplayer-lobby');
-              }}
-            />
-          )}
+          <AnimatePresence mode="popLayout" custom={slideDirection}>
+            <motion.div
+              key={currentScreen}
+              custom={slideDirection}
+              initial={{ x: slideDirection > 0 ? 300 : slideDirection < 0 ? -300 : 0, opacity: 0.7 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: slideDirection < 0 ? 300 : slideDirection > 0 ? -300 : 0, opacity: 0.7 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="w-full h-full"
+            >
+              {currentScreen === 'home' && (
+                <Home
+                  profileData={profileData}
+                  hasHistory={gameHistory.length > 0}
+                  onStartGame={startNewMission}
+                  onOpenHowToPlay={() => navigateToScreen('how-to-play')}
+                  onOpenSettings={() => setShowSettings(true)}
+                  onOpenLeaderboard={() => navigateToScreen('leaderboard')}
+                  onOpenHistory={() => setCurrentScreen('history')}
+                  onOpenProfile={() => setCurrentScreen('profile')}
+                  onOpenMultiplayer={() => setCurrentScreen('multiplayer-lobby')}
+                />
+              )}
+              {currentScreen === 'how-to-play' && (
+                <HowToPlay
+                  onBack={() => navigateToScreen('home')}
+                  onOpenSettings={() => setShowSettings(true)}
+                />
+              )}
+              {currentScreen === 'setup' && (
+                <PlayerSetup
+                  onNext={confirmPlayerCount}
+                  onBack={() => setCurrentScreen('home')}
+                  onOpenSettings={() => setShowSettings(true)}
+                />
+              )}
+              {currentScreen === 'identify' && (
+                <IdentifyAgents
+                  players={players}
+                  onUpdatePlayers={setPlayers}
+                  onConfirm={confirmTeam}
+                  onBack={() => setCurrentScreen('setup')}
+                  onOpenSettings={() => setShowSettings(true)}
+                />
+              )}
+              {currentScreen === 'briefing' && (
+                <MissionBriefing
+                  totalPlayers={players.length}
+                  onStartGame={startGame}
+                  onBack={() => setCurrentScreen('identify')}
+                  onOpenSettings={() => setShowSettings(true)}
+                />
+              )}
+              {currentScreen === 'game' && (
+                <GameSession
+                  players={players}
+                  config={gameConfig}
+                  onEndGame={handleScoreUpdate}
+                  onAbort={() => setCurrentScreen('home')}
+                  onOpenSettings={() => setShowSettings(true)}
+                />
+              )}
+              {currentScreen === 'scoreboard' && (
+                <Scoreboard
+                  players={players}
+                  winners={winners}
+                  onReplay={replayGame}
+                  onHome={() => setCurrentScreen('home')}
+                  onOpenSettings={() => setShowSettings(true)}
+                />
+              )}
+              {currentScreen === 'leaderboard' && (
+                <Leaderboard
+                  onBack={() => navigateToScreen('home')}
+                  onOpenSettings={() => setShowSettings(true)}
+                />
+              )}
+              {currentScreen === 'history' && (
+                <History
+                  history={gameHistory}
+                  onUpdateHistory={handleUpdateHistory}
+                  onReplayTeam={(teamPlayers) => {
+                    setPlayers(teamPlayers);
+                    setCurrentScreen('identify');
+                  }}
+                  onBack={() => setCurrentScreen('home')}
+                  onOpenSettings={() => setShowSettings(true)}
+                />
+              )}
+              {currentScreen === 'profile' && (
+                <Profile
+                  user={user}
+                  profileData={profileData}
+                  onUpdateProfile={handleUpdateProfile}
+                  onLogout={handleLogout}
+                  onBack={() => setCurrentScreen('home')}
+                  onOpenShop={() => setCurrentScreen('shop')}
+                />
+              )}
+              {currentScreen === 'shop' && (
+                <Shop
+                  user={user}
+                  profileData={profileData}
+                  onUpdateProfile={handleUpdateProfile}
+                  onBack={() => setCurrentScreen('home')}
+                />
+              )}
+              {currentScreen === 'multiplayer-lobby' && (
+                <MultiplayerLobby
+                  user={user}
+                  profileData={profileData}
+                  onStartMultiplayerGame={(roomData) => {
+                    setMultiplayerRoom(roomData);
+                    setCurrentScreen('multiplayer-game');
+                  }}
+                  onBack={() => setCurrentScreen('home')}
+                />
+              )}
+              {currentScreen === 'multiplayer-game' && (
+                <MultiplayerGame
+                  user={user}
+                  profileData={profileData}
+                  initialRoom={multiplayerRoom}
+                  onUpdateProfile={handleUpdateProfile}
+                  onLeave={() => {
+                    setMultiplayerRoom(null);
+                    setCurrentScreen('multiplayer-lobby');
+                  }}
+                />
+              )}
+            </motion.div>
+          </AnimatePresence>
         </div>
 
         {/* Bottom Floating Navigation Bar (3D Cartoon Graphiste Style with Clash Royale Swiping) */}
