@@ -154,7 +154,7 @@ const Leaderboard = () => {
   const hasMore = visibleCount < Math.min(100, leaderboardData.length);
 
   return (
-    /* LEVER 1: Outer Positioning Container (Fits 100% cleanly inside all mobile screens) */
+    /* LEVER 1: Outer Positioning Container (Fits 100% cleanly on Mobile & PC Desktop) */
     <div className="fixed inset-0 top-16 bottom-24 px-3 sm:px-5 max-w-md mx-auto flex flex-col items-center justify-start pt-1 overflow-hidden pointer-events-auto select-none z-10">
       
       {/* Background Seamless Ambient Glow */}
@@ -194,8 +194,8 @@ const Leaderboard = () => {
               <span className="text-[7px] sm:text-[8px] font-black text-spy-lime">{top2.winRate}% Réussite</span>
               
               {/* Podium Pillar 2 */}
-              <div className="w-full h-7.5 sm:h-9 mt-0.5 bg-gradient-to-b from-slate-800/95 to-slate-950/95 border-2 border-slate-300 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center shadow-[0_4px_14px_rgba(0,0,0,0.5)] p-0.5">
-                <span className="text-[11px] sm:text-xs font-black text-slate-300 opacity-90">#2</span>
+              <div className="w-full h-7 sm:h-8.5 mt-0.5 bg-gradient-to-b from-slate-800/95 to-slate-950/95 border-2 border-slate-300 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center shadow-[0_4px_14px_rgba(0,0,0,0.5)] p-0.5">
+                <span className="text-[10.5px] sm:text-xs font-black text-slate-300 opacity-90">#2</span>
                 <span className="text-[5.5px] sm:text-[7px] text-white/70 font-bold">{top2.wins}V • {top2.losses}D</span>
               </div>
             </div>
@@ -216,8 +216,8 @@ const Leaderboard = () => {
               <span className="text-[7.5px] sm:text-[8.5px] font-black text-spy-lime">{top1.winRate}% Réussite</span>
               
               {/* Podium Pillar 1 */}
-              <div className="w-full h-11 sm:h-13 mt-0.5 bg-gradient-to-b from-amber-500/20 to-slate-950/95 border-2 border-amber-400 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center shadow-[0_6px_20px_rgba(251,191,36,0.25)] relative overflow-hidden p-0.5">
-                <span className="text-[11px] sm:text-xs font-black text-amber-400 opacity-95">#1 ÉLITE</span>
+              <div className="w-full h-10 sm:h-12 mt-0.5 bg-gradient-to-b from-amber-500/20 to-slate-950/95 border-2 border-amber-400 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center shadow-[0_6px_20px_rgba(251,191,36,0.25)] relative overflow-hidden p-0.5">
+                <span className="text-[10.5px] sm:text-xs font-black text-amber-400 opacity-95">#1 ÉLITE</span>
                 <span className="text-[6px] sm:text-[7.5px] font-black text-amber-200">{top1.wins}V • {top1.losses}D</span>
                 <div className="flex items-center gap-0.5 mt-0.5">
                   <img src="/croquette_coin_3d.png" alt="coin" className="w-2.5 h-2.5 object-contain" />
@@ -242,8 +242,8 @@ const Leaderboard = () => {
               <span className="text-[7px] sm:text-[8px] font-black text-spy-lime">{top3.winRate}% Réussite</span>
               
               {/* Podium Pillar 3 */}
-              <div className="w-full h-7 sm:h-8.5 mt-0.5 bg-gradient-to-b from-amber-950/80 to-slate-950/95 border-2 border-amber-700 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center shadow-[0_4px_14px_rgba(0,0,0,0.5)] p-0.5">
-                <span className="text-[11px] sm:text-xs font-black text-amber-600 opacity-90">#3</span>
+              <div className="w-full h-6.5 sm:h-8 mt-0.5 bg-gradient-to-b from-amber-950/80 to-slate-950/95 border-2 border-amber-700 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center shadow-[0_4px_14px_rgba(0,0,0,0.5)] p-0.5">
+                <span className="text-[10.5px] sm:text-xs font-black text-amber-600 opacity-90">#3</span>
                 <span className="text-[5.5px] sm:text-[7px] text-white/70 font-bold">{top3.wins}V • {top3.losses}D</span>
               </div>
             </div>
@@ -251,8 +251,8 @@ const Leaderboard = () => {
 
         </div>
 
-        {/* LEVER 2: ROUNDED RANK LIST CONTAINER - Perfectly scaled for mobile viewports */}
-        <div className="w-full bg-gradient-to-b from-slate-900/90 via-slate-950/95 to-slate-950/90 backdrop-blur-2xl border-2 border-white/15 rounded-2xl sm:rounded-3xl p-2 sm:p-2.5 shadow-[0_16px_40px_rgba(0,0,0,0.6),0_0_20px_rgba(204,255,0,0.06)] flex flex-col overflow-hidden flex-1 min-h-0">
+        {/* LEVER 2: ROUNDED RANK LIST CONTAINER - Hugs content on PC, scales dynamically on mobile */}
+        <div className={`w-full bg-gradient-to-b from-slate-900/90 via-slate-950/95 to-slate-950/90 backdrop-blur-2xl border-2 border-white/15 rounded-2xl sm:rounded-3xl p-2 sm:p-2.5 shadow-[0_16px_40px_rgba(0,0,0,0.6),0_0_20px_rgba(204,255,0,0.06)] flex flex-col overflow-hidden transition-all duration-300 ${visibleCount > 10 ? 'flex-1 min-h-0' : 'flex-1 sm:flex-shrink-0 min-h-0 sm:min-h-auto'}`}>
           
           <div className="flex items-center justify-between px-2 pb-0.5 mb-1 border-b border-white/10 text-[7.5px] sm:text-[8.5px] font-black uppercase tracking-widest text-white/40 flex-shrink-0">
             <span>RANG & AGENT</span>
@@ -267,8 +267,8 @@ const Leaderboard = () => {
           ) : (
             <div className="flex flex-col overflow-hidden flex-1 min-h-0 justify-between">
               
-              {/* LEVER 3: Scrollable Player List - Compact ultra-responsive rows */}
-              <div className="flex-1 overflow-y-auto pr-0.5 no-scrollbar space-y-1">
+              {/* LEVER 3: Scrollable Player List - Hugs snugly on PC, fits 100% on Mobile */}
+              <div className={`overflow-y-auto pr-0.5 no-scrollbar space-y-1 ${visibleCount > 10 ? 'flex-1' : 'flex-1 sm:flex-initial sm:max-h-[300px]'}`}>
                 {paginatedList.map((agent, index) => {
                   const rankNumber = index + 4;
                   return (
