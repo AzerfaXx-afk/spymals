@@ -561,10 +561,17 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                                 transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                                 className="w-full flex flex-col items-center gap-4"
                             >
-                                {/* 3D Detective Mascot Hero Illustration - Static & Crisp */}
-                                <div className="relative w-36 h-36 flex items-center justify-center">
-                                    <div className="absolute inset-0 bg-spy-orange/25 rounded-full blur-2xl pointer-events-none" />
-                                    <img src="/detective_mascot.png" alt="Agents Vote" className="w-full h-full object-contain filter drop-shadow-[0_12px_24px_rgba(0,0,0,0.8)]" />
+                                {/* 3D Spy Animals Voting Hero Illustration */}
+                                <div className="relative w-full max-w-sm h-48 rounded-3xl overflow-hidden border-[3.5px] border-spy-orange/70 shadow-[0_12px_30px_rgba(255,107,0,0.25)] bg-gradient-to-b from-[#182947] to-[#0a1426] group">
+                                    <img 
+                                        src="/spy_animals_voting_3d.png" 
+                                        alt="Agents Espions Vote" 
+                                        className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" 
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-[#0a1426] via-transparent to-transparent opacity-80 pointer-events-none" />
+                                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-spy-orange to-amber-500 text-black px-4 py-1 rounded-full border-2 border-black text-[10px] font-black uppercase tracking-[0.2em] shadow-lg flex items-center gap-1.5 whitespace-nowrap z-10">
+                                        <Vote className="w-3.5 h-3.5 text-black stroke-[3]" /> CONSEIL SECRET D'ACCUSATION
+                                    </div>
                                 </div>
 
                                 <div className="card-cartoon bg-gradient-to-b from-[#14233e] to-[#0a1426] p-6 border-[3.5px] border-white/20 shadow-2xl w-full rounded-[32px] text-center">
