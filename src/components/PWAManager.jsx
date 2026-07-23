@@ -206,53 +206,29 @@ const PWAManager = () => {
                 </div>
             )}
 
-            {/* ═══════════ PRO UPDATE POPUP MODAL ═══════════ */}
+            {/* ═══════════ TOP FLOATING UPDATE NOTIFICATION PILL ═══════════ */}
             {updateAvailable && (
-                <div className="fixed inset-0 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 z-[999] animate-pop-in select-none">
-                    <div 
-                        className="max-w-sm w-full rounded-3xl p-6 relative text-center space-y-4 shadow-[0_25px_60px_rgba(204,255,0,0.25)] border-2 border-spy-lime/60 bg-gradient-to-b from-slate-900 via-slate-950 to-slate-950"
-                    >
-                        {/* Glowing Update Badge Icon */}
-                        <div className="relative mx-auto w-16 h-16 rounded-2xl bg-spy-lime/15 border-2 border-spy-lime flex items-center justify-center shadow-[0_0_25px_rgba(204,255,0,0.3)]">
-                            <RefreshCw className="w-8 h-8 text-spy-lime animate-spin" />
-                            <div className="absolute -top-1 -right-1 bg-white text-slate-950 rounded-full p-1 border border-spy-lime shadow-sm">
-                                <Sparkles className="w-3.5 h-3.5 fill-spy-lime" />
-                            </div>
-                        </div>
-
-                        {/* Title & Subtitle */}
-                        <div className="space-y-1">
-                            <div className="inline-flex items-center gap-1 px-3 py-0.5 rounded-full bg-spy-lime/10 border border-spy-lime/30 text-spy-lime text-[8px] font-black uppercase tracking-widest">
-                                <Rocket className="w-3 h-3" /> NOUVELLE MISE À JOUR !
-                            </div>
-                            <h3 className="text-xl font-black uppercase tracking-tight text-white pt-1">
-                                Mise à jour disponible
-                            </h3>
-                            <p className="text-white/60 text-xs font-medium leading-relaxed px-2 pt-1">
-                                Une nouvelle version de SpyMals vient d'être déployée. Mettez à jour maintenant pour profiter des dernières nouveautés !
-                            </p>
-                        </div>
-
-                        {/* Action Buttons */}
-                        <div className="pt-2 space-y-2">
-                            <button
-                                type="button"
-                                onClick={handleUpdate}
-                                className="w-full py-3 px-4 bg-gradient-to-b from-[#d9ff33] via-spy-lime to-[#88bb00] hover:brightness-110 border-2 border-white rounded-2xl text-slate-950 font-black uppercase text-xs tracking-wider shadow-[0_4px_0_#557700,0_8px_20px_rgba(204,255,0,0.3)] active:translate-y-1 active:shadow-[0_1px_0_#557700] transition-all cursor-pointer flex items-center justify-center gap-2"
-                            >
-                                <RefreshCw className="w-4 h-4 stroke-[3]" />
-                                <span>METTRE À JOUR MAINTENANT</span>
-                            </button>
-
-                            <button
-                                type="button"
-                                onClick={() => setUpdateAvailable(false)}
-                                className="text-white/40 hover:text-white text-[10px] font-black uppercase tracking-wider transition-colors pt-1 block mx-auto cursor-pointer"
-                            >
-                                Plus tard
-                            </button>
-                        </div>
+                <div className="fixed top-3 left-1/2 -translate-x-1/2 z-[350] bg-slate-950/95 backdrop-blur-2xl border-2 border-spy-lime text-white text-xs font-black uppercase tracking-wider px-3.5 py-2 rounded-full shadow-[0_12px_35px_rgba(204,255,0,0.35)] flex items-center gap-2.5 animate-bounce-subtle max-w-[94vw] select-none">
+                    <div className="w-6.5 h-6.5 rounded-full bg-spy-lime text-slate-950 flex items-center justify-center flex-shrink-0 animate-spin">
+                        <RefreshCw className="w-3.5 h-3.5 stroke-[3]" />
                     </div>
+                    <div className="flex flex-col text-left pr-1">
+                        <span className="text-[9.5px] text-spy-lime font-black tracking-wide leading-tight">Mise à jour disponible !</span>
+                        <span className="text-[7.5px] text-white/60 font-bold leading-tight">Cliquez pour appliquer</span>
+                    </div>
+                    <button
+                        onClick={handleUpdate}
+                        className="bg-gradient-to-b from-[#d9ff33] via-spy-lime to-[#88bb00] text-slate-950 px-3 py-1.5 rounded-full border border-white text-[9px] font-black uppercase tracking-wider hover:brightness-110 active:scale-95 transition-all cursor-pointer shadow-md flex-shrink-0 flex items-center gap-1"
+                    >
+                        <span>METTRE À JOUR</span>
+                    </button>
+                    <button
+                        onClick={() => setUpdateAvailable(false)}
+                        className="text-white/40 hover:text-white transition-colors cursor-pointer p-0.5"
+                        title="Fermer"
+                    >
+                        <X className="w-3.5 h-3.5" />
+                    </button>
                 </div>
             )}
 

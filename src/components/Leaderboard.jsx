@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Crown } from 'lucide-react';
+import React, { useEffect, useState, useRef } from 'react';
+import { Crown, ChevronDown, ChevronUp } from 'lucide-react';
 import { CartoonAvatar } from './CartoonAvatars';
 import { supabase } from '../utils/supabaseClient';
 import { getLevelTitle } from './Profile';
@@ -45,19 +45,13 @@ const DEFAULT_AGENTS = generateTop100Agents();
 
 const Leaderboard = () => {
   const [leaderboardData, setLeaderboardData] = useState([]);
+  const [visibleCount, setVisibleCount] = useState(10);
   const [loading, setLoading] = useState(true);
+  const scrollRef = useRef(null);
 
   useEffect(() => {
     fetchLeaderboard();
   }, []);
-
-  const getTitleByCoins = (coins) => {
-    if (coins >= 1200) return 'Légende Spymals';
-    if (coins >= 800) return 'Détective En Chef';
-    if (coins >= 500) return 'Infiltré Élite';
-    if (coins >= 300) return 'Agent Spécial';
-    return 'Recrue Furtive';
-  };
 
   const calculateStats = (item) => {
     const wins = item.wins || item.games_won || 0;
@@ -90,7 +84,7 @@ const Leaderboard = () => {
       const { data: profiles, error } = await supabase
         .from('spymals_profiles')
         .select('*')
-        .limit(50);
+        .limit(100);
 
       if (profiles && profiles.length > 0 && !error) {
         rawList = profiles.map(calculateStats);
@@ -129,20 +123,30 @@ const Leaderboard = () => {
 
     rawList.sort((a, b) => b.winRate - a.winRate || b.wins - a.wins || b.coins - a.coins);
 
-    setLeaderboardData(rawList.slice(0, 10));
+    setLeaderboardData(rawList.slice(0, 100));
     setLoading(false);
+  };
+
+  const handleLoadMore = () => {
+    setVisibleCount(prev => Math.min(100, prev + 10));
+  };
+
+  const handleShowLess = () => {
+    setVisibleCount(10);
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
   };
 
   const top1 = leaderboardData[0];
   const top2 = leaderboardData[1];
   const top3 = leaderboardData[2];
 
-  const ranks4to10 = leaderboardData.slice(3, 10);
+  const paginatedList = leaderboardData.slice(3, visibleCount);
+  const hasMore = visibleCount < Math.min(100, leaderboardData.length);
 
   return (
-    /* Non-scrollable fixed screen container — perfectly sized for Top 10 without scrolling */
+    /* Responsive full-screen container — clears topbar & navbar with smooth scroll */
     <div className="fixed top-[70px] sm:top-[78px] left-0 right-0 px-2.5 sm:px-5 max-w-md mx-auto flex flex-col items-center overflow-hidden pointer-events-auto select-none z-10"
-      style={{ bottom: 'calc(100px + env(safe-area-inset-bottom, 0px))' }}
+      style={{ bottom: 'calc(105px + env(safe-area-inset-bottom, 0px))' }}
     >
       
       {/* Ambient background glows */}
@@ -152,15 +156,15 @@ const Leaderboard = () => {
         ></div>
       </div>
 
-      {/* All content in a non-scrollable flex column */}
-      <div className="z-10 w-full flex flex-col items-center overflow-hidden flex-1 justify-between">
+      {/* All content in a flex column */}
+      <div className="z-10 w-full flex flex-col items-center overflow-hidden flex-1 min-h-0">
         
         {/* ═══════════ HEADER ═══════════ */}
-        <div className="text-center mb-1 flex-shrink-0">
+        <div className="text-center mb-1 sm:mb-1.5 flex-shrink-0">
           <div className="inline-flex items-center px-3 py-0.5 rounded-full bg-spy-lime/8 border border-spy-lime/25 text-spy-lime text-[7.5px] sm:text-[9px] font-black uppercase tracking-[0.15em] mb-0.5"
             style={{ boxShadow: '0 2px 12px rgba(204,255,0,0.08)' }}
           >
-            TOP 10 AGENTS ÉLITES
+            {visibleCount <= 10 ? 'TOP 10 AGENTS ÉLITES' : `TOP ${visibleCount} AGENTS ÉLITES`}
           </div>
           <h1 className="text-lg sm:text-2xl font-black text-white uppercase tracking-tight"
             style={{ textShadow: '0 2px 12px rgba(0,0,0,0.6)' }}
@@ -235,7 +239,7 @@ const Leaderboard = () => {
                   boxShadow: '0 8px 28px rgba(251,191,36,0.15), inset 0 1px 0 rgba(251,191,36,0.12)'
                 }}
               >
-                <span className="text-[9.5px] sm:text-xs font-black text-amber-400">#1 ÉLITE</span>
+                <span className="text-[9.5px] sm:text-xs font-black text-amber-400">#1</span>
                 <span className="text-[5px] sm:text-[7px] font-bold text-amber-200/80">{top1.wins} Vic. • {top1.losses} Déf.</span>
                 <div className="flex items-center gap-0.5 mt-0.5">
                   <img src="/croquette_coin_3d.png" alt="coin" className="w-2.5 h-2.5 object-contain" />
@@ -282,17 +286,17 @@ const Leaderboard = () => {
 
         </div>
 
-        {/* ═══════════ RANK LIST CARD (Non-scrollable Top 4 to 10) ═══════════ */}
-        <div className="w-full rounded-2xl sm:rounded-3xl p-2 flex flex-col overflow-hidden flex-1 justify-between"
+        {/* ═══════════ RANK LIST CARD (Scrollable with VOIR PLUS button) ═══════════ */}
+        <div className="w-full rounded-2xl sm:rounded-3xl p-2 sm:p-2.5 flex flex-col overflow-hidden flex-1 min-h-0"
           style={{
-            background: 'linear-gradient(180deg, rgba(15,23,42,0.94) 0%, rgba(2,6,23,0.98) 100%)',
+            background: 'linear-gradient(180deg, rgba(15,23,42,0.92) 0%, rgba(2,6,23,0.96) 50%, rgba(15,23,42,0.90) 100%)',
             border: '1px solid rgba(255,255,255,0.08)',
-            boxShadow: '0 -1px 0 rgba(255,255,255,0.04) inset, 0 12px 40px rgba(0,0,0,0.6)'
+            boxShadow: '0 -1px 0 rgba(255,255,255,0.04) inset, 0 12px 40px rgba(0,0,0,0.5)'
           }}
         >
           
           {/* Column headers */}
-          <div className="flex items-center justify-between px-2 pb-1 text-[7.5px] sm:text-[8.5px] font-black uppercase tracking-[0.12em] text-white/40 flex-shrink-0"
+          <div className="flex items-center justify-between px-1.5 sm:px-2 pb-1 mb-1 text-[7px] sm:text-[8.5px] font-black uppercase tracking-[0.12em] text-white/30 flex-shrink-0"
             style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
           >
             <span>RANG & AGENT</span>
@@ -305,67 +309,94 @@ const Leaderboard = () => {
               <span className="text-[8.5px] font-black uppercase tracking-wider">Chargement des agents...</span>
             </div>
           ) : (
-            <div className="flex flex-col justify-around flex-1 py-0.5 space-y-1">
-              {ranks4to10.map((agent, index) => {
-                const rankNumber = index + 4;
-                return (
-                  <div
-                    key={agent.username + index}
-                    className="flex items-center justify-between rounded-xl px-2 py-1 transition-all duration-200"
-                    style={{
-                      background: 'rgba(255,255,255,0.025)',
-                      border: '1px solid rgba(255,255,255,0.05)',
-                      boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
-                    }}
-                  >
-                    {/* Left: Rank + Avatar + Name */}
-                    <div className="flex items-center gap-2 min-w-0">
-                      <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-lg flex items-center justify-center text-[8px] sm:text-[9.5px] font-black text-white/50 flex-shrink-0"
-                        style={{
-                          background: 'rgba(255,255,255,0.05)',
-                          border: '1px solid rgba(255,255,255,0.08)'
-                        }}
-                      >
-                        #{rankNumber}
+            <div className="flex flex-col overflow-hidden flex-1 min-h-0">
+              
+              {/* Scrollable player rows */}
+              <div ref={scrollRef} className="overflow-y-auto no-scrollbar space-y-[2px] sm:space-y-1 flex-1 min-h-0 pr-0.5">
+                {paginatedList.map((agent, index) => {
+                  const rankNumber = index + 4;
+                  return (
+                    <div
+                      key={agent.username + index}
+                      className="flex items-center justify-between rounded-xl p-1 sm:p-1.5 transition-all duration-200"
+                      style={{
+                        background: 'rgba(255,255,255,0.02)',
+                        border: '1px solid rgba(255,255,255,0.04)',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.02)'
+                      }}
+                    >
+                      {/* Left: Rank + Avatar + Name */}
+                      <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+                        <div className="w-4.5 h-4.5 sm:w-6 sm:h-6 rounded-lg flex items-center justify-center text-[7.5px] sm:text-[9.5px] font-black text-white/50 flex-shrink-0"
+                          style={{
+                            background: 'rgba(255,255,255,0.04)',
+                            border: '1px solid rgba(255,255,255,0.06)'
+                          }}
+                        >
+                          #{rankNumber}
+                        </div>
+
+                        <div className="w-6 h-6 sm:w-8.5 sm:h-8.5 rounded-xl overflow-hidden flex-shrink-0"
+                          style={{
+                            background: 'linear-gradient(135deg, rgba(30,41,59,0.8), rgba(15,23,42,0.9))',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
+                          }}
+                        >
+                          <CartoonAvatar id={agent.avatar_emoji} className="w-full h-full border-none shadow-none" />
+                        </div>
+
+                        <div className="flex flex-col text-left min-w-0">
+                          <span className="font-black text-[8.5px] sm:text-[11px] text-white tracking-wide truncate max-w-[80px] sm:max-w-[130px]">
+                            {agent.username}
+                          </span>
+                          <span className="text-[6px] sm:text-[8px] text-spy-lime/70 font-bold">
+                            {agent.title} • Niv.{agent.level}
+                          </span>
+                        </div>
                       </div>
 
-                      <div className="w-6.5 h-6.5 sm:w-8 sm:h-8 rounded-xl overflow-hidden flex-shrink-0"
-                        style={{
-                          background: 'linear-gradient(135deg, rgba(30,41,59,0.8), rgba(15,23,42,0.9))',
-                          border: '1px solid rgba(255,255,255,0.12)'
-                        }}
-                      >
-                        <CartoonAvatar id={agent.avatar_emoji} className="w-full h-full border-none shadow-none" />
-                      </div>
-
-                      <div className="flex flex-col text-left min-w-0">
-                        <span className="font-black text-[9px] sm:text-[11px] text-white tracking-wide truncate max-w-[90px] sm:max-w-[140px]">
-                          {agent.username}
+                      {/* Right: Win Rate + Stats */}
+                      <div className="flex flex-col items-end flex-shrink-0">
+                        <span className="text-[9px] sm:text-[11.5px] font-black text-spy-lime tracking-tight">
+                          {agent.winRate}%
                         </span>
-                        <span className="text-[6.5px] sm:text-[8px] text-spy-lime/80 font-bold">
-                          {agent.title} • Niv.{agent.level}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Right: Win Rate + Stats */}
-                    <div className="flex flex-col items-end flex-shrink-0">
-                      <span className="text-[9.5px] sm:text-[11.5px] font-black text-spy-lime tracking-tight">
-                        {agent.winRate}%
-                      </span>
-                      <div className="flex items-center gap-1">
-                        <span className="text-[6px] sm:text-[7.5px] text-white/50 font-bold whitespace-nowrap">
-                          {agent.wins}V • {agent.losses}D
+                        <span className="text-[5.5px] sm:text-[7.5px] text-white/45 font-bold whitespace-nowrap">
+                          {agent.wins} Vic. • {agent.losses} Déf.
                         </span>
                         <div className="flex items-center gap-0.5">
-                          <img src="/croquette_coin_3d.png" alt="coin" className="w-2.5 h-2.5 object-contain" />
-                          <span className="text-[6px] sm:text-[7.5px] text-white/40 font-black">{agent.coins}</span>
+                          <img src="/croquette_coin_3d.png" alt="coin" className="w-2 h-2 sm:w-2.5 sm:h-2.5 object-contain" />
+                          <span className="text-[5.5px] sm:text-[7px] text-white/30 font-black">{agent.coins}</span>
                         </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
+
+              {/* Buttons pinned at bottom of card — 3D Cartoon Ultra Rounded Pill Button */}
+              <div className="pt-1.5 sm:pt-2 flex items-center gap-2 flex-shrink-0 w-full">
+                {hasMore && (
+                  <button
+                    onClick={handleLoadMore}
+                    className="flex-1 py-1.5 sm:py-2.5 px-4 bg-gradient-to-b from-[#d9ff33] via-spy-lime to-[#88bb00] hover:brightness-110 border-2 border-white rounded-full text-slate-950 font-black uppercase text-[9.5px] sm:text-[11px] tracking-[0.12em] shadow-[0_4px_0_#557700,0_8px_18px_rgba(204,255,0,0.3)] active:translate-y-1 active:shadow-[0_1px_0_#557700] transition-all duration-150 cursor-pointer flex items-center justify-center gap-1.5 select-none"
+                  >
+                    <span>VOIR PLUS (+10)</span>
+                    <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3]" />
+                  </button>
+                )}
+
+                {visibleCount > 10 && (
+                  <button
+                    onClick={handleShowLess}
+                    className="py-1.5 sm:py-2.5 px-4 bg-white/10 hover:bg-white/20 border-2 border-white/30 rounded-full text-white font-black uppercase text-[9.5px] sm:text-[11px] tracking-wider shadow-[0_4px_0_rgba(0,0,0,0.4),0_8px_16px_rgba(0,0,0,0.3)] active:translate-y-1 active:shadow-[0_1px_0_rgba(0,0,0,0.4)] transition-all duration-150 cursor-pointer flex items-center justify-center gap-1.5 flex-shrink-0 select-none"
+                  >
+                    <span>REPLIER</span>
+                    <ChevronUp className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3]" />
+                  </button>
+                )}
+              </div>
+
             </div>
           )}
 
