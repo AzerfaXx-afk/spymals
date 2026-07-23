@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { 
   Edit3, Award, Sliders, MessageSquare, 
   HelpCircle, LogOut, LogIn, Palette, Lock, CheckCircle2, ChevronDown, ChevronUp,
-  Compass, Cpu, Snowflake, Ghost, Gamepad2
+  Compass, Cpu, Snowflake, Ghost, Gamepad2, Mail
 } from 'lucide-react';
 import { supabase } from '../utils/supabaseClient';
 import EditProfileModal from './EditProfileModal';
@@ -276,9 +276,14 @@ const Profile = ({ user, profileData, onUpdateProfile, onLogout, onBack }) => {
                                 <span>{getLevelTitle(profileData?.level || 1)}</span>
                             </div>
 
-                            {isGuest && (
-                                <span className="inline-block bg-white/5 text-white/50 text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg border border-white/10">
-                                    Mode Invité
+                            {user?.email ? (
+                                <div className="flex items-center gap-1.5 text-white/60 text-[10px] font-bold tracking-wide mt-1">
+                                    <Mail className="w-3 h-3 text-spy-lime flex-shrink-0" />
+                                    <span className="truncate">{user.email}</span>
+                                </div>
+                            ) : isGuest && (
+                                <span className="inline-block bg-white/5 text-white/50 text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg border border-white/10 mt-1">
+                                    Mode Invité (Local)
                                 </span>
                             )}
                         </div>
@@ -617,7 +622,7 @@ const Profile = ({ user, profileData, onUpdateProfile, onLogout, onBack }) => {
                             className="w-full py-3.5 bg-rose-600/90 hover:bg-rose-600 border border-rose-500/40 rounded-2xl text-white font-black uppercase text-xs tracking-wider shadow-[0_4px_14px_rgba(225,29,72,0.3)] active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2"
                         >
                             <LogOut className="w-4 h-4" />
-                            <span>Se déconnecter de la Centrale</span>
+                            <span>SE DÉCONNECTER</span>
                         </button>
                     )}
                 </div>
