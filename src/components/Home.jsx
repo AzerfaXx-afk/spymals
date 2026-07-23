@@ -16,39 +16,38 @@ const Home = ({
     const [showPlayOptions, setShowPlayOptions] = useState(false);
 
     return (
-        <div className="fixed inset-0 top-16 bottom-20 px-4 max-w-md mx-auto flex flex-col items-center justify-between py-2 text-center overflow-hidden z-10 pointer-events-auto select-none">
+        <div className="fixed inset-0 top-16 bottom-26 px-4 max-w-md mx-auto flex flex-col items-center justify-between py-1 text-center overflow-hidden z-10 pointer-events-auto select-none">
             
             {/* Decors & Larger Mascot */}
             <div className="z-10 flex flex-col items-center relative w-full my-auto">
-                <div className="relative w-full max-w-[300px] sm:max-w-[340px] mx-auto flex items-center justify-center transition-transform duration-300 hover:scale-105">
-                    {/* Soft Neon Mascot Glow */}
-                    <div className="absolute inset-0 bg-spy-lime/15 rounded-full blur-3xl -z-10 scale-90"></div>
+                <div className="relative w-full max-w-[280px] sm:max-w-[320px] mx-auto flex items-center justify-center transition-transform duration-300 hover:scale-105">
+                    {/* Soft Radial Ambient Mascot Glow - Smooth Blend */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-spy-lime/10 via-spy-lime/5 to-transparent rounded-full blur-2xl -z-10 scale-100"></div>
                     <img
                         src="/detective_mascot.png"
                         alt="Logo SpyMals"
-                        width={450}
-                        height={450}
+                        width={420}
+                        height={420}
                         fetchpriority="high"
                         decoding="async"
                         className="w-full h-auto object-contain drop-shadow-[0_16px_25px_rgba(0,0,0,0.75)]"
-                        style={{ maxHeight: '36dvh' }}
+                        style={{ maxHeight: '32dvh' }}
                     />
                 </div>
 
-                {/* Subtitle Badge */}
-                <div className="mt-3 bg-slate-950/90 backdrop-blur-md px-4 py-1.5 rounded-full border-2 border-spy-lime/40 shadow-[0_6px_20px_rgba(0,0,0,0.6)] flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-spy-lime animate-ping"></span>
-                    <p className="text-spy-lime font-black text-[10.5px] tracking-[0.22em] uppercase">
-                        Démasquez l'imposteur
+                {/* Subtitle Badge - Clean Cartoon Style (No AI ping animation) */}
+                <div className="mt-2.5 bg-slate-950/90 backdrop-blur-md px-5 py-2 rounded-full border-2 border-spy-lime/50 shadow-[0_6px_20px_rgba(0,0,0,0.6)]">
+                    <p className="text-spy-lime font-black text-[11px] tracking-[0.2em] uppercase">
+                        DÉMASQUEZ L'IMPOSTEUR
                     </p>
                 </div>
             </div>
 
-            {/* Giant Play Button */}
-            <div className="z-10 w-full max-w-xs space-y-2.5 pb-2 flex-shrink-0">
+            {/* Giant Play Button - Completely Visible Above Nav Bar */}
+            <div className="z-10 w-full max-w-xs space-y-2 pb-1 flex-shrink-0">
                 <button
                     onClick={() => setShowPlayOptions(true)}
-                    className="btn-cartoon-primary w-full text-xl sm:text-2xl py-3.5 sm:py-4 px-6 font-black uppercase tracking-wider shadow-[0_6px_0_#000] cursor-pointer flex items-center justify-center gap-2.5 active:scale-95 transition-all duration-150"
+                    className="btn-cartoon-primary w-full text-xl sm:text-2xl py-3.5 px-6 font-black uppercase tracking-wider shadow-[0_6px_0_#000] cursor-pointer flex items-center justify-center gap-2.5 active:scale-95 transition-all duration-150"
                 >
                     <Play className="w-6 h-6 fill-current" /> JOUER !
                 </button>
