@@ -73,13 +73,22 @@ const Shop = ({ user, profileData, onUpdateProfile, onBack }) => {
             <BackArrow onClick={onBack} />
 
             {/* Header */}
-            <div className="z-10 text-center mb-6 max-w-md w-full mx-auto">
-                <h2 className="text-3xl font-black text-white uppercase tracking-tighter">
-                    Boutique Agent
-                </h2>
-                <div className="flex items-center justify-center gap-1.5 mt-2 bg-black/45 px-4 py-2 rounded-full border-2 border-black inline-flex mx-auto shadow-[2px_2px_0_#000]">
-                    <Coins className="w-4 h-4 text-spy-lime" />
-                    <span className="text-sm font-black text-spy-lime font-display leading-none">{coins} Croquettes</span>
+            <div className="z-10 text-center mb-4 max-w-md w-full mx-auto">
+                <div className="inline-flex items-center px-3 py-0.5 rounded-full bg-spy-lime/8 border border-spy-lime/25 text-spy-lime text-[7.5px] sm:text-[9px] font-black uppercase tracking-[0.15em] mb-0.5"
+                    style={{ boxShadow: '0 2px 12px rgba(204,255,0,0.08)' }}
+                >
+                    CENTRALE D'ÉQUIPEMENT
+                </div>
+                <h1 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight"
+                    style={{ textShadow: '0 2px 12px rgba(0,0,0,0.6)' }}
+                >
+                    BOUTIQUE
+                </h1>
+                <div className="w-14 sm:w-16 h-[2px] bg-gradient-to-r from-transparent via-spy-lime to-transparent mx-auto rounded-full mt-0.5 opacity-80 mb-2"></div>
+                
+                <div className="flex items-center justify-center gap-1.5 bg-slate-950/80 px-3.5 py-1.5 rounded-full border border-spy-lime/40 inline-flex mx-auto shadow-md">
+                    <img src="/croquette_coin_3d.png" alt="Croquettes" className="w-4 h-4 object-contain" />
+                    <span className="text-xs font-black text-spy-lime font-display leading-none">{coins} Croquettes</span>
                 </div>
             </div>
 

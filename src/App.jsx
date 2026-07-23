@@ -692,30 +692,18 @@ function App() {
         {isMenuScreen && (
           <div className="fixed bottom-3 left-0 right-0 z-40 px-3.5 pointer-events-none select-none">
             <div className="max-w-md mx-auto pointer-events-auto">
-              <div className="bg-slate-950/95 backdrop-blur-2xl border-2 border-white/20 rounded-3xl p-1.5 shadow-[0_16px_45px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(255,255,255,0.12)] flex items-center justify-between relative overflow-hidden">
+              <div className="bg-slate-950/95 backdrop-blur-2xl border-2 border-white/20 rounded-3xl p-2 shadow-[0_16px_45px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(255,255,255,0.12)] flex items-center justify-between relative">
                 
-                {/* Active Tab Background Glow Indicator */}
-                <div 
-                  className="absolute top-1 bottom-1 transition-all duration-300 rounded-2xl pointer-events-none"
-                  style={{
-                    left: currentScreen === 'leaderboard' ? '0.375rem' : currentScreen === 'home' ? '33.33%' : '66.66%',
-                    width: '33.33%',
-                    paddingRight: '0.75rem'
-                  }}
-                >
-                  <div className="w-full h-full bg-spy-lime/10 border border-spy-lime/30 rounded-2xl shadow-[0_0_20px_rgba(204,255,0,0.25)]"></div>
-                </div>
-
                 {/* Tab 1: Classement */}
                 <button
                   onClick={() => setCurrentScreen('leaderboard')}
-                  className={`flex-1 flex flex-col items-center justify-center py-1.5 relative z-10 transition-all duration-300 transform cursor-pointer active:scale-90 group ${
+                  className={`flex-1 flex flex-col items-center justify-center py-1 relative z-10 transition-all duration-300 transform cursor-pointer active:scale-90 group ${
                     currentScreen === 'leaderboard' ? 'text-spy-lime font-black' : 'text-white/40 hover:text-white/80'
                   }`}
                 >
                   <div className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-300 transform group-hover:-translate-y-1 ${
                     currentScreen === 'leaderboard'
-                      ? 'bg-gradient-to-b from-spy-lime/30 to-slate-900 border-2 border-spy-lime shadow-[0_0_22px_rgba(204,255,0,0.6)] scale-110 -translate-y-1'
+                      ? 'bg-gradient-to-b from-spy-lime/30 via-spy-lime/10 to-slate-900 border-2 border-spy-lime shadow-[0_0_22px_rgba(204,255,0,0.6)] scale-110 -translate-y-0.5'
                       : 'bg-white/5 border border-white/10 hover:bg-white/10'
                   }`}>
                     <img src="/trophy_icon_3d.svg" alt="Classement" className="w-7 h-7 object-contain filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] transform group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300" />
@@ -735,7 +723,7 @@ function App() {
                   <button
                     onClick={() => setCurrentScreen('home')}
                     className={`w-16 h-16 rounded-2xl bg-gradient-to-b from-[#d9ff33] via-spy-lime to-[#77aa00] border-3 border-white flex flex-col items-center justify-center shadow-[0_12px_28px_rgba(204,255,0,0.55),0_4px_0_#446600,inset_0_1px_0_rgba(255,255,255,0.5)] active:translate-y-1 active:shadow-[0_2px_0_#446600] transition-all duration-300 cursor-pointer group ${
-                      currentScreen === 'home' ? 'shadow-[0_0_25px_rgba(204,255,0,0.85),0_4px_0_#446600] scale-105 ring-2 ring-spy-lime/50' : 'hover:scale-105'
+                      currentScreen === 'home' ? 'shadow-[0_0_25px_rgba(204,255,0,0.85),0_4px_0_#446600] scale-105 ring-2 ring-spy-lime/60' : 'hover:scale-105'
                     }`}
                     title="Jouer"
                   >
@@ -747,13 +735,13 @@ function App() {
                 {/* Tab 3: Guide */}
                 <button
                   onClick={() => setCurrentScreen('how-to-play')}
-                  className={`flex-1 flex flex-col items-center justify-center py-1.5 relative z-10 transition-all duration-300 transform cursor-pointer active:scale-90 group ${
+                  className={`flex-1 flex flex-col items-center justify-center py-1 relative z-10 transition-all duration-300 transform cursor-pointer active:scale-90 group ${
                     currentScreen === 'how-to-play' ? 'text-spy-lime font-black' : 'text-white/40 hover:text-white/80'
                   }`}
                 >
                   <div className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-300 transform group-hover:-translate-y-1 ${
                     currentScreen === 'how-to-play'
-                      ? 'bg-gradient-to-b from-spy-lime/30 to-slate-900 border-2 border-spy-lime shadow-[0_0_22px_rgba(204,255,0,0.6)] scale-110 -translate-y-1'
+                      ? 'bg-gradient-to-b from-spy-lime/30 via-spy-lime/10 to-slate-900 border-2 border-spy-lime shadow-[0_0_22px_rgba(204,255,0,0.6)] scale-110 -translate-y-0.5'
                       : 'bg-white/5 border border-white/10 hover:bg-white/10'
                   }`}>
                     <img src="/guide_icon_3d.svg" alt="Guide" className="w-7 h-7 object-contain filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] transform group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-300" />

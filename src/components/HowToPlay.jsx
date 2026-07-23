@@ -32,15 +32,19 @@ const HowToPlay = ({ onBack, onOpenSettings }) => {
 
             <div className="z-10 w-full flex flex-col items-center">
 
-                {/* Header Title (Positioned Higher Up) */}
-                <div className="text-center mb-2 flex-shrink-0">
-                    <div className="inline-flex items-center px-3.5 py-1 rounded-full bg-spy-lime/10 border border-spy-lime/30 text-spy-lime text-[9px] font-black uppercase tracking-widest mb-1 shadow-sm">
-                        GUIDE DE L'AGENT
+                {/* Header Title */}
+                <div className="text-center mb-2.5 sm:mb-3 flex-shrink-0 w-full">
+                    <div className="inline-flex items-center px-3 py-0.5 rounded-full bg-spy-lime/8 border border-spy-lime/25 text-spy-lime text-[7.5px] sm:text-[9px] font-black uppercase tracking-[0.15em] mb-0.5"
+                        style={{ boxShadow: '0 2px 12px rgba(204,255,0,0.08)' }}
+                    >
+                        MANUEL TECHNIQUE
                     </div>
-                    <h1 className="text-2xl font-black text-white uppercase tracking-tighter drop-shadow-md">
-                        COMMENT JOUER ?
+                    <h1 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight"
+                        style={{ textShadow: '0 2px 12px rgba(0,0,0,0.6)' }}
+                    >
+                        GUIDE DU JEU
                     </h1>
-                    <div className="w-14 h-1 bg-gradient-to-r from-transparent via-spy-lime to-transparent mx-auto rounded-full mt-1"></div>
+                    <div className="w-14 sm:w-16 h-[2px] bg-gradient-to-r from-transparent via-spy-lime to-transparent mx-auto rounded-full mt-0.5 opacity-80"></div>
                 </div>
 
                 {/* 3D Cartoon Tab Navigation Bar */}

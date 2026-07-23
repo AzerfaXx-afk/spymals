@@ -64,11 +64,18 @@ const History = ({ history, onUpdateHistory, onReplayTeam, onBack, onOpenSetting
             <div className="z-10 w-full animate-slide-up flex flex-col h-full">
 
                 {/* Header */}
-                <div className="text-center mb-6">
-                    <h1 className="text-3xl font-black text-white uppercase tracking-tighter drop-shadow-lg mb-2">
-                        Historique
+                <div className="text-center mb-4 w-full">
+                    <div className="inline-flex items-center px-3 py-0.5 rounded-full bg-spy-lime/8 border border-spy-lime/25 text-spy-lime text-[7.5px] sm:text-[9px] font-black uppercase tracking-[0.15em] mb-0.5"
+                        style={{ boxShadow: '0 2px 12px rgba(204,255,0,0.08)' }}
+                    >
+                        RAPPORTS DE MISSIONS
+                    </div>
+                    <h1 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight"
+                        style={{ textShadow: '0 2px 12px rgba(0,0,0,0.6)' }}
+                    >
+                        HISTORIQUE
                     </h1>
-                    <div className="w-16 h-1.5 bg-spy-orange mx-auto rounded-full border border-black shadow-[1px_1px_0_#000]"></div>
+                    <div className="w-14 sm:w-16 h-[2px] bg-gradient-to-r from-transparent via-spy-lime to-transparent mx-auto rounded-full mt-0.5 opacity-80"></div>
                 </div>
 
                 {/* History List */}
