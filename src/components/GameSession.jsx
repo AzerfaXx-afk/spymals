@@ -282,19 +282,23 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                     transition={{ type: 'spring', stiffness: 200, damping: 25 }}
                     className="z-10 w-full max-w-md flex flex-col items-center"
                 >
-                    {/* 3D Victory / Defeat Hero Banner */}
+                    {/* 3D Cutout Victory / Defeat Hero Character */}
                     <motion.div
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
+                        initial={{ scale: 0.7, opacity: 0, y: 20 }}
+                        animate={{ scale: 1, opacity: 1, y: 0 }}
                         transition={{ delay: 0.1, type: 'spring', stiffness: 300, damping: 20 }}
-                        className="relative w-full max-w-sm h-48 rounded-3xl overflow-hidden border-[3.5px] border-white/20 shadow-[0_12px_30px_rgba(0,0,0,0.8)] bg-gradient-to-b from-[#182947] to-[#0a1426] mb-4 flex-shrink-0"
+                        className="relative w-56 h-52 flex items-center justify-center mb-1 flex-shrink-0"
                     >
+                        {/* Radial neon glow aura */}
+                        <div className={`absolute inset-4 rounded-full blur-2xl opacity-40 pointer-events-none ${
+                            isCivilianWin ? 'bg-spy-lime' : 'bg-spy-orange'
+                        }`} />
+
                         <img 
                             src={isCivilianWin ? '/victory_civilians_3d.png' : '/victory_impostors_3d.png'} 
                             alt={isCivilianWin ? 'Victoire des Innocents' : 'Victoire des Imposteurs'} 
-                            className="w-full h-full object-cover" 
+                            className="w-full h-full object-contain filter drop-shadow-[0_15px_25px_rgba(0,0,0,0.9)] z-10 transform hover:scale-105 transition-transform duration-300" 
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#0a1426] via-transparent to-transparent opacity-80 pointer-events-none" />
                     </motion.div>
 
                     <div className="text-center mb-5">

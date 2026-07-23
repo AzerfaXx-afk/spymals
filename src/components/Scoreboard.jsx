@@ -30,14 +30,16 @@ const Scoreboard = ({ players, winners, onReplay, onHome, onOpenSettings }) => {
 
             <div className="z-10 w-full animate-pop-in flex flex-col flex-1 pb-4 overflow-hidden">
 
-                {/* 3D Victory / Defeat Hero Banner */}
-                <div className="relative w-full h-44 rounded-3xl overflow-hidden border-[3.5px] border-white/20 shadow-[0_12px_30px_rgba(0,0,0,0.8)] bg-gradient-to-b from-[#182947] to-[#0a1426] mb-4 flex-shrink-0">
+                {/* 3D Cutout Victory / Defeat Hero Character */}
+                <div className="relative w-full h-48 flex items-center justify-center mb-1 flex-shrink-0">
+                    <div className={`absolute inset-4 rounded-full blur-2xl opacity-40 pointer-events-none ${
+                        isCivilianWin ? 'bg-spy-lime' : 'bg-spy-orange'
+                    }`} />
                     <img 
                         src={isCivilianWin ? '/victory_civilians_3d.png' : '/victory_impostors_3d.png'} 
                         alt={winningTeamText} 
-                        className="w-full h-full object-cover" 
+                        className="w-full h-full object-contain filter drop-shadow-[0_15px_25px_rgba(0,0,0,0.9)] z-10 transform hover:scale-105 transition-transform duration-300" 
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0a1426] via-transparent to-transparent opacity-80 pointer-events-none" />
                 </div>
 
                 {/* Header Title */}
