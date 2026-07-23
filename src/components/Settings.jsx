@@ -8,7 +8,7 @@ const Settings = ({ onBack }) => {
     const { musicVolume, setMusicVolume, sfxVolume, setSfxVolume } = useAudio();
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center p-6 pt-24 bg-spy-blue relative overflow-hidden">
+        <div className="min-h-screen flex flex-col items-center justify-center p-6 pt-24 bg-transparent relative overflow-hidden">
             <BackArrow onClick={onBack} />
 
             {/* Background Decor */}
@@ -19,7 +19,7 @@ const Settings = ({ onBack }) => {
                 <h2 className="text-3xl font-black text-center text-white uppercase tracking-tighter mb-2">
                     Paramètres
                 </h2>
-                <div className="w-12 h-1 bg-spy-lime mx-auto rounded-full mb-10"></div>
+                <div className="w-12 h-1 bg-spy-lime mx-auto rounded-full mb-8"></div>
 
                 {/* Music Volume Control */}
                 <div className="mb-6 bg-black/20 rounded-3xl p-6 border border-white/5">
@@ -52,7 +52,7 @@ const Settings = ({ onBack }) => {
                 </div>
 
                 {/* SFX Volume Control */}
-                <div className="mb-12 bg-black/20 rounded-3xl p-6 border border-white/5">
+                <div className="mb-2 bg-black/20 rounded-3xl p-6 border border-white/5">
                     <div className="flex justify-between items-center mb-6">
                         <div className="flex items-center">
                             <Volume2 className="w-5 h-5 text-spy-lime mr-3" />
@@ -80,10 +80,6 @@ const Settings = ({ onBack }) => {
                         />
                     </div>
                 </div>
-
-                <BouncyButton onClick={onBack} variant="secondary" className="w-full py-5 shadow-xl">
-                    RETOUR
-                </BouncyButton>
 
             </div>
         </div>

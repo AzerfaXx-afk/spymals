@@ -25,17 +25,17 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
 
     const { switchMusic, playSfx } = useAudio();
 
-    // Tombstone animation state
-    const [showTombstone, setShowTombstone] = useState(false);
+    // 3D Cartoon Anvil drop animation state
+    const [showAnvil, setShowAnvil] = useState(false);
 
-    // Auto trigger tombstone animation when entering reveal screen
+    // Auto trigger anvil drop animation when entering reveal screen
     useEffect(() => {
         if (gameState === 'reveal') {
-            setShowTombstone(false); // reset first
+            setShowAnvil(false); // reset first
             const timer = setTimeout(() => {
-                setShowTombstone(true);
+                setShowAnvil(true);
                 playSfx('/sons/mort.mp3', { volumeMultiplier: 1.0 }); // Death sound
-            }, 800);
+            }, 500);
             return () => clearTimeout(timer);
         }
     }, [gameState, playSfx]);
@@ -575,9 +575,6 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                                 </div>
 
                                 <div className="card-cartoon bg-gradient-to-b from-[#14233e] to-[#0a1426] p-6 border-[3.5px] border-white/20 shadow-2xl w-full rounded-[32px] text-center">
-                                    <div className="bg-spy-orange/20 border border-spy-orange/50 px-3 py-1 rounded-full inline-block mb-3">
-                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-spy-orange">Accusation Finale</span>
-                                    </div>
                                     <h2 className="text-2xl font-black text-white uppercase tracking-tight mb-2 text-shadow-md">
                                         Tout le monde a parlé !
                                     </h2>
@@ -692,26 +689,43 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                     animate={{ y: 0, opacity: 1 }}
                     className="z-10 w-full max-w-md flex flex-col items-center"
                 >
-                    <div className="mb-6 relative h-36 flex flex-col items-center justify-end">
+                    <div className="mb-6 relative h-44 flex flex-col items-center justify-end w-full max-w-xs">
 
-                        {/* Tombstone animation */}
-                        {showTombstone && (
-                            <div className="absolute top-[-20px] left-1/2 -translate-x-1/2 text-8xl z-20 animate-drop-tombstone filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.9)] flex flex-col items-center justify-center">
-                                🪦
-                                <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-3 text-red-500 font-black text-lg tracking-[0.2em] animate-pulse bg-black/70 px-2 rounded-lg border border-red-500/40">
-                                    R.I.P
-                                </span>
-                            </div>
-                        )}
+                        {/* 3D Cartoon Anvil Drop Animation */}
+                        <AnimatePresence>
+                            {showAnvil && (
+                                <motion.div
+                                    initial={{ y: -180, opacity: 0, scale: 1.3 }}
+                                    animate={{ y: -25, opacity: 1, scale: 1 }}
+                                    transition={{ type: 'spring', stiffness: 500, damping: 15, mass: 1.2 }}
+                                    className="absolute top-[-25px] z-20 flex flex-col items-center justify-center pointer-events-none"
+                                >
+                                    <div className="relative w-36 h-28 flex items-center justify-center">
+                                        <img 
+                                            src="/cartoon_anvil_3d.png" 
+                                            alt="Enclume Cartoon 3D" 
+                                            className="w-full h-full object-contain filter drop-shadow-[0_15px_15px_rgba(0,0,0,0.9)]" 
+                                        />
+                                        <div className="absolute -bottom-2 bg-gradient-to-r from-red-600 to-rose-700 text-white font-black text-xs uppercase tracking-[0.2em] px-3.5 py-1 rounded-full border-2 border-black shadow-[0_4px_10px_rgba(255,0,0,0.5)] flex items-center gap-1 animate-pulse">
+                                            <Skull className="w-3.5 h-3.5 text-white stroke-[2.5]" /> ÉLIMINÉ !
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
 
-                        {/* Avatar animation */}
-                        <div className={`w-28 h-28 relative z-10 flex items-center justify-center origin-bottom ${showTombstone ? 'animate-squish-avatar' : 'animate-bounce-slow'}`}>
+                        {/* Avatar cartoon squish effect under the heavy anvil */}
+                        <motion.div 
+                            animate={showAnvil ? { scaleY: 0.35, scaleX: 1.35, y: 15 } : { scaleY: 1, scaleX: 1, y: 0 }}
+                            transition={{ type: 'spring', stiffness: 600, damping: 18 }}
+                            className="w-28 h-28 relative z-10 flex items-center justify-center origin-bottom overflow-hidden rounded-full border-4 border-white/20 shadow-2xl bg-black/50"
+                        >
                             {votedPlayer.avatar.type === 'image' ? (
-                                <img src={votedPlayer.avatar.value} alt={votedPlayer.name} className="w-full h-full object-cover rounded-full shadow-2xl border-4 border-white/20" />
+                                <img src={votedPlayer.avatar.value} alt={votedPlayer.name} className="w-full h-full object-cover rounded-full" />
                             ) : (
                                 <CartoonAvatar id={votedPlayer.avatar.value} className="w-full h-full border-none shadow-none" />
                             )}
-                        </div>
+                        </motion.div>
 
                     </div>
                     
@@ -734,18 +748,21 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                         </h3>
 
                         {isCivilian && (
-                            <p className="text-spy-orange font-black text-xs mt-3 uppercase tracking-wider">
-                                ⚠️ Erreur ! Vous avez éliminé un innocent...
+                            <p className="text-spy-orange font-black text-xs mt-3 uppercase tracking-wider flex items-center justify-center gap-1.5">
+                                <ShieldAlert className="w-4 h-4 text-spy-orange flex-shrink-0 stroke-[2.5]" />
+                                <span>Erreur ! Vous avez éliminé un innocent...</span>
                             </p>
                         )}
                         {isUndercover && (
-                            <p className="text-spy-lime font-black text-xs mt-3 uppercase tracking-wider">
-                                🎉 Bien joué agents ! L'espion est démasqué.
+                            <p className="text-spy-lime font-black text-xs mt-3 uppercase tracking-wider flex items-center justify-center gap-1.5">
+                                <PartyPopper className="w-4 h-4 text-spy-lime flex-shrink-0 stroke-[2.5]" />
+                                <span>Bien joué agents ! L'espion est démasqué.</span>
                             </p>
                         )}
                         {isMrWhite && (
-                            <p className="text-cyan-400 font-black text-xs mt-3 uppercase tracking-wider">
-                                🤫 Mr. Blanc est éliminé ! Mais il a 1 dernière chance...
+                            <p className="text-cyan-400 font-black text-xs mt-3 uppercase tracking-wider flex items-center justify-center gap-1.5">
+                                <Skull className="w-4 h-4 text-cyan-400 flex-shrink-0 stroke-[2.5]" />
+                                <span>Mr. Blanc est éliminé ! Mais il a 1 dernière chance...</span>
                             </p>
                         )}
                     </div>
