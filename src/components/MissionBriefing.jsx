@@ -94,14 +94,14 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
     };
 
     return (
-        <div className="min-h-screen h-[100dvh] flex flex-col items-center p-4 pt-16 relative overflow-hidden bg-spy-blue">
+        <div className="min-h-screen h-[100dvh] flex flex-col items-center p-4 pt-16 relative overflow-hidden bg-transparent">
             <BackArrow onClick={onBack} />
             <SettingsGear onClick={onOpenSettings} />
 
             {/* Background Ambient Lights */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-                <div className="absolute top-[-10%] right-[-20%] w-[600px] h-[600px] bg-spy-lime opacity-[0.08] rounded-full blur-[120px] animate-pulse-slow"></div>
-                <div className="absolute bottom-[-10%] left-[-20%] w-[500px] h-[500px] bg-spy-orange opacity-[0.08] rounded-full blur-[120px] animate-pulse-slow delay-700"></div>
+                <div className="absolute top-[-10%] right-[-20%] w-[600px] h-[600px] bg-spy-lime opacity-[0.14] rounded-full blur-[120px] animate-pulse-slow"></div>
+                <div className="absolute bottom-[-10%] left-[-20%] w-[500px] h-[500px] bg-spy-orange opacity-[0.14] rounded-full blur-[120px] animate-pulse-slow delay-700"></div>
             </div>
 
             {/* Top Status Badge */}

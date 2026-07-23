@@ -5,7 +5,7 @@ import EditPlayerModal from './EditPlayerModal';
 import BackArrow from './BackArrow';
 import SettingsGear from './SettingsGear';
 
-const IdentifyAgents = ({ players, onUpdatePlayers, onConfirm, onBack, onOpenSettings }) => {
+const IdentifyAgents = ({ players, profileData, onUpdatePlayers, onConfirm, onBack, onOpenSettings }) => {
     const [editingPlayerId, setEditingPlayerId] = useState(null);
 
     const handleEditPlayer = (id) => {
@@ -23,14 +23,14 @@ const IdentifyAgents = ({ players, onUpdatePlayers, onConfirm, onBack, onOpenSet
     const editingPlayer = players.find(p => p.id === editingPlayerId);
 
     return (
-        <div className="flex flex-col h-screen bg-spy-blue relative overflow-hidden">
+        <div className="flex flex-col h-screen bg-transparent relative overflow-hidden">
             <BackArrow onClick={onBack} />
             <SettingsGear onClick={onOpenSettings} />
 
             {/* Background Ambient Lights */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-                <div className="absolute top-[-10%] right-[-20%] w-[600px] h-[600px] bg-spy-lime opacity-[0.08] rounded-full blur-[120px] animate-pulse-slow"></div>
-                <div className="absolute bottom-[-10%] left-[-20%] w-[500px] h-[500px] bg-spy-orange opacity-[0.08] rounded-full blur-[120px] animate-pulse-slow delay-700"></div>
+                <div className="absolute top-[-10%] right-[-20%] w-[600px] h-[600px] bg-spy-lime opacity-[0.12] rounded-full blur-[120px] animate-pulse-slow"></div>
+                <div className="absolute bottom-[-10%] left-[-20%] w-[500px] h-[500px] bg-spy-orange opacity-[0.12] rounded-full blur-[120px] animate-pulse-slow delay-700"></div>
             </div>
 
             {/* Header */}
@@ -80,6 +80,7 @@ const IdentifyAgents = ({ players, onUpdatePlayers, onConfirm, onBack, onOpenSet
             {editingPlayer && (
                 <EditPlayerModal
                     player={editingPlayer}
+                    profileData={profileData}
                     onSave={handleSavePlayer}
                     onCancel={() => setEditingPlayerId(null)}
                 />

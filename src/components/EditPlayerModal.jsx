@@ -1,10 +1,10 @@
 import React, { useState, useRef } from 'react';
-import { Camera, Check, X, Edit2, RotateCcw } from 'lucide-react';
+import { Camera, Check, X, Edit2, RotateCcw, Lock, Sparkles } from 'lucide-react';
 import { CartoonAvatar, CARTOON_AVATARS_LIST } from './CartoonAvatars';
 
 const PRESET_AVATARS = CARTOON_AVATARS_LIST;
 
-const EditPlayerModal = ({ player, onSave, onCancel }) => {
+const EditPlayerModal = ({ player, profileData, onSave, onCancel }) => {
     const getDefaultName = (av) => {
         if (av.type === 'emoji') {
             const animal = PRESET_AVATARS.find(a => a.id === av.value);
@@ -12,6 +12,8 @@ const EditPlayerModal = ({ player, onSave, onCancel }) => {
         }
         return 'Agent Secret';
     };
+
+    const unlockedItems = profileData?.unlocked_items || ['default', 'lime', 'orange'];
 
     const [name, setName] = useState(player.isCustom ? player.name : '');
     const [avatar, setAvatar] = useState(player.avatar);
@@ -21,13 +23,13 @@ const EditPlayerModal = ({ player, onSave, onCancel }) => {
     const fileInputRef = useRef(null);
 
     const COLOR_PALETTE = [
-        { id: 'default', class: 'text-white', bgClass: 'bg-white', label: 'Blanc Classique', badge: 'Gratuit' },
-        { id: 'lime', class: 'text-spy-lime', bgClass: 'bg-spy-lime', label: 'Néon Lime', badge: 'Recrue' },
-        { id: 'orange', class: 'text-spy-orange', bgClass: 'bg-spy-orange', label: 'Orange Espion', badge: 'Recrue' },
-        { id: 'cyan', class: 'text-cyan-400', bgClass: 'bg-cyan-400', label: 'Cyan Cyber', badge: 'Détective' },
-        { id: 'purple', class: 'text-purple-400', bgClass: 'bg-purple-400', label: 'Violet Infiltré', badge: 'Détective' },
-        { id: 'pink', class: 'text-pink-400', bgClass: 'bg-pink-400', label: 'Rose Néon', badge: 'Élite Shop' },
-        { id: 'gold', class: 'text-yellow-400 font-black drop-shadow-[0_2px_10px_rgba(234,179,8,0.4)]', bgClass: 'bg-yellow-400', label: 'Or Impérial', badge: 'Légende' },
+        { id: 'default', class: 'text-white', bgClass: 'bg-white', label: 'Blanc Classique', price: 0, unlocked: true },
+        { id: 'lime', class: 'text-spy-lime', bgClass: 'bg-spy-lime', label: 'Néon Lime', price: 0, unlocked: true },
+        { id: 'orange', class: 'text-spy-orange', bgClass: 'bg-spy-orange', label: 'Orange Espion', price: 0, unlocked: true },
+        { id: 'cyan', class: 'text-cyan-400', bgClass: 'bg-cyan-400', label: 'Cyan Cyber', price: 50, unlocked: unlockedItems.includes('cyan') },
+        { id: 'purple', class: 'text-purple-400', bgClass: 'bg-purple-400', label: 'Violet Infiltré', price: 100, unlocked: unlockedItems.includes('purple') },
+        { id: 'pink', class: 'text-pink-400', bgClass: 'bg-pink-400', label: 'Rose Néon', price: 100, unlocked: unlockedItems.includes('pink') },
+        { id: 'gold', class: 'text-yellow-400 font-black drop-shadow-[0_2px_10px_rgba(234,179,8,0.4)]', bgClass: 'bg-yellow-400', label: 'Or Impérial', price: 250, unlocked: unlockedItems.includes('gold') },
     ];
 
     const selectedColorObj = COLOR_PALETTE.find(c => c.class === pseudoColor) || COLOR_PALETTE[0];
@@ -185,7 +187,7 @@ const EditPlayerModal = ({ player, onSave, onCancel }) => {
                         )}
                     </div>
 
-                    {/* Color Picker Swatches */}
+                    {/* Color Picker Swatches with Gamified Lock Status */}
                     <div className="flex flex-col items-center gap-1.5 mt-3 w-full">
                         <div className="flex items-center justify-center gap-2">
                             {COLOR_PALETTE.map((color) => (
@@ -196,18 +198,32 @@ const EditPlayerModal = ({ player, onSave, onCancel }) => {
                                     className={`w-7 h-7 rounded-full ${color.bgClass} border-2 transition-all cursor-pointer relative flex items-center justify-center ${
                                         pseudoColor === color.class 
                                             ? 'scale-125 border-white shadow-[0_0_14px_rgba(255,255,255,0.8)] ring-2 ring-spy-lime' 
-                                            : 'border-black/60 hover:scale-110 opacity-70 hover:opacity-100'
+                                            : color.unlocked 
+                                                ? 'border-black/60 hover:scale-110 opacity-80 hover:opacity-100'
+                                                : 'border-black/80 opacity-50 hover:opacity-80'
                                     }`}
-                                    title={`${color.label} (${color.badge})`}
+                                    title={color.unlocked ? `${color.label} (Débloquée)` : `${color.label} (🔒 À débloquer en Boutique)`}
                                 >
-                                    {pseudoColor === color.class && (
+                                    {!color.unlocked ? (
+                                        <Lock className="w-3.5 h-3.5 text-black stroke-[3] drop-shadow-sm" />
+                                    ) : pseudoColor === color.class ? (
                                         <div className="w-2 h-2 rounded-full bg-black shadow-sm" />
-                                    )}
+                                    ) : null}
                                 </button>
                             ))}
                         </div>
-                        <span className="text-[9.5px] font-black uppercase tracking-wider text-white/50 bg-black/30 px-3 py-0.5 rounded-full border border-white/10 mt-1">
-                            Couleur : <span className={selectedColorObj.class}>{selectedColorObj.label}</span> · <span className="text-spy-lime">{selectedColorObj.badge}</span>
+                        <span className="text-[9.5px] font-black uppercase tracking-wider text-white/70 bg-black/40 px-3 py-1 rounded-full border border-white/10 mt-1 flex items-center gap-1.5 shadow-inner">
+                            <span>Couleur : <span className={selectedColorObj.class}>{selectedColorObj.label}</span></span>
+                            <span className="text-white/30">•</span>
+                            {selectedColorObj.unlocked ? (
+                                <span className="text-spy-lime flex items-center gap-1">
+                                    <Sparkles className="w-3 h-3 text-spy-lime" /> Débloquée
+                                </span>
+                            ) : (
+                                <span className="text-amber-400 flex items-center gap-1">
+                                    <Lock className="w-3 h-3 text-amber-400" /> À débloquer dans le Shop
+                                </span>
+                            )}
                         </span>
                     </div>
                 </div>

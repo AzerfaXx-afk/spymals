@@ -271,7 +271,7 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
         const isCivilianWin = finalWinningTeam === 'Civilian';
 
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-spy-blue text-center relative overflow-hidden">
+            <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-transparent text-center relative overflow-hidden">
                 <SettingsGear onClick={onOpenSettings} />
                 <div className="absolute inset-0 bg-black/85 backdrop-blur-md z-0" />
 
@@ -380,7 +380,7 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
     // ─────────────────────────────────────────────
     if (gameState === 'mrwhite_guess') {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-spy-blue text-center relative overflow-hidden">
+            <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-transparent text-center relative overflow-hidden">
                 <SettingsGear onClick={onOpenSettings} />
                 <div className="absolute inset-0 bg-black/85 backdrop-blur-md z-0" />
 
@@ -449,7 +449,7 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
         const roundNumber = Math.floor(eliminatedPlayers.length) + 1;
 
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-spy-blue text-center relative overflow-hidden">
+            <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-transparent text-center relative overflow-hidden">
                 <SettingsGear onClick={onOpenSettings} />
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-spy-lime/10 opacity-30 rounded-full blur-[140px] pointer-events-none" />
 
@@ -590,7 +590,7 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
     // ─────────────────────────────────────────────
     if (gameState === 'voting') {
         return (
-            <div className="min-h-screen min-h-[100dvh] flex flex-col items-center justify-center p-4 bg-spy-blue relative overflow-x-hidden">
+            <div className="min-h-screen min-h-[100dvh] flex flex-col items-center justify-center p-4 bg-transparent relative overflow-x-hidden">
                 <SettingsGear onClick={onOpenSettings} />
                 <div className="w-full max-w-md z-10 animate-pop-in max-h-[88dvh] overflow-y-auto custom-scrollbar px-2 py-4 flex flex-col items-center">
                     
@@ -661,7 +661,7 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
         const isImpostor = isMrWhite || isUndercover;
 
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-spy-blue text-center relative overflow-hidden">
+            <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-transparent text-center relative overflow-hidden">
                 <SettingsGear onClick={onOpenSettings} />
                 <div className="absolute inset-0 bg-black/85 backdrop-blur-md z-0" />
 
@@ -747,7 +747,7 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
     if (!currentPlayer) return <div className="text-white text-center p-8 font-black uppercase">Initialisation...</div>;
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center p-4 text-center relative overflow-hidden bg-spy-blue">
+        <div className="min-h-screen flex flex-col items-center justify-center p-4 text-center relative overflow-hidden bg-transparent">
             <SettingsGear onClick={onOpenSettings} />
 
             <div className="absolute inset-0 pointer-events-none">
