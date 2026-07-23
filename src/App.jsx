@@ -36,18 +36,19 @@ function App() {
   const [authSkipped, setAuthSkipped] = useState(false);
   const [showSetupModal, setShowSetupModal] = useState(false);
 
-  // Touch swipe gesture for main tabs navigation (Clash Royale style)
+  // Touch swipe gesture for navbar tabs only (Clash Royale style)
   const [touchStartX, setTouchStartX] = useState(null);
   const [touchEndX, setTouchEndX] = useState(null);
-  const [slideDirection, setSlideDirection] = useState(0);
+  const [slideDirection, setSlideDirection] = useState(0); // 1 = right-to-left, -1 = left-to-right, 0 = fade
+
+  const NAVBAR_TABS = ['leaderboard', 'home', 'how-to-play'];
 
   const navigateToScreen = (newScreen) => {
-    const mainTabs = ['leaderboard', 'home', 'how-to-play'];
-    const prevIdx = mainTabs.indexOf(currentScreen);
-    const nextIdx = mainTabs.indexOf(newScreen);
+    const prevIdx = NAVBAR_TABS.indexOf(currentScreen);
+    const nextIdx = NAVBAR_TABS.indexOf(newScreen);
 
-    if (prevIdx !== -1 && nextIdx !== -1) {
-      setSlideDirection(nextIdx - prevIdx);
+    if (prevIdx !== -1 && nextIdx !== -1 && prevIdx !== nextIdx) {
+      setSlideDirection(nextIdx > prevIdx ? 1 : -1);
     } else {
       setSlideDirection(0);
     }
@@ -55,7 +56,7 @@ function App() {
   };
 
   const handleTouchStart = (e) => {
-    if (['leaderboard', 'home', 'how-to-play'].includes(currentScreen)) {
+    if (NAVBAR_TABS.includes(currentScreen)) {
       setTouchStartX(e.targetTouches[0].clientX);
       setTouchEndX(e.targetTouches[0].clientX);
     }
@@ -70,17 +71,16 @@ function App() {
   const handleTouchEnd = () => {
     if (touchStartX === null || touchEndX === null) return;
     const distance = touchStartX - touchEndX;
-    const isSwipeLeft = distance > 50;
-    const isSwipeRight = distance < -50;
+    const isSwipeLeft = distance > 40;
+    const isSwipeRight = distance < -40;
 
-    const mainTabs = ['leaderboard', 'home', 'how-to-play'];
-    const currentIndex = mainTabs.indexOf(currentScreen);
+    const currentIndex = NAVBAR_TABS.indexOf(currentScreen);
 
     if (currentIndex !== -1) {
-      if (isSwipeLeft && currentIndex < mainTabs.length - 1) {
-        navigateToScreen(mainTabs[currentIndex + 1]);
+      if (isSwipeLeft && currentIndex < NAVBAR_TABS.length - 1) {
+        navigateToScreen(NAVBAR_TABS[currentIndex + 1]);
       } else if (isSwipeRight && currentIndex > 0) {
-        navigateToScreen(mainTabs[currentIndex - 1]);
+        navigateToScreen(NAVBAR_TABS[currentIndex - 1]);
       }
     }
 
@@ -581,10 +581,22 @@ function App() {
             <motion.div
               key={currentScreen}
               custom={slideDirection}
-              initial={{ x: slideDirection > 0 ? 300 : slideDirection < 0 ? -300 : 0, opacity: 0.7 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: slideDirection < 0 ? 300 : slideDirection > 0 ? -300 : 0, opacity: 0.7 }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              initial={
+                slideDirection !== 0
+                  ? { x: slideDirection > 0 ? '100%' : '-100%', opacity: 0.9 }
+                  : { opacity: 0, scale: 0.98 }
+              }
+              animate={{ x: 0, opacity: 1, scale: 1 }}
+              exit={
+                slideDirection !== 0
+                  ? { x: slideDirection > 0 ? '-100%' : '100%', opacity: 0.9 }
+                  : { opacity: 0, scale: 0.98 }
+              }
+              transition={
+                slideDirection !== 0
+                  ? { type: "spring", stiffness: 260, damping: 26, mass: 0.75 }
+                  : { duration: 0.15 }
+              }
               className="w-full h-full"
             >
               {currentScreen === 'home' && (
