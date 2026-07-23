@@ -163,7 +163,7 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3 items-stretch">
+                    <div className="grid grid-cols-2 gap-2 md:gap-3 items-stretch w-full overflow-hidden">
                         <RoleStepper
                             label="Espions"
                             count={undercoverCount}

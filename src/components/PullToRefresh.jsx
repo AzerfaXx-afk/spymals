@@ -55,7 +55,7 @@ const PullToRefresh = ({ children }) => {
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
-            className="relative min-h-screen w-full"
+            className="relative min-h-screen min-h-[100dvh] w-full flex flex-col"
         >
             {/* Pull to refresh visual indicator badge */}
             {(pullY > 0 || isRefreshing) && (
@@ -85,6 +85,7 @@ const PullToRefresh = ({ children }) => {
 
             {/* Application Main Content Container */}
             <div 
+                className="w-full flex-1 flex flex-col min-h-screen min-h-[100dvh]"
                 style={{ 
                     transform: pullY > 0 ? `translateY(${pullY * 0.4}px)` : 'none',
                     transition: isPullingRef.current ? 'none' : 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)'

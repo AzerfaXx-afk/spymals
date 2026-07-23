@@ -632,7 +632,7 @@ function App() {
         )}
 
         <div 
-          className="w-full h-full h-[100dvh] overflow-hidden relative"
+          className="w-full min-h-screen min-h-[100dvh] relative flex flex-col flex-1"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
@@ -645,7 +645,7 @@ function App() {
               initial="initial"
               animate="animate"
               exit="exit"
-              className="w-full h-full transform-gpu will-change-transform"
+              className="w-full min-h-screen min-h-[100dvh] flex flex-col flex-1 transform-gpu will-change-transform"
             >
               {currentScreen === 'home' && (
                 <Home
