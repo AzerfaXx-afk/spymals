@@ -282,31 +282,33 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                     transition={{ type: 'spring', stiffness: 200, damping: 25 }}
                     className="z-10 w-full max-w-md flex flex-col items-center"
                 >
-                    {/* Header Celebration */}
-                    <div className="mb-6 relative w-full flex flex-col items-center">
-                        <motion.div
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            transition={{ delay: 0.2, type: 'spring' }}
-                            className="mb-3 drop-shadow-[0_0_50px_rgba(255,255,255,0.4)] animate-bounce-slow"
-                        >
-                            {isCivilianWin 
-                                ? <Trophy className="w-20 h-20 text-spy-lime stroke-[2.5]" /> 
-                                : <ShieldAlert className="w-20 h-20 text-spy-orange stroke-[2.5]" />
-                            }
-                        </motion.div>
+                    {/* 3D Victory / Defeat Hero Banner */}
+                    <motion.div
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: 0.1, type: 'spring', stiffness: 300, damping: 20 }}
+                        className="relative w-full max-w-sm h-48 rounded-3xl overflow-hidden border-[3.5px] border-white/20 shadow-[0_12px_30px_rgba(0,0,0,0.8)] bg-gradient-to-b from-[#182947] to-[#0a1426] mb-4 flex-shrink-0"
+                    >
+                        <img 
+                            src={isCivilianWin ? '/victory_civilians_3d.png' : '/victory_impostors_3d.png'} 
+                            alt={isCivilianWin ? 'Victoire des Innocents' : 'Victoire des Imposteurs'} 
+                            className="w-full h-full object-cover" 
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#0a1426] via-transparent to-transparent opacity-80 pointer-events-none" />
+                    </motion.div>
 
-                        <div className="bg-white/10 px-4 py-1 rounded-full border border-white/20 mb-2">
+                    <div className="text-center mb-5">
+                        <div className="bg-white/10 px-4 py-1 rounded-full border border-white/20 mb-2 inline-block">
                             <span className="text-[10px] font-black uppercase tracking-[0.25em] text-white/70">
                                 Fin de la Partie
                             </span>
                         </div>
 
-                        <h2 className="text-2xl font-black text-white uppercase tracking-tight mb-1 text-shadow-md">
+                        <h2 className="text-xl font-black text-white uppercase tracking-tight mb-1 text-shadow-md">
                             Mission Terminée
                         </h2>
-                        <h3 className={`text-4xl font-black uppercase tracking-widest ${isCivilianWin ? 'text-spy-lime' : 'text-spy-orange'} text-shadow-lg`}>
-                            {isCivilianWin ? 'Victoire des Innocents' : 'Victoire des Imposteurs'}
+                        <h3 className={`text-3xl md:text-4xl font-black uppercase tracking-tight ${isCivilianWin ? 'text-spy-lime' : 'text-spy-orange'} text-shadow-lg`}>
+                            {isCivilianWin ? 'Victoire des Innocents !' : 'Victoire des Imposteurs !'}
                         </h3>
                     </div>
 
@@ -691,45 +693,35 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                 >
                     <div className="mb-6 relative h-48 flex flex-col items-center justify-center w-full max-w-xs">
 
-                        {/* Avatar Frame with Tombstone Memorial Backdrop */}
+                        {/* Avatar Frame - Squishes and disappears when crushed by tombstone */}
                         <motion.div 
-                            animate={showTombstone ? { scale: 0.95, y: 12, rotate: -2 } : { scale: 1, y: 0, rotate: 0 }}
-                            transition={{ type: 'spring', stiffness: 500, damping: 20 }}
-                            className="w-32 h-32 relative z-10 flex items-center justify-center rounded-full border-4 border-white/20 shadow-[0_10px_30px_rgba(0,0,0,0.8)] bg-slate-900 overflow-hidden"
+                            animate={showTombstone ? { scaleY: 0, scaleX: 1.4, opacity: 0, y: 40 } : { scaleY: 1, scaleX: 1, opacity: 1, y: 0 }}
+                            transition={{ type: 'spring', stiffness: 600, damping: 20 }}
+                            className="w-32 h-32 relative z-10 flex items-center justify-center rounded-full border-4 border-white/20 shadow-[0_10px_30px_rgba(0,0,0,0.8)] bg-slate-900 overflow-hidden origin-bottom"
                         >
                             {votedPlayer.avatar.type === 'image' ? (
-                                <img src={votedPlayer.avatar.value} alt={votedPlayer.name} className={`w-full h-full object-cover rounded-full ${showTombstone ? 'filter grayscale brightness-75' : ''}`} />
+                                <img src={votedPlayer.avatar.value} alt={votedPlayer.name} className="w-full h-full object-cover rounded-full" />
                             ) : (
-                                <CartoonAvatar id={votedPlayer.avatar.value} className={`w-full h-full border-none shadow-none ${showTombstone ? 'filter grayscale brightness-75' : ''}`} />
-                            )}
-
-                            {/* Elimination impact overlay */}
-                            {showTombstone && (
-                                <div className="absolute inset-0 bg-red-950/40 border-2 border-red-500/60 rounded-full pointer-events-none" />
+                                <CartoonAvatar id={votedPlayer.avatar.value} className="w-full h-full border-none shadow-none" />
                             )}
                         </motion.div>
 
-                        {/* 3D Cutout Cartoon Tombstone Memorial */}
+                        {/* 3D Cutout Cartoon Tombstone with engraved R.I.P - Replaces crushed avatar */}
                         <AnimatePresence>
                             {showTombstone && (
                                 <motion.div
-                                    initial={{ y: -140, opacity: 0, scale: 1.3 }}
-                                    animate={{ y: -32, opacity: 1, scale: 1 }}
+                                    initial={{ y: -180, opacity: 0, scale: 1.3 }}
+                                    animate={{ y: 0, opacity: 1, scale: 1 }}
                                     transition={{ type: 'spring', stiffness: 550, damping: 18, mass: 1.1 }}
-                                    className="absolute z-20 flex flex-col items-center justify-center pointer-events-none"
+                                    className="absolute inset-0 flex flex-col items-center justify-center z-20 pointer-events-none"
                                 >
-                                    {/* 3D Tombstone Image - 100% Transparent Cutout */}
-                                    <div className="relative w-44 h-36 flex items-center justify-center">
+                                    {/* 3D Tombstone Image - 100% Transparent Cutout with engraved R.I.P */}
+                                    <div className="relative w-44 h-44 flex items-center justify-center">
                                         <img 
                                             src="/cartoon_tombstone_3d.png" 
-                                            alt="Sépulture Cartoon 3D" 
-                                            className="w-full h-full object-contain filter drop-shadow-[0_15px_25px_rgba(0,0,0,0.95)]" 
+                                            alt="Sépulture Cartoon 3D R.I.P" 
+                                            className="w-full h-full object-contain filter drop-shadow-[0_20px_25px_rgba(0,0,0,0.95)]" 
                                         />
-                                        
-                                        {/* Steady Non-blinking R.I.P • ÉLIMINÉ Badge */}
-                                        <div className="absolute -top-3 bg-gradient-to-r from-red-600 to-rose-700 text-white font-black text-[11px] uppercase tracking-[0.2em] px-4 py-1 rounded-full border-2 border-black shadow-[0_4px_12px_rgba(255,0,0,0.6)] flex items-center gap-1.5 whitespace-nowrap">
-                                            <Skull className="w-3.5 h-3.5 text-white stroke-[2.5]" /> R.I.P • ÉLIMINÉ
-                                        </div>
                                     </div>
                                 </motion.div>
                             )}
