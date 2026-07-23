@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Download, RefreshCw, X, WifiOff } from 'lucide-react';
+import { Download, RefreshCw, X, WifiOff, Sparkles, Rocket } from 'lucide-react';
 
 /**
  * PWAManager handles:
- * 1. "Update available" banner when a new SW version is ready
+ * 1. Pro Update Pop-up Modal when a new version is released on the server
  * 2. "Install app" prompt positioned safely at the TOP (no bottom nav overlap)
  * 3. Pull-to-refresh on mobile to force check for updates
  * 4. Offline indicator
@@ -19,7 +19,7 @@ const PWAManager = () => {
     // Check if running in standalone mode (already installed)
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
 
-    // ── Listen for SW update events & Auto-Check every 25 seconds ──
+    // ── Listen for SW update events & Auto-Check every 15 seconds ──
     useEffect(() => {
         let registration = null;
         let updateInterval = null;
@@ -55,10 +55,10 @@ const PWAManager = () => {
 
         checkForUpdates();
 
-        // Periodically check for new version every 25 seconds
+        // Periodically check for new version every 15 seconds
         updateInterval = setInterval(() => {
             checkForUpdates();
-        }, 25000);
+        }, 15000);
 
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.addEventListener('controllerchange', () => {
@@ -156,8 +156,12 @@ const PWAManager = () => {
             navigator.serviceWorker.getRegistration().then((reg) => {
                 if (reg && reg.waiting) {
                     reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+                } else {
+                    window.location.reload();
                 }
             });
+        } else {
+            window.location.reload();
         }
         setUpdateAvailable(false);
     };
@@ -179,8 +183,6 @@ const PWAManager = () => {
         setShowInstallBanner(false);
         sessionStorage.setItem('spyMals_install_session_dismissed', 'true');
     };
-
-    if (isStandalone) return null;
 
     return (
         <>
@@ -204,24 +206,58 @@ const PWAManager = () => {
                 </div>
             )}
 
-            {/* Update available banner */}
+            {/* ═══════════ PRO UPDATE POPUP MODAL ═══════════ */}
             {updateAvailable && (
-                <div className="fixed top-3 left-1/2 -translate-x-1/2 z-[300] bg-slate-950/95 backdrop-blur-2xl border-2 border-spy-lime text-white text-xs font-black uppercase tracking-wider px-4 py-2.5 rounded-full shadow-[0_12px_35px_rgba(204,255,0,0.35)] flex items-center gap-3 animate-bounce-subtle max-w-[92vw]">
-                    <div className="w-7 h-7 rounded-full bg-spy-lime text-spy-blue flex items-center justify-center flex-shrink-0 animate-spin">
-                        <RefreshCw className="w-4 h-4" />
-                    </div>
-                    <span className="text-[10px] text-spy-lime font-black">Nouvelle mise à jour disponible !</span>
-                    <button
-                        onClick={handleUpdate}
-                        className="bg-spy-lime text-spy-blue px-3.5 py-1.5 rounded-full border border-white text-[9px] font-black uppercase tracking-wider hover:bg-spy-lime/90 active:scale-95 transition-all cursor-pointer shadow-md flex-shrink-0"
+                <div className="fixed inset-0 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 z-[999] animate-pop-in select-none">
+                    <div 
+                        className="max-w-sm w-full rounded-3xl p-6 relative text-center space-y-4 shadow-[0_25px_60px_rgba(204,255,0,0.25)] border-2 border-spy-lime/60 bg-gradient-to-b from-slate-900 via-slate-950 to-slate-950"
                     >
-                        Mettre à jour
-                    </button>
+                        {/* Glowing Update Badge Icon */}
+                        <div className="relative mx-auto w-16 h-16 rounded-2xl bg-spy-lime/15 border-2 border-spy-lime flex items-center justify-center shadow-[0_0_25px_rgba(204,255,0,0.3)]">
+                            <RefreshCw className="w-8 h-8 text-spy-lime animate-spin" />
+                            <div className="absolute -top-1 -right-1 bg-white text-slate-950 rounded-full p-1 border border-spy-lime shadow-sm">
+                                <Sparkles className="w-3.5 h-3.5 fill-spy-lime" />
+                            </div>
+                        </div>
+
+                        {/* Title & Subtitle */}
+                        <div className="space-y-1">
+                            <div className="inline-flex items-center gap-1 px-3 py-0.5 rounded-full bg-spy-lime/10 border border-spy-lime/30 text-spy-lime text-[8px] font-black uppercase tracking-widest">
+                                <Rocket className="w-3 h-3" /> NOUVELLE MISE À JOUR !
+                            </div>
+                            <h3 className="text-xl font-black uppercase tracking-tight text-white pt-1">
+                                Mise à jour disponible
+                            </h3>
+                            <p className="text-white/60 text-xs font-medium leading-relaxed px-2 pt-1">
+                                Une nouvelle version de SpyMals vient d'être déployée. Mettez à jour maintenant pour profiter des dernières nouveautés !
+                            </p>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="pt-2 space-y-2">
+                            <button
+                                type="button"
+                                onClick={handleUpdate}
+                                className="w-full py-3 px-4 bg-gradient-to-b from-[#d9ff33] via-spy-lime to-[#88bb00] hover:brightness-110 border-2 border-white rounded-2xl text-slate-950 font-black uppercase text-xs tracking-wider shadow-[0_4px_0_#557700,0_8px_20px_rgba(204,255,0,0.3)] active:translate-y-1 active:shadow-[0_1px_0_#557700] transition-all cursor-pointer flex items-center justify-center gap-2"
+                            >
+                                <RefreshCw className="w-4 h-4 stroke-[3]" />
+                                <span>METTRE À JOUR MAINTENANT</span>
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={() => setUpdateAvailable(false)}
+                                className="text-white/40 hover:text-white text-[10px] font-black uppercase tracking-wider transition-colors pt-1 block mx-auto cursor-pointer"
+                            >
+                                Plus tard
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
 
             {/* Install app banner (TOP position, clean floating banner) */}
-            {showInstallBanner && !isOffline && !updateAvailable && (
+            {showInstallBanner && !isOffline && !updateAvailable && !isStandalone && (
                 <div className="fixed top-3 left-1/2 -translate-x-1/2 z-[250] bg-slate-900/95 backdrop-blur-xl text-white text-xs font-bold px-4 py-2.5 rounded-full border border-spy-lime/40 shadow-[0_8px_25px_rgba(0,0,0,0.6)] flex items-center gap-3 animate-pop-in max-w-[92vw]">
                     <div className="w-7 h-7 rounded-full bg-spy-lime/20 border border-spy-lime/40 flex items-center justify-center flex-shrink-0">
                         <Download className="w-4 h-4 text-spy-lime" />

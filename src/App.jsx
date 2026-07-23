@@ -262,10 +262,30 @@ function App() {
     }
   };
 
-  const handleUpdateProfile = (updatedProfile) => {
+  const handleUpdateProfile = async (updatedProfile) => {
     setProfileData(updatedProfile);
-    if (!user) {
-      localStorage.setItem('spyMals_guest_profile', JSON.stringify(updatedProfile));
+    
+    // Save to local cache for instant reload
+    localStorage.setItem('spyMals_guest_profile', JSON.stringify(updatedProfile));
+    localStorage.setItem('spyMals_user_profile', JSON.stringify(updatedProfile));
+
+    if (user) {
+      try {
+        await supabase
+          .from('spymals_profiles')
+          .update({
+            username: updatedProfile.username,
+            avatar_emoji: updatedProfile.avatar_emoji,
+            coins: updatedProfile.coins,
+            equipped_color: updatedProfile.equipped_color,
+            equipped_banner: updatedProfile.equipped_banner,
+            equipped_theme: updatedProfile.equipped_theme,
+            unlocked_items: updatedProfile.unlocked_items
+          })
+          .eq('id', user.id);
+      } catch (e) {
+        console.error("Failed to sync profile update to Supabase", e);
+      }
     }
   };
 
