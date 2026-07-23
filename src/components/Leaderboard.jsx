@@ -205,7 +205,7 @@ const Leaderboard = () => {
               <span className="text-[7px] sm:text-[8px] font-bold text-spy-lime/90">{top2.winRate}% Réussite</span>
               
               {/* Silver Pillar */}
-              <div className="w-full h-8 sm:h-10 mt-1 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center p-0.5 relative overflow-hidden"
+              <div className="w-full h-10 sm:h-12 mt-1 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center p-0.5 relative overflow-hidden"
                 style={{
                   background: 'linear-gradient(180deg, rgba(100,116,139,0.4) 0%, rgba(15,23,42,0.95) 100%)',
                   border: '1.5px solid rgba(148,163,184,0.3)',
@@ -214,6 +214,10 @@ const Leaderboard = () => {
               >
                 <span className="text-[11px] sm:text-xs font-black text-slate-300/90">#2</span>
                 <span className="text-[5.5px] sm:text-[7px] text-white/50 font-bold">{top2.wins} Vic. • {top2.losses} Déf.</span>
+                <div className="flex items-center gap-0.5 mt-0.5">
+                  <img src="/croquette_coin_3d.png" alt="coin" className="w-2.5 h-2.5 sm:w-3 sm:h-3 object-contain" />
+                  <span className="text-[6.5px] sm:text-[8px] font-black text-spy-lime">{top2.coins}</span>
+                </div>
               </div>
             </div>
           )}
@@ -275,7 +279,7 @@ const Leaderboard = () => {
               <span className="text-[7px] sm:text-[8px] font-bold text-spy-lime/90">{top3.winRate}% Réussite</span>
               
               {/* Bronze Pillar */}
-              <div className="w-full h-7 sm:h-9 mt-1 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center p-0.5 relative overflow-hidden"
+              <div className="w-full h-9 sm:h-11 mt-1 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center p-0.5 relative overflow-hidden"
                 style={{
                   background: 'linear-gradient(180deg, rgba(120,53,15,0.3) 0%, rgba(15,23,42,0.95) 100%)',
                   border: '1.5px solid rgba(180,83,9,0.3)',
@@ -284,6 +288,10 @@ const Leaderboard = () => {
               >
                 <span className="text-[11px] sm:text-xs font-black text-amber-600/90">#3</span>
                 <span className="text-[5.5px] sm:text-[7px] text-white/50 font-bold">{top3.wins} Vic. • {top3.losses} Déf.</span>
+                <div className="flex items-center gap-0.5 mt-0.5">
+                  <img src="/croquette_coin_3d.png" alt="coin" className="w-2.5 h-2.5 sm:w-3 sm:h-3 object-contain" />
+                  <span className="text-[6.5px] sm:text-[8px] font-black text-spy-lime">{top3.coins}</span>
+                </div>
               </div>
             </div>
           )}
