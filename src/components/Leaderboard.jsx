@@ -153,7 +153,7 @@ const Leaderboard = () => {
   return (
     /* Fixed full-screen container — NO page scroll. Clears top bar and navbar */
     <div className="fixed top-16 left-0 right-0 px-3 sm:px-5 max-w-md mx-auto flex flex-col items-center overflow-hidden pointer-events-auto select-none z-10"
-      style={{ bottom: 'calc(96px + env(safe-area-inset-bottom, 0px))' }}
+      style={{ bottom: 'calc(115px + env(safe-area-inset-bottom, 0px))' }}
     >
       
       {/* Ambient background glows */}
