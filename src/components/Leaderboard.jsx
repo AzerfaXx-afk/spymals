@@ -229,8 +229,8 @@ const Leaderboard = () => {
 
         </div>
 
-        {/* FULLY FILLED ROUNDED RANK LIST CONTAINER (Expands to fit all 7 items of Top 10 + Load More button) */}
-        <div className="w-full bg-slate-950/90 backdrop-blur-xl border-2 border-white/15 rounded-3xl p-2.5 shadow-[0_12px_30px_rgba(0,0,0,0.6)] flex-1 flex flex-col overflow-hidden min-h-0">
+        {/* ROUNDED RANK LIST CONTAINER - Hugs contents tightly up to item #10 */}
+        <div className="w-full bg-slate-950/90 backdrop-blur-xl border-2 border-white/15 rounded-3xl p-2.5 shadow-[0_12px_30px_rgba(0,0,0,0.6)] flex flex-col overflow-hidden flex-shrink-0 max-h-[58dvh]">
           
           <div className="flex items-center justify-between px-2 pb-1 mb-1 border-b border-white/10 text-[8px] font-black uppercase tracking-widest text-white/40 flex-shrink-0">
             <span>RANG & AGENT</span>
@@ -238,15 +238,15 @@ const Leaderboard = () => {
           </div>
 
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-6 text-spy-lime gap-2 flex-1">
+            <div className="flex flex-col items-center justify-center py-6 text-spy-lime gap-2">
               <div className="w-5 h-5 border-2 border-spy-lime border-t-transparent rounded-full animate-spin"></div>
               <span className="text-[8.5px] font-black uppercase tracking-wider">Chargement des agents...</span>
             </div>
           ) : (
-            <div className="flex flex-col justify-between flex-1 overflow-hidden min-h-0">
+            <div className="flex flex-col flex-shrink-0 overflow-hidden">
               
               {/* Scrollable list items */}
-              <div className="flex-1 overflow-y-auto pr-0.5 no-scrollbar space-y-1">
+              <div className="overflow-y-auto pr-0.5 no-scrollbar space-y-1 max-h-[265px] flex-shrink">
                 {paginatedList.map((agent, index) => {
                   const rankNumber = index + 4;
                   return (
