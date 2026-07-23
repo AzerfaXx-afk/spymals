@@ -33,8 +33,45 @@ function App() {
   const [user, setUser] = useState(null);
   const [profileData, setProfileData] = useState(null);
   const [authSkipped, setAuthSkipped] = useState(false);
-  const [multiplayerRoom, setMultiplayerRoom] = useState(null);
   const [showSetupModal, setShowSetupModal] = useState(false);
+
+  // Touch swipe gesture for main tabs navigation (Clash Royale style)
+  const [touchStartX, setTouchStartX] = useState(null);
+  const [touchEndX, setTouchEndX] = useState(null);
+
+  const handleTouchStart = (e) => {
+    if (['leaderboard', 'home', 'how-to-play'].includes(currentScreen)) {
+      setTouchStartX(e.targetTouches[0].clientX);
+      setTouchEndX(e.targetTouches[0].clientX);
+    }
+  };
+
+  const handleTouchMove = (e) => {
+    if (touchStartX !== null) {
+      setTouchEndX(e.targetTouches[0].clientX);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartX === null || touchEndX === null) return;
+    const distance = touchStartX - touchEndX;
+    const isSwipeLeft = distance > 50;
+    const isSwipeRight = distance < -50;
+
+    const mainTabs = ['leaderboard', 'home', 'how-to-play'];
+    const currentIndex = mainTabs.indexOf(currentScreen);
+
+    if (currentIndex !== -1) {
+      if (isSwipeLeft && currentIndex < mainTabs.length - 1) {
+        setCurrentScreen(mainTabs[currentIndex + 1]);
+      } else if (isSwipeRight && currentIndex > 0) {
+        setCurrentScreen(mainTabs[currentIndex - 1]);
+      }
+    }
+
+    setTouchStartX(null);
+    setTouchEndX(null);
+  };
 
   // Trigger profile setup modal for new Google OAuth logins
   useEffect(() => {
@@ -519,7 +556,12 @@ function App() {
           </div>
         )}
 
-        <div className={isMenuScreen ? "h-screen h-[100dvh] overflow-hidden" : ""}>
+        <div 
+          className={isMenuScreen ? "h-screen h-[100dvh] overflow-hidden" : ""}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           {currentScreen === 'home' && (
             <Home
               profileData={profileData}
@@ -646,66 +688,84 @@ function App() {
           )}
         </div>
 
-        {/* Bottom Floating Navigation Bar (Animated 3D Cartoon Icons) */}
+        {/* Bottom Floating Navigation Bar (3D Cartoon Graphiste Style with Clash Royale Swiping) */}
         {isMenuScreen && (
-          <div className="fixed bottom-3 left-0 right-0 z-40 px-4 pointer-events-none">
+          <div className="fixed bottom-3 left-0 right-0 z-40 px-3.5 pointer-events-none select-none">
             <div className="max-w-md mx-auto pointer-events-auto">
-              <div className="bg-slate-950/95 backdrop-blur-2xl border-2 border-white/15 rounded-3xl px-4 py-2.5 shadow-[0_16px_40px_rgba(0,0,0,0.85)] flex items-center justify-between relative">
+              <div className="bg-slate-950/95 backdrop-blur-2xl border-2 border-white/20 rounded-3xl p-1.5 shadow-[0_16px_45px_rgba(0,0,0,0.85),inset_0_1px_0_rgba(255,255,255,0.12)] flex items-center justify-between relative overflow-hidden">
                 
+                {/* Active Tab Background Glow Indicator */}
+                <div 
+                  className="absolute top-1 bottom-1 transition-all duration-300 rounded-2xl pointer-events-none"
+                  style={{
+                    left: currentScreen === 'leaderboard' ? '0.375rem' : currentScreen === 'home' ? '33.33%' : '66.66%',
+                    width: '33.33%',
+                    paddingRight: '0.75rem'
+                  }}
+                >
+                  <div className="w-full h-full bg-spy-lime/10 border border-spy-lime/30 rounded-2xl shadow-[0_0_20px_rgba(204,255,0,0.25)]"></div>
+                </div>
+
                 {/* Tab 1: Classement */}
                 <button
                   onClick={() => setCurrentScreen('leaderboard')}
-                  className={`flex-1 flex flex-col items-center justify-center py-1 transition-all duration-300 transform cursor-pointer active:scale-90 group ${
-                    currentScreen === 'leaderboard' ? 'text-spy-lime' : 'text-white/40 hover:text-white/80'
+                  className={`flex-1 flex flex-col items-center justify-center py-1.5 relative z-10 transition-all duration-300 transform cursor-pointer active:scale-90 group ${
+                    currentScreen === 'leaderboard' ? 'text-spy-lime font-black' : 'text-white/40 hover:text-white/80'
                   }`}
                 >
                   <div className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-300 transform group-hover:-translate-y-1 ${
                     currentScreen === 'leaderboard'
-                      ? 'bg-spy-lime/20 border-2 border-spy-lime shadow-[0_0_20px_rgba(204,255,0,0.5)] scale-110'
-                      : 'bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/30'
+                      ? 'bg-gradient-to-b from-spy-lime/30 to-slate-900 border-2 border-spy-lime shadow-[0_0_22px_rgba(204,255,0,0.6)] scale-110 -translate-y-1'
+                      : 'bg-white/5 border border-white/10 hover:bg-white/10'
                   }`}>
                     <img src="/trophy_icon_3d.svg" alt="Classement" className="w-7 h-7 object-contain filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] transform group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300" />
                   </div>
-                  <span className={`text-[9px] font-black uppercase tracking-widest mt-1.5 transition-colors duration-300 ${
-                    currentScreen === 'leaderboard' ? 'text-spy-lime' : 'text-white/40 group-hover:text-white/80'
-                  }`}>
-                    Classement
-                  </span>
+                  <div className="flex items-center gap-1 mt-1">
+                    {currentScreen === 'leaderboard' && <div className="w-1.5 h-1.5 rounded-full bg-spy-lime shadow-[0_0_8px_#ccff00]"></div>}
+                    <span className={`text-[9px] font-black uppercase tracking-wider transition-colors duration-300 ${
+                      currentScreen === 'leaderboard' ? 'text-spy-lime drop-shadow-[0_1px_4px_rgba(204,255,0,0.3)]' : 'text-white/40'
+                    }`}>
+                      Classement
+                    </span>
+                  </div>
                 </button>
 
-                {/* Center Tab: Jouer / Accueil (3D Hero Floating Play Button) */}
-                <div className="flex-1 flex justify-center relative -translate-y-5">
+                {/* Tab 2: Center Hero Play Button */}
+                <div className="flex-1 flex justify-center relative -translate-y-5 z-20">
                   <button
                     onClick={() => setCurrentScreen('home')}
-                    className={`w-16 h-16 rounded-2xl bg-gradient-to-b from-spy-lime via-[#aadd00] to-[#88bb00] border-3 border-white flex flex-col items-center justify-center shadow-[0_12px_28px_rgba(204,255,0,0.55),0_4px_0_#446600] active:translate-y-1 active:shadow-[0_2px_0_#446600] transition-all duration-300 cursor-pointer group ${
-                      currentScreen === 'home' ? 'shadow-[0_0_22px_rgba(204,255,0,0.8),0_4px_0_#446600] scale-105' : 'hover:scale-105'
+                    className={`w-16 h-16 rounded-2xl bg-gradient-to-b from-[#d9ff33] via-spy-lime to-[#77aa00] border-3 border-white flex flex-col items-center justify-center shadow-[0_12px_28px_rgba(204,255,0,0.55),0_4px_0_#446600,inset_0_1px_0_rgba(255,255,255,0.5)] active:translate-y-1 active:shadow-[0_2px_0_#446600] transition-all duration-300 cursor-pointer group ${
+                      currentScreen === 'home' ? 'shadow-[0_0_25px_rgba(204,255,0,0.85),0_4px_0_#446600] scale-105 ring-2 ring-spy-lime/50' : 'hover:scale-105'
                     }`}
                     title="Jouer"
                   >
                     <img src="/gamepad_icon_3d.svg" alt="Jouer" className="w-9 h-9 object-contain transform group-hover:scale-115 group-hover:rotate-3 transition-transform duration-300 filter drop-shadow-[0_2px_5px_rgba(0,0,0,0.4)]" />
-                    <span className="text-[8px] font-black uppercase tracking-tighter text-spy-blue -mt-0.5">JOUER</span>
+                    <span className="text-[8px] font-black uppercase tracking-tighter text-slate-950 -mt-0.5">JOUER</span>
                   </button>
                 </div>
 
-                {/* Tab 3: Guide Agent */}
+                {/* Tab 3: Guide */}
                 <button
                   onClick={() => setCurrentScreen('how-to-play')}
-                  className={`flex-1 flex flex-col items-center justify-center py-1 transition-all duration-300 transform cursor-pointer active:scale-90 group ${
-                    currentScreen === 'how-to-play' ? 'text-spy-lime' : 'text-white/40 hover:text-white/80'
+                  className={`flex-1 flex flex-col items-center justify-center py-1.5 relative z-10 transition-all duration-300 transform cursor-pointer active:scale-90 group ${
+                    currentScreen === 'how-to-play' ? 'text-spy-lime font-black' : 'text-white/40 hover:text-white/80'
                   }`}
                 >
                   <div className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-300 transform group-hover:-translate-y-1 ${
                     currentScreen === 'how-to-play'
-                      ? 'bg-spy-lime/20 border-2 border-spy-lime shadow-[0_0_20px_rgba(204,255,0,0.5)] scale-110'
-                      : 'bg-white/5 border border-white/10 hover:bg-white/10 hover:border-white/30'
+                      ? 'bg-gradient-to-b from-spy-lime/30 to-slate-900 border-2 border-spy-lime shadow-[0_0_22px_rgba(204,255,0,0.6)] scale-110 -translate-y-1'
+                      : 'bg-white/5 border border-white/10 hover:bg-white/10'
                   }`}>
                     <img src="/guide_icon_3d.svg" alt="Guide" className="w-7 h-7 object-contain filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] transform group-hover:scale-110 group-hover:-rotate-6 transition-transform duration-300" />
                   </div>
-                  <span className={`text-[9px] font-black uppercase tracking-widest mt-1.5 transition-colors duration-300 ${
-                    currentScreen === 'how-to-play' ? 'text-spy-lime' : 'text-white/40 group-hover:text-white/80'
-                  }`}>
-                    Guide
-                  </span>
+                  <div className="flex items-center gap-1 mt-1">
+                    {currentScreen === 'how-to-play' && <div className="w-1.5 h-1.5 rounded-full bg-spy-lime shadow-[0_0_8px_#ccff00]"></div>}
+                    <span className={`text-[9px] font-black uppercase tracking-wider transition-colors duration-300 ${
+                      currentScreen === 'how-to-play' ? 'text-spy-lime drop-shadow-[0_1px_4px_rgba(204,255,0,0.3)]' : 'text-white/40'
+                    }`}>
+                      Guide
+                    </span>
+                  </div>
                 </button>
 
               </div>
