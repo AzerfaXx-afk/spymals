@@ -581,7 +581,7 @@ function App() {
 
   return (
     <AudioProvider>
-      <div className="antialiased text-gray-900 bg-spy-blue min-h-screen relative overflow-x-hidden">
+      <div className="antialiased text-gray-900 bg-spy-blue fixed inset-0 w-full h-full h-[100dvh] overflow-hidden select-none">
         <PWAManager />
         
         {/* Top Header for Menu Screens */}
@@ -630,7 +630,7 @@ function App() {
         )}
 
         <div 
-          className={isMenuScreen ? "h-screen h-[100dvh] overflow-hidden relative" : ""}
+          className="w-full h-full h-[100dvh] overflow-hidden relative"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
