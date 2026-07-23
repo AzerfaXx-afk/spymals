@@ -25,15 +25,15 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
 
     const { switchMusic, playSfx } = useAudio();
 
-    // 3D Cartoon Anvil drop animation state
-    const [showAnvil, setShowAnvil] = useState(false);
+    // 3D Cartoon Tombstone drop animation state
+    const [showTombstone, setShowTombstone] = useState(false);
 
-    // Auto trigger anvil drop animation when entering reveal screen
+    // Auto trigger tombstone animation when entering reveal screen
     useEffect(() => {
         if (gameState === 'reveal') {
-            setShowAnvil(false); // reset first
+            setShowTombstone(false); // reset first
             const timer = setTimeout(() => {
-                setShowAnvil(true);
+                setShowTombstone(true);
                 playSfx('/sons/mort.mp3', { volumeMultiplier: 1.0 }); // Death sound
             }, 500);
             return () => clearTimeout(timer);
@@ -691,39 +691,39 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                 >
                     <div className="mb-6 relative h-48 flex flex-col items-center justify-center w-full max-w-xs">
 
-                        {/* Avatar Frame with Pro Cartoon Impact Animation */}
+                        {/* Avatar Frame with Tombstone Memorial Backdrop */}
                         <motion.div 
-                            animate={showAnvil ? { scale: 0.92, y: 16, rotate: -3 } : { scale: 1, y: 0, rotate: 0 }}
+                            animate={showTombstone ? { scale: 0.95, y: 12, rotate: -2 } : { scale: 1, y: 0, rotate: 0 }}
                             transition={{ type: 'spring', stiffness: 500, damping: 20 }}
                             className="w-32 h-32 relative z-10 flex items-center justify-center rounded-full border-4 border-white/20 shadow-[0_10px_30px_rgba(0,0,0,0.8)] bg-slate-900 overflow-hidden"
                         >
                             {votedPlayer.avatar.type === 'image' ? (
-                                <img src={votedPlayer.avatar.value} alt={votedPlayer.name} className={`w-full h-full object-cover rounded-full ${showAnvil ? 'filter grayscale brightness-75' : ''}`} />
+                                <img src={votedPlayer.avatar.value} alt={votedPlayer.name} className={`w-full h-full object-cover rounded-full ${showTombstone ? 'filter grayscale brightness-75' : ''}`} />
                             ) : (
-                                <CartoonAvatar id={votedPlayer.avatar.value} className={`w-full h-full border-none shadow-none ${showAnvil ? 'filter grayscale brightness-75' : ''}`} />
+                                <CartoonAvatar id={votedPlayer.avatar.value} className={`w-full h-full border-none shadow-none ${showTombstone ? 'filter grayscale brightness-75' : ''}`} />
                             )}
 
                             {/* Elimination impact overlay */}
-                            {showAnvil && (
+                            {showTombstone && (
                                 <div className="absolute inset-0 bg-red-950/40 border-2 border-red-500/60 rounded-full pointer-events-none" />
                             )}
                         </motion.div>
 
-                        {/* 3D Cutout Cartoon Anvil Drop */}
+                        {/* 3D Cutout Cartoon Tombstone Memorial */}
                         <AnimatePresence>
-                            {showAnvil && (
+                            {showTombstone && (
                                 <motion.div
-                                    initial={{ y: -160, opacity: 0, scale: 1.4 }}
-                                    animate={{ y: -38, opacity: 1, scale: 1 }}
-                                    transition={{ type: 'spring', stiffness: 600, damping: 18, mass: 1.1 }}
+                                    initial={{ y: -140, opacity: 0, scale: 1.3 }}
+                                    animate={{ y: -32, opacity: 1, scale: 1 }}
+                                    transition={{ type: 'spring', stiffness: 550, damping: 18, mass: 1.1 }}
                                     className="absolute z-20 flex flex-col items-center justify-center pointer-events-none"
                                 >
-                                    {/* 3D Steel Anvil Image - 100% Transparent Cutout */}
-                                    <div className="relative w-44 h-32 flex items-center justify-center">
+                                    {/* 3D Tombstone Image - 100% Transparent Cutout */}
+                                    <div className="relative w-44 h-36 flex items-center justify-center">
                                         <img 
-                                            src="/cartoon_anvil_3d.png" 
-                                            alt="Enclume Cartoon 3D" 
-                                            className="w-full h-full object-contain filter drop-shadow-[0_15px_20px_rgba(0,0,0,0.9)]" 
+                                            src="/cartoon_tombstone_3d.png" 
+                                            alt="Sépulture Cartoon 3D" 
+                                            className="w-full h-full object-contain filter drop-shadow-[0_15px_25px_rgba(0,0,0,0.95)]" 
                                         />
                                         
                                         {/* Steady Non-blinking R.I.P • ÉLIMINÉ Badge */}
