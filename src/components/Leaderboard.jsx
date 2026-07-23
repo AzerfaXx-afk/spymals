@@ -154,24 +154,25 @@ const Leaderboard = () => {
   const hasMore = visibleCount < Math.min(100, leaderboardData.length);
 
   return (
+    /* LEVER 1: Outer Positioning Container (Top & Bottom Boundaries) */
     <div className="fixed inset-0 top-16 bottom-24 px-3.5 max-w-md mx-auto flex flex-col items-center justify-start pt-1 overflow-hidden pointer-events-auto select-none z-10">
       
-      {/* Background Soft Ambient Radial Glow */}
+      {/* Background Soft Ambient Glow */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 w-72 h-72 bg-spy-lime/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-2 left-1/2 -translate-x-1/2 w-80 h-80 bg-spy-lime/15 rounded-full blur-3xl"></div>
       </div>
 
       <div className="z-10 w-full flex flex-col items-center overflow-hidden flex-1">
         
         {/* Header Title (Aligned Higher Up at Top) */}
         <div className="text-center mb-1 flex-shrink-0">
-          <div className="inline-flex items-center px-3 py-0.5 rounded-full bg-spy-lime/10 border border-spy-lime/30 text-spy-lime text-[8.5px] font-black uppercase tracking-widest mb-0.5 shadow-sm">
+          <div className="inline-flex items-center px-3.5 py-0.5 rounded-full bg-spy-lime/10 border border-spy-lime/30 text-spy-lime text-[8.5px] font-black uppercase tracking-widest mb-0.5 shadow-[0_2px_8px_rgba(204,255,0,0.15)]">
             {visibleCount <= 10 ? 'TOP 10 AGENTS ÉLITES' : `TOP ${visibleCount} AGENTS ÉLITES`}
           </div>
           <h1 className="text-xl font-black text-white uppercase tracking-tighter drop-shadow-md">
             CLASSEMENT
           </h1>
-          <div className="w-12 h-1 bg-gradient-to-r from-transparent via-spy-lime to-transparent mx-auto rounded-full mt-0.5"></div>
+          <div className="w-14 h-1 bg-gradient-to-r from-transparent via-spy-lime to-transparent mx-auto rounded-full mt-0.5"></div>
         </div>
 
         {/* 3D CARTOON PODIUM SECTION */}
@@ -184,7 +185,7 @@ const Leaderboard = () => {
                 <div className="w-5 h-5 rounded-full bg-slate-300 border-2 border-white flex items-center justify-center text-[9px] font-black text-slate-900 shadow-md -mb-2 z-20">
                   2
                 </div>
-                <div className="w-10 h-10 rounded-2xl bg-gradient-to-b from-slate-700 to-slate-900 border-2 border-slate-300 p-0.5 shadow-md overflow-hidden">
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-b from-slate-700 to-slate-900 border-2 border-slate-300 p-0.5 shadow-lg overflow-hidden">
                   <CartoonAvatar id={top2.avatar_emoji} className="w-full h-full border-none shadow-none" />
                 </div>
               </div>
@@ -192,7 +193,7 @@ const Leaderboard = () => {
               <span className="text-[7.5px] font-black text-spy-lime">{top2.winRate}% Réussite</span>
               
               {/* Podium Pillar 2 */}
-              <div className="w-full h-8.5 mt-0.5 bg-gradient-to-b from-slate-800/90 to-slate-950/95 border-2 border-slate-300 rounded-2xl flex flex-col items-center justify-center shadow-md p-0.5">
+              <div className="w-full h-8.5 mt-0.5 bg-gradient-to-b from-slate-800/95 to-slate-950/95 border-2 border-slate-300 rounded-2xl flex flex-col items-center justify-center shadow-[0_4px_12px_rgba(0,0,0,0.5)] p-0.5">
                 <span className="text-xs font-black text-slate-300 opacity-90">#2</span>
                 <span className="text-[6px] text-white/70 font-bold">{top2.wins}V • {top2.losses}D</span>
               </div>
@@ -214,7 +215,7 @@ const Leaderboard = () => {
               <span className="text-[8px] font-black text-spy-lime">{top1.winRate}% Réussite</span>
               
               {/* Podium Pillar 1 */}
-              <div className="w-full h-12 mt-0.5 bg-gradient-to-b from-amber-500/20 to-slate-950/95 border-2 border-amber-400 rounded-2xl flex flex-col items-center justify-center shadow-lg relative overflow-hidden p-0.5">
+              <div className="w-full h-12 mt-0.5 bg-gradient-to-b from-amber-500/20 to-slate-950/95 border-2 border-amber-400 rounded-2xl flex flex-col items-center justify-center shadow-[0_6px_16px_rgba(251,191,36,0.25)] relative overflow-hidden p-0.5">
                 <span className="text-xs font-black text-amber-400 opacity-95">#1 ÉLITE</span>
                 <span className="text-[6.5px] font-black text-amber-200">{top1.wins}V • {top1.losses}D</span>
                 <div className="flex items-center gap-0.5 mt-0.5">
@@ -232,7 +233,7 @@ const Leaderboard = () => {
                 <div className="w-5 h-5 rounded-full bg-amber-700 border-2 border-white flex items-center justify-center text-[9px] font-black text-amber-100 shadow-md -mb-2 z-20">
                   3
                 </div>
-                <div className="w-10 h-10 rounded-2xl bg-gradient-to-b from-amber-900/60 to-slate-900 border-2 border-amber-600 p-0.5 shadow-md overflow-hidden">
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-b from-amber-900/60 to-slate-900 border-2 border-amber-600 p-0.5 shadow-lg overflow-hidden">
                   <CartoonAvatar id={top3.avatar_emoji} className="w-full h-full border-none shadow-none" />
                 </div>
               </div>
@@ -240,7 +241,7 @@ const Leaderboard = () => {
               <span className="text-[7.5px] font-black text-spy-lime">{top3.winRate}% Réussite</span>
               
               {/* Podium Pillar 3 */}
-              <div className="w-full h-8 mt-0.5 bg-gradient-to-b from-amber-950/80 to-slate-950/95 border-2 border-amber-700 rounded-2xl flex flex-col items-center justify-center shadow-md p-0.5">
+              <div className="w-full h-8 mt-0.5 bg-gradient-to-b from-amber-950/80 to-slate-950/95 border-2 border-amber-700 rounded-2xl flex flex-col items-center justify-center shadow-[0_4px_12px_rgba(0,0,0,0.5)] p-0.5">
                 <span className="text-xs font-black text-amber-600 opacity-90">#3</span>
                 <span className="text-[6px] text-white/70 font-bold">{top3.wins}V • {top3.losses}D</span>
               </div>
@@ -249,8 +250,8 @@ const Leaderboard = () => {
 
         </div>
 
-        {/* ROUNDED RANK LIST CONTAINER - Hugs content snugly for Top 10, expands dynamically when VOIR PLUS is clicked up to Top 100 */}
-        <div className={`w-full bg-slate-950/90 backdrop-blur-xl border-2 border-white/15 rounded-3xl p-2.5 shadow-[0_12px_30px_rgba(0,0,0,0.6)] flex flex-col overflow-hidden transition-all duration-300 ${visibleCount > 10 ? 'flex-1 min-h-0' : 'flex-shrink-0'}`}>
+        {/* LEVER 2: ROUNDED RANK LIST CONTAINER - Premium Cartoon 3D Glass Card */}
+        <div className={`w-full bg-slate-950/95 backdrop-blur-2xl border-2 border-white/15 rounded-3xl p-2.5 shadow-[0_16px_40px_rgba(0,0,0,0.85)] flex flex-col overflow-hidden transition-all duration-300 ${visibleCount > 10 ? 'flex-1 min-h-0' : 'flex-shrink-0'}`}>
           
           <div className="flex items-center justify-between px-2 pb-1 mb-1 border-b border-white/10 text-[8px] font-black uppercase tracking-widest text-white/40 flex-shrink-0">
             <span>RANG & AGENT</span>
@@ -265,14 +266,14 @@ const Leaderboard = () => {
           ) : (
             <div className={`flex flex-col overflow-hidden ${visibleCount > 10 ? 'flex-1 min-h-0 justify-between' : 'flex-shrink-0'}`}>
               
-              {/* Scrollable list items */}
-              <div className={`overflow-y-auto pr-0.5 no-scrollbar space-y-1 ${visibleCount > 10 ? 'flex-1' : 'max-h-[305px]'}`}>
+              {/* LEVER 3: Scrollable Player List Height - Set to max-h-[345px] so all 7 items (#4 to #10) fit 100% visibly */}
+              <div className={`overflow-y-auto pr-0.5 no-scrollbar space-y-1 ${visibleCount > 10 ? 'flex-1' : 'max-h-[345px]'}`}>
                 {paginatedList.map((agent, index) => {
                   const rankNumber = index + 4;
                   return (
                     <div
                       key={agent.username + index}
-                      className="flex items-center justify-between bg-slate-900/90 border border-white/10 hover:border-spy-lime/40 rounded-xl p-1.5 transition-all duration-200"
+                      className="flex items-center justify-between bg-slate-900/90 border border-white/10 hover:border-spy-lime/50 rounded-xl p-1.5 transition-all duration-200 shadow-sm"
                     >
                       {/* Left: Rank + Avatar + Name */}
                       <div className="flex items-center gap-2">
@@ -317,20 +318,20 @@ const Leaderboard = () => {
                 {hasMore && (
                   <button
                     onClick={handleLoadMore}
-                    className="flex-1 py-1.5 bg-gradient-to-r from-spy-lime/20 via-spy-lime/30 to-spy-lime/20 hover:from-spy-lime/35 hover:to-spy-lime/35 border-2 border-spy-lime rounded-2xl text-spy-lime font-black uppercase text-[9px] tracking-widest transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 active:scale-95 shadow-[0_3px_12px_rgba(204,255,0,0.25)]"
+                    className="flex-1 py-1.5 bg-gradient-to-r from-spy-lime via-[#bbe600] to-spy-lime hover:brightness-110 border border-white rounded-2xl text-slate-950 font-black uppercase text-[9.5px] tracking-widest transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 active:scale-95 shadow-[0_4px_14px_rgba(204,255,0,0.35),0_2px_0_#77aa00]"
                   >
                     <span>VOIR PLUS (+10)</span>
-                    <ChevronDown className="w-3.5 h-3.5" />
+                    <ChevronDown className="w-3.5 h-3.5 stroke-[3]" />
                   </button>
                 )}
 
                 {visibleCount > 10 && (
                   <button
                     onClick={handleShowLess}
-                    className="py-1.5 px-3 bg-white/10 hover:bg-white/15 border border-white/20 rounded-2xl text-white font-black uppercase text-[9px] tracking-wider transition-all duration-200 cursor-pointer flex items-center justify-center gap-1 active:scale-95 flex-shrink-0"
+                    className="py-1.5 px-3.5 bg-white/10 hover:bg-white/20 border border-white/25 rounded-2xl text-white font-black uppercase text-[9.5px] tracking-wider transition-all duration-200 cursor-pointer flex items-center justify-center gap-1 active:scale-95 flex-shrink-0 shadow-md"
                   >
                     <span>REPLIER</span>
-                    <ChevronUp className="w-3.5 h-3.5" />
+                    <ChevronUp className="w-3.5 h-3.5 stroke-[3]" />
                   </button>
                 )}
               </div>
