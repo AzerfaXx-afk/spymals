@@ -23,7 +23,7 @@ const HowToPlay = ({ onBack, onOpenSettings }) => {
     };
 
     return (
-        <div className="fixed inset-0 top-16 bottom-28 px-3.5 max-w-md mx-auto flex flex-col justify-between overflow-hidden pointer-events-auto select-none z-10">
+        <div className="fixed inset-0 top-18 bottom-28 px-3.5 max-w-md mx-auto flex flex-col items-center justify-center overflow-hidden pointer-events-auto select-none z-10">
             
             {/* Background Soft Ambient Glow */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
@@ -31,7 +31,7 @@ const HowToPlay = ({ onBack, onOpenSettings }) => {
                 <div className="absolute bottom-4 right-4 w-48 h-48 bg-spy-orange opacity-10 rounded-full blur-[80px]"></div>
             </div>
 
-            <div className="z-10 w-full flex flex-col h-full overflow-hidden justify-between">
+            <div className="z-10 w-full flex flex-col items-center justify-center my-auto overflow-hidden">
                 
                 {/* Header Title */}
                 <div className="text-center mb-1 flex-shrink-0">
@@ -45,7 +45,7 @@ const HowToPlay = ({ onBack, onOpenSettings }) => {
                 </div>
 
                 {/* 3D Cartoon Tab Navigation Bar */}
-                <div className="flex bg-slate-950/90 backdrop-blur-md p-1 rounded-2xl border-2 border-white/15 shadow-lg flex-shrink-0 my-1">
+                <div className="flex bg-slate-950/90 backdrop-blur-md p-1 rounded-2xl border-2 border-white/15 shadow-lg flex-shrink-0 w-full my-1.5">
                     {tabs.map((tab) => (
                         <button
                             key={tab.id}
@@ -61,8 +61,8 @@ const HowToPlay = ({ onBack, onOpenSettings }) => {
                     ))}
                 </div>
 
-                {/* MAIN CARTOON CONTENT CARD (Fits 100% inside screen above nav bar) */}
-                <div className="w-full bg-slate-950/95 backdrop-blur-2xl border-2 border-white/15 rounded-[2.2rem] p-3.5 shadow-[0_16px_40px_rgba(0,0,0,0.85)] flex-1 flex flex-col justify-between overflow-hidden min-h-0 relative">
+                {/* MAIN CARTOON CONTENT CARD - Hugs content naturally with zero empty void space */}
+                <div className="w-full bg-slate-950/95 backdrop-blur-2xl border-2 border-white/15 rounded-[2rem] p-3.5 shadow-[0_16px_40px_rgba(0,0,0,0.85)] flex flex-col justify-between overflow-hidden relative">
                     
                     {/* TAB 1: LES RÔLES */}
                     {activeTab === 'roles' && (

@@ -177,7 +177,7 @@ const Leaderboard = () => {
               <span className="text-[8px] font-black text-spy-lime">{top2.winRate}% Réussite</span>
               
               {/* Podium Pillar 2 */}
-              <div className="w-full h-11 mt-1 bg-gradient-to-b from-slate-800/90 to-slate-950/90 border-t-3 border-slate-300 rounded-t-2xl flex flex-col items-center justify-center shadow-lg p-0.5">
+              <div className="w-full h-11 mt-1 bg-gradient-to-b from-slate-800/90 to-slate-950/95 border-2 border-slate-300 rounded-2xl flex flex-col items-center justify-center shadow-lg p-0.5">
                 <span className="text-sm font-black text-slate-300 opacity-90">#2</span>
                 <span className="text-[6.5px] text-white/70 font-bold">{top2.wins}V • {top2.losses}D</span>
               </div>
@@ -199,7 +199,7 @@ const Leaderboard = () => {
               <span className="text-[8.5px] font-black text-spy-lime">{top1.winRate}% Réussite</span>
               
               {/* Podium Pillar 1 */}
-              <div className="w-full h-15 mt-1 bg-gradient-to-b from-amber-500/20 to-slate-950/95 border-t-4 border-amber-400 rounded-t-2xl flex flex-col items-center justify-center shadow-2xl relative overflow-hidden p-0.5">
+              <div className="w-full h-15 mt-1 bg-gradient-to-b from-amber-500/20 to-slate-950/95 border-2 border-amber-400 rounded-2xl flex flex-col items-center justify-center shadow-2xl relative overflow-hidden p-0.5">
                 <span className="text-base font-black text-amber-400 opacity-95">#1 ÉLITE</span>
                 <span className="text-[7px] font-black text-amber-200">{top1.wins}V • {top1.losses}D</span>
                 <div className="flex items-center gap-0.5 mt-0.5">
@@ -225,7 +225,7 @@ const Leaderboard = () => {
               <span className="text-[8px] font-black text-spy-lime">{top3.winRate}% Réussite</span>
               
               {/* Podium Pillar 3 */}
-              <div className="w-full h-10 mt-1 bg-gradient-to-b from-amber-950/80 to-slate-950/90 border-t-3 border-amber-700 rounded-t-2xl flex flex-col items-center justify-center shadow-lg p-0.5">
+              <div className="w-full h-10 mt-1 bg-gradient-to-b from-amber-950/80 to-slate-950/95 border-2 border-amber-700 rounded-2xl flex flex-col items-center justify-center shadow-lg p-0.5">
                 <span className="text-sm font-black text-amber-600 opacity-90">#3</span>
                 <span className="text-[6.5px] text-white/70 font-bold">{top3.wins}V • {top3.losses}D</span>
               </div>

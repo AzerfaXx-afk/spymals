@@ -678,7 +678,7 @@ function App() {
                   <button
                     onClick={() => setCurrentScreen('home')}
                     className={`w-16 h-16 rounded-2xl bg-gradient-to-b from-spy-lime via-[#aadd00] to-[#88bb00] border-3 border-white flex flex-col items-center justify-center shadow-[0_12px_28px_rgba(204,255,0,0.55),0_4px_0_#446600] active:translate-y-1 active:shadow-[0_2px_0_#446600] transition-all duration-300 cursor-pointer group ${
-                      currentScreen === 'home' ? 'ring-4 ring-spy-lime/60 scale-105' : 'hover:scale-105'
+                      currentScreen === 'home' ? 'shadow-[0_0_22px_rgba(204,255,0,0.8),0_4px_0_#446600] scale-105' : 'hover:scale-105'
                     }`}
                     title="Jouer"
                   >
