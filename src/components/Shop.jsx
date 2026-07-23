@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   CheckCircle2, Lock, Sparkles, 
-  Compass, Cpu, Snowflake, Ghost, Gamepad2, Eye, Zap
+  Compass, Cpu, Snowflake, Ghost, Gamepad2, Eye, Zap, Palette
 } from 'lucide-react';
 import { USERNAME_COLORS, PROFILE_BANNERS, THEMES_LIST } from './Profile';
 import { supabase } from '../utils/supabaseClient';
@@ -18,25 +18,33 @@ const Shop = ({ user, profileData, onUpdateProfile, onBack }) => {
     // Temporary preview states
     const [previewColorId, setPreviewColorId] = useState(null);
     const [previewBannerId, setPreviewBannerId] = useState(null);
+    const [previewThemeId, setPreviewThemeId] = useState(null);
 
     const coins = profileData?.coins || 0;
     const unlockedItems = profileData?.unlocked_items || ['default', 'theme-safari'];
 
     const equippedColor = profileData?.equipped_color || 'default';
     const equippedBanner = profileData?.equipped_banner || 'default';
+    const equippedTheme = profileData?.equipped_theme || 'safari';
 
     // Active or Previewed values for the Live Preview box
     const activeColorId = previewColorId || equippedColor;
     const activeBannerId = previewBannerId || equippedBanner;
+    const activeThemeId = previewThemeId || equippedTheme;
 
     const activeColorObj = USERNAME_COLORS.find(c => c.id === activeColorId) || USERNAME_COLORS[0];
     const activeBannerObj = PROFILE_BANNERS.find(b => b.id === activeBannerId) || PROFILE_BANNERS[0];
+    const activeThemeObj = THEMES_LIST.find(t => t.id === activeThemeId) || THEMES_LIST[0];
+    const ActiveThemeIcon = activeThemeObj.IconComponent || Compass;
 
-    const isPreviewActive = (previewColorId && previewColorId !== equippedColor) || (previewBannerId && previewBannerId !== equippedBanner);
+    const isPreviewActive = (previewColorId && previewColorId !== equippedColor) || 
+                            (previewBannerId && previewBannerId !== equippedBanner) ||
+                            (previewThemeId && previewThemeId !== equippedTheme);
 
     const resetPreview = () => {
         setPreviewColorId(null);
         setPreviewBannerId(null);
+        setPreviewThemeId(null);
     };
 
     // Handle Buy cosmetic item
@@ -176,7 +184,7 @@ const Shop = ({ user, profileData, onUpdateProfile, onBack }) => {
                         )}
                     </div>
 
-                    <div className={`p-3.5 rounded-2xl border-2 ${activeBannerObj.class} flex items-center justify-between shadow-md relative overflow-hidden`}>
+                    <div className={`p-3.5 rounded-2xl border-2 ${activeBannerObj.class} flex flex-col justify-between shadow-md relative overflow-hidden`}>
                         <div className="flex items-center gap-3 relative z-10">
                             <div className="w-11 h-11 rounded-2xl bg-slate-900/90 border-2 border-spy-lime overflow-hidden flex-shrink-0 shadow-md">
                                 <CartoonAvatar id={profileData?.avatar_emoji} className="w-full h-full border-none shadow-none" />
@@ -189,6 +197,17 @@ const Shop = ({ user, profileData, onUpdateProfile, onBack }) => {
                                     Niveau {profileData?.level || 1}
                                 </span>
                             </div>
+                        </div>
+
+                        {/* Active/Previewed Theme Pill Indicator */}
+                        <div className="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-[8.5px] font-black uppercase tracking-wider relative z-10">
+                            <span className="text-white/50 flex items-center gap-1">
+                                <Palette className="w-3 h-3 text-spy-lime" /> AMBIANCE THÈME
+                            </span>
+                            <span className={`px-2.5 py-0.5 rounded-lg border border-white/20 flex items-center gap-1 shadow-sm font-black ${activeThemeObj.bg}`}>
+                                <ActiveThemeIcon className="w-3 h-3" />
+                                <span>{activeThemeObj.label}</span>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -397,13 +416,14 @@ const Shop = ({ user, profileData, onUpdateProfile, onBack }) => {
                             const themeItemId = `theme-${theme.id}`;
                             const isOwned = unlockedItems.includes(themeItemId);
                             const isEquipped = profileData?.equipped_theme === theme.id;
+                            const isPreviewed = previewThemeId === theme.id;
                             const IconComp = theme.IconComponent || Eye;
 
                             return (
                                 <div 
                                     key={theme.id} 
                                     className={`bg-slate-950/80 border-2 rounded-2xl p-3 flex items-center justify-between shadow-md transition-all duration-200 group ${
-                                        isEquipped ? 'border-spy-lime bg-spy-lime/5 shadow-[0_0_18px_rgba(204,255,0,0.15)]' : 'border-white/10 hover:border-white/25'
+                                        isPreviewed || isEquipped ? 'border-spy-lime bg-spy-lime/5 shadow-[0_0_18px_rgba(204,255,0,0.15)]' : 'border-white/10 hover:border-white/25'
                                     }`}
                                 >
                                     <div className="flex items-center gap-3">
@@ -417,13 +437,26 @@ const Shop = ({ user, profileData, onUpdateProfile, onBack }) => {
                                                 Thème {theme.label}
                                             </h4>
                                             <p className="text-white/40 text-[8.5px] font-black uppercase tracking-wider mt-0.5">
-                                                Ambiance visuelle
+                                                {theme.desc || 'Ambiance visuelle'}
                                             </p>
                                         </div>
                                     </div>
 
                                     {/* Actions */}
-                                    <div className="flex-none">
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => setPreviewThemeId(theme.id)}
+                                            className={`px-2.5 py-1.5 rounded-xl border text-[9.5px] font-black uppercase tracking-wider transition-all flex items-center gap-1 cursor-pointer ${
+                                                isPreviewed 
+                                                    ? 'bg-spy-lime text-slate-950 border-white shadow-sm font-black' 
+                                                    : 'bg-slate-900/90 text-spy-lime border-spy-lime/30 hover:bg-spy-lime/15'
+                                            }`}
+                                        >
+                                            <Eye className="w-3 h-3" />
+                                            <span>APERÇU</span>
+                                        </button>
+
                                         {isEquipped ? (
                                             <span className="text-spy-lime text-[9.5px] font-black uppercase tracking-wider bg-spy-lime/15 px-3 py-1.5 rounded-xl border border-spy-lime/40 flex items-center gap-1 shadow-sm">
                                                 <CheckCircle2 className="w-3.5 h-3.5" /> ÉQUIPÉ
@@ -432,7 +465,7 @@ const Shop = ({ user, profileData, onUpdateProfile, onBack }) => {
                                             <button
                                                 type="button"
                                                 onClick={() => handleEquipItem('theme', theme.id)}
-                                                className="bg-white/10 hover:bg-white/20 text-white font-black uppercase text-[10px] tracking-wider px-3.5 py-2 rounded-xl border border-white/20 transition-all cursor-pointer"
+                                                className="bg-white/10 hover:bg-white/20 text-white font-black uppercase text-[10px] tracking-wider px-3 py-1.5 rounded-xl border border-white/20 transition-all cursor-pointer"
                                             >
                                                 ÉQUIPER
                                             </button>
@@ -440,7 +473,7 @@ const Shop = ({ user, profileData, onUpdateProfile, onBack }) => {
                                             <button
                                                 type="button"
                                                 onClick={() => handleBuyItem(themeItemId, theme.price, 'theme')}
-                                                className="bg-gradient-to-b from-[#d9ff33] via-spy-lime to-[#77aa00] active:scale-95 text-slate-950 font-black uppercase text-[11px] tracking-wider px-3.5 py-1.5 rounded-xl border-2 border-white shadow-[0_4px_0_#446600] hover:scale-105 transition-all flex items-center gap-1.5 cursor-pointer"
+                                                className="bg-gradient-to-b from-[#d9ff33] via-spy-lime to-[#77aa00] active:scale-95 text-slate-950 font-black uppercase text-[11px] tracking-wider px-3 py-1.5 rounded-xl border-2 border-white shadow-[0_4px_0_#446600] hover:scale-105 transition-all flex items-center gap-1.5 cursor-pointer"
                                             >
                                                 <span>{theme.price}</span>
                                                 <img src="/croquette_coin_3d.png" alt="Croquettes" className="w-4 h-4 object-contain" />

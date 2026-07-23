@@ -26,11 +26,11 @@ export const PROFILE_BANNERS = [
 ];
 
 export const THEMES_LIST = [
-    { id: 'safari', label: 'Safari', bg: 'bg-[#aadd00] text-slate-950', IconComponent: Compass, price: 0 },
-    { id: 'cyber', label: 'Cyber', bg: 'bg-cyan-400 text-slate-950', IconComponent: Cpu, price: 100 },
-    { id: 'polar', label: 'Polar', bg: 'bg-blue-500 text-white', IconComponent: Snowflake, price: 150 },
-    { id: 'spooky', label: 'Spooky', bg: 'bg-orange-500 text-slate-950', IconComponent: Ghost, price: 200 },
-    { id: 'retro', label: 'Retro', bg: 'bg-lime-500 text-slate-950', IconComponent: Gamepad2, price: 250 }
+    { id: 'safari', label: 'Safari', bg: 'bg-[#aadd00] text-slate-950', IconComponent: Compass, price: 0, desc: 'Ambiance Verte & Tactique' },
+    { id: 'cyber', label: 'Cyber', bg: 'bg-cyan-400 text-slate-950', IconComponent: Cpu, price: 100, desc: 'Néon Cyan & Matrix' },
+    { id: 'polar', label: 'Polar', bg: 'bg-blue-500 text-white', IconComponent: Snowflake, price: 150, desc: 'Bleu Glacé & Flocons' },
+    { id: 'spooky', label: 'Spooky', bg: 'bg-orange-500 text-slate-950', IconComponent: Ghost, price: 200, desc: 'Nuit Orange Sombre' },
+    { id: 'retro', label: 'Retro', bg: 'bg-lime-500 text-slate-950', IconComponent: Gamepad2, price: 250, desc: 'Arcade Pixel 8-Bit' }
 ];
 
 const getLevelTitle = (lvl) => {
