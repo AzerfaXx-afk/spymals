@@ -249,8 +249,8 @@ const Leaderboard = () => {
 
         </div>
 
-        {/* ROUNDED RANK LIST CONTAINER - Fits all 7 items (#4 to #10) cleanly with room to expand up to Top 100 */}
-        <div className="w-full bg-slate-950/90 backdrop-blur-xl border-2 border-white/15 rounded-3xl p-2.5 shadow-[0_12px_30px_rgba(0,0,0,0.6)] flex flex-col overflow-hidden flex-1 min-h-0">
+        {/* ROUNDED RANK LIST CONTAINER - Hugs content snugly for Top 10, expands dynamically when VOIR PLUS is clicked up to Top 100 */}
+        <div className={`w-full bg-slate-950/90 backdrop-blur-xl border-2 border-white/15 rounded-3xl p-2.5 shadow-[0_12px_30px_rgba(0,0,0,0.6)] flex flex-col overflow-hidden transition-all duration-300 ${visibleCount > 10 ? 'flex-1 min-h-0' : 'flex-shrink-0'}`}>
           
           <div className="flex items-center justify-between px-2 pb-1 mb-1 border-b border-white/10 text-[8px] font-black uppercase tracking-widest text-white/40 flex-shrink-0">
             <span>RANG & AGENT</span>
@@ -263,10 +263,10 @@ const Leaderboard = () => {
               <span className="text-[8.5px] font-black uppercase tracking-wider">Chargement des agents...</span>
             </div>
           ) : (
-            <div className="flex flex-col flex-1 overflow-hidden min-h-0 justify-between">
+            <div className={`flex flex-col overflow-hidden ${visibleCount > 10 ? 'flex-1 min-h-0 justify-between' : 'flex-shrink-0'}`}>
               
               {/* Scrollable list items */}
-              <div className="flex-1 overflow-y-auto pr-0.5 no-scrollbar space-y-1">
+              <div className={`overflow-y-auto pr-0.5 no-scrollbar space-y-1 ${visibleCount > 10 ? 'flex-1' : 'max-h-[305px]'}`}>
                 {paginatedList.map((agent, index) => {
                   const rankNumber = index + 4;
                   return (
