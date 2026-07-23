@@ -139,7 +139,7 @@ const Leaderboard = () => {
   };
 
   return (
-    <div className="fixed inset-0 top-16 bottom-28 px-3.5 max-w-md mx-auto flex flex-col justify-between overflow-hidden pointer-events-auto select-none z-10">
+    <div className="fixed inset-0 top-16 bottom-24 px-4 max-w-md mx-auto flex flex-col justify-start pt-2 overflow-hidden pointer-events-auto select-none z-10">
       
       {/* Background Glow */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
