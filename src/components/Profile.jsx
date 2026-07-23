@@ -72,8 +72,8 @@ const Profile = ({ user, profileData, onUpdateProfile, onLogout, onBack }) => {
     const [unlockedItems, setUnlockedItems] = useState(['default']);
     const [showEditModal, setShowEditModal] = useState(false);
 
-    // Collapsible Accordion sections: 'custom', 'audio', 'feedback', 'faq' (null = closed)
-    const [activeSection, setActiveSection] = useState('custom');
+    // Collapsible Accordion sections: 'custom', 'audio', 'feedback', 'faq' (null = all closed by default)
+    const [activeSection, setActiveSection] = useState(null);
 
     // Feedback inputs
     const [feedbackEmail, setFeedbackEmail] = useState(isGuest ? '' : user?.email || '');
@@ -206,9 +206,9 @@ const Profile = ({ user, profileData, onUpdateProfile, onLogout, onBack }) => {
     };
 
     return (
-        /* Smooth Scrollable Container clearing navbar bottom area */
-        <div className="fixed top-14 sm:top-16 left-0 right-0 overflow-y-auto no-scrollbar pointer-events-auto select-none z-10"
-            style={{ paddingBottom: 'calc(110px + env(safe-area-inset-bottom, 0px))' }}
+        /* Smooth Full Scrollable Container — Allows scrolling all expanded menus & buttons cleanly above navbar */
+        <div className="fixed inset-0 top-14 sm:top-16 overflow-y-auto no-scrollbar pointer-events-auto select-none z-10"
+            style={{ paddingBottom: 'calc(140px + env(safe-area-inset-bottom, 0px))' }}
         >
             {/* Ambient Background Glow */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
