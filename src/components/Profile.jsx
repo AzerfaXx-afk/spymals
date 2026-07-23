@@ -33,19 +33,33 @@ export const THEMES_LIST = [
     { id: 'retro', label: 'Retro', bg: 'bg-lime-500 text-slate-950', IconComponent: Gamepad2, price: 250, desc: 'Arcade Pixel 8-Bit' }
 ];
 
-const getLevelTitle = (lvl) => {
-    if (lvl >= 15) return 'Maître Espion';
-    if (lvl >= 10) return 'Agent d\'Élite';
+export const getLevelTitle = (lvl) => {
+    if (lvl >= 15) return 'Légende Spymals';
+    if (lvl >= 12) return 'Maître Espion';
+    if (lvl >= 8) return 'Agent d\'Élite';
     if (lvl >= 5) return 'Détective Confirmé';
     if (lvl >= 3) return 'Espion Junior';
     return 'Recrue Curieuse';
+};
+
+export const getNextRankTitleInfo = (lvl) => {
+    if (lvl < 3) return { nextTitle: 'Espion Junior', nextLvl: 3 };
+    if (lvl < 5) return { nextTitle: 'Détective Confirmé', nextLvl: 5 };
+    if (lvl < 8) return { nextTitle: 'Agent d\'Élite', nextLvl: 8 };
+    if (lvl < 12) return { nextTitle: 'Maître Espion', nextLvl: 12 };
+    if (lvl < 15) return { nextTitle: 'Légende Spymals', nextLvl: 15 };
+    return { nextTitle: 'Niveau Max Reint !', nextLvl: 15 };
 };
 
 const getXPNeeded = (lvl) => lvl * 150;
 
 const FAQ_ITEMS = [
     {
-        q: "Comment marquer des points et monter de niveau ?",
+        q: "C'est quoi 'Recrue Curieuse', 'Espion Junior'... ?",
+        a: "Ce sont vos Titres de Grade d'Agent ! Ils s'améliorent automatiquement au fur et à mesure que vous gagnez des parties et accumulez de l'XP pour monter de niveau (Recrue Curieuse → Espion Junior → Détective Confirmé → Agent d'Élite → Maître Espion → Légende Spymals)."
+    },
+    {
+        q: "Comment marquer des points d'XP et monter de niveau ?",
         a: "Gagnez des points d'XP à chaque fin de partie ! Démasquer l'imposteur en tant que civil ou rester indétectable en tant qu'imposteur vous donne un bonus d'XP. Chaque niveau franchi vous rapporte des Croquettes."
     },
     {
@@ -290,28 +304,41 @@ const Profile = ({ user, profileData, onUpdateProfile, onLogout, onBack }) => {
                     </div>
 
                     {/* Level / XP Progress */}
-                    <div className="rounded-2xl p-3.5 border border-white/8 mb-4"
-                        style={{ background: 'rgba(255,255,255,0.02)' }}
-                    >
-                        <div className="flex justify-between items-end mb-1.5">
-                            <span className="text-[9.5px] font-black uppercase tracking-widest text-white/45">
-                                NIVEAU {profileData?.level || 1}
-                            </span>
-                            <span className="text-[10px] font-black text-white/80">
-                                {profileData?.xp || 0} / {xpNeeded} XP
-                            </span>
-                        </div>
-                        {/* 3D XP Bar */}
-                        <div className="w-full h-3 bg-slate-950 rounded-full overflow-hidden p-0.5 border border-white/10 shadow-inner">
-                            <div 
-                                className="h-full bg-gradient-to-r from-spy-lime via-[#d8ff33] to-spy-lime rounded-full transition-all duration-500"
-                                style={{
-                                    width: `${xpPercent}%`,
-                                    boxShadow: '0 0 12px rgba(204,255,0,0.5)'
-                                }}
-                            ></div>
-                        </div>
-                    </div>
+                    {(() => {
+                        const nextRankInfo = getNextRankTitleInfo(profileData?.level || 1);
+                        return (
+                            <div className="rounded-2xl p-3.5 border border-white/8 mb-4"
+                                style={{ background: 'rgba(255,255,255,0.02)' }}
+                            >
+                                <div className="flex justify-between items-end mb-1.5">
+                                    <span className="text-[9.5px] font-black uppercase tracking-widest text-white/45">
+                                        NIVEAU {profileData?.level || 1}
+                                    </span>
+                                    <span className="text-[10px] font-black text-white/80">
+                                        {profileData?.xp || 0} / {xpNeeded} XP
+                                    </span>
+                                </div>
+                                {/* 3D XP Bar */}
+                                <div className="w-full h-3 bg-slate-950 rounded-full overflow-hidden p-0.5 border border-white/10 shadow-inner mb-2">
+                                    <div 
+                                        className="h-full bg-gradient-to-r from-spy-lime via-[#d8ff33] to-spy-lime rounded-full transition-all duration-500"
+                                        style={{
+                                            width: `${xpPercent}%`,
+                                            boxShadow: '0 0 12px rgba(204,255,0,0.5)'
+                                        }}
+                                    ></div>
+                                </div>
+                                
+                                {/* Next Rank Upgrade Target */}
+                                <div className="flex items-center justify-between text-[8px] sm:text-[9px] font-bold text-white/50 bg-white/[0.03] px-2.5 py-1 rounded-xl border border-white/5">
+                                    <span>PROCHAIN GRADE :</span>
+                                    <span className="text-spy-lime font-black uppercase tracking-wider">
+                                        {nextRankInfo.nextTitle} (Niv. {nextRankInfo.nextLvl})
+                                    </span>
+                                </div>
+                            </div>
+                        );
+                    })()}
 
                     {/* Stats Grid with 3D Croquette Image */}
                     <div className="grid grid-cols-2 gap-3 mb-2">

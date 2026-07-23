@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Crown } from 'lucide-react';
 import { CartoonAvatar } from './CartoonAvatars';
 import { supabase } from '../utils/supabaseClient';
+import { getLevelTitle } from './Profile';
 
 const ANIMAL_AVATARS = ['fox-detective', 'cat-spy', 'dog-agent', 'owl-hacker', 'ninja-frog', 'panda-monocle', 'tiger-agent', 'koala-agent', 'lion-detective', 'penguin-secret'];
 const PREFIXES = ['Agent', 'Shadow', 'Cyber', 'Master', 'Ninja', 'Spectre', 'Ghost', 'Viper', 'Eagle', 'Falcon', 'Panther', 'Hunter', 'Alpha', 'Delta', 'Omega', 'Vortex', 'Apex', 'Titan', 'Zenith', 'Kestrel'];
@@ -77,7 +78,7 @@ const Leaderboard = () => {
       winRate,
       avatar_emoji,
       level,
-      title: getTitleByCoins(coins)
+      title: getLevelTitle(level)
     };
   };
 
