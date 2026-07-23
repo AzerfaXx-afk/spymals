@@ -740,54 +740,109 @@ body.theme-retro {
     box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.4);
 }
 
-/* Cyber Theme inputs override */
-.theme-cyber input, .theme-cyber select, .theme-cyber textarea {
-    border: 3px solid rgba(0, 255, 255, 0.3) !important;
-    background: rgba(13, 9, 26, 0.8) !important;
+/* ======================================================== */
+/* 🌟 THEME ACCENT & IMMERSIVE BACKGROUND SYSTEM           */
+/* ======================================================== */
+
+/* 1. SAFARI (DEFAULT) - Tactical Lime Jungle */
+body.theme-safari {
+    background-image: radial-gradient(circle at center top, #0f2b1d 0%, #081a11 60%, #030a06 100%) !important;
+}
+
+/* 2. CYBER - Matrix Cyan Neon */
+body.theme-cyber {
+    background-image: radial-gradient(circle at center top, #082d40 0%, #041724 60%, #010912 100%) !important;
+}
+body.theme-cyber .text-spy-lime {
+    color: #00F0FF !important;
+}
+body.theme-cyber .bg-spy-lime {
+    background-color: #00F0FF !important;
+    color: #020b14 !important;
+}
+body.theme-cyber .border-spy-lime {
+    border-color: #00F0FF !important;
+}
+body.theme-cyber input, body.theme-cyber select, body.theme-cyber textarea {
+    border: 2px solid rgba(0, 240, 255, 0.3) !important;
+    background: rgba(4, 20, 36, 0.9) !important;
     color: #f0f0f5 !important;
 }
-.theme-cyber input:focus, .theme-cyber select:focus, .theme-cyber textarea:focus {
-    border-color: #00ffff !important;
-    box-shadow: 0 0 12px rgba(0, 255, 255, 0.4) !important;
+body.theme-cyber input:focus, body.theme-cyber select:focus, body.theme-cyber textarea:focus {
+    border-color: #00F0FF !important;
+    box-shadow: 0 0 14px rgba(0, 240, 255, 0.5) !important;
 }
 
-/* Polar Theme inputs override */
-.theme-polar input, .theme-polar select, .theme-polar textarea {
-    border: 3px solid rgba(59, 130, 246, 0.4) !important;
-    background: #ffffff !important;
-    color: #1a2e40 !important;
+/* 3. POLAR - Arctic Blue Ice */
+body.theme-polar {
+    background-image: radial-gradient(circle at center top, #0c3666 0%, #061c36 60%, #020b17 100%) !important;
 }
-.theme-polar input::placeholder, .theme-polar textarea::placeholder {
-    color: rgba(26, 46, 64, 0.4) !important;
+body.theme-polar .text-spy-lime {
+    color: #38BDF8 !important;
 }
-.theme-polar input:focus, .theme-polar select:focus, .theme-polar textarea:focus {
-    border-color: #3b82f6 !important;
-    box-shadow: 0 0 10px rgba(59, 130, 246, 0.2) !important;
+body.theme-polar .bg-spy-lime {
+    background-color: #38BDF8 !important;
+    color: #031429 !important;
+}
+body.theme-polar .border-spy-lime {
+    border-color: #38BDF8 !important;
+}
+body.theme-polar input, body.theme-polar select, body.theme-polar textarea {
+    border: 2px solid rgba(56, 189, 248, 0.4) !important;
+    background: rgba(6, 28, 54, 0.9) !important;
+    color: #f0f8ff !important;
+}
+body.theme-polar input:focus, body.theme-polar select:focus, body.theme-polar textarea:focus {
+    border-color: #38BDF8 !important;
+    box-shadow: 0 0 14px rgba(56, 189, 248, 0.4) !important;
 }
 
-/* Spooky Theme inputs override */
-.theme-spooky input, .theme-spooky select, .theme-spooky textarea {
-    border: 3px solid rgba(255, 119, 0, 0.4) !important;
-    background: rgba(21, 15, 31, 0.8) !important;
-    color: #f0f0f0 !important;
+/* 4. SPOOKY - Halloween Orange Nightmare */
+body.theme-spooky {
+    background-image: radial-gradient(circle at center top, #3b104c 0%, #1e0629 60%, #0b0112 100%) !important;
 }
-.theme-spooky input:focus, .theme-spooky select:focus, .theme-spooky textarea:focus {
-    border-color: #ff7700 !important;
-    box-shadow: 0 0 12px rgba(255, 119, 0, 0.4) !important;
+body.theme-spooky .text-spy-lime {
+    color: #FF6600 !important;
+}
+body.theme-spooky .bg-spy-lime {
+    background-color: #FF6600 !important;
+    color: #12021a !important;
+}
+body.theme-spooky .border-spy-lime {
+    border-color: #FF6600 !important;
+}
+body.theme-spooky input, body.theme-spooky select, body.theme-spooky textarea {
+    border: 2px solid rgba(255, 102, 0, 0.4) !important;
+    background: rgba(30, 6, 41, 0.9) !important;
+    color: #fff0f0 !important;
+}
+body.theme-spooky input:focus, body.theme-spooky select:focus, body.theme-spooky textarea:focus {
+    border-color: #FF6600 !important;
+    box-shadow: 0 0 14px rgba(255, 102, 0, 0.4) !important;
 }
 
-/* Retro Theme inputs override */
-.theme-retro input, .theme-retro select, .theme-retro textarea {
-    border: 3px solid #0f380f !important;
-    background: #9bbc0f !important;
-    color: #0f380f !important;
+/* 5. RETRO - 80s Synthwave Hot Pink */
+body.theme-retro {
+    background-image: radial-gradient(circle at center top, #470942 0%, #240221 60%, #0f000e 100%) !important;
 }
-.theme-retro input::placeholder, .theme-retro textarea::placeholder {
-    color: rgba(15, 56, 15, 0.5) !important;
+body.theme-retro .text-spy-lime {
+    color: #FF007F !important;
 }
-.theme-retro input:focus, .theme-retro select:focus, .theme-retro textarea:focus {
-    border-color: #0f380f !important;
-    box-shadow: 0 0 8px rgba(15, 56, 15, 0.3) !important;
+body.theme-retro .bg-spy-lime {
+    background-color: #FF007F !important;
+    color: #ffffff !important;
+}
+body.theme-retro .border-spy-lime {
+    border-color: #FF007F !important;
+}
+body.theme-retro input, body.theme-retro select, body.theme-retro textarea {
+    border: 2px solid rgba(255, 0, 127, 0.4) !important;
+    background: rgba(36, 2, 33, 0.9) !important;
+    color: #ffffff !important;
+}
+body.theme-retro input:focus, body.theme-retro select:focus, body.theme-retro textarea:focus {
+    border-color: #FF007F !important;
+    box-shadow: 0 0 14px rgba(255, 0, 127, 0.5) !important;
 }
 
 /* Accordion Animation & Custom classes */

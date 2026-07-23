@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   CheckCircle2, Lock, Sparkles, 
   Compass, Cpu, Snowflake, Ghost, Gamepad2, Eye, Zap, Palette
@@ -26,6 +26,15 @@ const Shop = ({ user, profileData, onUpdateProfile, onBack }) => {
     const equippedColor = profileData?.equipped_color || 'default';
     const equippedBanner = profileData?.equipped_banner || 'default';
     const equippedTheme = profileData?.equipped_theme || 'safari';
+
+    // Realtime background & theme preview effect
+    useEffect(() => {
+        const targetTheme = previewThemeId || equippedTheme || 'safari';
+        document.body.className = `theme-${targetTheme}`;
+        return () => {
+            document.body.className = `theme-${equippedTheme || 'safari'}`;
+        };
+    }, [previewThemeId, equippedTheme]);
 
     // Active or Previewed values for the Live Preview box
     const activeColorId = previewColorId || equippedColor;
