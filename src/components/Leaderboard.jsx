@@ -151,9 +151,9 @@ const Leaderboard = () => {
   const hasMore = visibleCount < Math.min(100, leaderboardData.length);
 
   return (
-    /* Fixed full-screen container — NO page scroll. Clears top bar (top-16) and navbar (bottom-[88px]) */
+    /* Fixed full-screen container — NO page scroll. Clears top bar and navbar */
     <div className="fixed top-16 left-0 right-0 px-3 sm:px-5 max-w-md mx-auto flex flex-col items-center overflow-hidden pointer-events-auto select-none z-10"
-      style={{ bottom: 'calc(88px + env(safe-area-inset-bottom, 0px))' }}
+      style={{ bottom: 'calc(96px + env(safe-area-inset-bottom, 0px))' }}
     >
       
       {/* Ambient background glows */}
@@ -293,8 +293,11 @@ const Leaderboard = () => {
 
         </div>
 
-        {/* ═══════════ RANK LIST CARD (takes remaining space, scrolls internally) ═══════════ */}
-        <div className="w-full rounded-2xl sm:rounded-3xl p-2 sm:p-2.5 flex flex-col overflow-hidden flex-1 min-h-0"
+        {/* ═══════════ RANK LIST CARD ═══════════
+            Top 10 mode: card hugs content (flex-shrink-0), no empty space
+            VOIR PLUS mode: card expands to fill remaining space (flex-1 min-h-0), list scrolls internally
+        */}
+        <div className={`w-full rounded-2xl sm:rounded-3xl p-2 sm:p-2.5 flex flex-col overflow-hidden ${visibleCount > 10 ? 'flex-1 min-h-0' : 'flex-shrink-0'}`}
           style={{
             background: 'linear-gradient(180deg, rgba(15,23,42,0.92) 0%, rgba(2,6,23,0.96) 50%, rgba(15,23,42,0.90) 100%)',
             border: '1px solid rgba(255,255,255,0.08)',
