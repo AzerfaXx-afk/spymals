@@ -206,8 +206,8 @@ const Profile = ({ user, profileData, onUpdateProfile, onLogout, onBack }) => {
     };
 
     return (
-        /* Smooth Full Scrollable Container — Allows scrolling all expanded menus & buttons cleanly above navbar */
-        <div className="fixed inset-0 top-14 sm:top-16 overflow-y-auto no-scrollbar pointer-events-auto select-none z-10"
+        /* Smooth Full Scrollable Container — Standardized top header alignment */
+        <div className="fixed inset-0 top-[70px] sm:top-[78px] overflow-y-auto no-scrollbar pointer-events-auto select-none z-10"
             style={{ paddingBottom: 'calc(140px + env(safe-area-inset-bottom, 0px))' }}
         >
             {/* Ambient Background Glow */}

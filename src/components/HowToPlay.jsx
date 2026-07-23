@@ -23,7 +23,7 @@ const HowToPlay = ({ onBack, onOpenSettings }) => {
     };
 
     return (
-        <div className="fixed inset-0 top-16 bottom-24 px-4 max-w-md mx-auto flex flex-col items-center justify-start pt-2 overflow-hidden pointer-events-auto select-none z-10">
+        <div className="fixed inset-0 top-[70px] sm:top-[78px] bottom-24 px-4 max-w-md mx-auto flex flex-col items-center justify-start overflow-hidden pointer-events-auto select-none z-10">
 
             {/* Background Soft Ambient Radial Glow - Seamless Blend */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">

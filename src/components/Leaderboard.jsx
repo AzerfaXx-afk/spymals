@@ -152,7 +152,7 @@ const Leaderboard = () => {
 
   return (
     /* Responsive full-screen container — perfectly fits Top 10 (#1 to #10) on mobile & PC while clearing navbar */
-    <div className="fixed top-14 sm:top-16 left-0 right-0 px-2.5 sm:px-5 max-w-md mx-auto flex flex-col items-center overflow-hidden pointer-events-auto select-none z-10"
+    <div className="fixed top-[70px] sm:top-[78px] left-0 right-0 px-2.5 sm:px-5 max-w-md mx-auto flex flex-col items-center overflow-hidden pointer-events-auto select-none z-10"
       style={{ bottom: 'calc(105px + env(safe-area-inset-bottom, 0px))' }}
     >
       

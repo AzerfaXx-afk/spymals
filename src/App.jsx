@@ -21,6 +21,7 @@ import { AudioProvider } from './contexts/AudioContext';
 import { supabase } from './utils/supabaseClient';
 import { CartoonAvatar } from './components/CartoonAvatars';
 import { ShoppingCart, Trophy, Gamepad2, BookOpen, Coins } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 function App() {
   const [currentScreen, setCurrentScreen] = useState('home');
@@ -38,6 +39,20 @@ function App() {
   // Touch swipe gesture for main tabs navigation (Clash Royale style)
   const [touchStartX, setTouchStartX] = useState(null);
   const [touchEndX, setTouchEndX] = useState(null);
+  const [slideDirection, setSlideDirection] = useState(0);
+
+  const navigateToScreen = (newScreen) => {
+    const mainTabs = ['leaderboard', 'home', 'how-to-play'];
+    const prevIdx = mainTabs.indexOf(currentScreen);
+    const nextIdx = mainTabs.indexOf(newScreen);
+
+    if (prevIdx !== -1 && nextIdx !== -1) {
+      setSlideDirection(nextIdx - prevIdx);
+    } else {
+      setSlideDirection(0);
+    }
+    setCurrentScreen(newScreen);
+  };
 
   const handleTouchStart = (e) => {
     if (['leaderboard', 'home', 'how-to-play'].includes(currentScreen)) {
@@ -63,9 +78,9 @@ function App() {
 
     if (currentIndex !== -1) {
       if (isSwipeLeft && currentIndex < mainTabs.length - 1) {
-        setCurrentScreen(mainTabs[currentIndex + 1]);
+        navigateToScreen(mainTabs[currentIndex + 1]);
       } else if (isSwipeRight && currentIndex > 0) {
-        setCurrentScreen(mainTabs[currentIndex - 1]);
+        navigateToScreen(mainTabs[currentIndex - 1]);
       }
     }
 
@@ -557,119 +572,11 @@ function App() {
         )}
 
         <div 
-          className={isMenuScreen ? "h-screen h-[100dvh] overflow-hidden" : ""}
+          className={isMenuScreen ? "h-screen h-[100dvh] overflow-hidden relative" : ""}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          {currentScreen === 'home' && (
-            <Home
-              profileData={profileData}
-              hasHistory={gameHistory.length > 0}
-              onStartGame={startNewMission}
-              onOpenHowToPlay={() => setCurrentScreen('how-to-play')}
-              onOpenSettings={() => setShowSettings(true)}
-              onOpenLeaderboard={() => setCurrentScreen('leaderboard')}
-              onOpenHistory={() => setCurrentScreen('history')}
-              onOpenProfile={() => setCurrentScreen('profile')}
-              onOpenMultiplayer={() => setCurrentScreen('multiplayer-lobby')}
-            />
-          )}
-          {currentScreen === 'how-to-play' && (
-            <HowToPlay
-              onBack={() => setCurrentScreen('home')}
-              onOpenSettings={() => setShowSettings(true)}
-            />
-          )}
-          {currentScreen === 'setup' && (
-            <PlayerSetup
-              onNext={confirmPlayerCount}
-              onBack={() => setCurrentScreen('home')}
-              onOpenSettings={() => setShowSettings(true)}
-            />
-          )}
-          {currentScreen === 'identify' && (
-            <IdentifyAgents
-              players={players}
-              onUpdatePlayers={setPlayers}
-              onConfirm={confirmTeam}
-              onBack={() => setCurrentScreen('setup')}
-              onOpenSettings={() => setShowSettings(true)}
-            />
-          )}
-          {currentScreen === 'briefing' && (
-            <MissionBriefing
-              totalPlayers={players.length}
-              onStartGame={startGame}
-              onBack={() => setCurrentScreen('identify')}
-              onOpenSettings={() => setShowSettings(true)}
-            />
-          )}
-          {currentScreen === 'game' && (
-            <GameSession
-              players={players}
-              config={gameConfig}
-              onEndGame={handleScoreUpdate}
-              onAbort={() => setCurrentScreen('home')}
-              onOpenSettings={() => setShowSettings(true)}
-            />
-          )}
-          {currentScreen === 'scoreboard' && (
-            <Scoreboard
-              players={players}
-              winners={winners}
-              onReplay={replayGame}
-              onHome={() => setCurrentScreen('home')}
-              onOpenSettings={() => setShowSettings(true)}
-            />
-          )}
-          {currentScreen === 'leaderboard' && (
-            <Leaderboard
-              onBack={() => setCurrentScreen('home')}
-              onOpenSettings={() => setShowSettings(true)}
-            />
-          )}
-          {currentScreen === 'history' && (
-            <History
-              history={gameHistory}
-              onUpdateHistory={handleUpdateHistory}
-              onReplayTeam={(teamPlayers) => {
-                setPlayers(teamPlayers);
-                setCurrentScreen('identify');
-              }}
-              onBack={() => setCurrentScreen('home')}
-              onOpenSettings={() => setShowSettings(true)}
-            />
-          )}
-          {currentScreen === 'profile' && (
-            <Profile
-              user={user}
-              profileData={profileData}
-              onUpdateProfile={handleUpdateProfile}
-              onLogout={handleLogout}
-              onBack={() => setCurrentScreen('home')}
-              onOpenShop={() => setCurrentScreen('shop')}
-            />
-          )}
-          {currentScreen === 'shop' && (
-            <Shop
-              user={user}
-              profileData={profileData}
-              onUpdateProfile={handleUpdateProfile}
-              onBack={() => setCurrentScreen('profile')}
-            />
-          )}
-          {currentScreen === 'multiplayer-lobby' && (
-            <MultiplayerLobby
-              user={user}
-              profileData={profileData}
-              onBack={() => setCurrentScreen('home')}
-              onStartMultiplayerGame={(roomData) => {
-                setMultiplayerRoom(roomData);
-                setCurrentScreen('multiplayer-game');
-              }}
-              onLoginRedirect={() => {
-                setAuthSkipped(false);
                 setCurrentScreen('home');
               }}
             />
@@ -696,7 +603,7 @@ function App() {
                 
                 {/* Tab 1: Classement */}
                 <button
-                  onClick={() => setCurrentScreen('leaderboard')}
+                  onClick={() => navigateToScreen('leaderboard')}
                   className={`flex-1 flex flex-col items-center justify-center py-1 relative z-10 transition-all duration-300 transform cursor-pointer active:scale-90 group ${
                     currentScreen === 'leaderboard' ? 'text-spy-lime font-black' : 'text-white/40 hover:text-white/80'
                   }`}
@@ -721,7 +628,7 @@ function App() {
                 {/* Tab 2: Center Hero Play Button */}
                 <div className="flex-1 flex justify-center relative -translate-y-5 z-20">
                   <button
-                    onClick={() => setCurrentScreen('home')}
+                    onClick={() => navigateToScreen('home')}
                     className={`w-16 h-16 rounded-2xl bg-gradient-to-b from-[#d9ff33] via-spy-lime to-[#77aa00] border-3 border-white flex flex-col items-center justify-center shadow-[0_12px_28px_rgba(204,255,0,0.55),0_4px_0_#446600,inset_0_1px_0_rgba(255,255,255,0.5)] active:translate-y-1 active:shadow-[0_2px_0_#446600] transition-all duration-300 cursor-pointer group ${
                       currentScreen === 'home' ? 'shadow-[0_0_25px_rgba(204,255,0,0.85),0_4px_0_#446600] scale-105 ring-2 ring-spy-lime/60' : 'hover:scale-105'
                     }`}
@@ -734,7 +641,7 @@ function App() {
 
                 {/* Tab 3: Guide */}
                 <button
-                  onClick={() => setCurrentScreen('how-to-play')}
+                  onClick={() => navigateToScreen('how-to-play')}
                   className={`flex-1 flex flex-col items-center justify-center py-1 relative z-10 transition-all duration-300 transform cursor-pointer active:scale-90 group ${
                     currentScreen === 'how-to-play' ? 'text-spy-lime font-black' : 'text-white/40 hover:text-white/80'
                   }`}

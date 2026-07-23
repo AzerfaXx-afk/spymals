@@ -126,71 +126,80 @@ const EditProfileModal = ({ profileData, onSave, onClose, isForce = false }) => 
                             Avatar de l'agent
                         </label>
                         
-                        <div className="grid grid-cols-2 gap-3 pt-1">
-                            {/* Card 1: Predefined Animals */}
-                            <button
-                                type="button"
-                                onClick={() => setShowAnimalModal(true)}
-                                className={`rounded-2xl p-3.5 flex flex-col items-center justify-center gap-2 cursor-pointer border transition-all duration-200 min-h-[100px] relative ${
-                                    !selectedAvatar.startsWith('data:image/') && !selectedAvatar.startsWith('http')
-                                        ? 'bg-spy-lime/10 border-spy-lime shadow-[0_0_15px_rgba(204,255,0,0.15)]'
-                                        : 'bg-white/5 border-white/10 hover:border-white/20'
-                                }`}
-                            >
-                                <div className="w-11 h-11 rounded-xl bg-slate-800 border border-white/10 overflow-hidden flex items-center justify-center">
-                                    <CartoonAvatar id={selectedAvatar} className="w-full h-full border-none shadow-none" />
-                                </div>
-                                <div className="text-center">
-                                    <span className="text-[9.5px] font-black uppercase tracking-wider block text-white">
-                                        Mascottes
-                                    </span>
-                                    <span className="text-[8px] text-spy-lime font-bold block mt-0.5">Choisir mascotte</span>
-                                </div>
-                                {!selectedAvatar.startsWith('data:image/') && !selectedAvatar.startsWith('http') && (
-                                    <CheckCircle2 className="w-4 h-4 text-spy-lime absolute top-2 right-2" />
-                                )}
-                            </button>
+                        {(() => {
+                            const isCustomImage = selectedAvatar.startsWith('data:image/') || selectedAvatar.startsWith('http');
+                            const mascotPreviewId = isCustomImage 
+                                ? (profileData?.avatar_emoji && !profileData.avatar_emoji.startsWith('data:') && !profileData.avatar_emoji.startsWith('http') ? profileData.avatar_emoji : 'fox-detective')
+                                : selectedAvatar;
 
-                            {/* Card 2: Gallery / Photo */}
-                            <label
-                                className={`rounded-2xl p-3.5 flex flex-col items-center justify-center gap-2 cursor-pointer border transition-all duration-200 min-h-[100px] relative overflow-hidden ${
-                                    selectedAvatar.startsWith('data:image/') || selectedAvatar.startsWith('http')
-                                        ? 'bg-spy-lime/10 border-spy-lime shadow-[0_0_15px_rgba(204,255,0,0.15)]'
-                                        : 'bg-white/5 border-white/10 hover:border-white/20'
-                                }`}
-                            >
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={handleFileChange}
-                                    className="hidden"
-                                />
-                                {selectedAvatar.startsWith('data:image/') || selectedAvatar.startsWith('http') ? (
-                                    <>
-                                        <img src={selectedAvatar} alt="Photo" className="w-11 h-11 rounded-xl object-cover border border-white/20 shadow-md" />
-                                        <div className="text-center">
-                                            <span className="text-[9.5px] font-black uppercase tracking-wider block text-white">
-                                                Photo Galerie
-                                            </span>
-                                            <span className="text-[8px] text-spy-lime font-bold block mt-0.5">Changer l'image</span>
-                                        </div>
-                                        <CheckCircle2 className="w-4 h-4 text-spy-lime absolute top-2 right-2" />
-                                    </>
-                                ) : (
-                                    <>
-                                        <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
-                                            <Camera className="w-6 h-6 text-white/60" />
+                            return (
+                                <div className="grid grid-cols-2 gap-3 pt-1">
+                                    {/* Card 1: Predefined Animal Mascots */}
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowAnimalModal(true)}
+                                        className={`rounded-2xl p-3.5 flex flex-col items-center justify-center gap-2 cursor-pointer border transition-all duration-200 min-h-[100px] relative ${
+                                            !isCustomImage
+                                                ? 'bg-spy-lime/10 border-spy-lime shadow-[0_0_15px_rgba(204,255,0,0.15)]'
+                                                : 'bg-white/5 border-white/10 hover:border-white/20'
+                                        }`}
+                                    >
+                                        <div className="w-11 h-11 rounded-xl bg-slate-800 border border-white/10 overflow-hidden flex items-center justify-center">
+                                            <CartoonAvatar id={mascotPreviewId} className="w-full h-full border-none shadow-none" />
                                         </div>
                                         <div className="text-center">
                                             <span className="text-[9.5px] font-black uppercase tracking-wider block text-white">
-                                                Photo Galerie
+                                                Mascottes
                                             </span>
-                                            <span className="text-[8px] text-white/40 font-bold block mt-0.5">Importer photo</span>
+                                            <span className="text-[8px] text-spy-lime font-bold block mt-0.5">Choisir mascotte</span>
                                         </div>
-                                    </>
-                                )}
-                            </label>
-                        </div>
+                                        {!isCustomImage && (
+                                            <CheckCircle2 className="w-4 h-4 text-spy-lime absolute top-2 right-2" />
+                                        )}
+                                    </button>
+
+                                    {/* Card 2: Gallery / Photo */}
+                                    <label
+                                        className={`rounded-2xl p-3.5 flex flex-col items-center justify-center gap-2 cursor-pointer border transition-all duration-200 min-h-[100px] relative overflow-hidden ${
+                                            isCustomImage
+                                                ? 'bg-spy-lime/10 border-spy-lime shadow-[0_0_15px_rgba(204,255,0,0.15)]'
+                                                : 'bg-white/5 border-white/10 hover:border-white/20'
+                                        }`}
+                                    >
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleFileChange}
+                                            className="hidden"
+                                        />
+                                        {isCustomImage ? (
+                                            <>
+                                                <img src={selectedAvatar} alt="Photo" className="w-11 h-11 rounded-xl object-cover border border-white/20 shadow-md" />
+                                                <div className="text-center">
+                                                    <span className="text-[9.5px] font-black uppercase tracking-wider block text-white">
+                                                        Photo Galerie
+                                                    </span>
+                                                    <span className="text-[8px] text-spy-lime font-bold block mt-0.5">Changer l'image</span>
+                                                </div>
+                                                <CheckCircle2 className="w-4 h-4 text-spy-lime absolute top-2 right-2" />
+                                            </>
+                                        ) : (
+                                            <>
+                                                <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+                                                    <Camera className="w-6 h-6 text-white/60" />
+                                                </div>
+                                                <div className="text-center">
+                                                    <span className="text-[9.5px] font-black uppercase tracking-wider block text-white">
+                                                        Photo Galerie
+                                                    </span>
+                                                    <span className="text-[8px] text-white/40 font-bold block mt-0.5">Importer photo</span>
+                                                </div>
+                                            </>
+                                        )}
+                                    </label>
+                                </div>
+                            );
+                        })()}
                     </div>
                 </div>
 
