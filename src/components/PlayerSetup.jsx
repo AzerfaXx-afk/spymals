@@ -70,26 +70,25 @@ const PlayerSetup = ({ onNext, onBack, onOpenSettings }) => {
                     </AnimatePresence>
                 </div>
 
-                {/* Counter Stepper Control - Proportional, no crushing */}
-                <div className="flex items-center justify-between w-full mb-6 bg-black/35 rounded-2xl p-3 border-2 border-white/10 shadow-inner">
-                    <BouncyButton
+                {/* Counter Stepper Control - Fixed dimensions, perfectly centered */}
+                <div className="flex items-center justify-between w-full mb-6 bg-black/40 rounded-2xl p-3 border-2 border-white/10 shadow-inner">
+                    <button
+                        type="button"
                         onClick={decrement}
-                        variant="secondary"
-                        className="w-12 h-12 text-2xl font-black rounded-xl border-3 border-black shadow-[0_4px_0_#000] active:translate-y-1 flex-shrink-0 flex items-center justify-center"
                         disabled={count <= 3}
-                        soundOptions={{ pitch: Math.max(0.5, 0.8 + ((count - 1 - 3) * 0.1)) }}
+                        className="w-12 h-12 rounded-xl bg-gradient-to-b from-slate-700 to-slate-800 border-2 border-white/20 text-white font-black text-2xl shadow-[0_4px_0_#000] active:translate-y-1 active:shadow-[0_0_0_#000] flex-shrink-0 flex items-center justify-center cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed hover:border-spy-lime transition-all"
                     >
                         -
-                    </BouncyButton>
+                    </button>
 
                     <motion.div
                         key={count}
                         initial={{ scale: 0.7, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-                        className="flex flex-col items-center px-4"
+                        className="flex flex-col items-center justify-center flex-1 px-2 text-center"
                     >
-                        <span className="text-5xl sm:text-6xl font-black text-white px-2 font-display text-shadow-lg leading-none tracking-tight">
+                        <span className="text-5xl sm:text-6xl font-black text-white font-display text-shadow-lg leading-none tracking-tight">
                             {count}
                         </span>
                         <span className="text-[10px] font-black uppercase tracking-widest text-spy-lime mt-1">
@@ -97,15 +96,14 @@ const PlayerSetup = ({ onNext, onBack, onOpenSettings }) => {
                         </span>
                     </motion.div>
 
-                    <BouncyButton
+                    <button
+                        type="button"
                         onClick={increment}
-                        variant="primary"
-                        className="w-12 h-12 text-2xl font-black rounded-xl border-3 border-black shadow-[0_4px_0_#000] active:translate-y-1 flex-shrink-0 flex items-center justify-center"
                         disabled={count >= 20}
-                        soundOptions={{ pitch: Math.min(3.0, 0.8 + ((count + 1 - 3) * 0.1)) }}
+                        className="w-12 h-12 rounded-xl bg-gradient-to-b from-spy-lime to-[#aadd00] border-2 border-black text-black font-black text-2xl shadow-[0_4px_0_#000] active:translate-y-1 active:shadow-[0_0_0_#000] flex-shrink-0 flex items-center justify-center cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                     >
                         +
-                    </BouncyButton>
+                    </button>
                 </div>
 
                 {/* Action Button */}

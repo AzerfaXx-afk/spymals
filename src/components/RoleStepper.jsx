@@ -8,15 +8,14 @@ const RoleStepper = ({ label, count, onIncrement, onDecrement, color = 'text-whi
 
                 {/* Controls Row */}
                 <div className="flex items-center justify-between w-full gap-2 px-1">
-                    <BouncyButton
+                    <button
+                        type="button"
                         onClick={onDecrement}
-                        className="w-11 h-11 text-xl font-black rounded-xl border-2 border-black shadow-[0_3px_0_#000] active:translate-y-0.5"
-                        variant="secondary"
                         disabled={count <= 0}
-                        soundOptions={soundOptions}
+                        className="w-10 h-10 rounded-xl bg-gradient-to-b from-slate-700 to-slate-800 border-2 border-white/20 text-white font-black text-xl shadow-[0_3px_0_#000] active:translate-y-0.5 active:shadow-[0_0_0_#000] flex-shrink-0 flex items-center justify-center cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed hover:border-spy-lime transition-all"
                     >
                         -
-                    </BouncyButton>
+                    </button>
 
                     <div className="flex flex-col items-center justify-center bg-black/60 border-2 border-white/10 shadow-inner rounded-xl w-full max-w-[7.5rem] py-2 px-1 h-[84px] relative">
                         <span className={`text-[36px] font-display font-black leading-none whitespace-nowrap text-shadow-md ${color === 'text-white' ? 'text-white' : color}`}>
@@ -28,14 +27,13 @@ const RoleStepper = ({ label, count, onIncrement, onDecrement, color = 'text-whi
                         </span>
                     </div>
 
-                    <BouncyButton
+                    <button
+                        type="button"
                         onClick={onIncrement}
-                        className="w-11 h-11 text-xl font-black rounded-xl border-2 border-black shadow-[0_3px_0_#000] active:translate-y-0.5"
-                        variant="secondary"
-                        soundOptions={soundOptions}
+                        className="w-10 h-10 rounded-xl bg-gradient-to-b from-spy-lime to-[#aadd00] border-2 border-black text-black font-black text-xl shadow-[0_3px_0_#000] active:translate-y-0.5 active:shadow-[0_0_0_#000] flex-shrink-0 flex items-center justify-center cursor-pointer transition-all"
                     >
                         +
-                    </BouncyButton>
+                    </button>
                 </div>
 
                 {/* SubLabel */}
