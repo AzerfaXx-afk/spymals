@@ -16,6 +16,7 @@ import MultiplayerLobby from './components/MultiplayerLobby';
 import MultiplayerGame from './components/MultiplayerGame';
 import EditProfileModal from './components/EditProfileModal';
 import PWAManager from './components/PWAManager';
+import PullToRefresh from './components/PullToRefresh';
 
 import { AudioProvider } from './contexts/AudioContext';
 import { supabase } from './utils/supabaseClient';
@@ -581,8 +582,9 @@ function App() {
 
   return (
     <AudioProvider>
-      <div className="antialiased text-gray-900 bg-spy-blue fixed inset-0 w-full h-full h-[100dvh] overflow-hidden select-none">
-        <PWAManager />
+      <PullToRefresh>
+        <div className="antialiased text-gray-900 bg-spy-blue min-h-screen min-h-[100dvh] w-full select-none">
+          <PWAManager />
         
         {/* Top Header for Menu Screens */}
         {isMenuScreen && (
@@ -860,7 +862,8 @@ function App() {
             isForce={true}
           />
         )}
-      </div>
+        </div>
+      </PullToRefresh>
     </AudioProvider>
   );
 }
