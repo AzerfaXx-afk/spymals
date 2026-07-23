@@ -159,8 +159,8 @@ const Leaderboard = () => {
       
       {/* Background Seamless Ambient Glow */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
-        <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-96 h-96 bg-spy-lime/10 rounded-full blur-[100px]"></div>
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-80 h-80 bg-blue-500/10 rounded-full blur-[90px]"></div>
+        <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-96 h-96 bg-spy-lime/15 rounded-full blur-[110px]"></div>
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-80 h-80 bg-blue-600/10 rounded-full blur-[100px]"></div>
       </div>
 
       <div className="z-10 w-full flex flex-col items-center overflow-hidden flex-1">
@@ -251,8 +251,8 @@ const Leaderboard = () => {
 
         </div>
 
-        {/* LEVER 2: ROUNDED RANK LIST CONTAINER - Premium Cartoon 3D Glass Card */}
-        <div className={`w-full bg-slate-950/90 backdrop-blur-2xl border-2 border-white/15 rounded-3xl p-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.85),0_0_30px_rgba(204,255,0,0.04)] flex flex-col overflow-hidden transition-all duration-300 ${visibleCount > 10 ? 'flex-1 min-h-0' : 'flex-shrink-0'}`}>
+        {/* LEVER 2: ROUNDED RANK LIST CONTAINER - Seamless Glass Card with Soft Outer Ambient Shadow */}
+        <div className={`w-full bg-gradient-to-b from-slate-900/90 via-slate-950/95 to-slate-950/90 backdrop-blur-2xl border-2 border-white/15 rounded-3xl p-2.5 shadow-[0_16px_40px_rgba(0,0,0,0.6),0_0_20px_rgba(204,255,0,0.06)] flex flex-col overflow-hidden transition-all duration-300 ${visibleCount > 10 ? 'flex-1 min-h-0' : 'flex-shrink-0'}`}>
           
           <div className="flex items-center justify-between px-2 pb-1 mb-1 border-b border-white/10 text-[8px] sm:text-[8.5px] font-black uppercase tracking-widest text-white/40 flex-shrink-0">
             <span>RANG & AGENT</span>
@@ -267,14 +267,14 @@ const Leaderboard = () => {
           ) : (
             <div className={`flex flex-col overflow-hidden ${visibleCount > 10 ? 'flex-1 min-h-0 justify-between' : 'flex-shrink-0'}`}>
               
-              {/* LEVER 3: Scrollable Player List Height - max-h-[380px] fits all 7 items (#4 to #10) 100% cleanly */}
-              <div className={`overflow-y-auto pr-0.5 no-scrollbar space-y-1 ${visibleCount > 10 ? 'flex-1' : 'max-h-[380px]'}`}>
+              {/* LEVER 3: Scrollable Player List Height - Set to max-h-[415px] so item #10 (Agent_Pro_20) has generous space above the button */}
+              <div className={`overflow-y-auto pr-0.5 no-scrollbar space-y-1.5 ${visibleCount > 10 ? 'flex-1' : 'max-h-[415px]'}`}>
                 {paginatedList.map((agent, index) => {
                   const rankNumber = index + 4;
                   return (
                     <div
                       key={agent.username + index}
-                      className="flex items-center justify-between bg-slate-900/90 border border-white/10 hover:border-spy-lime/50 rounded-xl p-1.5 transition-all duration-200 shadow-sm"
+                      className="flex items-center justify-between bg-slate-900/80 border border-white/10 hover:border-spy-lime/50 rounded-xl p-1.5 transition-all duration-200 shadow-sm"
                     >
                       {/* Left: Rank + Avatar + Name */}
                       <div className="flex items-center gap-2">
@@ -315,7 +315,7 @@ const Leaderboard = () => {
               </div>
 
               {/* ALWAYS VISIBLE PINNED CONTROLS AT BOTTOM (+10 AND REPLIER) */}
-              <div className="pt-1.5 flex items-center gap-2 flex-shrink-0">
+              <div className="pt-2 flex items-center gap-2 flex-shrink-0">
                 {hasMore && (
                   <button
                     onClick={handleLoadMore}
