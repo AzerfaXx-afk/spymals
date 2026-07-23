@@ -116,20 +116,14 @@ const PlayerSetup = ({ onNext, onBack, onOpenSettings }) => {
                     </BouncyButton>
                 </div>
 
-                {/* Action Buttons */}
-                <div className="w-full space-y-3">
+                {/* Action Button */}
+                <div className="w-full pt-2">
                     <button
                         onClick={() => onNext(count)}
                         className="btn-cartoon-primary w-full py-4 text-xl font-black uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-[0_6px_0_#000] active:translate-y-1.5 active:shadow-[0_0_0_#000] transition-all"
                     >
-                        CONTINUER <ChevronRight className="w-6 h-6 stroke-[3]" />
-                    </button>
-
-                    <button
-                        onClick={onBack}
-                        className="btn-cartoon-secondary w-full py-3 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer shadow-[0_4px_0_#000] active:translate-y-1 active:shadow-[0_0_0_#000] transition-all"
-                    >
-                        <ArrowLeft className="w-4 h-4 stroke-[3]" /> RETOUR
+                        <span>CONTINUER</span>
+                        <ChevronRight className="w-6 h-6 stroke-[3]" />
                     </button>
                 </div>
             </motion.div>

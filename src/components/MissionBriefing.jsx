@@ -27,7 +27,7 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
         { id: 'food', label: 'Gourmand / Nourriture', icon: <Utensils className="w-5 h-5 text-orange-400" /> },
         { id: 'fun', label: 'Absurde & Fun', icon: <Smile className="w-5 h-5 text-yellow-400" /> },
         { id: 'random', label: 'Aléatoire', icon: <Dices className="w-5 h-5 text-spy-lime" /> },
-        { id: 'custom', label: '>>> Mots Perso <<<', icon: <Edit3 className="w-5 h-5 text-spy-orange" />, special: true },
+        { id: 'custom', label: 'Mots Personnalisés', icon: <Edit3 className="w-5 h-5 text-spy-orange" />, special: true },
     ];
 
     // Easter egg: screw animation

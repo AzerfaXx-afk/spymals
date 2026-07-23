@@ -21,13 +21,16 @@ const EditPlayerModal = ({ player, onSave, onCancel }) => {
     const fileInputRef = useRef(null);
 
     const COLOR_PALETTE = [
-        { class: 'text-white', bgClass: 'bg-white', label: 'Blanc' },
-        { class: 'text-spy-lime', bgClass: 'bg-spy-lime', label: 'Neon Lime' },
-        { class: 'text-spy-orange', bgClass: 'bg-spy-orange', label: 'Orange Espion' },
-        { class: 'text-cyan-400', bgClass: 'bg-cyan-400', label: 'Cyan Cyber' },
-        { class: 'text-purple-400', bgClass: 'bg-purple-400', label: 'Violet Infiltré' },
-        { class: 'text-pink-400', bgClass: 'bg-pink-400', label: 'Rose Néon' },
+        { id: 'default', class: 'text-white', bgClass: 'bg-white', label: 'Blanc Classique', badge: 'Gratuit' },
+        { id: 'lime', class: 'text-spy-lime', bgClass: 'bg-spy-lime', label: 'Néon Lime', badge: 'Recrue' },
+        { id: 'orange', class: 'text-spy-orange', bgClass: 'bg-spy-orange', label: 'Orange Espion', badge: 'Recrue' },
+        { id: 'cyan', class: 'text-cyan-400', bgClass: 'bg-cyan-400', label: 'Cyan Cyber', badge: 'Détective' },
+        { id: 'purple', class: 'text-purple-400', bgClass: 'bg-purple-400', label: 'Violet Infiltré', badge: 'Détective' },
+        { id: 'pink', class: 'text-pink-400', bgClass: 'bg-pink-400', label: 'Rose Néon', badge: 'Élite Shop' },
+        { id: 'gold', class: 'text-yellow-400 font-black drop-shadow-[0_2px_10px_rgba(234,179,8,0.4)]', bgClass: 'bg-yellow-400', label: 'Or Impérial', badge: 'Légende' },
     ];
+
+    const selectedColorObj = COLOR_PALETTE.find(c => c.class === pseudoColor) || COLOR_PALETTE[0];
 
     const handleSave = () => {
         const finalName = name.trim() !== '' ? name.trim() : player.name;
@@ -183,20 +186,29 @@ const EditPlayerModal = ({ player, onSave, onCancel }) => {
                     </div>
 
                     {/* Color Picker Swatches */}
-                    <div className="flex items-center justify-center gap-2.5 mt-3">
-                        {COLOR_PALETTE.map((color) => (
-                            <button
-                                key={color.class}
-                                type="button"
-                                onClick={() => setPseudoColor(color.class)}
-                                className={`w-7 h-7 rounded-full ${color.bgClass} border-2 transition-all cursor-pointer ${
-                                    pseudoColor === color.class 
-                                        ? 'scale-125 border-white shadow-[0_0_12px_rgba(255,255,255,0.7)] ring-2 ring-spy-lime' 
-                                        : 'border-black/60 hover:scale-110 opacity-70 hover:opacity-100'
-                                }`}
-                                title={color.label}
-                            />
-                        ))}
+                    <div className="flex flex-col items-center gap-1.5 mt-3 w-full">
+                        <div className="flex items-center justify-center gap-2">
+                            {COLOR_PALETTE.map((color) => (
+                                <button
+                                    key={color.id}
+                                    type="button"
+                                    onClick={() => setPseudoColor(color.class)}
+                                    className={`w-7 h-7 rounded-full ${color.bgClass} border-2 transition-all cursor-pointer relative flex items-center justify-center ${
+                                        pseudoColor === color.class 
+                                            ? 'scale-125 border-white shadow-[0_0_14px_rgba(255,255,255,0.8)] ring-2 ring-spy-lime' 
+                                            : 'border-black/60 hover:scale-110 opacity-70 hover:opacity-100'
+                                    }`}
+                                    title={`${color.label} (${color.badge})`}
+                                >
+                                    {pseudoColor === color.class && (
+                                        <div className="w-2 h-2 rounded-full bg-black shadow-sm" />
+                                    )}
+                                </button>
+                            ))}
+                        </div>
+                        <span className="text-[9.5px] font-black uppercase tracking-wider text-white/50 bg-black/30 px-3 py-0.5 rounded-full border border-white/10 mt-1">
+                            Couleur : <span className={selectedColorObj.class}>{selectedColorObj.label}</span> · <span className="text-spy-lime">{selectedColorObj.badge}</span>
+                        </span>
                     </div>
                 </div>
 
