@@ -7,6 +7,7 @@ import { wordPacks } from '../data/wordPacks';
 import SettingsGear from './SettingsGear';
 import { useAudio } from '../contexts/AudioContext';
 import { supabase } from '../utils/supabaseClient';
+import { CartoonAvatar } from './CartoonAvatars';
 
 const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) => {
     // States: distributing | playing | voting | reveal | mrwhite_guess
@@ -490,10 +491,10 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                                         </span>
                                     </div>
 
-                                    <div className="w-24 h-24 rounded-full bg-black/40 border-4 border-spy-lime flex items-center justify-center text-5xl shadow-[0_0_30px_rgba(204,255,0,0.3)]">
+                                    <div className="w-24 h-24 rounded-full bg-black/40 border-4 border-spy-lime flex items-center justify-center shadow-[0_0_30px_rgba(204,255,0,0.3)] overflow-hidden">
                                         {currentSpeaker.avatar.type === 'image'
                                             ? <img src={currentSpeaker.avatar.value} alt={currentSpeaker.name} className="w-full h-full object-cover rounded-full" />
-                                            : <span>{currentSpeaker.avatar.value}</span>
+                                            : <CartoonAvatar id={currentSpeaker.avatar.value} className="w-full h-full border-none shadow-none" />
                                         }
                                     </div>
                                     <div>
@@ -552,10 +553,16 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                                 transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                                 className="w-full flex flex-col items-center gap-4"
                             >
-                                <div className="p-4 rounded-full bg-spy-orange/20 border-2 border-spy-orange/40 animate-bounce-slow">
-                                    <Vote className="w-14 h-14 text-spy-orange stroke-[2.5]" />
+                                {/* 3D Detective Mascot Hero Illustration */}
+                                <div className="relative w-36 h-36 flex items-center justify-center animate-bounce-slow">
+                                    <div className="absolute inset-0 bg-spy-orange/20 rounded-full blur-2xl pointer-events-none" />
+                                    <img src="/detective_mascot.png" alt="Agents Vote" className="w-full h-full object-contain filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.7)]" />
                                 </div>
-                                <div className="card-cartoon bg-gradient-to-b from-[#14233e] to-[#0a1426] p-6 border-[3.5px] border-white/20 shadow-2xl w-full rounded-[32px]">
+
+                                <div className="card-cartoon bg-gradient-to-b from-[#14233e] to-[#0a1426] p-6 border-[3.5px] border-white/20 shadow-2xl w-full rounded-[32px] text-center">
+                                    <div className="bg-spy-orange/20 border border-spy-orange/50 px-3 py-1 rounded-full inline-block mb-3">
+                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-spy-orange">Accusation Finale</span>
+                                    </div>
                                     <h2 className="text-2xl font-black text-white uppercase tracking-tight mb-2 text-shadow-md">
                                         Tout le monde a parlé !
                                     </h2>
@@ -627,7 +634,7 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                                             {player.avatar.type === 'image' ? (
                                                 <img src={player.avatar.value} alt={player.name} className="w-full h-full object-cover rounded-full shadow-lg border-2 border-white/20" />
                                             ) : (
-                                                <span className="text-4xl">{player.avatar.value}</span>
+                                                <CartoonAvatar id={player.avatar.value} className="w-full h-full border-none shadow-none" />
                                             )}
                                         </div>
                                         <span className={`font-black uppercase text-xs tracking-wider text-center ${player.pseudoColor || 'text-white'}`}>
@@ -687,7 +694,7 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                             {votedPlayer.avatar.type === 'image' ? (
                                 <img src={votedPlayer.avatar.value} alt={votedPlayer.name} className="w-full h-full object-cover rounded-full shadow-2xl border-4 border-white/20" />
                             ) : (
-                                <span className="text-8xl">{votedPlayer.avatar.value}</span>
+                                <CartoonAvatar id={votedPlayer.avatar.value} className="w-full h-full border-none shadow-none" />
                             )}
                         </div>
 
@@ -758,11 +765,11 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
 
                 {/* Player identity */}
                 <div className="flex flex-col items-center gap-3">
-                    <div className="w-20 h-20 rounded-full bg-black/40 flex items-center justify-center text-5xl border-3 border-spy-lime shadow-[0_0_25px_rgba(204,255,0,0.3)]">
+                    <div className="w-24 h-24 rounded-full bg-black/40 flex items-center justify-center border-4 border-spy-lime shadow-[0_0_30px_rgba(204,255,0,0.35)] overflow-hidden">
                         {currentPlayer.avatar.type === 'image' ? (
                             <img src={currentPlayer.avatar.value} alt={currentPlayer.name} className="w-full h-full object-cover rounded-full" />
                         ) : (
-                            <span>{currentPlayer.avatar.value}</span>
+                            <CartoonAvatar id={currentPlayer.avatar.value} className="w-full h-full border-none shadow-none" />
                         )}
                     </div>
                     <h2 className={`text-2xl font-black uppercase tracking-wider text-shadow-md ${currentPlayer.pseudoColor || 'text-white'}`}>

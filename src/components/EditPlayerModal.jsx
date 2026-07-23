@@ -212,18 +212,8 @@ const EditPlayerModal = ({ player, profileData, onSave, onCancel }) => {
                                 </button>
                             ))}
                         </div>
-                        <span className="text-[9.5px] font-black uppercase tracking-wider text-white/70 bg-black/40 px-3 py-1 rounded-full border border-white/10 mt-1 flex items-center gap-1.5 shadow-inner">
-                            <span>Couleur : <span className={selectedColorObj.class}>{selectedColorObj.label}</span></span>
-                            <span className="text-white/30">•</span>
-                            {selectedColorObj.unlocked ? (
-                                <span className="text-spy-lime flex items-center gap-1">
-                                    <Sparkles className="w-3 h-3 text-spy-lime" /> Débloquée
-                                </span>
-                            ) : (
-                                <span className="text-amber-400 flex items-center gap-1">
-                                    <Lock className="w-3 h-3 text-amber-400" /> À débloquer dans le Shop
-                                </span>
-                            )}
+                        <span className="text-[10px] font-black uppercase tracking-wider text-white/80 bg-black/40 px-3.5 py-1 rounded-full border border-white/10 mt-1 shadow-inner">
+                            Couleur : <span className={selectedColorObj.class}>{selectedColorObj.label}</span>
                         </span>
                     </div>
                 </div>
