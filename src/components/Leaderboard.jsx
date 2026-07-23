@@ -153,9 +153,9 @@ const Leaderboard = () => {
   return (
     /* Fixed full-screen container — NO page scroll. Clears top bar and navbar */
     <div className="fixed top-16 left-0 right-0 px-3 sm:px-5 max-w-md mx-auto flex flex-col items-center overflow-hidden pointer-events-auto select-none z-10"
-      style={{ bottom: 'calc(115px + env(safe-area-inset-bottom, 0px))' }}
+      style={{ bottom: 'calc(180px + env(safe-area-inset-bottom, 0px))' }}
     >
-      
+
       {/* Ambient background glows */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full blur-[140px]"
@@ -165,7 +165,7 @@ const Leaderboard = () => {
 
       {/* All content in a flex column — header & podium are fixed, card stretches */}
       <div className="z-10 w-full flex flex-col items-center overflow-hidden flex-1 min-h-0">
-        
+
         {/* ═══════════ HEADER (never scrolls) ═══════════ */}
         <div className="text-center mb-0.5 sm:mb-1 flex-shrink-0">
           <div className="inline-flex items-center px-3 py-0.5 rounded-full bg-spy-lime/8 border border-spy-lime/25 text-spy-lime text-[7.5px] sm:text-[9px] font-black uppercase tracking-[0.15em] mb-0.5"
@@ -183,7 +183,7 @@ const Leaderboard = () => {
 
         {/* ═══════════ 3D PODIUM (never scrolls) ═══════════ */}
         <div className="w-full grid grid-cols-3 gap-1 sm:gap-2 items-end mb-1 sm:mb-1.5 px-0.5 flex-shrink-0">
-          
+
           {/* ── 2ND PLACE (Silver) ── */}
           {top2 && (
             <div className="flex flex-col items-center">
@@ -201,7 +201,7 @@ const Leaderboard = () => {
               </div>
               <span className="text-[8px] sm:text-[10.5px] font-black text-white truncate max-w-[70px] sm:max-w-[90px] text-center leading-tight mt-0.5">{top2.username}</span>
               <span className="text-[6.5px] sm:text-[8px] font-bold text-spy-lime/90">{top2.winRate}% Réussite</span>
-              
+
               <div className="w-full h-9 sm:h-12 mt-0.5 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center p-0.5"
                 style={{
                   background: 'linear-gradient(180deg, rgba(100,116,139,0.4) 0%, rgba(15,23,42,0.95) 100%)',
@@ -238,7 +238,7 @@ const Leaderboard = () => {
                 style={{ textShadow: '0 1px 6px rgba(0,0,0,0.5)' }}
               >{top1.username}</span>
               <span className="text-[7px] sm:text-[8.5px] font-bold text-spy-lime/90">{top1.winRate}% Réussite</span>
-              
+
               <div className="w-full h-10 sm:h-13 mt-0.5 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center p-0.5 relative overflow-hidden"
                 style={{
                   background: 'linear-gradient(180deg, rgba(245,158,11,0.2) 0%, rgba(120,53,15,0.1) 40%, rgba(15,23,42,0.95) 100%)',
@@ -273,7 +273,7 @@ const Leaderboard = () => {
               </div>
               <span className="text-[8px] sm:text-[10.5px] font-black text-white truncate max-w-[70px] sm:max-w-[90px] text-center leading-tight mt-0.5">{top3.username}</span>
               <span className="text-[6.5px] sm:text-[8px] font-bold text-spy-lime/90">{top3.winRate}% Réussite</span>
-              
+
               <div className="w-full h-8 sm:h-11 mt-0.5 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center p-0.5"
                 style={{
                   background: 'linear-gradient(180deg, rgba(120,53,15,0.3) 0%, rgba(15,23,42,0.95) 100%)',
@@ -304,7 +304,7 @@ const Leaderboard = () => {
             boxShadow: '0 -1px 0 rgba(255,255,255,0.04) inset, 0 12px 40px rgba(0,0,0,0.5)'
           }}
         >
-          
+
           {/* Column headers */}
           <div className="flex items-center justify-between px-1.5 sm:px-2 pb-1 mb-1 text-[7px] sm:text-[8.5px] font-black uppercase tracking-[0.12em] text-white/30 flex-shrink-0"
             style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
@@ -320,7 +320,7 @@ const Leaderboard = () => {
             </div>
           ) : (
             <div className="flex flex-col overflow-hidden flex-1 min-h-0">
-              
+
               {/* Scrollable player rows — ONLY this part scrolls */}
               <div ref={scrollRef} className="overflow-y-auto no-scrollbar space-y-[3px] sm:space-y-1 flex-1 min-h-0 pr-0.5">
                 {paginatedList.map((agent, index) => {
@@ -384,35 +384,25 @@ const Leaderboard = () => {
                 })}
               </div>
 
-              {/* Buttons pinned at bottom of card */}
-              <div className="pt-1.5 flex items-center gap-2 flex-shrink-0">
+              {/* Buttons pinned at bottom of card — 3D Cartoon Graphiste Style */}
+              <div className="pt-2 flex items-center gap-2 flex-shrink-0 w-full">
                 {hasMore && (
                   <button
                     onClick={handleLoadMore}
-                    className="flex-1 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl text-slate-950 font-black uppercase text-[9px] sm:text-[10.5px] tracking-[0.12em] transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 active:scale-[0.97]"
-                    style={{
-                      background: 'linear-gradient(90deg, #ccff00, #d8ff33, #ccff00)',
-                      border: '1.5px solid rgba(255,255,255,0.3)',
-                      boxShadow: '0 4px 16px rgba(204,255,0,0.3), 0 2px 0 #7a9900, inset 0 1px 0 rgba(255,255,255,0.5)'
-                    }}
+                    className="flex-1 py-2 sm:py-2.5 px-4 bg-gradient-to-b from-[#d9ff33] via-spy-lime to-[#99cc00] hover:brightness-110 border-2 border-white rounded-2xl text-slate-950 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.12em] shadow-[0_4px_0_#668800,0_10px_22px_rgba(204,255,0,0.35)] active:translate-y-1 active:shadow-[0_1px_0_#668800] transition-all duration-150 cursor-pointer flex items-center justify-center gap-2 select-none"
                   >
                     <span>VOIR PLUS (+10)</span>
-                    <ChevronDown className="w-3.5 h-3.5 stroke-[3]" />
+                    <ChevronDown className="w-4 h-4 stroke-[3]" />
                   </button>
                 )}
 
                 {visibleCount > 10 && (
                   <button
                     onClick={handleShowLess}
-                    className="py-1.5 sm:py-2 px-3.5 rounded-xl sm:rounded-2xl text-white font-black uppercase text-[9px] sm:text-[10.5px] tracking-wider transition-all duration-200 cursor-pointer flex items-center justify-center gap-1 active:scale-[0.97] flex-shrink-0"
-                    style={{
-                      background: 'rgba(255,255,255,0.06)',
-                      border: '1px solid rgba(255,255,255,0.12)',
-                      boxShadow: '0 2px 10px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05)'
-                    }}
+                    className="py-2 sm:py-2.5 px-4 bg-white/10 hover:bg-white/20 border-2 border-white/30 rounded-2xl text-white font-black uppercase text-[10px] sm:text-[11px] tracking-wider shadow-[0_4px_0_rgba(0,0,0,0.4),0_8px_16px_rgba(0,0,0,0.3)] active:translate-y-1 active:shadow-[0_1px_0_rgba(0,0,0,0.4)] transition-all duration-150 cursor-pointer flex items-center justify-center gap-1.5 flex-shrink-0 select-none"
                   >
                     <span>REPLIER</span>
-                    <ChevronUp className="w-3.5 h-3.5 stroke-[3]" />
+                    <ChevronUp className="w-4 h-4 stroke-[3]" />
                   </button>
                 )}
               </div>
