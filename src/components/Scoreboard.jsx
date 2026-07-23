@@ -81,13 +81,19 @@ const Scoreboard = ({ players, winners, onReplay, onHome, onOpenSettings }) => {
                 </div>
 
                 {/* Actions */}
-                <div className="grid grid-cols-1 gap-3 mt-auto">
-                    <BouncyButton onClick={onReplay} className="w-full py-4 text-sm font-black shadow-[4px_4px_0_#000] flex items-center justify-center gap-2">
-                        <RotateCcw className="w-4 h-4" /> REJOUER (MEMES EQUIPES)
-                    </BouncyButton>
-                    <BouncyButton onClick={onHome} variant="secondary" className="w-full py-4 text-xs font-black shadow-[3px_3px_0_#000] flex items-center justify-center gap-2">
-                        <Home className="w-4 h-4" /> RETOUR ACCUEIL
-                    </BouncyButton>
+                <div className="grid grid-cols-1 gap-3.5 mt-auto w-full">
+                    <button
+                        onClick={onReplay}
+                        className="btn-cartoon-primary w-full py-4 text-sm font-black uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-[0_6px_0_#000] active:translate-y-1.5 active:shadow-[0_0_0_#000] transition-all"
+                    >
+                        <RotateCcw className="w-5 h-5 stroke-[3]" /> REJOUER (MÊMES ÉQUIPES)
+                    </button>
+                    <button
+                        onClick={onHome}
+                        className="btn-cartoon-secondary w-full py-3.5 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-[0_4px_0_#000] active:translate-y-1 active:shadow-[0_0_0_#000] transition-all"
+                    >
+                        <Home className="w-4 h-4 stroke-[3]" /> RETOUR À L'ACCUEIL
+                    </button>
                 </div>
             </div>
         </div>

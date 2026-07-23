@@ -1,6 +1,9 @@
 import React, { useState, useCallback, useRef } from 'react';
 import confetti from 'canvas-confetti';
-import BouncyButton from './BouncyButton';
+import { 
+    Rocket, ShieldAlert, FolderKanban, Check, ChevronDown, 
+    Folder, Film, Brain, Dog, Gamepad2, Plane, Utensils, Smile, Dices, Edit3 
+} from 'lucide-react';
 import RoleStepper from './RoleStepper';
 import BackArrow from './BackArrow';
 import SettingsGear from './SettingsGear';
@@ -15,27 +18,26 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
     const [customWords, setCustomWords] = useState({ innocent: '', spy: '' });
 
     const packOptions = [
-        { id: 'standard', label: 'Pack Standard', icon: '📁' },
-        { id: 'pop-culture', label: 'Culture Pop', icon: '🍿' },
-        { id: 'abstract', label: 'Concepts Abstraits', icon: '🧠' },
-        { id: 'animals', label: 'Animaux', icon: '🦁' },
-        { id: 'geek', label: 'Jeux Vidéo & Geek', icon: '🎮' },
-        { id: 'travel', label: 'Voyage & Pays', icon: '✈️' },
-        { id: 'food', label: 'Gourmand / Nourriture', icon: '🍔' },
-        { id: 'fun', label: 'Absurde & Fun', icon: '🤪' },
-        { id: 'random', label: 'Aléatoire', icon: '🎲' },
-        { id: 'custom', label: '>>> Mots Perso <<<', icon: '✏️', special: true },
+        { id: 'standard', label: 'Pack Standard', icon: <Folder className="w-5 h-5 text-spy-lime" /> },
+        { id: 'pop-culture', label: 'Culture Pop', icon: <Film className="w-5 h-5 text-pink-400" /> },
+        { id: 'abstract', label: 'Concepts Abstraits', icon: <Brain className="w-5 h-5 text-purple-400" /> },
+        { id: 'animals', label: 'Animaux', icon: <Dog className="w-5 h-5 text-amber-400" /> },
+        { id: 'geek', label: 'Jeux Vidéo & Geek', icon: <Gamepad2 className="w-5 h-5 text-cyan-400" /> },
+        { id: 'travel', label: 'Voyage & Pays', icon: <Plane className="w-5 h-5 text-emerald-400" /> },
+        { id: 'food', label: 'Gourmand / Nourriture', icon: <Utensils className="w-5 h-5 text-orange-400" /> },
+        { id: 'fun', label: 'Absurde & Fun', icon: <Smile className="w-5 h-5 text-yellow-400" /> },
+        { id: 'random', label: 'Aléatoire', icon: <Dices className="w-5 h-5 text-spy-lime" /> },
+        { id: 'custom', label: '>>> Mots Perso <<<', icon: <Edit3 className="w-5 h-5 text-spy-orange" />, special: true },
     ];
 
     // Easter egg: screw animation
     const [unscrewedScrews, setUnscrewedScrews] = useState({});
     const allFourTriggered = useRef(false);
     const handleScrewClick = useCallback((id) => {
-        if (unscrewedScrews[id]) return; // already animating
+        if (unscrewedScrews[id]) return;
         const next = { ...unscrewedScrews, [id]: true };
         setUnscrewedScrews(next);
 
-        // Check if all 4 screws are unscrewed at the same time
         const allPositions = ['tl', 'tr', 'bl', 'br'];
         if (allPositions.every(p => next[p] === true) && !allFourTriggered.current) {
             allFourTriggered.current = true;
@@ -54,12 +56,11 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
         setTimeout(() => {
             setUnscrewedScrews(prev => {
                 const updated = { ...prev, [id]: false };
-                // Reset the confetti trigger when any screw rescrews
                 allFourTriggered.current = false;
                 return updated;
             });
         }, 2000);
-    }, [unscrewedScrews]);
+    }, [unscrewedScrews, playSfx]);
 
     const civilianCount = totalPlayers - undercoverCount - whiteCount;
 
@@ -93,28 +94,29 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
     };
 
     return (
-        <div className="min-h-screen h-[100dvh] flex flex-col items-center p-4 pt-20 relative overflow-hidden bg-spy-blue">
+        <div className="min-h-screen h-[100dvh] flex flex-col items-center p-4 pt-16 relative overflow-hidden bg-spy-blue">
             <BackArrow onClick={onBack} />
             <SettingsGear onClick={onOpenSettings} />
 
-            {/* Background Decor */}
+            {/* Background Ambient Lights */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-                <div className="absolute top-[-10%] right-[-20%] w-[600px] h-[600px] bg-spy-lime opacity-[0.05] rounded-full blur-[100px] animate-pulse-slow"></div>
-                <div className="absolute bottom-[-10%] left-[-20%] w-[500px] h-[500px] bg-spy-orange opacity-[0.05] rounded-full blur-[100px] animate-pulse-slow delay-700"></div>
+                <div className="absolute top-[-10%] right-[-20%] w-[600px] h-[600px] bg-spy-lime opacity-[0.08] rounded-full blur-[120px] animate-pulse-slow"></div>
+                <div className="absolute bottom-[-10%] left-[-20%] w-[500px] h-[500px] bg-spy-orange opacity-[0.08] rounded-full blur-[120px] animate-pulse-slow delay-700"></div>
             </div>
 
-            <div className="z-10 mb-6 text-center flex-none animate-slide-up bg-white/10 px-8 py-3 rounded-full border border-white/15 shadow-2xl backdrop-blur-xl">
-                <h2 className="text-2xl font-black text-white uppercase tracking-tighter drop-shadow-md">
-                    ACCÈS AUTORISÉ
+            {/* Top Status Badge */}
+            <div className="z-10 mb-4 text-center flex-none animate-slide-up bg-black/40 px-6 py-2 rounded-full border-2 border-spy-lime/40 shadow-xl backdrop-blur-md">
+                <h2 className="text-xl font-black text-white uppercase tracking-tight flex items-center gap-2">
+                    <FolderKanban className="w-5 h-5 text-spy-lime" /> Briefing de Mission
                 </h2>
-                <p className="text-spy-lime text-[10px] font-black uppercase tracking-[0.2em] animate-pulse mt-0.5">
-                    Système Prêt
+                <p className="text-spy-lime text-[9.5px] font-black uppercase tracking-[0.2em] animate-pulse mt-0.5">
+                    Paramètres & Rôles Secret Défense
                 </p>
             </div>
 
-            <div className="w-full max-w-md flex-1 overflow-y-auto no-scrollbar z-10 animate-slide-up space-y-4 px-4 pb-6" style={{ animationDelay: '0.1s' }}>
+            <div className="w-full max-w-md flex-1 overflow-y-auto custom-scrollbar z-10 animate-slide-up space-y-4 px-2 pb-6" style={{ animationDelay: '0.1s' }}>
 
-                <div className="bg-white/10 backdrop-blur-xl rounded-[32px] p-6 border border-white/15 shadow-2xl flex-none relative w-full">
+                <div className="card-cartoon bg-gradient-to-b from-[#14233e] to-[#0a1426] p-6 border-[3.5px] border-white/20 shadow-2xl flex-none relative w-full rounded-[32px]">
                     {/* Decorative Screws — Easter Egg! */}
                     {['tl', 'tr', 'bl', 'br'].map((pos) => {
                         const posClass = pos === 'tl' ? 'top-4 left-4'
@@ -138,9 +140,7 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
                                 }}
                                 aria-label="Vis décorative"
                             >
-                                {/* Screw head indent curve */}
                                 <div className="absolute inset-[2px] rounded-full bg-gradient-to-br from-gray-500 to-gray-300 shadow-inner"></div>
-                                {/* Philips Cross */}
                                 <div className="w-2.5 h-[1.5px] bg-gray-700/80 rotate-45 absolute shadow-[0_1px_0_rgba(255,255,255,0.3)]"></div>
                                 <div className="w-2.5 h-[1.5px] bg-gray-700/80 rotate-135 absolute shadow-[0_1px_0_rgba(255,255,255,0.3)]"></div>
                             </button>
@@ -148,20 +148,22 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
                     })}
 
                     {/* Civilians Display - Digital Readout */}
-                    <div className="bg-black/20 rounded-2xl p-4 flex items-center justify-between border border-white/10 mb-5 relative overflow-hidden shadow-inner">
-                        <div className="absolute left-0 top-0 w-1 h-full bg-spy-lime opacity-50"></div>
-                        <div className="relative z-10 flex items-center gap-3 w-full justify-between">
+                    <div className="bg-black/40 rounded-2xl p-4 flex items-center justify-between border-2 border-white/10 mb-5 relative overflow-hidden shadow-inner">
+                        <div className="absolute left-0 top-0 w-1.5 h-full bg-spy-lime shadow-[0_0_10px_#ccff00]"></div>
+                        <div className="relative z-10 flex items-center gap-3 w-full justify-between pl-2">
                             <div className="flex flex-col">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-white/40">PERSONNEL</span>
-                                <span className="text-sm font-black uppercase tracking-widest text-white">Innocents</span>
+                                <span className="text-[10px] font-black uppercase tracking-widest text-white/40">PERSONNEL ACCRÉDITÉ</span>
+                                <span className="text-base font-black uppercase tracking-wider text-white">Innocents (Civils)</span>
                             </div>
-                            <div className="bg-black/40 border border-white/5 rounded-xl px-4 py-2 flex items-center justify-center shadow-inner">
-                                <span className="text-3xl font-display font-black leading-none text-spy-lime">{civilianCount.toString().padStart(2, '0')}</span>
+                            <div className="bg-black/60 border-2 border-spy-lime/40 rounded-xl px-4 py-2 flex items-center justify-center shadow-inner">
+                                <span className="text-3xl font-display font-black leading-none text-spy-lime text-shadow-md">
+                                    {civilianCount.toString().padStart(2, '0')}
+                                </span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4 items-stretch">
+                    <div className="grid grid-cols-2 gap-3 items-stretch">
                         <RoleStepper
                             label="Espions"
                             count={undercoverCount}
@@ -177,17 +179,17 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
                             count={whiteCount}
                             onIncrement={() => handleIncrement('white')}
                             onDecrement={() => handleDecrement('white')}
-                            color="text-white"
+                            color="text-cyan-400"
                             subLabel="Aucun mot"
                             soundOptions={{ pitch: Math.min(2.0, 0.8 + ((whiteCount) * 0.1)) }}
                         />
                     </div>
                 </div>
 
-                {/* Word Pack Selection - Module */}
-                <div className="bg-white/10 backdrop-blur-xl rounded-[32px] p-6 border border-white/15 shadow-2xl flex-none relative w-full mb-2 mt-4">
-                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-spy-blue px-4 py-1 rounded-full text-[10px] uppercase font-black text-white/50 border border-white/15 tracking-widest shadow-lg">
-                        Données Mission
+                {/* Word Pack Selection */}
+                <div className="card-cartoon bg-gradient-to-b from-[#14233e] to-[#0a1426] p-5 border-[3.5px] border-white/20 shadow-2xl flex-none relative w-full rounded-[32px]">
+                    <div className="absolute -top-3.5 left-1/2 transform -translate-x-1/2 bg-[#0a1628] px-4 py-1 rounded-full text-[10px] uppercase font-black text-spy-lime border-2 border-spy-lime/40 tracking-widest shadow-md">
+                        Pack de Mots
                     </div>
 
                     <div className="relative mt-2">
@@ -195,40 +197,41 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
                         <button
                             type="button"
                             onClick={() => setIsPackDropdownOpen(!isPackDropdownOpen)}
-                            className="w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-4 flex items-center justify-between text-white font-black focus:outline-none transition-all shadow-inner hover:bg-black/50"
+                            className="w-full bg-black/40 border-2 border-white/15 rounded-2xl px-4 py-3.5 flex items-center justify-between text-white font-black focus:outline-none transition-all shadow-inner hover:bg-black/60 cursor-pointer"
                         >
                             <div className="flex items-center gap-3">
                                 <span className="text-xl">{packOptions.find(p => p.id === wordPack)?.icon}</span>
-                                <span className={`text-sm uppercase tracking-wider ${wordPack === 'custom' ? 'text-spy-orange' : 'text-white'}`}>
+                                <span className={`text-sm uppercase tracking-wider font-black ${wordPack === 'custom' ? 'text-spy-orange' : 'text-white'}`}>
                                     {packOptions.find(p => p.id === wordPack)?.label}
                                 </span>
                             </div>
-                            <div className={`transition-transform duration-300 ${isPackDropdownOpen ? 'rotate-180 text-spy-lime' : 'text-white/30'}`}>
-                                ▼
-                            </div>
+                            <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isPackDropdownOpen ? 'rotate-180 text-spy-lime' : 'text-white/40'}`} />
                         </button>
 
                         {/* Custom Dropdown Menu */}
                         {isPackDropdownOpen && (
-                            <div className="w-full mt-2 bg-[#1a213A]/95 backdrop-blur-2xl border border-white/20 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.8)] overflow-hidden animate-slide-up origin-top">
-                                <div className="max-h-[220px] overflow-y-auto no-scrollbar scroll-smooth">
-                                    {packOptions.map((pack, index) => (
+                            <div className="w-full mt-2 bg-[#121c32]/98 backdrop-blur-2xl border-2 border-white/20 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.9)] overflow-hidden animate-slide-up origin-top z-30">
+                                <div className="max-h-[210px] overflow-y-auto custom-scrollbar">
+                                    {packOptions.map((pack) => (
                                         <button
                                             key={pack.id}
+                                            type="button"
                                             onClick={() => {
                                                 setWordPack(pack.id);
                                                 setIsPackDropdownOpen(false);
                                             }}
-                                            className={`w-full text-left px-5 py-4 flex items-center gap-3 transition-colors border-b border-white/5 last:border-0 hover:bg-white/10 ${wordPack === pack.id ? 'bg-spy-lime/10' : ''
-                                                }`}
+                                            className={`w-full text-left px-4 py-3 flex items-center gap-3 transition-colors border-b border-white/5 last:border-0 hover:bg-white/10 cursor-pointer ${
+                                                wordPack === pack.id ? 'bg-spy-lime/15' : ''
+                                            }`}
                                         >
                                             <span className="text-xl flex-none">{pack.icon}</span>
-                                            <span className={`text-sm font-black uppercase tracking-wider flex-1 ${pack.special ? 'text-spy-orange' : wordPack === pack.id ? 'text-spy-lime' : 'text-white/80'
-                                                }`}>
+                                            <span className={`text-xs font-black uppercase tracking-wider flex-1 ${
+                                                pack.special ? 'text-spy-orange' : wordPack === pack.id ? 'text-spy-lime' : 'text-white/90'
+                                            }`}>
                                                 {pack.label}
                                             </span>
                                             {wordPack === pack.id && (
-                                                <span className="text-spy-lime text-lg">✓</span>
+                                                <Check className="w-4 h-4 text-spy-lime flex-none stroke-[3]" />
                                             )}
                                         </button>
                                     ))}
@@ -241,60 +244,57 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
                     {wordPack === 'custom' && (
                         <div className="mt-4 space-y-3 animate-pop-in">
                             <div className="space-y-1">
-                                <label className="text-[9px] uppercase font-black tracking-widest text-white/40 pl-2">Cible 1 (Innocent)</label>
+                                <label className="text-[9.5px] uppercase font-black tracking-widest text-spy-lime pl-1">Cible 1 (Mot des Innocents)</label>
                                 <input
                                     type="text"
-                                    placeholder="Entrez un mot..."
+                                    placeholder="Entrez un mot (ex: Pizza)..."
                                     value={customWords.innocent}
                                     onChange={(e) => setCustomWords({ ...customWords, innocent: e.target.value })}
-                                    className="w-full bg-black/30 border border-spy-lime/30 rounded-xl px-4 py-3 text-spy-lime font-black text-sm focus:border-spy-lime focus:outline-none transition-colors placeholder:text-white/20 shadow-inner"
+                                    className="w-full bg-black/40 border-2 border-spy-lime/50 rounded-xl px-4 py-3 text-spy-lime font-black text-sm focus:border-spy-lime focus:outline-none transition-colors placeholder:text-white/20 shadow-inner"
                                 />
                             </div>
                             <div className="space-y-1">
-                                <label className="text-[9px] uppercase font-black tracking-widest text-white/40 pl-2">Cible 2 (Espion)</label>
+                                <label className="text-[9.5px] uppercase font-black tracking-widest text-spy-orange pl-1">Cible 2 (Mot des Espions)</label>
                                 <input
                                     type="text"
-                                    placeholder="Entrez un mot..."
+                                    placeholder="Entrez un mot (ex: Burger)..."
                                     value={customWords.spy}
                                     onChange={(e) => setCustomWords({ ...customWords, spy: e.target.value })}
-                                    className="w-full bg-black/30 border border-spy-orange/30 rounded-xl px-4 py-3 text-spy-orange font-black text-sm focus:border-spy-orange focus:outline-none transition-colors placeholder:text-white/20 shadow-inner"
+                                    className="w-full bg-black/40 border-2 border-spy-orange/50 rounded-xl px-4 py-3 text-spy-orange font-black text-sm focus:border-spy-orange focus:outline-none transition-colors placeholder:text-white/20 shadow-inner"
                                 />
                             </div>
                         </div>
                     )}
                 </div>
 
-                {/* Validation Warning */}
-                <div className="mt-2 flex-none px-2 mb-4">
+                {/* Validation Warnings */}
+                <div className="mt-2 flex-none px-1">
                     {!isRoleCountValid && (
-                        <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-black p-3 rounded-xl text-center animate-shake uppercase tracking-widest shadow-inner">
-                            ⚠️ Pas assez d'innocents (Min 2)
+                        <div className="bg-red-500/20 border-2 border-red-500/50 text-red-300 text-[10.5px] font-black p-3 rounded-2xl text-center animate-shake uppercase tracking-widest shadow-lg flex items-center justify-center gap-2">
+                            <ShieldAlert className="w-4 h-4 text-red-400" /> Pas assez d'innocents (Min. 2 requises)
                         </div>
                     )}
 
                     {wordPack === 'custom' && !isCustomValid && (
-                        <div className="bg-spy-orange/10 border border-spy-orange/20 text-spy-orange text-[10px] font-black p-3 rounded-xl text-center animate-shake uppercase tracking-widest shadow-inner mt-2">
-                            ⚠️ Données incomplètes
+                        <div className="bg-spy-orange/20 border-2 border-spy-orange/50 text-spy-orange text-[10.5px] font-black p-3 rounded-2xl text-center animate-shake uppercase tracking-widest shadow-lg flex items-center justify-center gap-2 mt-2">
+                            <ShieldAlert className="w-4 h-4 text-spy-orange" /> Données des mots perso incomplètes
                         </div>
                     )}
                 </div>
 
             </div>
 
-            {/* Start Button Area */}
-            <div className="w-full max-w-md mt-auto z-20 pt-4 pb-8 px-4 relative flex justify-center" style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}>
-                <div className="absolute top-0 left-1/4 right-1/4 h-px bg-gradient-to-r from-transparent via-spy-lime/30 to-transparent" />
-
-                <BouncyButton
-                    variant="primary"
+            {/* Launch Button Area */}
+            <div className="w-full max-w-md mt-auto z-20 pt-2 pb-6 px-4 flex justify-center" style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}>
+                <button
                     onClick={() => onStartGame({ undercoverCount, whiteCount, wordPack, customWords })}
-                    className="w-full text-xl py-6 rounded-2xl tracking-widest relative overflow-hidden group shadow-spy-lime/30 shadow-2xl"
                     disabled={!isValid}
+                    className={`btn-cartoon-primary w-full py-4 text-xl font-black uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-[0_6px_0_#000] active:translate-y-1.5 active:shadow-[0_0_0_#000] transition-all ${
+                        !isValid ? 'opacity-50 cursor-not-allowed filter grayscale' : 'hover:scale-[1.01]'
+                    }`}
                 >
-                    <span className="relative z-10 flex items-center justify-center gap-2">
-                        LANCER LA MISSION
-                    </span>
-                </BouncyButton>
+                    <Rocket className="w-6 h-6 stroke-[3]" /> LANCER LA MISSION
+                </button>
             </div>
 
         </div>
@@ -302,3 +302,4 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
 };
 
 export default MissionBriefing;
+

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
+import { Trophy, ShieldAlert, Check, X, Eye, Vote, Volume2, Lightbulb, Skull, PartyPopper, UserCheck } from 'lucide-react';
 import BouncyButton from './BouncyButton';
 import { wordPacks } from '../data/wordPacks';
 import SettingsGear from './SettingsGear';
@@ -270,9 +271,9 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
         const isCivilianWin = finalWinningTeam === 'Civilian';
 
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-spy-blue text-center relative overflow-hidden">
+            <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-spy-blue text-center relative overflow-hidden">
                 <SettingsGear onClick={onOpenSettings} />
-                <div className="absolute inset-0 bg-black/80 backdrop-blur-md z-0" />
+                <div className="absolute inset-0 bg-black/85 backdrop-blur-md z-0" />
 
                 <motion.div
                     initial={{ scale: 0.8, opacity: 0, y: 50 }}
@@ -281,20 +282,30 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                     className="z-10 w-full max-w-md flex flex-col items-center"
                 >
                     {/* Header Celebration */}
-                    <div className="mb-6 relative w-full">
+                    <div className="mb-6 relative w-full flex flex-col items-center">
                         <motion.div
                             initial={{ scale: 0 }}
                             animate={{ scale: 1 }}
                             transition={{ delay: 0.2, type: 'spring' }}
-                            className="text-7xl mb-2 drop-shadow-[0_0_50px_rgba(255,255,255,0.3)] animate-bounce-slow"
+                            className="mb-3 drop-shadow-[0_0_50px_rgba(255,255,255,0.4)] animate-bounce-slow"
                         >
-                            {isCivilianWin ? '🎉' : '🎭'}
+                            {isCivilianWin 
+                                ? <Trophy className="w-20 h-20 text-spy-lime stroke-[2.5]" /> 
+                                : <ShieldAlert className="w-20 h-20 text-spy-orange stroke-[2.5]" />
+                            }
                         </motion.div>
-                        <h2 className="text-3xl font-black text-white uppercase tracking-tight mb-1">
+
+                        <div className="bg-white/10 px-4 py-1 rounded-full border border-white/20 mb-2">
+                            <span className="text-[10px] font-black uppercase tracking-[0.25em] text-white/70">
+                                Fin de la Partie
+                            </span>
+                        </div>
+
+                        <h2 className="text-2xl font-black text-white uppercase tracking-tight mb-1 text-shadow-md">
                             Mission Terminée
                         </h2>
-                        <h3 className={`text-4xl font-black uppercase tracking-widest ${isCivilianWin ? 'text-spy-lime' : 'text-spy-orange'} filter drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]`}>
-                            {isCivilianWin ? 'Innocents' : 'Imposteurs'}
+                        <h3 className={`text-4xl font-black uppercase tracking-widest ${isCivilianWin ? 'text-spy-lime' : 'text-spy-orange'} text-shadow-lg`}>
+                            {isCivilianWin ? 'Victoire des Innocents' : 'Victoire des Imposteurs'}
                         </h3>
                     </div>
 
@@ -302,27 +313,26 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 0.6, duration: 0.4 }}
-                        className="w-full bg-white/10 backdrop-blur-2xl rounded-[40px] p-8 border border-white/20 shadow-2xl mb-8 relative"
+                        transition={{ delay: 0.5, duration: 0.4 }}
+                        className="w-full card-cartoon bg-gradient-to-b from-[#14233e] to-[#0a1426] p-6 border-[3.5px] border-white/20 shadow-2xl mb-6 relative rounded-[32px]"
                     >
-                        <p className="text-white/50 text-[10px] font-black uppercase tracking-[0.3em] mb-6">
-                            Déclassification des mots
+                        <p className="text-white/60 text-[10px] font-black uppercase tracking-[0.3em] mb-4">
+                            Déclassification des Mots Secrets
                         </p>
 
-                        <div className="flex flex-col gap-5">
+                        <div className="flex flex-col gap-4">
                             {/* Civilian Word */}
                             <motion.div
                                 initial={{ x: -20, opacity: 0 }}
                                 animate={{ x: 0, opacity: 1 }}
-                                transition={{ delay: 1 }}
-                                className="bg-spy-lime/10 border border-spy-lime/30 rounded-3xl p-5 relative overflow-hidden group"
+                                transition={{ delay: 0.7 }}
+                                className="bg-spy-lime/15 border-2 border-spy-lime/40 rounded-2xl p-4 relative overflow-hidden group shadow-inner"
                             >
-                                <div className="absolute top-0 right-0 w-24 h-24 bg-spy-lime/20 rounded-full blur-2xl transform translate-x-1/2 -translate-y-1/2 group-hover:bg-spy-lime/30 transition-colors" />
                                 <div className="flex flex-col items-center">
-                                    <span className="text-spy-lime/60 text-[10px] font-bold uppercase tracking-[0.2em] mb-1">
+                                    <span className="text-spy-lime text-[10px] font-black uppercase tracking-[0.2em] mb-1">
                                         Mot des Innocents
                                     </span>
-                                    <span className="text-4xl font-black text-white break-words">
+                                    <span className="text-3xl font-black text-white break-words text-shadow-md">
                                         {targetWord?.civilian || '???'}
                                     </span>
                                 </div>
@@ -332,15 +342,14 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                             <motion.div
                                 initial={{ x: 20, opacity: 0 }}
                                 animate={{ x: 0, opacity: 1 }}
-                                transition={{ delay: 1.5 }}
-                                className="bg-spy-orange/10 border border-spy-orange/30 rounded-3xl p-5 relative overflow-hidden group"
+                                transition={{ delay: 0.9 }}
+                                className="bg-spy-orange/15 border-2 border-spy-orange/40 rounded-2xl p-4 relative overflow-hidden group shadow-inner"
                             >
-                                <div className="absolute top-0 left-0 w-24 h-24 bg-spy-orange/20 rounded-full blur-2xl transform -translate-x-1/2 -translate-y-1/2 group-hover:bg-spy-orange/30 transition-colors" />
                                 <div className="flex flex-col items-center">
-                                    <span className="text-spy-orange/60 text-[10px] font-bold uppercase tracking-[0.2em] mb-1">
-                                        Mot de l'Espion
+                                    <span className="text-spy-orange text-[10px] font-black uppercase tracking-[0.2em] mb-1">
+                                        Mot des Espions
                                     </span>
-                                    <span className="text-4xl font-black text-white break-words">
+                                    <span className="text-3xl font-black text-white break-words text-shadow-md">
                                         {targetWord?.undercover || '???'}
                                     </span>
                                 </div>
@@ -351,15 +360,15 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 2.2 }}
+                        transition={{ delay: 1.2 }}
                         className="w-full"
                     >
-                        <BouncyButton
+                        <button
                             onClick={proceedToScoreboard}
-                            className="w-full py-5 text-xl tracking-widest"
+                            className="btn-cartoon-primary w-full py-4 text-xl font-black uppercase tracking-wider cursor-pointer shadow-[0_6px_0_#000] active:translate-y-1.5 active:shadow-[0_0_0_#000] transition-all"
                         >
                             VOIR LES SCORES →
-                        </BouncyButton>
+                        </button>
                     </motion.div>
                 </motion.div>
             </div>
@@ -371,63 +380,59 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
     // ─────────────────────────────────────────────
     if (gameState === 'mrwhite_guess') {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-spy-blue text-center relative overflow-hidden">
+            <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-spy-blue text-center relative overflow-hidden">
                 <SettingsGear onClick={onOpenSettings} />
-                <div className="absolute inset-0 bg-black/85 backdrop-blur-sm z-0" />
+                <div className="absolute inset-0 bg-black/85 backdrop-blur-md z-0" />
 
                 <motion.div
                     initial={{ y: 100, opacity: 0, scale: 0.9 }}
                     animate={{ y: 0, opacity: 1, scale: 1 }}
                     transition={{ type: 'spring', stiffness: 280, damping: 22 }}
-                    className="z-10 w-full max-w-md"
+                    className="z-10 w-full max-w-md flex flex-col items-center"
                 >
                     {/* Icon + Title */}
-                    <div className="mb-6">
-                        <div className="text-8xl mb-4 animate-bounce-slow filter drop-shadow-[0_0_40px_rgba(255,255,255,0.15)]">
-                            🤫
+                    <div className="mb-6 flex flex-col items-center">
+                        <div className="p-4 rounded-full bg-cyan-500/20 border-2 border-cyan-400/40 mb-3 animate-bounce-slow filter drop-shadow-[0_0_40px_rgba(6,182,212,0.3)]">
+                            <ShieldAlert className="w-12 h-12 text-cyan-400 stroke-[2.5]" />
                         </div>
-                        <h2 className="text-3xl font-black text-white uppercase tracking-tight leading-tight mb-1">
-                            La Dernière Chance de
+                        <h2 className="text-2xl font-black text-white uppercase tracking-tight leading-tight mb-1 text-shadow-md">
+                            Dernière Chance
                         </h2>
-                        <h2 className="text-4xl font-black text-spy-lime uppercase tracking-tight">
+                        <h2 className="text-3xl font-black text-cyan-400 uppercase tracking-tight text-shadow-lg">
                             Mr. Blanc
                         </h2>
                     </div>
 
                     {/* Info card */}
-                    <div className="bg-white/10 backdrop-blur-xl rounded-[32px] p-6 border border-white/15 shadow-2xl mb-8">
+                    <div className="card-cartoon bg-gradient-to-b from-[#14233e] to-[#0a1426] p-6 border-[3.5px] border-white/20 shadow-2xl mb-6 rounded-[32px] w-full">
                         <p className="text-white/90 font-bold text-base leading-relaxed">
                             <span className="text-spy-lime font-black">{votedPlayer?.name}</span> a été éliminé·e.
-                            <br />
-                            Donne-lui une chance : s'il/elle devine le <span className="text-white font-black">mot secret des Civils</span>,
-                            les imposteurs <span className="text-spy-orange font-black">remportent la victoire !</span>
+                            <br /><br />
+                            S'il/elle devine le <span className="text-white font-black underline">mot secret des Civils</span> à voix haute,
+                            les imposteurs <span className="text-spy-orange font-black">gagnent la partie !</span>
                         </p>
-                        <div className="mt-4 pt-4 border-t border-white/10">
-                            <p className="text-white/50 text-xs font-bold uppercase tracking-widest">
-                                Le groupe vote s'il a trouvé le bon mot
+                        <div className="mt-4 pt-3 border-t border-white/10">
+                            <p className="text-white/50 text-xs font-black uppercase tracking-widest">
+                                Le groupe valide le résultat ci-dessous
                             </p>
                         </div>
                     </div>
 
                     {/* Action buttons */}
-                    <div className="flex flex-col gap-4">
-                        {/* SUCCESS – Impostors win */}
-                        <motion.button
-                            whileTap={{ scale: 0.95 }}
+                    <div className="flex flex-col gap-3 w-full">
+                        <button
                             onClick={handleMrWhiteSuccess}
-                            className="w-full py-5 rounded-2xl border border-green-400/40 bg-green-400/10 text-green-400 font-black uppercase tracking-widest text-lg backdrop-blur-md shadow-lg shadow-green-900/20 active:bg-green-400/20 transition-all"
+                            className="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-white font-black border-[3.5px] border-black rounded-2xl py-4 text-base uppercase tracking-wider shadow-[0_5px_0_#000] active:translate-y-1 active:shadow-[0_0_0_#000] cursor-pointer transition-all flex items-center justify-center gap-2"
                         >
-                            ✅ Il a trouvé le mot !
-                        </motion.button>
+                            <Check className="w-5 h-5 stroke-[3]" /> Il a trouvé le mot secret !
+                        </button>
 
-                        {/* FAIL – Mr. White definitively out */}
-                        <motion.button
-                            whileTap={{ scale: 0.95 }}
+                        <button
                             onClick={handleMrWhiteFail}
-                            className="w-full py-5 rounded-2xl border border-red-400/40 bg-red-400/10 text-red-400 font-black uppercase tracking-widest text-lg backdrop-blur-md shadow-lg shadow-red-900/20 active:bg-red-400/20 transition-all"
+                            className="bg-gradient-to-r from-rose-600 to-red-700 hover:from-rose-500 hover:to-red-600 text-white font-black border-[3.5px] border-black rounded-2xl py-4 text-base uppercase tracking-wider shadow-[0_5px_0_#000] active:translate-y-1 active:shadow-[0_0_0_#000] cursor-pointer transition-all flex items-center justify-center gap-2"
                         >
-                            ❌ Mauvais mot...
-                        </motion.button>
+                            <X className="w-5 h-5 stroke-[3]" /> Mauvais mot... Éliminé !
+                        </button>
                     </div>
                 </motion.div>
             </div>
@@ -446,141 +451,132 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
         return (
             <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-spy-blue text-center relative overflow-hidden">
                 <SettingsGear onClick={onOpenSettings} />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-spy-lime opacity-5 rounded-full blur-[120px] animate-pulse-slow pointer-events-none" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-spy-lime/10 opacity-30 rounded-full blur-[140px] pointer-events-none" />
 
-                <div className="z-10 flex flex-col items-center w-full max-w-md gap-5">
+                <div className="z-10 flex flex-col items-center w-full max-w-md gap-4">
 
                     {/* Round label */}
-                    <div className="text-white/30 font-black uppercase tracking-[0.3em] text-[10px]">
-                        Manche {roundNumber} · Discussion
+                    <div className="bg-black/40 border border-white/15 px-4 py-1.5 rounded-full mb-1">
+                        <span className="text-spy-lime font-black uppercase tracking-[0.2em] text-[10.5px]">
+                            Manche {roundNumber} · Tour d'Indice
+                        </span>
                     </div>
 
                     <AnimatePresence mode="wait">
                         {isLoading ? (
-                            /* Loading — speakingOrder not ready yet */
                             <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="w-full">
-                                <div className="bg-white/10 backdrop-blur-xl rounded-[32px] p-8 border border-white/15 shadow-2xl flex items-center justify-center gap-3">
-                                    <div className="w-2 h-2 rounded-full bg-spy-lime animate-bounce" style={{ animationDelay: '0ms' }} />
-                                    <div className="w-2 h-2 rounded-full bg-spy-lime animate-bounce" style={{ animationDelay: '150ms' }} />
-                                    <div className="w-2 h-2 rounded-full bg-spy-lime animate-bounce" style={{ animationDelay: '300ms' }} />
+                                <div className="card-cartoon bg-[#14233e] p-8 border-[3.5px] border-white/20 shadow-2xl flex items-center justify-center gap-3 rounded-[32px]">
+                                    <div className="w-3 h-3 rounded-full bg-spy-lime animate-bounce" style={{ animationDelay: '0ms' }} />
+                                    <div className="w-3 h-3 rounded-full bg-spy-lime animate-bounce" style={{ animationDelay: '150ms' }} />
+                                    <div className="w-3 h-3 rounded-full bg-spy-lime animate-bounce" style={{ animationDelay: '300ms' }} />
                                 </div>
                             </motion.div>
                         ) : !allSpoken && currentSpeaker ? (
-                            /* ── CURRENT SPEAKER CARD ── */
+                            /* CURRENT SPEAKER CARD */
                             <motion.div
                                 key={`speaker-${currentSpeakerIndex}`}
-                                initial={{ y: 40, opacity: 0, scale: 0.95 }}
+                                initial={{ y: 30, opacity: 0, scale: 0.95 }}
                                 animate={{ y: 0, opacity: 1, scale: 1 }}
-                                exit={{ y: -40, opacity: 0, scale: 0.95 }}
-                                transition={{ type: 'spring', stiffness: 300, damping: 26 }}
-                                className="w-full"
+                                exit={{ y: -30, opacity: 0, scale: 0.95 }}
+                                transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                                className="w-full flex flex-col items-center"
                             >
-                                {/* Big speaker highlight */}
-                                <div className="bg-white/10 backdrop-blur-xl rounded-[32px] p-8 border border-white/15 shadow-2xl mb-5 flex flex-col items-center gap-4">
-                                    <p className="text-white/40 font-black uppercase tracking-[0.25em] text-[10px]">
-                                        À qui de parler
-                                    </p>
-                                    <div className="w-24 h-24 rounded-full bg-spy-lime/10 border-2 border-spy-lime/50 flex items-center justify-center text-5xl shadow-[0_0_30px_rgba(204,255,0,0.15)]">
+                                {/* Speaker highlight card */}
+                                <div className="card-cartoon bg-gradient-to-b from-[#14233e] to-[#0a1426] p-7 border-[3.5px] border-white/20 shadow-2xl mb-5 flex flex-col items-center gap-4 w-full rounded-[36px]">
+                                    <div className="bg-spy-lime/20 border border-spy-lime/40 px-3 py-1 rounded-full flex items-center gap-1.5">
+                                        <Volume2 className="w-3.5 h-3.5 text-spy-lime stroke-[2.5]" />
+                                        <span className="text-spy-lime font-black uppercase tracking-[0.2em] text-[10px]">
+                                            À qui de parler
+                                        </span>
+                                    </div>
+
+                                    <div className="w-24 h-24 rounded-full bg-black/40 border-4 border-spy-lime flex items-center justify-center text-5xl shadow-[0_0_30px_rgba(204,255,0,0.3)]">
                                         {currentSpeaker.avatar.type === 'image'
                                             ? <img src={currentSpeaker.avatar.value} alt={currentSpeaker.name} className="w-full h-full object-cover rounded-full" />
                                             : <span>{currentSpeaker.avatar.value}</span>
                                         }
                                     </div>
                                     <div>
-                                        <h2 className={`text-3xl font-black uppercase tracking-tight ${currentSpeaker.pseudoColor || 'text-white'}`}>
+                                        <h2 className={`text-3xl font-black uppercase tracking-tight text-shadow-md ${currentSpeaker.pseudoColor || 'text-white'}`}>
                                             {currentSpeaker.name}
                                         </h2>
-                                        <p className="text-white/40 text-sm font-bold mt-1">
-                                            Donne un indice sur ton mot sans le dire
+                                        <p className="text-white/70 text-xs font-black mt-2 bg-black/30 px-4 py-2 rounded-xl border border-white/10 flex items-center justify-center gap-1.5">
+                                            <Lightbulb className="w-4 h-4 text-spy-lime flex-shrink-0 stroke-[2.5]" />
+                                            <span>Donne un indice sur ton mot sans le révéler</span>
                                         </p>
                                     </div>
                                 </div>
 
                                 {/* Progress dots */}
-                                <div className="flex items-center justify-center gap-2 mb-5">
+                                <div className="flex items-center justify-center gap-2 mb-4">
                                     {speakingOrder.map((_, i) => (
                                         <div
                                             key={i}
                                             className={`rounded-full transition-all duration-300 ${i < currentSpeakerIndex
-                                                ? 'w-2 h-2 bg-spy-lime'
+                                                ? 'w-2.5 h-2.5 bg-spy-lime'
                                                 : i === currentSpeakerIndex
-                                                    ? 'w-4 h-3 bg-spy-lime'
-                                                    : 'w-2 h-2 bg-white/20'
+                                                    ? 'w-6 h-2.5 bg-spy-lime shadow-[0_0_10px_#ccff00]'
+                                                    : 'w-2.5 h-2.5 bg-white/20'
                                                 }`}
                                         />
                                     ))}
                                 </div>
 
-                                {/* Who's spoken already (mini list) */}
+                                {/* Who's spoken list */}
                                 {currentSpeakerIndex > 0 && (
                                     <div className="flex flex-wrap justify-center gap-2 mb-4">
                                         {speakingOrder.slice(0, currentSpeakerIndex).map(p => (
-                                            <div key={p.id} className="flex items-center gap-1.5 bg-white/5 rounded-full px-3 py-1 border border-white/10">
-                                                {p.avatar.type === 'image' ? (
-                                                    <img src={p.avatar.value} alt={p.name} className="w-5 h-5 object-cover rounded-full" />
-                                                ) : (
-                                                    <span className="text-sm">{p.avatar.value}</span>
-                                                )}
-                                                <span className={`${p.pseudoColor ? p.pseudoColor.replace('text-', 'text-').concat('/40') : 'text-white/40'} font-bold text-xs uppercase`}>{p.name}</span>
-                                                <span className="text-spy-lime text-xs">✓</span>
+                                            <div key={p.id} className="flex items-center gap-1.5 bg-black/40 rounded-full px-3 py-1 border border-spy-lime/30">
+                                                <span className={`${p.pseudoColor || 'text-white'} font-black text-xs uppercase`}>{p.name}</span>
+                                                <span className="text-spy-lime text-xs font-black">✓</span>
                                             </div>
                                         ))}
                                     </div>
                                 )}
 
-                                <BouncyButton
+                                <button
                                     onClick={() => setCurrentSpeakerIndex(i => i + 1)}
-                                    className="w-full py-5 text-lg"
+                                    className="btn-cartoon-primary w-full py-4 text-xl font-black uppercase tracking-wider cursor-pointer shadow-[0_6px_0_#000] active:translate-y-1.5 active:shadow-[0_0_0_#000] transition-all"
                                 >
                                     {currentSpeakerIndex < speakingOrder.length - 1
                                         ? `SUIVANT →`
                                         : `DERNIER JOUEUR ✓`}
-                                </BouncyButton>
+                                </button>
                             </motion.div>
                         ) : (
-                            /* ── ALL SPOKEN — VOTE UNLOCKED ── */
+                            /* ALL SPOKEN — VOTE UNLOCKED */
                             <motion.div
                                 key="vote-ready"
-                                initial={{ y: 40, opacity: 0, scale: 0.95 }}
+                                initial={{ y: 30, opacity: 0, scale: 0.95 }}
                                 animate={{ y: 0, opacity: 1, scale: 1 }}
-                                transition={{ type: 'spring', stiffness: 300, damping: 26 }}
-                                className="w-full flex flex-col items-center gap-5"
+                                transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                                className="w-full flex flex-col items-center gap-4"
                             >
-                                <div className="text-6xl animate-bounce-slow">🗳️</div>
-                                <div className="bg-white/10 backdrop-blur-xl rounded-[32px] p-6 border border-white/15 shadow-2xl w-full">
-                                    <h2 className="text-3xl font-black text-white uppercase tracking-tight mb-2">
+                                <div className="p-4 rounded-full bg-spy-orange/20 border-2 border-spy-orange/40 animate-bounce-slow">
+                                    <Vote className="w-14 h-14 text-spy-orange stroke-[2.5]" />
+                                </div>
+                                <div className="card-cartoon bg-gradient-to-b from-[#14233e] to-[#0a1426] p-6 border-[3.5px] border-white/20 shadow-2xl w-full rounded-[32px]">
+                                    <h2 className="text-2xl font-black text-white uppercase tracking-tight mb-2 text-shadow-md">
                                         Tout le monde a parlé !
                                     </h2>
-                                    <p className="text-white/60 font-bold text-sm">
-                                        Qui est l'imposteur parmi vous ?
+                                    <p className="text-white/70 font-black text-xs uppercase tracking-wider">
+                                        Débattez ensemble et désignez l'imposteur
                                     </p>
                                 </div>
 
-                                {/* All speakers recap */}
-                                <div className="flex flex-wrap justify-center gap-2">
-                                    {speakingOrder.map(p => (
-                                        <div key={p.id} className="flex items-center gap-1.5 bg-white/5 rounded-full px-3 py-1.5 border border-spy-lime/20">
-                                            {p.avatar.type === 'image' ? (
-                                                <img src={p.avatar.value} alt={p.name} className="w-5 h-5 object-cover rounded-full" />
-                                            ) : (
-                                                <span className="text-sm">{p.avatar.value}</span>
-                                            )}
-                                            <span className={`${p.pseudoColor ? p.pseudoColor.replace('text-', 'text-').concat('/60') : 'text-white/60'} font-bold text-xs uppercase`}>{p.name}</span>
-                                            <span className="text-spy-lime text-xs">✓</span>
-                                        </div>
-                                    ))}
-                                </div>
-
-                                <BouncyButton onClick={handleStartVote} className="w-full py-6 text-xl shadow-spy-orange/30 shadow-2xl">
-                                    🗳️ PASSER AU VOTE
-                                </BouncyButton>
+                                <button
+                                    onClick={handleStartVote}
+                                    className="btn-cartoon-primary w-full py-4 text-xl font-black uppercase tracking-wider cursor-pointer shadow-[0_6px_0_#000] active:translate-y-1.5 active:shadow-[0_0_0_#000] transition-all bg-gradient-to-r from-spy-orange to-amber-500 text-black border-black flex items-center justify-center gap-2"
+                                >
+                                    <Vote className="w-6 h-6 stroke-[3]" /> PASSER AU VOTE
+                                </button>
                             </motion.div>
                         )}
                     </AnimatePresence>
 
                     <button
                         onClick={onAbort}
-                        className="text-white/30 text-xs font-bold uppercase tracking-widest hover:text-white transition-colors"
+                        className="text-white/40 text-xs font-black uppercase tracking-widest hover:text-white transition-colors cursor-pointer pt-2"
                     >
                         Annuler la mission
                     </button>
@@ -594,14 +590,21 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
     // ─────────────────────────────────────────────
     if (gameState === 'voting') {
         return (
-            <div className="min-h-screen min-h-[100dvh] flex flex-col items-center justify-center p-4 md:p-6 bg-spy-blue relative overflow-x-hidden">
+            <div className="min-h-screen min-h-[100dvh] flex flex-col items-center justify-center p-4 bg-spy-blue relative overflow-x-hidden">
                 <SettingsGear onClick={onOpenSettings} />
-                <div className="w-full max-w-md z-10 animate-pop-in max-h-[88dvh] overflow-y-auto custom-scrollbar px-2 py-4">
-                    <h2 className="text-2xl md:text-3xl font-black text-white text-center mb-6 uppercase tracking-tighter">
+                <div className="w-full max-w-md z-10 animate-pop-in max-h-[88dvh] overflow-y-auto custom-scrollbar px-2 py-4 flex flex-col items-center">
+                    
+                    <div className="bg-spy-orange/20 border-2 border-spy-orange/50 px-4 py-1.5 rounded-full mb-3 shadow-[0_0_15px_rgba(255,102,0,0.3)]">
+                        <span className="text-spy-orange font-black uppercase tracking-[0.2em] text-[10.5px]">
+                            Vote & Accusation
+                        </span>
+                    </div>
+
+                    <h2 className="text-2xl font-black text-white text-center mb-6 uppercase tracking-tight text-shadow-md">
                         Qui est <span className="text-spy-orange">l'imposteur ?</span>
                     </h2>
 
-                    <div className="grid grid-cols-2 gap-3 md:gap-4 mb-6">
+                    <div className="grid grid-cols-2 gap-3 w-full mb-6">
                         <AnimatePresence>
                             {assignedRoles.map((player) => {
                                 const isEliminated = eliminatedPlayers.includes(player.id);
@@ -610,34 +613,26 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                                         key={player.id}
                                         layout
                                         initial={{ opacity: 0, scale: 0.8 }}
-                                        animate={{ opacity: isEliminated ? 0.5 : 1, scale: 1, filter: isEliminated ? 'grayscale(100%)' : 'grayscale(0%)' }}
-                                        exit={{
-                                            y: 300,
-                                            opacity: 0,
-                                            scale: 0.5,
-                                            rotateX: -45,
-                                            transition: { duration: 0.6, ease: "anticipate" }
-                                        }}
+                                        animate={{ opacity: isEliminated ? 0.4 : 1, scale: 1 }}
                                         onClick={() => !isEliminated && handleVote(player)}
                                         disabled={isEliminated}
-                                        style={{ transformOrigin: "top center" }}
                                         className={`
-                                            btn-glass-secondary rounded-2xl p-4 flex flex-col items-center transition-all relative overflow-hidden
+                                            card-cartoon p-4 flex flex-col items-center transition-all relative overflow-hidden border-[3px] cursor-pointer
                                             ${isEliminated
-                                                ? 'bg-red-900/20 cursor-not-allowed'
-                                                : 'active:scale-95 hover:bg-white/20'}
+                                                ? 'bg-red-950/30 border-red-900/40 cursor-not-allowed filter grayscale'
+                                                : 'bg-[#14233e] border-white/20 hover:border-spy-orange hover:scale-105 active:scale-95 shadow-[0_6px_0_#000]'}
                                         `}
                                     >
-                                        <div className="w-16 h-16 mb-2 flex items-center justify-center filter drop-shadow-md">
+                                        <div className="w-16 h-16 mb-2 flex items-center justify-center">
                                             {player.avatar.type === 'image' ? (
-                                                <img src={player.avatar.value} alt={player.name} className="w-full h-full object-cover rounded-full shadow-lg" />
+                                                <img src={player.avatar.value} alt={player.name} className="w-full h-full object-cover rounded-full shadow-lg border-2 border-white/20" />
                                             ) : (
                                                 <span className="text-4xl">{player.avatar.value}</span>
                                             )}
                                         </div>
-                                        <span className={`font-bold uppercase text-sm tracking-wide ${player.pseudoColor || 'text-white'}`}>
+                                        <span className={`font-black uppercase text-xs tracking-wider text-center ${player.pseudoColor || 'text-white'}`}>
                                             {player.name}
-                                            {isEliminated && <span className="block text-xs text-red-400 mt-1 drop-shadow-sm font-black">(Éliminé)</span>}
+                                            {isEliminated && <span className="block text-[10px] text-red-400 mt-0.5 font-black">(Éliminé)</span>}
                                         </span>
                                     </motion.button>
                                 );
@@ -645,9 +640,12 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                         </AnimatePresence>
                     </div>
 
-                    <BouncyButton onClick={() => setGameState('playing')} variant="secondary" className="w-full">
+                    <button
+                        onClick={() => setGameState('playing')}
+                        className="btn-cartoon-secondary w-full py-3.5 text-xs font-black uppercase tracking-wider cursor-pointer shadow-[0_4px_0_#000] active:translate-y-1 transition-all"
+                    >
                         RETOUR DISCUSSION
-                    </BouncyButton>
+                    </button>
                 </div>
             </div>
         );
@@ -663,89 +661,81 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
         const isImpostor = isMrWhite || isUndercover;
 
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-spy-blue text-center relative overflow-hidden">
+            <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-spy-blue text-center relative overflow-hidden">
                 <SettingsGear onClick={onOpenSettings} />
-                <div className="absolute inset-0 bg-black/80 backdrop-blur-sm z-0" />
+                <div className="absolute inset-0 bg-black/85 backdrop-blur-md z-0" />
 
                 <motion.div
                     initial={{ y: 100, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    className="z-10 w-full max-w-md"
+                    className="z-10 w-full max-w-md flex flex-col items-center"
                 >
-                    <div className="mb-8 relative h-40 flex flex-col items-center justify-end">
+                    <div className="mb-6 relative h-36 flex flex-col items-center justify-end">
 
-                        {/* The Tombstone falling from above */}
+                        {/* Tombstone animation */}
                         {showTombstone && (
-                            <div className="absolute top-[-20px] left-1/2 -translate-x-1/2 text-9xl z-20 animate-drop-tombstone filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)] flex flex-col items-center justify-center">
+                            <div className="absolute top-[-20px] left-1/2 -translate-x-1/2 text-8xl z-20 animate-drop-tombstone filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.9)] flex flex-col items-center justify-center">
                                 🪦
-                                <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-4 text-red-500 font-black text-xl tracking-[0.2em] animate-pulse shadow-black drop-shadow-md bg-black/50 px-2 rounded-lg">
+                                <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 mt-3 text-red-500 font-black text-lg tracking-[0.2em] animate-pulse bg-black/70 px-2 rounded-lg border border-red-500/40">
                                     R.I.P
                                 </span>
                             </div>
                         )}
 
-                        {/* The Avatar that gets squished */}
-                        <div className={`w-32 h-32 relative z-10 flex items-center justify-center origin-bottom ${showTombstone ? 'animate-squish-avatar' : 'animate-bounce-slow filter drop-shadow-[0_0_50px_rgba(255,255,255,0.2)]'}`}>
+                        {/* Avatar animation */}
+                        <div className={`w-28 h-28 relative z-10 flex items-center justify-center origin-bottom ${showTombstone ? 'animate-squish-avatar' : 'animate-bounce-slow'}`}>
                             {votedPlayer.avatar.type === 'image' ? (
-                                <img src={votedPlayer.avatar.value} alt={votedPlayer.name} className="w-full h-full object-cover rounded-full shadow-2xl" />
+                                <img src={votedPlayer.avatar.value} alt={votedPlayer.name} className="w-full h-full object-cover rounded-full shadow-2xl border-4 border-white/20" />
                             ) : (
-                                <span className="text-9xl">{votedPlayer.avatar.value}</span>
+                                <span className="text-8xl">{votedPlayer.avatar.value}</span>
                             )}
                         </div>
 
                     </div>
-                    <div className="mb-8 relative">
-                        <h2 className={`text-4xl font-black uppercase tracking-wider mb-2 ${votedPlayer.pseudoColor || 'text-white'}`}>
+                    
+                    <div className="mb-6">
+                        <h2 className={`text-3xl font-black uppercase tracking-wider mb-1 text-shadow-md ${votedPlayer.pseudoColor || 'text-white'}`}>
                             {votedPlayer.name}
                         </h2>
-                        <p className="text-white/60 font-bold uppercase tracking-widest text-sm">était...</p>
+                        <p className="text-white/60 font-black uppercase tracking-widest text-xs">était dans l'équipe...</p>
                     </div>
 
-                    <div className="bg-white/10 backdrop-blur-xl rounded-[40px] p-8 border border-white/10 shadow-2xl mb-8 transform hover:scale-105 transition-transform duration-500">
-                        <h3 className="text-5xl font-black uppercase drop-shadow-lg mb-2">
+                    <div className="card-cartoon bg-gradient-to-b from-[#14233e] to-[#0a1426] p-6 border-[3.5px] border-white/20 shadow-2xl mb-6 w-full rounded-[32px] text-center">
+                        <h3 className="text-4xl font-black uppercase drop-shadow-lg mb-2">
                             {isCivilian ? (
-                                <span className="text-spy-lime">Innocent</span>
+                                <span className="text-spy-lime">Innocent (Civil)</span>
                             ) : isUndercover ? (
                                 <span className="text-spy-orange">Espion</span>
                             ) : (
-                                <span className="text-white">Mr. Blanc</span>
+                                <span className="text-cyan-400">Mr. Blanc</span>
                             )}
                         </h3>
 
                         {isCivilian && (
-                            <p className="text-spy-orange font-bold mt-4 animate-pulse">
-                                Oups ! Vous avez éliminé un innocent...<br />L'imposteur est toujours là.
+                            <p className="text-spy-orange font-black text-xs mt-3 uppercase tracking-wider">
+                                ⚠️ Erreur ! Vous avez éliminé un innocent...
                             </p>
                         )}
                         {isUndercover && (
-                            <p className="text-white/80 font-bold mt-4">
-                                Bien joué agents !<br />L'espion est démasqué.
+                            <p className="text-spy-lime font-black text-xs mt-3 uppercase tracking-wider">
+                                🎉 Bien joué agents ! L'espion est démasqué.
                             </p>
                         )}
                         {isMrWhite && (
-                            <p className="text-spy-lime font-bold mt-4">
-                                Mr. Blanc est éliminé...<br />
-                                <span className="text-white/70 text-sm">Mais il a une dernière chance !</span>
+                            <p className="text-cyan-400 font-black text-xs mt-3 uppercase tracking-wider">
+                                🤫 Mr. Blanc est éliminé ! Mais il a 1 dernière chance...
                             </p>
                         )}
                     </div>
 
-                    <div className="grid grid-cols-1 gap-4">
-                        {/* For ALL roles: elimination triggers the central handler */}
-                        <BouncyButton
-                            onClick={handleEliminatePlayer}
-                            className={`w-full py-5 text-lg ${isCivilian
-                                ? 'shadow-spy-orange/30 shadow-2xl'
-                                : isImpostor
-                                    ? 'shadow-spy-lime/30 shadow-2xl'
-                                    : ''
-                                }`}
-                        >
-                            {isCivilian && 'CONTINUER L\'ENQUÊTE'}
-                            {isUndercover && 'VÉRIFIER LA VICTOIRE'}
-                            {isMrWhite && 'DERNIÈRE CHANCE →'}
-                        </BouncyButton>
-                    </div>
+                    <button
+                        onClick={handleEliminatePlayer}
+                        className="btn-cartoon-primary w-full py-4 text-xl font-black uppercase tracking-wider cursor-pointer shadow-[0_6px_0_#000] active:translate-y-1.5 active:shadow-[0_0_0_#000] transition-all"
+                    >
+                        {isCivilian && 'CONTINUER L\'ENQUÊTE'}
+                        {isUndercover && 'VÉRIFIER VICTOIRE'}
+                        {isMrWhite && 'DERNIÈRE CHANCE →'}
+                    </button>
                 </motion.div>
             </div>
         );
@@ -754,32 +744,32 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
     // ─────────────────────────────────────────────
     // DISTRIBUTING STATE (tap to reveal word)
     // ─────────────────────────────────────────────
-    if (!currentPlayer) return <div className="text-white">Initialisation...</div>;
+    if (!currentPlayer) return <div className="text-white text-center p-8 font-black uppercase">Initialisation...</div>;
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center relative overflow-hidden bg-black">
+        <div className="min-h-screen flex flex-col items-center justify-center p-4 text-center relative overflow-hidden bg-spy-blue">
             <SettingsGear onClick={onOpenSettings} />
 
             <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#0f172a_0%,_#000_100%)]" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-spy-lime/10 opacity-20 rounded-full blur-[140px]" />
             </div>
 
-            <div className="z-10 flex flex-col items-center w-full max-w-sm gap-6">
+            <div className="z-10 flex flex-col items-center w-full max-w-sm gap-5">
 
                 {/* Player identity */}
                 <div className="flex flex-col items-center gap-3">
-                    <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center text-5xl border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.6)]">
+                    <div className="w-20 h-20 rounded-full bg-black/40 flex items-center justify-center text-5xl border-3 border-spy-lime shadow-[0_0_25px_rgba(204,255,0,0.3)]">
                         {currentPlayer.avatar.type === 'image' ? (
                             <img src={currentPlayer.avatar.value} alt={currentPlayer.name} className="w-full h-full object-cover rounded-full" />
                         ) : (
                             <span>{currentPlayer.avatar.value}</span>
                         )}
                     </div>
-                    <h2 className={`text-2xl font-black uppercase tracking-widest ${currentPlayer.pseudoColor || 'text-white'}`}>
+                    <h2 className={`text-2xl font-black uppercase tracking-wider text-shadow-md ${currentPlayer.pseudoColor || 'text-white'}`}>
                         {currentPlayer.name}
                     </h2>
-                    <p className="text-white/30 font-bold uppercase tracking-[0.3em] text-[10px]">
-                        Passe le téléphone à cet agent
+                    <p className="text-white/60 font-black uppercase tracking-[0.25em] text-[10px] bg-black/30 px-3 py-1 rounded-full border border-white/10">
+                        Passez le téléphone à cet agent
                     </p>
                 </div>
 
@@ -793,9 +783,9 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                             exit={{ opacity: 0, scale: 0.9 }}
                             onClick={handleReveal}
                             whileTap={{ scale: 0.95 }}
-                            className="w-full py-5 rounded-2xl border border-spy-lime/40 bg-spy-lime/10 text-spy-lime font-black uppercase tracking-widest text-lg shadow-[0_0_30px_rgba(204,255,0,0.1)] active:bg-spy-lime/20 transition-all"
+                            className="btn-cartoon-primary w-full py-5 text-xl font-black uppercase tracking-wider cursor-pointer shadow-[0_6px_0_#000] active:translate-y-1.5 active:shadow-[0_0_0_#000] transition-all flex items-center justify-center gap-2"
                         >
-                            👁 Voir mon mot
+                            <Eye className="w-6 h-6 stroke-[3]" /> VOIR MON MOT SECRET
                         </motion.button>
                     ) : (
                         /* WORD REVEAL CARD */
@@ -804,46 +794,42 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                             initial={{ y: 30, opacity: 0, scale: 0.95 }}
                             animate={{ y: 0, opacity: 1, scale: 1 }}
                             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-                            className="w-full bg-black border border-white/10 rounded-3xl overflow-hidden shadow-2xl"
+                            className="w-full card-cartoon bg-gradient-to-b from-[#14233e] to-[#0a1426] border-[3.5px] border-white/20 rounded-[32px] overflow-hidden shadow-2xl p-6"
                         >
                             {/* TOP SECRET badge */}
-                            <div className="flex items-center justify-center gap-2 py-2 border-b border-white/5">
-                                <span className="text-[9px] font-black uppercase tracking-[0.4em] text-red-500/60">⬛ Top Secret ⬛</span>
+                            <div className="inline-block px-3 py-1 rounded-full bg-red-500/20 border border-red-500/50 mb-4">
+                                <span className="text-[9.5px] font-black uppercase tracking-[0.3em] text-red-400">⬛ Secret Défense ⬛</span>
                             </div>
 
                             {/* Main content */}
-                            <div className="flex flex-col items-center justify-center py-10 px-6 gap-3">
+                            <div className="flex flex-col items-center justify-center py-4 px-2 gap-2">
                                 {currentPlayer.role !== 'Mr. White' ? (
                                     <>
-                                        <p className="text-white/30 text-[10px] font-bold uppercase tracking-[0.3em]">Ton mot secret</p>
-                                        <p className="text-5xl font-black text-white tracking-tight leading-tight break-words text-center">
+                                        <p className="text-white/50 text-[10px] font-black uppercase tracking-[0.3em]">Ton mot secret</p>
+                                        <p className="text-4xl sm:text-5xl font-black text-spy-lime tracking-tight leading-tight break-words text-center text-shadow-md">
                                             {currentPlayer.word ? currentPlayer.word : '???'}
                                         </p>
-                                        <p className="text-white/25 text-[10px] font-bold uppercase tracking-widest mt-1">
-                                            Ne dis pas ton mot à voix haute
+                                        <p className="text-white/40 text-[10px] font-black uppercase tracking-widest mt-2">
+                                            Ne dis pas ton mot à voix haute !
                                         </p>
                                     </>
                                 ) : (
                                     <>
-                                        <p className="text-white/30 text-[10px] font-bold uppercase tracking-[0.3em]">Ton rôle</p>
-                                        <p className="text-4xl font-black text-white uppercase tracking-tight">Mr. Blanc</p>
-                                        <p className="text-white/40 text-sm font-bold mt-1">Tu n'as aucun mot. Bluff !</p>
-                                        <div className="mt-1 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-white/10 text-white/60 border border-white/10">
-                                            🐻‍❄️ Bluffeur
-                                        </div>
+                                        <p className="text-white/50 text-[10px] font-black uppercase tracking-[0.3em]">Ton rôle</p>
+                                        <p className="text-4xl font-black text-cyan-400 uppercase tracking-tight text-shadow-md">Mr. Blanc</p>
+                                        <p className="text-white/80 text-xs font-black mt-2">Tu n'as aucun mot. Bluff les innocents !</p>
                                     </>
                                 )}
                             </div>
 
                             {/* SUITE button */}
-                            <div className="px-6 pb-6">
-                                <BouncyButton
+                            <div className="pt-4">
+                                <button
                                     onClick={nextPlayer}
-                                    variant="primary"
-                                    className="w-full py-4 text-base"
+                                    className="btn-cartoon-primary w-full py-4 text-lg font-black uppercase tracking-wider cursor-pointer shadow-[0_5px_0_#000] active:translate-y-1 transition-all"
                                 >
-                                    {currentPlayerIndex < players.length - 1 ? 'SUITE →' : 'LANCER LA MISSION'}
-                                </BouncyButton>
+                                    {currentPlayerIndex < players.length - 1 ? 'SUIVANT →' : 'LANCER LA MISSION'}
+                                </button>
                             </div>
                         </motion.div>
                     )}
