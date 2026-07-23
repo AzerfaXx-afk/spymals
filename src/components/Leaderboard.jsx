@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Crown, ChevronDown } from 'lucide-react';
+import { Crown, ChevronDown, ChevronUp } from 'lucide-react';
 import { CartoonAvatar } from './CartoonAvatars';
 import { supabase } from '../utils/supabaseClient';
 
@@ -117,6 +117,10 @@ const Leaderboard = () => {
     setVisibleCount(prev => Math.min(100, prev + 10));
   };
 
+  const handleShowLess = () => {
+    setVisibleCount(10);
+  };
+
   const getTitleByCoins = (coins) => {
     if (coins >= 1200) return 'Légende Spymals';
     if (coins >= 800) return 'Détective En Chef';
@@ -134,7 +138,7 @@ const Leaderboard = () => {
   const hasMore = visibleCount < Math.min(100, leaderboardData.length);
 
   return (
-    <div className="fixed inset-0 top-16 bottom-24 px-3.5 max-w-md mx-auto flex flex-col items-center justify-start pt-2 overflow-hidden pointer-events-auto select-none z-10">
+    <div className="fixed inset-0 top-16 bottom-24 px-3.5 max-w-md mx-auto flex flex-col items-center justify-start pt-1 overflow-hidden pointer-events-auto select-none z-10">
       
       {/* Background Soft Ambient Radial Glow */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
@@ -144,7 +148,7 @@ const Leaderboard = () => {
       <div className="z-10 w-full flex flex-col items-center overflow-hidden flex-1">
         
         {/* Header Title (Aligned Higher Up at Top) */}
-        <div className="text-center mb-1.5 flex-shrink-0">
+        <div className="text-center mb-1 flex-shrink-0">
           <div className="inline-flex items-center px-3 py-0.5 rounded-full bg-spy-lime/10 border border-spy-lime/30 text-spy-lime text-[8.5px] font-black uppercase tracking-widest mb-0.5 shadow-sm">
             AGENTS ÉLITES
           </div>
@@ -155,7 +159,7 @@ const Leaderboard = () => {
         </div>
 
         {/* 3D CARTOON PODIUM SECTION */}
-        <div className="w-full grid grid-cols-3 gap-1.5 items-end mb-2 px-0.5 flex-shrink-0">
+        <div className="w-full grid grid-cols-3 gap-1.5 items-end mb-1.5 px-0.5 flex-shrink-0">
           
           {/* 2nd Place (Silver) */}
           {top2 && (
@@ -229,8 +233,8 @@ const Leaderboard = () => {
 
         </div>
 
-        {/* ROUNDED RANK LIST CONTAINER - Hugs contents tightly up to item #10 */}
-        <div className="w-full bg-slate-950/90 backdrop-blur-xl border-2 border-white/15 rounded-3xl p-2.5 shadow-[0_12px_30px_rgba(0,0,0,0.6)] flex flex-col overflow-hidden flex-shrink-0 max-h-[58dvh]">
+        {/* ROUNDED RANK LIST CONTAINER - Fits all 7 items (#4 to #10) cleanly without truncation */}
+        <div className="w-full bg-slate-950/90 backdrop-blur-xl border-2 border-white/15 rounded-3xl p-2.5 shadow-[0_12px_30px_rgba(0,0,0,0.6)] flex flex-col overflow-hidden flex-shrink-0 max-h-[64dvh]">
           
           <div className="flex items-center justify-between px-2 pb-1 mb-1 border-b border-white/10 text-[8px] font-black uppercase tracking-widest text-white/40 flex-shrink-0">
             <span>RANG & AGENT</span>
@@ -246,7 +250,7 @@ const Leaderboard = () => {
             <div className="flex flex-col flex-shrink-0 overflow-hidden">
               
               {/* Scrollable list items */}
-              <div className="overflow-y-auto pr-0.5 no-scrollbar space-y-1 max-h-[265px] flex-shrink">
+              <div className="overflow-y-auto pr-0.5 no-scrollbar space-y-1 max-h-[350px] flex-shrink">
                 {paginatedList.map((agent, index) => {
                   const rankNumber = index + 4;
                   return (
@@ -292,20 +296,26 @@ const Leaderboard = () => {
                 })}
               </div>
 
-              {/* ALWAYS VISIBLE PINNED "+10" BUTTON AT BOTTOM */}
-              <div className="pt-1.5 flex-shrink-0">
-                {hasMore ? (
+              {/* ALWAYS VISIBLE PINNED CONTROLS AT BOTTOM (+10 AND REPLIER) */}
+              <div className="pt-1.5 flex items-center gap-2 flex-shrink-0">
+                {hasMore && (
                   <button
                     onClick={handleLoadMore}
-                    className="w-full py-1.5 bg-gradient-to-r from-spy-lime/20 via-spy-lime/30 to-spy-lime/20 hover:from-spy-lime/35 hover:to-spy-lime/35 border-2 border-spy-lime rounded-2xl text-spy-lime font-black uppercase text-[9px] tracking-widest transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 active:scale-95 shadow-[0_3px_12px_rgba(204,255,0,0.25)]"
+                    className="flex-1 py-1.5 bg-gradient-to-r from-spy-lime/20 via-spy-lime/30 to-spy-lime/20 hover:from-spy-lime/35 hover:to-spy-lime/35 border-2 border-spy-lime rounded-2xl text-spy-lime font-black uppercase text-[9px] tracking-widest transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 active:scale-95 shadow-[0_3px_12px_rgba(204,255,0,0.25)]"
                   >
-                    <span>VOIR PLUS DE JOUEURS (+10)</span>
+                    <span>VOIR PLUS (+10)</span>
                     <ChevronDown className="w-3.5 h-3.5" />
                   </button>
-                ) : (
-                  <div className="w-full py-1 bg-white/5 border border-white/10 rounded-2xl text-white/40 font-black uppercase text-[8px] tracking-widest text-center">
-                    FIN DU CLASSEMENT
-                  </div>
+                )}
+
+                {visibleCount > 10 && (
+                  <button
+                    onClick={handleShowLess}
+                    className="py-1.5 px-3 bg-white/10 hover:bg-white/15 border border-white/20 rounded-2xl text-white font-black uppercase text-[9px] tracking-wider transition-all duration-200 cursor-pointer flex items-center justify-center gap-1 active:scale-95 flex-shrink-0"
+                  >
+                    <span>REPLIER</span>
+                    <ChevronUp className="w-3.5 h-3.5" />
+                  </button>
                 )}
               </div>
 
