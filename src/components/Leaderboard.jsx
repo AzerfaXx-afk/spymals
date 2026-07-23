@@ -139,11 +139,11 @@ const Leaderboard = () => {
   };
 
   return (
-    <div className="fixed inset-0 top-18 bottom-24 px-3.5 max-w-md mx-auto flex flex-col justify-between overflow-hidden pointer-events-auto select-none">
+    <div className="fixed inset-0 top-18 bottom-22 px-3.5 max-w-md mx-auto flex flex-col justify-between overflow-hidden pointer-events-auto select-none z-10">
       
       {/* Background Glow */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-6 left-1/2 -translate-x-1/2 w-64 h-64 bg-spy-lime opacity-10 rounded-full blur-[80px]"></div>
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 w-64 h-64 bg-spy-lime opacity-10 rounded-full blur-[80px]"></div>
       </div>
 
       <div className="z-10 w-full flex flex-col h-full overflow-hidden justify-between">
@@ -166,20 +166,20 @@ const Leaderboard = () => {
           {top2 && (
             <div className="flex flex-col items-center">
               <div className="relative mb-0.5 flex flex-col items-center">
-                <div className="w-4.5 h-4.5 rounded-full bg-slate-300 border border-white flex items-center justify-center text-[9px] font-black text-slate-900 shadow-md -mb-1.5 z-20">
+                <div className="w-5 h-5 rounded-full bg-slate-300 border-2 border-white flex items-center justify-center text-[9px] font-black text-slate-900 shadow-md -mb-2 z-20">
                   2
                 </div>
                 <div className="w-11 h-11 rounded-2xl bg-gradient-to-b from-slate-700 to-slate-900 border-2 border-slate-300 p-0.5 shadow-md overflow-hidden">
                   <CartoonAvatar id={top2.avatar_emoji} className="w-full h-full border-none shadow-none" />
                 </div>
               </div>
-              <span className="text-[9.5px] font-black text-white truncate max-w-[75px] text-center leading-tight">{top2.username}</span>
-              <span className="text-[8.5px] font-black text-spy-lime">{top2.winRate}% Réussite</span>
+              <span className="text-[9.5px] font-black text-white truncate max-w-[75px] text-center leading-tight mt-1">{top2.username}</span>
+              <span className="text-[8px] font-black text-spy-lime">{top2.winRate}% Réussite</span>
               
               {/* Podium Pillar 2 */}
-              <div className="w-full h-13 mt-1 bg-gradient-to-b from-slate-800/90 to-slate-950/90 border-t-3 border-slate-300 rounded-t-2xl flex flex-col items-center justify-center shadow-lg p-0.5">
-                <span className="text-base font-black text-slate-300 opacity-80">#2</span>
-                <span className="text-[6.5px] text-white/80 font-bold">{top2.wins} Victoires • {top2.losses} Défaites</span>
+              <div className="w-full h-11 mt-1 bg-gradient-to-b from-slate-800/90 to-slate-950/90 border-t-3 border-slate-300 rounded-t-2xl flex flex-col items-center justify-center shadow-lg p-0.5">
+                <span className="text-sm font-black text-slate-300 opacity-90">#2</span>
+                <span className="text-[6.5px] text-white/70 font-bold">{top2.wins}V • {top2.losses}D</span>
               </div>
             </div>
           )}
@@ -188,21 +188,20 @@ const Leaderboard = () => {
           {top1 && (
             <div className="flex flex-col items-center -translate-y-1">
               <div className="relative mb-0.5 flex flex-col items-center">
-                <div className="w-5.5 h-5.5 rounded-full bg-gradient-to-b from-amber-300 to-amber-500 border-2 border-white flex items-center justify-center text-slate-950 shadow-[0_0_12px_rgba(251,191,36,0.6)] -mb-2 z-20">
-                  <Crown className="w-3 h-3 fill-slate-950" />
+                <div className="w-6 h-6 rounded-full bg-gradient-to-b from-amber-300 to-amber-500 border-2 border-white flex items-center justify-center text-slate-950 shadow-[0_0_12px_rgba(251,191,36,0.6)] -mb-2.5 z-20">
+                  <Crown className="w-3.5 h-3.5 fill-slate-950" />
                 </div>
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-b from-amber-500/30 to-slate-900 border-3 border-amber-400 p-0.5 shadow-[0_6px_18px_rgba(251,191,36,0.4)] overflow-hidden">
+                <div className="w-13 h-13 rounded-2xl bg-gradient-to-b from-amber-500/30 to-slate-900 border-3 border-amber-400 p-0.5 shadow-[0_6px_18px_rgba(251,191,36,0.4)] overflow-hidden">
                   <CartoonAvatar id={top1.avatar_emoji} className="w-full h-full border-none shadow-none" />
                 </div>
               </div>
-              <span className="text-[10px] font-black text-amber-300 truncate max-w-[85px] text-center drop-shadow-sm leading-tight">{top1.username}</span>
-              <span className="text-[9px] font-black text-spy-lime">{top1.winRate}% Réussite</span>
+              <span className="text-[10px] font-black text-amber-300 truncate max-w-[85px] text-center drop-shadow-sm leading-tight mt-1">{top1.username}</span>
+              <span className="text-[8.5px] font-black text-spy-lime">{top1.winRate}% Réussite</span>
               
               {/* Podium Pillar 1 */}
-              <div className="w-full h-17 mt-1 bg-gradient-to-b from-amber-500/20 to-slate-950/95 border-t-4 border-amber-400 rounded-t-2xl flex flex-col items-center justify-center shadow-2xl relative overflow-hidden p-0.5">
-                <div className="absolute inset-0 bg-amber-400/5 animate-pulse"></div>
-                <span className="text-lg font-black text-amber-400 opacity-90">#1 ÉLITE</span>
-                <span className="text-[7px] font-black text-amber-200">{top1.wins} Victoires • {top1.losses} Défaites</span>
+              <div className="w-full h-15 mt-1 bg-gradient-to-b from-amber-500/20 to-slate-950/95 border-t-4 border-amber-400 rounded-t-2xl flex flex-col items-center justify-center shadow-2xl relative overflow-hidden p-0.5">
+                <span className="text-base font-black text-amber-400 opacity-95">#1 ÉLITE</span>
+                <span className="text-[7px] font-black text-amber-200">{top1.wins}V • {top1.losses}D</span>
                 <div className="flex items-center gap-0.5 mt-0.5">
                   <img src="/croquette_coin_3d.png" alt="coin" className="w-2.5 h-2.5 object-contain" />
                   <span className="text-[7px] font-black text-spy-lime">{top1.coins} Croquettes</span>
@@ -215,20 +214,20 @@ const Leaderboard = () => {
           {top3 && (
             <div className="flex flex-col items-center">
               <div className="relative mb-0.5 flex flex-col items-center">
-                <div className="w-4.5 h-4.5 rounded-full bg-amber-700 border border-white flex items-center justify-center text-[9px] font-black text-amber-100 shadow-md -mb-1.5 z-20">
+                <div className="w-5 h-5 rounded-full bg-amber-700 border-2 border-white flex items-center justify-center text-[9px] font-black text-amber-100 shadow-md -mb-2 z-20">
                   3
                 </div>
                 <div className="w-11 h-11 rounded-2xl bg-gradient-to-b from-amber-900/60 to-slate-900 border-2 border-amber-600 p-0.5 shadow-md overflow-hidden">
                   <CartoonAvatar id={top3.avatar_emoji} className="w-full h-full border-none shadow-none" />
                 </div>
               </div>
-              <span className="text-[9.5px] font-black text-white truncate max-w-[75px] text-center leading-tight">{top3.username}</span>
-              <span className="text-[8.5px] font-black text-spy-lime">{top3.winRate}% Réussite</span>
+              <span className="text-[9.5px] font-black text-white truncate max-w-[75px] text-center leading-tight mt-1">{top3.username}</span>
+              <span className="text-[8px] font-black text-spy-lime">{top3.winRate}% Réussite</span>
               
               {/* Podium Pillar 3 */}
-              <div className="w-full h-12 mt-1 bg-gradient-to-b from-amber-950/80 to-slate-950/90 border-t-3 border-amber-700 rounded-t-2xl flex flex-col items-center justify-center shadow-lg p-0.5">
-                <span className="text-base font-black text-amber-600 opacity-80">#3</span>
-                <span className="text-[6.5px] text-white/80 font-bold">{top3.wins} Victoires • {top3.losses} Défaites</span>
+              <div className="w-full h-10 mt-1 bg-gradient-to-b from-amber-950/80 to-slate-950/90 border-t-3 border-amber-700 rounded-t-2xl flex flex-col items-center justify-center shadow-lg p-0.5">
+                <span className="text-sm font-black text-amber-600 opacity-90">#3</span>
+                <span className="text-[6.5px] text-white/70 font-bold">{top3.wins}V • {top3.losses}D</span>
               </div>
             </div>
           )}
@@ -299,17 +298,17 @@ const Leaderboard = () => {
               </div>
 
               {/* ALWAYS VISIBLE PINNED BUTTON AT BOTTOM OF CARD */}
-              <div className="pt-2 flex-shrink-0">
+              <div className="pt-1.5 flex-shrink-0">
                 {hasMore ? (
                   <button
                     onClick={handleLoadMore}
-                    className="w-full py-2 bg-gradient-to-r from-spy-lime/25 via-spy-lime/35 to-spy-lime/25 hover:from-spy-lime/35 hover:to-spy-lime/35 border-2 border-spy-lime rounded-2xl text-spy-lime font-black uppercase text-[9.5px] tracking-widest transition-all duration-300 cursor-pointer flex items-center justify-center gap-1.5 active:scale-95 shadow-[0_4px_15px_rgba(204,255,0,0.3)]"
+                    className="w-full py-1.5 bg-gradient-to-r from-spy-lime/25 via-spy-lime/35 to-spy-lime/25 hover:from-spy-lime/35 hover:to-spy-lime/35 border-2 border-spy-lime rounded-2xl text-spy-lime font-black uppercase text-[9px] tracking-widest transition-all duration-300 cursor-pointer flex items-center justify-center gap-1.5 active:scale-95 shadow-[0_4px_15px_rgba(204,255,0,0.3)]"
                   >
                     <span>VOIR PLUS DE JOUEURS (+10)</span>
                     <ChevronDown className="w-3.5 h-3.5" />
                   </button>
                 ) : (
-                  <div className="w-full py-1.5 bg-white/5 border border-white/10 rounded-2xl text-white/40 font-black uppercase text-[8.5px] tracking-widest text-center">
+                  <div className="w-full py-1 bg-white/5 border border-white/10 rounded-2xl text-white/40 font-black uppercase text-[8px] tracking-widest text-center">
                     FIN DU CLASSEMENT
                   </div>
                 )}

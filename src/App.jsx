@@ -478,38 +478,38 @@ function App() {
         {isMenuScreen && (
           <div className="fixed top-2 left-0 right-0 z-40 px-3 pointer-events-none">
             <div className="max-w-md mx-auto pointer-events-auto">
-              <div className="bg-slate-950/95 backdrop-blur-2xl border-2 border-white/15 rounded-2xl h-16 px-4 flex items-center justify-between shadow-[0_12px_35px_rgba(0,0,0,0.8)]">
+              <div className="bg-slate-950/95 backdrop-blur-2xl border-2 border-white/15 rounded-2xl h-14 px-3 flex items-center justify-between shadow-[0_12px_35px_rgba(0,0,0,0.85)]">
                 {/* Top Left: Boutique (Caddie 3D) */}
                 <button
                   onClick={() => setCurrentScreen('shop')}
-                  className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl border transition-all duration-300 transform active:scale-90 hover:-translate-y-0.5 cursor-pointer shadow-md group ${
+                  className={`flex items-center gap-1.5 px-3 py-1 rounded-full border transition-all duration-200 transform active:scale-95 cursor-pointer shadow-md group ${
                     currentScreen === 'shop'
                       ? 'bg-spy-lime text-spy-blue border-white shadow-spy-lime/40 font-black scale-105'
-                      : 'bg-white/5 border-white/10 text-white/90 hover:bg-white/10 hover:border-spy-lime/50'
+                      : 'bg-white/5 border-white/15 text-white/90 hover:bg-white/10 hover:border-spy-lime/50'
                   }`}
                   title="Boutique"
                 >
-                  <img src="/shop_icon_3d.svg" alt="Boutique" className="w-8 h-8 object-contain filter drop-shadow-[0_3px_6px_rgba(0,0,0,0.5)] transform group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300" />
+                  <img src="/shop_icon_3d.svg" alt="Boutique" className="w-6 h-6 object-contain filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] transform group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300" />
                   <span className="text-[10px] font-black uppercase tracking-wider">Boutique</span>
                 </button>
 
-                {/* Center: 3D Croquette Coin Counter */}
-                <div className="bg-slate-900/90 border border-spy-lime/40 px-4 py-1.5 rounded-full flex items-center gap-2 text-xs font-black text-white shadow-inner select-none transition-transform duration-300 hover:scale-105">
-                  <img src="/croquette_coin_3d.png" alt="Croquettes" className="w-6 h-6 object-contain filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] animate-pulse" />
-                  <span className="text-spy-lime font-black text-sm tracking-tight">{profileData?.coins || 0}</span>
+                {/* Center: 3D Croquette Coin Counter (No blinking animation) */}
+                <div className="bg-slate-900/95 border border-spy-lime/50 px-3 py-1 rounded-full flex items-center gap-1.5 text-xs font-black text-white shadow-inner select-none transition-transform duration-200 hover:scale-105">
+                  <img src="/croquette_coin_3d.png" alt="Croquettes" className="w-5 h-5 object-contain filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" />
+                  <span className="text-spy-lime font-black text-xs tracking-tight">{profileData?.coins || 0}</span>
                 </div>
 
-                {/* Top Right: Agent Profile Button (Enlarged & Animated Avatar) */}
+                {/* Top Right: Agent Profile Button (Enlarged Avatar) */}
                 <button
                   onClick={() => setCurrentScreen('profile')}
-                  className={`flex items-center gap-2 p-1 pr-3 rounded-full border transition-all duration-300 transform active:scale-90 hover:-translate-y-0.5 cursor-pointer shadow-md group ${
+                  className={`flex items-center gap-1.5 p-0.5 pr-2.5 rounded-full border transition-all duration-200 transform active:scale-95 cursor-pointer shadow-md group ${
                     currentScreen === 'profile'
                       ? 'bg-spy-lime/20 border-spy-lime text-spy-lime shadow-spy-lime/30 scale-105'
                       : 'bg-white/5 border-white/15 text-white/90 hover:bg-white/10 hover:border-spy-lime/50'
                   }`}
                   title="Profil Agent"
                 >
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-b from-slate-800 to-slate-950 border-2 border-spy-lime overflow-hidden flex-shrink-0 shadow-md transform group-hover:scale-105 transition-transform duration-300">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-b from-slate-800 to-slate-950 border-2 border-spy-lime overflow-hidden flex-shrink-0 shadow-md transform group-hover:scale-105 transition-transform duration-300">
                     <CartoonAvatar id={profileData?.avatar_emoji} className="w-full h-full border-none shadow-none" />
                   </div>
                   <span className="text-[10px] font-black uppercase tracking-wider">Profil</span>
@@ -519,7 +519,7 @@ function App() {
           </div>
         )}
 
-        <div className={isMenuScreen ? "pb-36 pt-22" : ""}>
+        <div className={isMenuScreen ? "h-screen h-[100dvh] overflow-hidden" : ""}>
           {currentScreen === 'home' && (
             <Home
               profileData={profileData}
