@@ -689,43 +689,51 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                     animate={{ y: 0, opacity: 1 }}
                     className="z-10 w-full max-w-md flex flex-col items-center"
                 >
-                    <div className="mb-6 relative h-44 flex flex-col items-center justify-end w-full max-w-xs">
+                    <div className="mb-6 relative h-48 flex flex-col items-center justify-center w-full max-w-xs">
 
-                        {/* 3D Cartoon Anvil Drop Animation */}
+                        {/* Avatar Frame with Pro Cartoon Impact Animation */}
+                        <motion.div 
+                            animate={showAnvil ? { scale: 0.92, y: 16, rotate: -3 } : { scale: 1, y: 0, rotate: 0 }}
+                            transition={{ type: 'spring', stiffness: 500, damping: 20 }}
+                            className="w-32 h-32 relative z-10 flex items-center justify-center rounded-full border-4 border-white/20 shadow-[0_10px_30px_rgba(0,0,0,0.8)] bg-slate-900 overflow-hidden"
+                        >
+                            {votedPlayer.avatar.type === 'image' ? (
+                                <img src={votedPlayer.avatar.value} alt={votedPlayer.name} className={`w-full h-full object-cover rounded-full ${showAnvil ? 'filter grayscale brightness-75' : ''}`} />
+                            ) : (
+                                <CartoonAvatar id={votedPlayer.avatar.value} className={`w-full h-full border-none shadow-none ${showAnvil ? 'filter grayscale brightness-75' : ''}`} />
+                            )}
+
+                            {/* Elimination impact overlay */}
+                            {showAnvil && (
+                                <div className="absolute inset-0 bg-red-950/40 border-2 border-red-500/60 rounded-full pointer-events-none" />
+                            )}
+                        </motion.div>
+
+                        {/* 3D Cutout Cartoon Anvil Drop */}
                         <AnimatePresence>
                             {showAnvil && (
                                 <motion.div
-                                    initial={{ y: -180, opacity: 0, scale: 1.3 }}
-                                    animate={{ y: -25, opacity: 1, scale: 1 }}
-                                    transition={{ type: 'spring', stiffness: 500, damping: 15, mass: 1.2 }}
-                                    className="absolute top-[-25px] z-20 flex flex-col items-center justify-center pointer-events-none"
+                                    initial={{ y: -160, opacity: 0, scale: 1.4 }}
+                                    animate={{ y: -38, opacity: 1, scale: 1 }}
+                                    transition={{ type: 'spring', stiffness: 600, damping: 18, mass: 1.1 }}
+                                    className="absolute z-20 flex flex-col items-center justify-center pointer-events-none"
                                 >
-                                    <div className="relative w-36 h-28 flex items-center justify-center">
+                                    {/* 3D Steel Anvil Image - 100% Transparent Cutout */}
+                                    <div className="relative w-44 h-32 flex items-center justify-center">
                                         <img 
                                             src="/cartoon_anvil_3d.png" 
                                             alt="Enclume Cartoon 3D" 
-                                            className="w-full h-full object-contain filter drop-shadow-[0_15px_15px_rgba(0,0,0,0.9)]" 
+                                            className="w-full h-full object-contain filter drop-shadow-[0_15px_20px_rgba(0,0,0,0.9)]" 
                                         />
-                                        <div className="absolute -bottom-2 bg-gradient-to-r from-red-600 to-rose-700 text-white font-black text-xs uppercase tracking-[0.2em] px-3.5 py-1 rounded-full border-2 border-black shadow-[0_4px_10px_rgba(255,0,0,0.5)] flex items-center gap-1 animate-pulse">
-                                            <Skull className="w-3.5 h-3.5 text-white stroke-[2.5]" /> ÉLIMINÉ !
+                                        
+                                        {/* Steady Non-blinking R.I.P • ÉLIMINÉ Badge */}
+                                        <div className="absolute -top-3 bg-gradient-to-r from-red-600 to-rose-700 text-white font-black text-[11px] uppercase tracking-[0.2em] px-4 py-1 rounded-full border-2 border-black shadow-[0_4px_12px_rgba(255,0,0,0.6)] flex items-center gap-1.5 whitespace-nowrap">
+                                            <Skull className="w-3.5 h-3.5 text-white stroke-[2.5]" /> R.I.P • ÉLIMINÉ
                                         </div>
                                     </div>
                                 </motion.div>
                             )}
                         </AnimatePresence>
-
-                        {/* Avatar cartoon squish effect under the heavy anvil */}
-                        <motion.div 
-                            animate={showAnvil ? { scaleY: 0.35, scaleX: 1.35, y: 15 } : { scaleY: 1, scaleX: 1, y: 0 }}
-                            transition={{ type: 'spring', stiffness: 600, damping: 18 }}
-                            className="w-28 h-28 relative z-10 flex items-center justify-center origin-bottom overflow-hidden rounded-full border-4 border-white/20 shadow-2xl bg-black/50"
-                        >
-                            {votedPlayer.avatar.type === 'image' ? (
-                                <img src={votedPlayer.avatar.value} alt={votedPlayer.name} className="w-full h-full object-cover rounded-full" />
-                            ) : (
-                                <CartoonAvatar id={votedPlayer.avatar.value} className="w-full h-full border-none shadow-none" />
-                            )}
-                        </motion.div>
 
                     </div>
                     
