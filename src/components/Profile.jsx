@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { 
-  ArrowLeft, Edit3, Award, Sparkles, Sliders, MessageSquare, 
-  HelpCircle, LogOut, LogIn, Volume2, Palette, Coins, Lock, CheckCircle2 
+  Edit3, Award, Sliders, MessageSquare, 
+  HelpCircle, LogOut, LogIn, Palette, Lock, CheckCircle2, ChevronDown, ChevronUp,
+  Compass, Cpu, Snowflake, Ghost, Gamepad2
 } from 'lucide-react';
-import BouncyButton from './BouncyButton';
-import BackArrow from './BackArrow';
 import { supabase } from '../utils/supabaseClient';
 import EditProfileModal from './EditProfileModal';
 import { useAudio } from '../contexts/AudioContext';
-import { CartoonAvatar, CARTOON_AVATARS_LIST } from './CartoonAvatars';
+import { CartoonAvatar } from './CartoonAvatars';
 
 export const USERNAME_COLORS = [
     { id: 'default', label: 'Blanc Classique', class: 'text-white', price: 0 },
@@ -20,24 +19,24 @@ export const USERNAME_COLORS = [
 ];
 
 export const PROFILE_BANNERS = [
-    { id: 'default', label: 'Classique', class: 'bg-gradient-to-br from-slate-900/90 to-slate-950/90 border-white/10', previewClass: 'bg-slate-950', price: 0 },
-    { id: 'jungle', label: 'Jungle Secrète', class: 'bg-gradient-to-br from-emerald-950/90 via-slate-900/90 to-stone-950/90 border-emerald-500/25', previewClass: 'bg-emerald-950', price: 100 },
-    { id: 'cyber', label: 'Néon Grid', class: 'bg-gradient-to-br from-purple-950/90 via-slate-900/90 to-indigo-950/90 border-pink-500/25', previewClass: 'bg-purple-950', price: 150 },
-    { id: 'agent_gold', label: 'Élite Or', class: 'bg-gradient-to-br from-yellow-950/90 via-amber-900/90 to-stone-950/90 border-yellow-500/30', previewClass: 'bg-yellow-900', price: 300 },
+    { id: 'default', label: 'Classique', class: 'bg-gradient-to-br from-slate-900/90 to-slate-950/90 border-white/10', previewClass: 'bg-slate-800', price: 0 },
+    { id: 'jungle', label: 'Jungle Secrète', class: 'bg-gradient-to-br from-emerald-950/90 via-slate-900/90 to-stone-950/90 border-emerald-500/25', previewClass: 'bg-emerald-600', price: 100 },
+    { id: 'cyber', label: 'Néon Grid', class: 'bg-gradient-to-br from-purple-950/90 via-slate-900/90 to-indigo-950/90 border-pink-500/25', previewClass: 'bg-purple-600', price: 150 },
+    { id: 'agent_gold', label: 'Élite Or', class: 'bg-gradient-to-br from-yellow-950/90 via-amber-900/90 to-stone-950/90 border-yellow-500/30', previewClass: 'bg-amber-500', price: 300 },
 ];
 
 export const THEMES_LIST = [
-    { id: 'safari', label: 'Safari', bg: 'bg-[#aadd00] text-black', icon: '\ud83e\udd81', price: 0 },
-    { id: 'cyber', label: 'Cyber', bg: 'bg-[#00ffff] text-black', icon: '\ud83d\udc7e', price: 100 },
-    { id: 'polar', label: 'Polar', bg: 'bg-[#3b82f6] text-white', icon: '\u2744\ufe0f', price: 150 },
-    { id: 'spooky', label: 'Spooky', bg: 'bg-[#ff7700] text-black', icon: '\ud83c\udf19', price: 200 },
-    { id: 'retro', label: 'Retro', bg: 'bg-[#8bac0f] text-black', icon: '\ud83d\udd79\ufe0f', price: 250 }
+    { id: 'safari', label: 'Safari', bg: 'bg-[#aadd00] text-slate-950', IconComponent: Compass, price: 0 },
+    { id: 'cyber', label: 'Cyber', bg: 'bg-cyan-400 text-slate-950', IconComponent: Cpu, price: 100 },
+    { id: 'polar', label: 'Polar', bg: 'bg-blue-500 text-white', IconComponent: Snowflake, price: 150 },
+    { id: 'spooky', label: 'Spooky', bg: 'bg-orange-500 text-slate-950', IconComponent: Ghost, price: 200 },
+    { id: 'retro', label: 'Retro', bg: 'bg-lime-500 text-slate-950', IconComponent: Gamepad2, price: 250 }
 ];
 
 const getLevelTitle = (lvl) => {
     if (lvl >= 15) return 'Maître Espion';
-    if (lvl >= 10) return 'Agent d\'\u00c9lite';
-    if (lvl >= 5) return 'D\u00e9tective Confirm\u00e9';
+    if (lvl >= 10) return 'Agent d\'Élite';
+    if (lvl >= 5) return 'Détective Confirmé';
     if (lvl >= 3) return 'Espion Junior';
     return 'Recrue Curieuse';
 };
@@ -47,10 +46,10 @@ const getXPNeeded = (lvl) => lvl * 150;
 const FAQ_ITEMS = [
     {
         q: "Comment marquer des points et monter de niveau ?",
-        a: "Gagnez des points d'XP à chaque fin de partie ! Démasquer l'imposteur en tant que civil ou rester indétectable en tant qu'imposteur vous donne un bonus d'XP. Chaque niveau franchi vous rapporte 50 pièces."
+        a: "Gagnez des points d'XP à chaque fin de partie ! Démasquer l'imposteur en tant que civil ou rester indétectable en tant qu'imposteur vous donne un bonus d'XP. Chaque niveau franchi vous rapporte des Croquettes."
     },
     {
-        q: "À quoi servent les Croquettes (🐾) ?",
+        q: "À quoi servent les Croquettes ?",
         a: "Vous pouvez dépenser vos Croquettes dans la Boutique pour débloquer de magnifiques bannières de dossier, des thèmes cartoon animés et des couleurs de pseudonyme exclusives."
     },
     {
@@ -59,7 +58,7 @@ const FAQ_ITEMS = [
     },
     {
         q: "Mes données sont-elles sauvegardées ?",
-        a: "Si vous jouez avec un compte connecté (e.g. Google), votre progression est sauvegardée de façon permanente en ligne. En mode invité, elle est stockée uniquement sur ce navigateur."
+        a: "Si vous jouez avec un compte connecté, votre progression est sauvegardée de façon permanente en ligne. En mode invité, elle est stockée uniquement sur ce navigateur."
     }
 ];
 
@@ -73,11 +72,11 @@ const Profile = ({ user, profileData, onUpdateProfile, onLogout, onBack }) => {
     const [unlockedItems, setUnlockedItems] = useState(['default']);
     const [showEditModal, setShowEditModal] = useState(false);
 
-    // Collapsible Accordion sections: 'custom', 'audio', 'feedback', 'faq' (null = all closed)
+    // Collapsible Accordion sections: 'custom', 'audio', 'feedback', 'faq' (null = closed)
     const [activeSection, setActiveSection] = useState('custom');
 
     // Feedback inputs
-    const [feedbackEmail, setFeedbackEmail] = useState(isGuest ? '' : user.email || '');
+    const [feedbackEmail, setFeedbackEmail] = useState(isGuest ? '' : user?.email || '');
     const [feedbackMessage, setFeedbackMessage] = useState('');
     const [feedbackSent, setFeedbackSent] = useState(false);
     const [sendingFeedback, setSendingFeedback] = useState(false);
@@ -160,7 +159,6 @@ const Profile = ({ user, profileData, onUpdateProfile, onLogout, onBack }) => {
 
         setSendingFeedback(true);
         try {
-            // 1. Save to Supabase (Backup & log)
             const { error: dbError } = await supabase
                 .from('spymals_feedback')
                 .insert({
@@ -171,7 +169,6 @@ const Profile = ({ user, profileData, onUpdateProfile, onLogout, onBack }) => {
                 });
 
             if (dbError) {
-                console.warn("Could not save feedback to Supabase, saving to local storage fallback:", dbError);
                 const saved = JSON.parse(localStorage.getItem('spyMals_local_feedbacks') || '[]');
                 saved.push({
                     username: profileData?.username || 'Agent Invité',
@@ -182,8 +179,7 @@ const Profile = ({ user, profileData, onUpdateProfile, onLogout, onBack }) => {
                 localStorage.setItem('spyMals_local_feedbacks', JSON.stringify(saved));
             }
 
-            // 2. Trigger Vercel Serverless Function to send email via Resend
-            const emailRes = await fetch('/api/send-feedback', {
+            await fetch('/api/send-feedback', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -191,24 +187,18 @@ const Profile = ({ user, profileData, onUpdateProfile, onLogout, onBack }) => {
                     email: feedbackEmail || 'non-renseigne',
                     message: feedbackMessage
                 })
-            });
-
-            if (!emailRes.ok) {
-                const errData = await emailRes.json();
-                console.error("Vercel Email delivery failed:", errData);
-            }
+            }).catch(() => {});
             
             setFeedbackSent(true);
             setFeedbackMessage('');
             setTimeout(() => setFeedbackSent(false), 5000);
         } catch (err) {
-            console.error("Feedback submission error:", err);
+            console.error("Feedback error:", err);
         } finally {
             setSendingFeedback(false);
         }
     };
 
-    const selectedBannerClass = PROFILE_BANNERS.find(b => b.id === equippedBanner)?.class || PROFILE_BANNERS[0].class;
     const selectedColorClass = USERNAME_COLORS.find(c => c.id === equippedColor)?.class || USERNAME_COLORS[0].class;
 
     const toggleSection = (sectionName) => {
@@ -216,79 +206,133 @@ const Profile = ({ user, profileData, onUpdateProfile, onLogout, onBack }) => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-start p-4 bg-transparent max-w-md mx-auto relative overflow-y-auto no-scrollbar pb-24">
-            
-            {/* Title */}
-            <div className="z-10 text-center mb-6 w-full">
-                <h2 className="text-3xl font-black text-white uppercase tracking-tighter text-clay-white">
-                    Dossier Agent
-                </h2>
-                <p className="text-spy-lime text-[10px] font-black uppercase tracking-[0.2em] mt-1">
-                    Données d\'identification
-                </p>
+        /* Smooth Scrollable Container clearing navbar bottom area */
+        <div className="fixed top-14 sm:top-16 left-0 right-0 overflow-y-auto no-scrollbar pointer-events-auto select-none z-10"
+            style={{ paddingBottom: 'calc(110px + env(safe-area-inset-bottom, 0px))' }}
+        >
+            {/* Ambient Background Glow */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+                <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full blur-[140px]"
+                    style={{ background: 'radial-gradient(circle, rgba(204,255,0,0.08) 0%, rgba(204,255,0,0.02) 50%, transparent 80%)' }}
+                ></div>
+                <div className="absolute bottom-20 left-1/2 -translate-x-1/2 w-[400px] h-[400px] rounded-full blur-[120px]"
+                    style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.06) 0%, transparent 80%)' }}
+                ></div>
             </div>
 
-            {/* Profile Card */}
-            <div className={`z-10 w-full border-4 border-black rounded-[32px] p-6 shadow-[6px_6px_0px_#000] backdrop-blur-2xl transition-all duration-300 mb-6 bg-black/45`}>
+            <div className="relative z-10 max-w-md mx-auto px-3 sm:px-5 flex flex-col items-center pt-1">
                 
-                {/* Header (Avatar & Username & Title) - Clickable to edit profile */}
-                <div 
-                    onClick={() => setShowEditModal(true)}
-                    className="flex items-center gap-4 mb-6 cursor-pointer hover:bg-white/5 p-2 rounded-2xl transition-all group"
-                    title="Modifier le profil"
+                {/* ═══════════ HEADER ═══════════ */}
+                <div className="text-center mb-3.5 sm:mb-4 w-full">
+                    <div className="inline-flex items-center px-3 py-0.5 rounded-full bg-spy-lime/8 border border-spy-lime/25 text-spy-lime text-[7.5px] sm:text-[9px] font-black uppercase tracking-[0.15em] mb-1"
+                        style={{ boxShadow: '0 2px 12px rgba(204,255,0,0.08)' }}
+                    >
+                        DONNÉES D'IDENTIFICATION
+                    </div>
+                    <h1 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight"
+                        style={{ textShadow: '0 2px 12px rgba(0,0,0,0.6)' }}
+                    >
+                        DOSSIER AGENT
+                    </h1>
+                    <div className="w-14 sm:w-16 h-[2px] bg-gradient-to-r from-transparent via-spy-lime to-transparent mx-auto rounded-full mt-1 opacity-80"></div>
+                </div>
+
+                {/* ═══════════ MAIN PROFILE CARD ═══════════ */}
+                <div className="w-full rounded-3xl p-5 mb-4 backdrop-blur-2xl transition-all duration-300 relative overflow-hidden"
+                    style={{
+                        background: 'linear-gradient(180deg, rgba(15,23,42,0.95) 0%, rgba(2,6,23,0.98) 100%)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        boxShadow: '0 12px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05)'
+                    }}
                 >
-                    <div className="w-20 h-20 rounded-full bg-white/10 border-2 border-black flex items-center justify-center text-4xl shadow-inner overflow-hidden select-none flex-none relative group-hover:scale-105 transition-all">
-                        <CartoonAvatar id={profileData?.avatar_emoji} className="w-full h-full border-none shadow-none" />
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all rounded-full">
-                            <Edit3 className="w-5 h-5 text-white" />
+                    {/* Top profile banner highlight */}
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-spy-lime to-transparent opacity-40"></div>
+
+                    {/* Avatar & Info Row (Clickable to Edit) */}
+                    <div 
+                        onClick={() => setShowEditModal(true)}
+                        className="flex items-center gap-4 mb-4 cursor-pointer p-2 rounded-2xl hover:bg-white/[0.04] transition-all group"
+                        title="Modifier le profil"
+                    >
+                        <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-b from-slate-800 to-slate-950 border-2 border-white/20 flex items-center justify-center overflow-hidden flex-shrink-0 relative group-hover:scale-105 group-hover:border-spy-lime transition-all duration-200"
+                            style={{ boxShadow: '0 6px 20px rgba(0,0,0,0.5)' }}
+                        >
+                            <CartoonAvatar id={profileData?.avatar_emoji} className="w-full h-full border-none shadow-none" />
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
+                                <Edit3 className="w-5 h-5 text-spy-lime" />
+                            </div>
+                        </div>
+
+                        <div className="flex-1 min-w-0 text-left">
+                            <div className="flex items-center gap-1.5 mb-0.5">
+                                <h2 className={`text-xl sm:text-2xl font-black uppercase tracking-wide truncate group-hover:text-spy-lime transition-colors ${selectedColorClass}`}>
+                                    {profileData?.username || 'Agent Invité'}
+                                </h2>
+                                <Edit3 className="w-4 h-4 text-white/40 group-hover:text-spy-lime transition-colors flex-shrink-0" />
+                            </div>
+
+                            <div className="flex items-center gap-1.5 text-spy-lime text-xs font-black uppercase tracking-wider mb-1">
+                                <Award className="w-3.5 h-3.5 text-spy-lime" />
+                                <span>{getLevelTitle(profileData?.level || 1)}</span>
+                            </div>
+
+                            {isGuest && (
+                                <span className="inline-block bg-white/5 text-white/50 text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-lg border border-white/10">
+                                    Mode Invité
+                                </span>
+                            )}
                         </div>
                     </div>
-                    <div className="flex-1 min-w-0 text-left">
-                        <h3 className={`text-2xl font-black uppercase tracking-tight break-all leading-tight group-hover:text-spy-lime transition-all flex items-center gap-1.5 ${selectedColorClass}`}>
-                            {profileData?.username || 'Agent Invité'}
-                            <Edit3 className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity" />
-                        </h3>
-                        <p className="text-spy-lime text-xs font-black uppercase tracking-wider mt-1 flex items-center gap-1">
-                            <Award className="w-3.5 h-3.5" />
-                            {getLevelTitle(profileData?.level || 1)}
-                        </p>
-                        {isGuest && (
-                            <span className="inline-block mt-2 bg-white/10 text-white/50 text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded border border-white/5">
-                                Mode Invité
+
+                    {/* Level / XP Progress */}
+                    <div className="rounded-2xl p-3.5 border border-white/8 mb-4"
+                        style={{ background: 'rgba(255,255,255,0.02)' }}
+                    >
+                        <div className="flex justify-between items-end mb-1.5">
+                            <span className="text-[9.5px] font-black uppercase tracking-widest text-white/45">
+                                NIVEAU {profileData?.level || 1}
                             </span>
-                        )}
-                    </div>
-                </div>
-
-                {/* Level / XP Progress */}
-                <div className="bg-black/35 rounded-2xl p-4 border border-white/5 mb-5">
-                    <div className="flex justify-between items-end mb-2">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Niveau {profileData?.level || 1}</span>
-                        <span className="text-xs font-black text-white">{profileData?.xp || 0} / {xpNeeded} XP</span>
-                    </div>
-                    {/* Bar */}
-                    <div className="w-full h-3.5 bg-black/40 rounded-full overflow-hidden p-[2px] border-2 border-black">
-                        <div 
-                            className="h-full bg-[#aadd00] rounded-full shadow-[0_0_10px_rgba(204,255,0,0.4)] transition-all duration-500" 
-                            style={{ width: `${xpPercent}%` }}
-                        ></div>
-                    </div>
-                </div>
-
-                {/* Currencies & Stats */}
-                <div className="grid grid-cols-2 gap-4 mb-2">
-                    <div className="bg-black/25 rounded-2xl p-4 border border-white/5 flex flex-col items-center justify-center">
-                        <span className="text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Croquettes</span>
-                        <div className="flex items-center gap-1.5">
-                            <Coins className="w-5 h-5 text-spy-lime" />
-                            <span className="text-2xl font-black text-white font-display leading-none">{profileData?.coins || 0}</span>
+                            <span className="text-[10px] font-black text-white/80">
+                                {profileData?.xp || 0} / {xpNeeded} XP
+                            </span>
+                        </div>
+                        {/* 3D XP Bar */}
+                        <div className="w-full h-3 bg-slate-950 rounded-full overflow-hidden p-0.5 border border-white/10 shadow-inner">
+                            <div 
+                                className="h-full bg-gradient-to-r from-spy-lime via-[#d8ff33] to-spy-lime rounded-full transition-all duration-500"
+                                style={{
+                                    width: `${xpPercent}%`,
+                                    boxShadow: '0 0 12px rgba(204,255,0,0.5)'
+                                }}
+                            ></div>
                         </div>
                     </div>
 
-                    <div className="bg-black/25 rounded-2xl p-4 border border-white/5 flex flex-col items-center justify-center">
-                        <span className="text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Taux Victoires</span>
-                        <div className="flex items-center gap-1">
-                            <span className="text-2xl font-black text-white font-display leading-none">
+                    {/* Stats Grid with 3D Croquette Image */}
+                    <div className="grid grid-cols-2 gap-3 mb-2">
+                        {/* Croquettes Box */}
+                        <div className="rounded-2xl p-3.5 border border-white/8 flex flex-col items-center justify-center relative overflow-hidden"
+                            style={{ background: 'rgba(255,255,255,0.02)' }}
+                        >
+                            <span className="text-[8.5px] font-black uppercase tracking-widest text-white/40 mb-1">
+                                CROQUETTES
+                            </span>
+                            <div className="flex items-center gap-2">
+                                <img src="/croquette_coin_3d.png" alt="Croquettes" className="w-6 h-6 object-contain drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" />
+                                <span className="text-xl sm:text-2xl font-black text-white leading-none">
+                                    {profileData?.coins || 0}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Win Rate Box */}
+                        <div className="rounded-2xl p-3.5 border border-white/8 flex flex-col items-center justify-center"
+                            style={{ background: 'rgba(255,255,255,0.02)' }}
+                        >
+                            <span className="text-[8.5px] font-black uppercase tracking-widest text-white/40 mb-1">
+                                TAUX VICTOIRES
+                            </span>
+                            <span className="text-xl sm:text-2xl font-black text-spy-lime leading-none">
                                 {profileData?.games_played > 0 
                                     ? `${Math.floor(((profileData?.games_won || 0) / profileData.games_played) * 100)}%` 
                                     : '0%'
@@ -296,275 +340,297 @@ const Profile = ({ user, profileData, onUpdateProfile, onLogout, onBack }) => {
                             </span>
                         </div>
                     </div>
+
+                    {/* Missions Summary */}
+                    <div className="text-center pt-1">
+                        <span className="text-[8.5px] font-bold uppercase tracking-wider text-white/35">
+                            Missions : {profileData?.games_played || 0} jouées · {profileData?.games_won || 0} réussies
+                        </span>
+                    </div>
                 </div>
 
-                {/* Small stats row */}
-                <div className="text-center pt-2">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-white/35">
-                        Missions : {profileData?.games_played || 0} jouées · {profileData?.games_won || 0} réussies
-                    </span>
-                </div>
-            </div>
-
-            {/* Accordion List container */}
-            <div className="w-full space-y-4 z-10 mb-6">
-                
-                {/* 1. PERSONNALISATION */}
-                <div className="accordion-item">
-                    <button
-                        onClick={() => toggleSection('custom')}
-                        className="w-full px-5 py-4 text-left font-black text-sm text-white flex items-center justify-between cursor-pointer hover:bg-white/5 active:bg-white/10"
+                {/* ═══════════ ACCORDION LIST (Menus Déroulants) ═══════════ */}
+                <div className="w-full space-y-3 mb-4">
+                    
+                    {/* 1. PERSONNALISATION */}
+                    <div className="rounded-2xl border border-white/10 overflow-hidden transition-all duration-200"
+                        style={{ background: 'linear-gradient(180deg, rgba(15,23,42,0.9) 0%, rgba(2,6,23,0.95) 100%)' }}
                     >
-                        <div className="flex items-center gap-2">
-                            <Palette className="w-5 h-5 text-spy-lime" />
-                            <span className="uppercase tracking-wider">Personnalisation</span>
-                        </div>
-                        <span className="text-spy-lime text-lg">{activeSection === 'custom' ? '−' : '＋'}</span>
-                    </button>
-                    {activeSection === 'custom' && (
-                        <div className="p-5 border-t-2 border-black space-y-6 bg-black/45">
-                            {/* Themes */}
-                            <div className="space-y-2.5">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-white/50 block">Thèmes d\'Ambiance</span>
-                                <div className="grid grid-cols-2 gap-2">
-                                    {THEMES_LIST.map(theme => {
-                                        const isUnlocked = theme.id === 'safari' || unlockedItems.includes(`theme-${theme.id}`);
-                                        const isEquipped = equippedTheme === theme.id;
-                                        return (
+                        <button
+                            onClick={() => toggleSection('custom')}
+                            className="w-full px-4 py-3.5 text-left font-black text-xs sm:text-sm text-white flex items-center justify-between cursor-pointer hover:bg-white/[0.03] transition-colors"
+                        >
+                            <div className="flex items-center gap-2.5">
+                                <Palette className="w-4.5 h-4.5 text-spy-lime" />
+                                <span className="uppercase tracking-wider">Personnalisation</span>
+                            </div>
+                            {activeSection === 'custom' ? <ChevronUp className="w-4 h-4 text-spy-lime" /> : <ChevronDown className="w-4 h-4 text-white/40" />}
+                        </button>
+
+                        {activeSection === 'custom' && (
+                            <div className="p-4 border-t border-white/8 space-y-5 bg-black/20">
+                                {/* Thèmes */}
+                                <div className="space-y-2">
+                                    <span className="text-[9px] font-black uppercase tracking-widest text-white/40 block">Thèmes d'Ambiance</span>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {THEMES_LIST.map(theme => {
+                                            const isUnlocked = theme.id === 'safari' || unlockedItems.includes(`theme-${theme.id}`);
+                                            const isEquipped = equippedTheme === theme.id;
+                                            const ThemeIcon = theme.IconComponent;
+                                            return (
+                                                <button
+                                                    key={theme.id}
+                                                    onClick={() => isUnlocked && handleEquipTheme(theme.id)}
+                                                    className={`p-2.5 rounded-xl text-xs font-black border flex items-center justify-between transition-all cursor-pointer ${
+                                                        isEquipped 
+                                                            ? `${theme.bg} border-white shadow-[0_4px_12px_rgba(0,0,0,0.4)]` 
+                                                            : isUnlocked 
+                                                                ? 'bg-white/5 text-white border-white/10 hover:border-white/20' 
+                                                                : 'bg-white/[0.02] text-white/30 border-white/5 cursor-not-allowed'
+                                                    }`}
+                                                    disabled={!isUnlocked}
+                                                >
+                                                    <span className="flex items-center gap-2">
+                                                        <ThemeIcon className="w-4 h-4" />
+                                                        <span>{theme.label}</span>
+                                                    </span>
+                                                    {!isUnlocked && <Lock className="w-3.5 h-3.5 opacity-40" />}
+                                                    {isEquipped && <CheckCircle2 className="w-4 h-4" />}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+
+                                {/* Pseudo colors */}
+                                <div className="space-y-2">
+                                    <span className="text-[9px] font-black uppercase tracking-widest text-white/40 block">Couleurs de Pseudo</span>
+                                    <div className="flex flex-wrap gap-2">
+                                        {USERNAME_COLORS.filter(c => unlockedItems.includes(c.id)).map(color => (
                                             <button
-                                                key={theme.id}
-                                                onClick={() => isUnlocked && handleEquipTheme(theme.id)}
-                                                className={`p-3 rounded-2xl text-xs font-black border-2 border-black flex items-center justify-between transition-all cursor-pointer ${
-                                                    isEquipped 
-                                                        ? `${theme.bg} shadow-[2px_2px_0_#000]` 
-                                                        : isUnlocked 
-                                                            ? 'bg-black/35 text-white border-white/10 hover:border-white/20' 
-                                                            : 'bg-black/50 text-white/30 border-white/5 cursor-not-allowed'
+                                                key={color.id}
+                                                onClick={() => handleEquipColor(color.id)}
+                                                className={`px-3 py-1.5 rounded-xl text-xs font-black border transition-all cursor-pointer flex items-center gap-1.5 ${color.class} ${
+                                                    equippedColor === color.id 
+                                                        ? 'bg-white/15 border-spy-lime shadow-[0_2px_8px_rgba(204,255,0,0.2)]' 
+                                                        : 'bg-white/5 border-white/10 hover:border-white/20'
                                                 }`}
-                                                disabled={!isUnlocked}
                                             >
-                                                <span className="flex items-center gap-1.5">
-                                                    <span>{theme.icon}</span>
-                                                    <span>{theme.label}</span>
-                                                </span>
-                                                {!isUnlocked && <Lock className="w-3.5 h-3.5 text-white/30" />}
-                                                {isEquipped && <CheckCircle2 className="w-4 h-4 ml-1" />}
+                                                <span>{color.label}</span>
+                                                {equippedColor === color.id && <CheckCircle2 className="w-3.5 h-3.5 text-spy-lime" />}
                                             </button>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-
-                            {/* Pseudo colors */}
-                            <div className="space-y-2.5">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-white/50 block">Couleurs de Pseudo</span>
-                                <div className="flex flex-wrap gap-2">
-                                    {USERNAME_COLORS.filter(c => unlockedItems.includes(c.id)).map(color => (
-                                        <button
-                                            key={color.id}
-                                            onClick={() => handleEquipColor(color.id)}
-                                            className={`px-3 py-2 rounded-xl text-xs font-black border-2 border-black transition-all cursor-pointer flex items-center gap-1 ${color.class} ${equippedColor === color.id ? 'bg-white/25 border-spy-lime shadow-[2px_2px_0_#000]' : 'bg-black/35 border-white/10 hover:border-white/20'}`}
-                                        >
-                                            {color.label}
-                                            {equippedColor === color.id && <CheckCircle2 className="w-3.5 h-3.5 text-spy-lime ml-1" />}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Banners */}
-                            <div className="space-y-2.5">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-white/50 block">Bannières de Dossier</span>
-                                <div className="flex flex-wrap gap-2">
-                                    {PROFILE_BANNERS.filter(b => unlockedItems.includes(b.id)).map(banner => (
-                                        <button
-                                            key={banner.id}
-                                            onClick={() => handleEquipBanner(banner.id)}
-                                            className={`px-3 py-2 rounded-xl text-xs font-black border-2 border-black flex items-center gap-2 transition-all cursor-pointer ${equippedBanner === banner.id ? 'bg-white/25 border-spy-lime shadow-[2px_2px_0_#000]' : 'bg-black/35 border-white/10 hover:border-white/20'}`}
-                                        >
-                                            <div className={`w-3.5 h-3.5 rounded-full border border-black ${banner.previewClass}`}></div>
-                                            <span className="text-white">{banner.label}</span>
-                                            {equippedBanner === banner.id && <CheckCircle2 className="w-3.5 h-3.5 text-spy-lime ml-1" />}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </div>
-
-                {/* 2. PARAMETRES AUDIO */}
-                <div className="accordion-item">
-                    <button
-                        onClick={() => toggleSection('audio')}
-                        className="w-full px-5 py-4 text-left font-black text-sm text-white flex items-center justify-between cursor-pointer hover:bg-white/5 active:bg-white/10"
-                    >
-                        <div className="flex items-center gap-2">
-                            <Sliders className="w-5 h-5 text-spy-lime" />
-                            <span className="uppercase tracking-wider">Paramètres Audio</span>
-                        </div>
-                        <span className="text-spy-lime text-lg">{activeSection === 'audio' ? '−' : '＋'}</span>
-                    </button>
-                    {activeSection === 'audio' && (
-                        <div className="p-5 border-t-2 border-black space-y-4 bg-black/45">
-                            {/* Music Volume */}
-                            <div className="space-y-1.5">
-                                <div className="flex justify-between text-xs font-black uppercase text-white/75">
-                                    <span>Musique</span>
-                                    <span>{Math.round(musicVolume * 100)}%</span>
-                                </div>
-                                <input
-                                    type="range"
-                                    min="0"
-                                    max="1"
-                                    step="0.05"
-                                    value={musicVolume}
-                                    onChange={(e) => setMusicVolume(parseFloat(e.target.value))}
-                                    className="w-full h-2 rounded-lg bg-black/40 appearance-none cursor-pointer accent-[#aadd00]"
-                                />
-                            </div>
-
-                            {/* SFX Volume */}
-                            <div className="space-y-1.5">
-                                <div className="flex justify-between text-xs font-black uppercase text-white/75">
-                                    <span>Effets Sonores</span>
-                                    <span>{Math.round(sfxVolume * 100)}%</span>
-                                </div>
-                                <input
-                                    type="range"
-                                    min="0"
-                                    max="1"
-                                    step="0.05"
-                                    value={sfxVolume}
-                                    onChange={(e) => setSfxVolume(parseFloat(e.target.value))}
-                                    className="w-full h-2 rounded-lg bg-black/40 appearance-none cursor-pointer accent-[#aadd00]"
-                                />
-                            </div>
-                        </div>
-                    )}
-                </div>
-
-                {/* 3. SUGGESTIONS & RETOURS */}
-                <div className="accordion-item">
-                    <button
-                        onClick={() => toggleSection('feedback')}
-                        className="w-full px-5 py-4 text-left font-black text-sm text-white flex items-center justify-between cursor-pointer hover:bg-white/5 active:bg-white/10"
-                    >
-                        <div className="flex items-center gap-2">
-                            <MessageSquare className="w-5 h-5 text-spy-lime" />
-                            <span className="uppercase tracking-wider">Suggestions & Fiches</span>
-                        </div>
-                        <span className="text-spy-lime text-lg">{activeSection === 'feedback' ? '−' : '＋'}</span>
-                    </button>
-                    {activeSection === 'feedback' && (
-                        <div className="p-5 border-t-2 border-black bg-black/45">
-                            {feedbackSent ? (
-                                <div className="bg-emerald-500/10 border-2 border-emerald-500/40 p-4 rounded-2xl text-emerald-400 text-xs font-black text-center animate-pop-in">
-                                    Suggestion transmise avec succ\u00e8s, Agent !
-                                </div>
-                            ) : (
-                                <form onSubmit={handleSendFeedback} className="space-y-4">
-                                    <div>
-                                        <label className="block text-[9px] font-black uppercase tracking-wider text-white/50 mb-1 pl-1">Email de réponse</label>
-                                        <input 
-                                            type="email"
-                                            value={feedbackEmail}
-                                            onChange={(e) => setFeedbackEmail(e.target.value)}
-                                            className="w-full px-4 py-2.5 bg-black/35 text-white border-2 border-black rounded-xl text-xs font-black focus:outline-none"
-                                            placeholder="votre-email@exemple.com"
-                                            required
-                                        />
+                                        ))}
                                     </div>
-                                    <div>
-                                        <label className="block text-[9px] font-black uppercase tracking-wider text-white/50 mb-1 pl-1">Message / Suggestion</label>
-                                        <textarea 
-                                            value={feedbackMessage}
-                                            onChange={(e) => setFeedbackMessage(e.target.value)}
-                                            className="w-full px-4 py-3 bg-black/35 text-white border-2 border-black rounded-xl text-xs font-black h-24 focus:outline-none resize-none"
-                                            placeholder="Comment pouvons-nous améliorer SpyMals ?"
-                                            required
-                                        />
-                                    </div>
-                                    <button
-                                        type="submit"
-                                        disabled={sendingFeedback}
-                                        className="btn-cartoon-primary w-full py-3 text-xs shadow-[3px_3px_0_#000] disabled:opacity-50 cursor-pointer flex items-center justify-center gap-1.5"
-                                    >
-                                        <MessageSquare className="w-4 h-4" /> {sendingFeedback ? "Envoi en cours..." : "ENVOYER LA FICHE 🚀"}
-                                    </button>
-                                </form>
-                            )}
-                        </div>
-                    )}
-                </div>
+                                </div>
 
-                {/* 4. AIDE & FAQ */}
-                <div className="accordion-item">
-                    <button
-                        onClick={() => toggleSection('faq')}
-                        className="w-full px-5 py-4 text-left font-black text-sm text-white flex items-center justify-between cursor-pointer hover:bg-white/5 active:bg-white/10"
+                                {/* Banners */}
+                                <div className="space-y-2">
+                                    <span className="text-[9px] font-black uppercase tracking-widest text-white/40 block">Bannières de Dossier</span>
+                                    <div className="flex flex-wrap gap-2">
+                                        {PROFILE_BANNERS.filter(b => unlockedItems.includes(b.id)).map(banner => (
+                                            <button
+                                                key={banner.id}
+                                                onClick={() => handleEquipBanner(banner.id)}
+                                                className={`px-3 py-1.5 rounded-xl text-xs font-black border flex items-center gap-2 transition-all cursor-pointer ${
+                                                    equippedBanner === banner.id 
+                                                        ? 'bg-white/15 border-spy-lime shadow-[0_2px_8px_rgba(204,255,0,0.2)]' 
+                                                        : 'bg-white/5 border-white/10 hover:border-white/20'
+                                                }`}
+                                            >
+                                                <div className={`w-3.5 h-3.5 rounded-full border border-white/20 ${banner.previewClass}`}></div>
+                                                <span className="text-white">{banner.label}</span>
+                                                {equippedBanner === banner.id && <CheckCircle2 className="w-3.5 h-3.5 text-spy-lime" />}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* 2. PARAMÈTRES AUDIO */}
+                    <div className="rounded-2xl border border-white/10 overflow-hidden transition-all duration-200"
+                        style={{ background: 'linear-gradient(180deg, rgba(15,23,42,0.9) 0%, rgba(2,6,23,0.95) 100%)' }}
                     >
-                        <div className="flex items-center gap-2">
-                            <HelpCircle className="w-5 h-5 text-spy-lime" />
-                            <span className="uppercase tracking-wider">Aide & FAQ</span>
-                        </div>
-                        <span className="text-spy-lime text-lg">{activeSection === 'faq' ? '−' : '＋'}</span>
-                    </button>
-                    {activeSection === 'faq' && (
-                        <div className="p-5 border-t-2 border-black space-y-3 bg-black/45">
-                            {FAQ_ITEMS.map((item, index) => (
-                                <div 
-                                    key={index} 
-                                    className="border-2 border-black rounded-2xl bg-black/35 overflow-hidden"
-                                >
-                                    <button
-                                        type="button"
-                                        onClick={() => setFaqOpenIndex(faqOpenIndex === index ? null : index)}
-                                        className="w-full px-4 py-3 text-left font-black text-xs text-white flex items-center justify-between cursor-pointer active:bg-white/5"
-                                    >
-                                        <span className="pr-4">{item.q}</span>
-                                        <span className="text-spy-lime text-base flex-none select-none">{faqOpenIndex === index ? '−' : '＋'}</span>
-                                    </button>
-                                    {faqOpenIndex === index && (
-                                        <div className="px-4 pb-4 pt-1 text-[11px] font-bold text-white/70 leading-relaxed border-t border-white/5 animate-slide-down">
-                                            {item.a}
+                        <button
+                            onClick={() => toggleSection('audio')}
+                            className="w-full px-4 py-3.5 text-left font-black text-xs sm:text-sm text-white flex items-center justify-between cursor-pointer hover:bg-white/[0.03] transition-colors"
+                        >
+                            <div className="flex items-center gap-2.5">
+                                <Sliders className="w-4.5 h-4.5 text-spy-lime" />
+                                <span className="uppercase tracking-wider">Paramètres Audio</span>
+                            </div>
+                            {activeSection === 'audio' ? <ChevronUp className="w-4 h-4 text-spy-lime" /> : <ChevronDown className="w-4 h-4 text-white/40" />}
+                        </button>
+
+                        {activeSection === 'audio' && (
+                            <div className="p-4 border-t border-white/8 space-y-4 bg-black/20">
+                                <div className="space-y-1.5">
+                                    <div className="flex justify-between text-xs font-black uppercase text-white/70">
+                                        <span>Musique</span>
+                                        <span className="text-spy-lime">{Math.round(musicVolume * 100)}%</span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        min="0"
+                                        max="1"
+                                        step="0.05"
+                                        value={musicVolume}
+                                        onChange={(e) => setMusicVolume(parseFloat(e.target.value))}
+                                        className="w-full h-2 rounded-lg bg-slate-950 appearance-none cursor-pointer accent-[#ccff00]"
+                                    />
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <div className="flex justify-between text-xs font-black uppercase text-white/70">
+                                        <span>Effets Sonores</span>
+                                        <span className="text-spy-lime">{Math.round(sfxVolume * 100)}%</span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        min="0"
+                                        max="1"
+                                        step="0.05"
+                                        value={sfxVolume}
+                                        onChange={(e) => setSfxVolume(parseFloat(e.target.value))}
+                                        className="w-full h-2 rounded-lg bg-slate-950 appearance-none cursor-pointer accent-[#ccff00]"
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* 3. SUGGESTIONS & RETOURS */}
+                    <div className="rounded-2xl border border-white/10 overflow-hidden transition-all duration-200"
+                        style={{ background: 'linear-gradient(180deg, rgba(15,23,42,0.9) 0%, rgba(2,6,23,0.95) 100%)' }}
+                    >
+                        <button
+                            onClick={() => toggleSection('feedback')}
+                            className="w-full px-4 py-3.5 text-left font-black text-xs sm:text-sm text-white flex items-center justify-between cursor-pointer hover:bg-white/[0.03] transition-colors"
+                        >
+                            <div className="flex items-center gap-2.5">
+                                <MessageSquare className="w-4.5 h-4.5 text-spy-lime" />
+                                <span className="uppercase tracking-wider">Suggestions & Fiches</span>
+                            </div>
+                            {activeSection === 'feedback' ? <ChevronUp className="w-4 h-4 text-spy-lime" /> : <ChevronDown className="w-4 h-4 text-white/40" />}
+                        </button>
+
+                        {activeSection === 'feedback' && (
+                            <div className="p-4 border-t border-white/8 bg-black/20">
+                                {feedbackSent ? (
+                                    <div className="bg-emerald-500/10 border border-emerald-500/30 p-4 rounded-2xl text-emerald-400 text-xs font-black text-center">
+                                        Suggestion transmise avec succès, Agent !
+                                    </div>
+                                ) : (
+                                    <form onSubmit={handleSendFeedback} className="space-y-3">
+                                        <div>
+                                            <label className="block text-[9px] font-black uppercase tracking-wider text-white/45 mb-1 pl-1">Email de réponse</label>
+                                            <input 
+                                                type="email"
+                                                value={feedbackEmail}
+                                                onChange={(e) => setFeedbackEmail(e.target.value)}
+                                                className="w-full px-3.5 py-2.5 bg-slate-950 text-white border border-white/10 rounded-xl text-xs font-bold focus:outline-none focus:border-spy-lime/50 transition-colors"
+                                                placeholder="votre-email@exemple.com"
+                                                required
+                                            />
                                         </div>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
+                                        <div>
+                                            <label className="block text-[9px] font-black uppercase tracking-wider text-white/45 mb-1 pl-1">Message / Suggestion</label>
+                                            <textarea 
+                                                value={feedbackMessage}
+                                                onChange={(e) => setFeedbackMessage(e.target.value)}
+                                                className="w-full px-3.5 py-2.5 bg-slate-950 text-white border border-white/10 rounded-xl text-xs font-bold h-20 focus:outline-none focus:border-spy-lime/50 transition-colors resize-none"
+                                                placeholder="Comment pouvons-nous améliorer SpyMals ?"
+                                                required
+                                            />
+                                        </div>
+                                        <button
+                                            type="submit"
+                                            disabled={sendingFeedback}
+                                            className="w-full py-2.5 bg-gradient-to-r from-spy-lime via-[#d9ff33] to-spy-lime text-slate-950 font-black uppercase text-xs tracking-wider rounded-xl shadow-[0_4px_14px_rgba(204,255,0,0.3)] hover:brightness-110 active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2"
+                                        >
+                                            <MessageSquare className="w-4 h-4" />
+                                            <span>{sendingFeedback ? "Envoi en cours..." : "ENVOYER LA FICHE"}</span>
+                                        </button>
+                                    </form>
+                                )}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* 4. AIDE & FAQ */}
+                    <div className="rounded-2xl border border-white/10 overflow-hidden transition-all duration-200"
+                        style={{ background: 'linear-gradient(180deg, rgba(15,23,42,0.9) 0%, rgba(2,6,23,0.95) 100%)' }}
+                    >
+                        <button
+                            onClick={() => toggleSection('faq')}
+                            className="w-full px-4 py-3.5 text-left font-black text-xs sm:text-sm text-white flex items-center justify-between cursor-pointer hover:bg-white/[0.03] transition-colors"
+                        >
+                            <div className="flex items-center gap-2.5">
+                                <HelpCircle className="w-4.5 h-4.5 text-spy-lime" />
+                                <span className="uppercase tracking-wider">Aide & FAQ</span>
+                            </div>
+                            {activeSection === 'faq' ? <ChevronUp className="w-4 h-4 text-spy-lime" /> : <ChevronDown className="w-4 h-4 text-white/40" />}
+                        </button>
+
+                        {activeSection === 'faq' && (
+                            <div className="p-4 border-t border-white/8 space-y-2 bg-black/20">
+                                {FAQ_ITEMS.map((item, index) => (
+                                    <div 
+                                        key={index} 
+                                        className="border border-white/8 rounded-xl bg-slate-950/60 overflow-hidden"
+                                    >
+                                        <button
+                                            type="button"
+                                            onClick={() => setFaqOpenIndex(faqOpenIndex === index ? null : index)}
+                                            className="w-full px-3.5 py-2.5 text-left font-black text-xs text-white flex items-center justify-between cursor-pointer hover:bg-white/[0.02]"
+                                        >
+                                            <span className="pr-3 leading-snug">{item.q}</span>
+                                            {faqOpenIndex === index ? <ChevronUp className="w-4 h-4 text-spy-lime flex-shrink-0" /> : <ChevronDown className="w-4 h-4 text-white/40 flex-shrink-0" />}
+                                        </button>
+                                        {faqOpenIndex === index && (
+                                            <div className="px-3.5 pb-3 text-[11px] font-bold text-white/70 leading-relaxed border-t border-white/5 pt-2">
+                                                {item.a}
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                </div>
+
+                {/* ═══════════ LOGIN / LOGOUT BUTTON ═══════════ */}
+                <div className="w-full">
+                    {isGuest ? (
+                        <button
+                            onClick={onLogout}
+                            className="w-full py-3.5 bg-gradient-to-r from-spy-lime via-[#d9ff33] to-spy-lime border-2 border-white rounded-2xl text-slate-950 font-black uppercase text-xs tracking-wider shadow-[0_4px_14px_rgba(204,255,0,0.3)] hover:brightness-110 active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2"
+                        >
+                            <LogIn className="w-4 h-4 fill-current" />
+                            <span>Créer un compte / Connexion</span>
+                        </button>
+                    ) : (
+                        <button
+                            onClick={onLogout}
+                            className="w-full py-3.5 bg-rose-600/90 hover:bg-rose-600 border border-rose-500/40 rounded-2xl text-white font-black uppercase text-xs tracking-wider shadow-[0_4px_14px_rgba(225,29,72,0.3)] active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center gap-2"
+                        >
+                            <LogOut className="w-4 h-4" />
+                            <span>Se déconnecter de la Centrale</span>
+                        </button>
                     )}
                 </div>
 
-            </div>
-
-            {/* Logins Actions */}
-            <div className="z-10 w-full mt-2">
-                {isGuest ? (
-                    <button
-                        onClick={onLogout}
-                        className="btn-cartoon-primary w-full py-4 text-xs shadow-[4px_4px_0_#000] cursor-pointer flex items-center justify-center gap-2 text-black"
-                    >
-                        <LogIn className="w-4 h-4 fill-current" /> Créer un compte / Connexion
-                    </button>
-                ) : (
-                    <button
-                        onClick={onLogout}
-                        className="w-full py-4 bg-rose-600 hover:bg-rose-700 text-white font-black uppercase border-3 border-black rounded-2xl text-xs shadow-[3px_3px_0_#000] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all cursor-pointer flex items-center justify-center gap-2"
-                    >
-                        <LogOut className="w-4 h-4" /> Se déconnecter de la Centrale
-                    </button>
+                {/* Edit Profile Modal */}
+                {showEditModal && (
+                    <EditProfileModal
+                        profileData={profileData}
+                        onSave={handleSaveProfile}
+                        onClose={() => setShowEditModal(false)}
+                    />
                 )}
             </div>
-
-            {/* Edit Profile Modal */}
-            {showEditModal && (
-                <EditProfileModal
-                    profileData={profileData}
-                    onSave={handleSaveProfile}
-                    onClose={() => setShowEditModal(false)}
-                />
-            )}
         </div>
     );
 };

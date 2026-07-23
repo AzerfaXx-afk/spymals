@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Camera, AlertTriangle, X } from 'lucide-react';
-import BouncyButton from './BouncyButton';
+import { Camera, AlertTriangle, X, CheckCircle2 } from 'lucide-react';
 import { CartoonAvatar, CARTOON_AVATARS_LIST } from './CartoonAvatars';
 
 const EditProfileModal = ({ profileData, onSave, onClose, isForce = false }) => {
@@ -30,7 +29,6 @@ const EditProfileModal = ({ profileData, onSave, onClose, isForce = false }) => 
                 let width = img.width;
                 let height = img.height;
 
-                // Crop to square
                 const size = Math.min(width, height);
                 const xOffset = (width - size) / 2;
                 const yOffset = (height - size) / 2;
@@ -41,8 +39,8 @@ const EditProfileModal = ({ profileData, onSave, onClose, isForce = false }) => 
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(
                     img,
-                    xOffset, yOffset, size, size, // Source rect
-                    0, 0, MAX_WIDTH, MAX_HEIGHT   // Dest rect
+                    xOffset, yOffset, size, size,
+                    0, 0, MAX_WIDTH, MAX_HEIGHT
                 );
 
                 const base64 = canvas.toDataURL('image/jpeg', 0.8);
@@ -71,15 +69,20 @@ const EditProfileModal = ({ profileData, onSave, onClose, isForce = false }) => 
     };
 
     return (
-        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-pop-in">
-            <div className="card-cartoon max-w-sm w-full p-6 relative text-left space-y-5 bg-[#fffdf5] text-black">
-                
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 z-[100] animate-pop-in">
+            <div className="max-w-sm w-full rounded-3xl p-6 relative text-left space-y-5 backdrop-blur-2xl transition-all duration-300"
+                style={{
+                    background: 'linear-gradient(180deg, rgba(15,23,42,0.96) 0%, rgba(2,6,23,0.98) 100%)',
+                    border: '1px solid rgba(255,255,255,0.15)',
+                    boxShadow: '0 20px 60px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.1)'
+                }}
+            >
                 {/* Close button if not forced */}
                 {!isForce && (
                     <button
                         type="button"
                         onClick={onClose}
-                        className="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/10 border-2 border-black flex items-center justify-center text-black hover:bg-black/20 active:scale-95 transition-all z-20 cursor-pointer"
+                        className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/20 active:scale-95 transition-all z-20 cursor-pointer"
                     >
                         <X className="w-4 h-4" />
                     </button>
@@ -87,67 +90,73 @@ const EditProfileModal = ({ profileData, onSave, onClose, isForce = false }) => 
 
                 {/* Header */}
                 <div className="text-center">
-                    <h3 className="text-xl font-black uppercase tracking-tight">
+                    <div className="inline-flex items-center px-3 py-0.5 rounded-full bg-spy-lime/10 border border-spy-lime/30 text-spy-lime text-[8px] font-black uppercase tracking-widest mb-1">
+                        DOSSIER D'AGENT SECRET
+                    </div>
+                    <h3 className="text-xl font-black uppercase tracking-tight text-white">
                         {isForce ? "Finaliser votre Profil" : "Modifier votre Profil"}
                     </h3>
-                    <p className="text-spy-orange text-[10px] font-black uppercase tracking-[0.2em] mt-1">
-                        Dossier d'agent secret
-                    </p>
+                    <div className="w-12 h-[2px] bg-gradient-to-r from-transparent via-spy-lime to-transparent mx-auto rounded-full mt-1"></div>
                 </div>
 
                 {errorMsg && (
-                    <div className="bg-red-500/10 border-2 border-red-500 rounded-2xl p-4 flex items-start gap-3 animate-pop-in">
-                        <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0" />
-                        <p className="text-red-700 text-xs font-black uppercase tracking-wide leading-relaxed">{errorMsg}</p>
+                    <div className="bg-rose-500/10 border border-rose-500/30 rounded-2xl p-3.5 flex items-start gap-2.5">
+                        <AlertTriangle className="w-4 h-4 text-rose-400 flex-shrink-0 mt-0.5" />
+                        <p className="text-rose-300 text-xs font-bold leading-relaxed">{errorMsg}</p>
                     </div>
                 )}
 
                 <div className="space-y-4">
                     {/* Username input */}
                     <div className="space-y-1">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-black/60 pl-1">Pseudo Agent</label>
+                        <label className="text-[9.5px] font-black uppercase tracking-widest text-white/45 pl-1">Pseudo Agent</label>
                         <input
                             type="text"
                             required
                             placeholder="ex: Agent Cobra"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
-                            className="w-full bg-white border-3 border-black rounded-2xl px-4 py-3 text-black font-bold text-sm focus:outline-none transition-colors shadow-[2px_2px_0_#000]"
+                            className="w-full bg-slate-950/80 border border-white/15 rounded-2xl px-4 py-3 text-white font-bold text-sm focus:outline-none focus:border-spy-lime/60 transition-colors shadow-inner"
                         />
                     </div>
 
                     {/* Avatar selector cards */}
                     <div className="space-y-1">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-black/60 pl-1 block">
+                        <label className="text-[9.5px] font-black uppercase tracking-widest text-white/45 pl-1 block">
                             Avatar de l'agent
                         </label>
                         
-                        <div className="grid grid-cols-2 gap-4 pt-1">
+                        <div className="grid grid-cols-2 gap-3 pt-1">
                             {/* Card 1: Predefined Animals */}
                             <button
                                 type="button"
                                 onClick={() => setShowAnimalModal(true)}
-                                className={`rounded-2xl p-4 flex flex-col items-center justify-center gap-2 cursor-pointer border-3 transition-all duration-300 min-h-[96px] ${
+                                className={`rounded-2xl p-3.5 flex flex-col items-center justify-center gap-2 cursor-pointer border transition-all duration-200 min-h-[100px] relative ${
                                     !selectedAvatar.startsWith('data:image/') && !selectedAvatar.startsWith('http')
-                                        ? 'bg-spy-lime/25 border-black shadow-[3px_3px_0_#000] scale-102 font-black'
-                                        : 'bg-white border-black hover:bg-slate-50'
+                                        ? 'bg-spy-lime/10 border-spy-lime shadow-[0_0_15px_rgba(204,255,0,0.15)]'
+                                        : 'bg-white/5 border-white/10 hover:border-white/20'
                                 }`}
                             >
-                                <CartoonAvatar id={selectedAvatar} className="w-12 h-12 border-none shadow-none" />
-                                <div className="text-center">
-                                    <span className="text-[9px] font-black uppercase tracking-wider block">
-                                        Mascottes Cartoon
-                                    </span>
-                                    <span className="text-[8px] opacity-60 block mt-0.5">Modifier la mascotte</span>
+                                <div className="w-11 h-11 rounded-xl bg-slate-800 border border-white/10 overflow-hidden flex items-center justify-center">
+                                    <CartoonAvatar id={selectedAvatar} className="w-full h-full border-none shadow-none" />
                                 </div>
+                                <div className="text-center">
+                                    <span className="text-[9.5px] font-black uppercase tracking-wider block text-white">
+                                        Mascottes
+                                    </span>
+                                    <span className="text-[8px] text-spy-lime font-bold block mt-0.5">Choisir mascotte</span>
+                                </div>
+                                {!selectedAvatar.startsWith('data:image/') && !selectedAvatar.startsWith('http') && (
+                                    <CheckCircle2 className="w-4 h-4 text-spy-lime absolute top-2 right-2" />
+                                )}
                             </button>
 
                             {/* Card 2: Gallery / Photo */}
                             <label
-                                className={`rounded-2xl p-4 flex flex-col items-center justify-center gap-2 cursor-pointer border-3 transition-all duration-300 min-h-[96px] relative overflow-hidden ${
+                                className={`rounded-2xl p-3.5 flex flex-col items-center justify-center gap-2 cursor-pointer border transition-all duration-200 min-h-[100px] relative overflow-hidden ${
                                     selectedAvatar.startsWith('data:image/') || selectedAvatar.startsWith('http')
-                                        ? 'bg-spy-lime/25 border-black shadow-[3px_3px_0_#000] scale-102 font-black'
-                                        : 'bg-white border-black hover:bg-slate-50'
+                                        ? 'bg-spy-lime/10 border-spy-lime shadow-[0_0_15px_rgba(204,255,0,0.15)]'
+                                        : 'bg-white/5 border-white/10 hover:border-white/20'
                                 }`}
                             >
                                 <input
@@ -158,22 +167,25 @@ const EditProfileModal = ({ profileData, onSave, onClose, isForce = false }) => 
                                 />
                                 {selectedAvatar.startsWith('data:image/') || selectedAvatar.startsWith('http') ? (
                                     <>
-                                        <img src={selectedAvatar} alt="Photo" className="w-12 h-12 rounded-full object-cover border-2 border-black animate-pop-in" />
+                                        <img src={selectedAvatar} alt="Photo" className="w-11 h-11 rounded-xl object-cover border border-white/20 shadow-md" />
                                         <div className="text-center">
-                                            <span className="text-[9px] font-black uppercase tracking-wider block">
-                                                Photo Profil
+                                            <span className="text-[9.5px] font-black uppercase tracking-wider block text-white">
+                                                Photo Galerie
                                             </span>
-                                            <span className="text-[8px] opacity-60 block mt-0.5">Changer l'image</span>
+                                            <span className="text-[8px] text-spy-lime font-bold block mt-0.5">Changer l'image</span>
                                         </div>
+                                        <CheckCircle2 className="w-4 h-4 text-spy-lime absolute top-2 right-2" />
                                     </>
                                 ) : (
                                     <>
-                                        <Camera className="w-8 h-8 text-black" />
+                                        <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
+                                            <Camera className="w-6 h-6 text-white/60" />
+                                        </div>
                                         <div className="text-center">
-                                            <span className="text-[9px] font-black uppercase tracking-wider block">
+                                            <span className="text-[9.5px] font-black uppercase tracking-wider block text-white">
                                                 Photo Galerie
                                             </span>
-                                            <span className="text-[8px] opacity-60 block mt-0.5">Importer photo</span>
+                                            <span className="text-[8px] text-white/40 font-bold block mt-0.5">Importer photo</span>
                                         </div>
                                     </>
                                 )}
@@ -185,7 +197,7 @@ const EditProfileModal = ({ profileData, onSave, onClose, isForce = false }) => 
                 <div className="pt-2">
                     <button 
                         onClick={handleSave} 
-                        className="btn-cartoon-primary w-full py-3.5 uppercase tracking-wider font-black text-sm shadow-[4px_4px_0_#000]"
+                        className="w-full py-3.5 bg-gradient-to-r from-spy-lime via-[#d9ff33] to-spy-lime border-2 border-white rounded-2xl text-slate-950 font-black uppercase text-xs tracking-wider shadow-[0_4px_14px_rgba(204,255,0,0.3)] hover:brightness-110 active:scale-[0.98] transition-all cursor-pointer"
                     >
                         Sauvegarder le dossier
                     </button>
@@ -195,16 +207,22 @@ const EditProfileModal = ({ profileData, onSave, onClose, isForce = false }) => 
 
             {/* Animal Grid Modal */}
             {showAnimalModal && (
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-[60] animate-pop-in">
-                    <div className="card-cartoon max-w-sm w-full p-6 relative bg-[#fffdf5] text-black">
-                        <div className="text-center mb-5">
-                            <h3 className="text-lg font-black uppercase tracking-tight">Sélectionner une Mascotte</h3>
-                            <p className="text-[9px] font-black text-spy-orange uppercase tracking-widest mt-0.5">
-                                Choisi ton avatar d'agent
+                <div className="fixed inset-0 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 z-[110] animate-pop-in">
+                    <div className="max-w-sm w-full rounded-3xl p-6 relative backdrop-blur-2xl"
+                        style={{
+                            background: 'linear-gradient(180deg, rgba(15,23,42,0.98) 0%, rgba(2,6,23,0.99) 100%)',
+                            border: '1px solid rgba(255,255,255,0.15)',
+                            boxShadow: '0 20px 60px rgba(0,0,0,0.9)'
+                        }}
+                    >
+                        <div className="text-center mb-4">
+                            <h4 className="text-lg font-black uppercase tracking-tight text-white">Sélectionner une Mascotte</h4>
+                            <p className="text-[9px] font-black text-spy-lime uppercase tracking-widest mt-0.5">
+                                Choisissez votre avatar d'agent
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-5 gap-3 mb-6">
+                        <div className="grid grid-cols-5 gap-2.5 mb-5">
                             {CARTOON_AVATARS_LIST.map((avatar) => (
                                 <button
                                     key={avatar.id}
@@ -213,13 +231,13 @@ const EditProfileModal = ({ profileData, onSave, onClose, isForce = false }) => 
                                         setSelectedAvatar(avatar.id);
                                         setShowAnimalModal(false);
                                     }}
-                                    className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all border-2 cursor-pointer ${
+                                    className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all border cursor-pointer overflow-hidden ${
                                         selectedAvatar === avatar.id
-                                            ? 'bg-spy-lime/25 border-black scale-110 shadow-[2px_2px_0_#000]'
-                                            : 'bg-white border-black/10 hover:border-black active:scale-95'
+                                            ? 'bg-spy-lime/20 border-spy-lime scale-105 shadow-[0_0_12px_rgba(204,255,0,0.3)]'
+                                            : 'bg-white/5 border-white/10 hover:border-white/30 active:scale-95'
                                     }`}
                                 >
-                                    <CartoonAvatar id={avatar.id} className="w-10 h-10 border-none shadow-none" />
+                                    <CartoonAvatar id={avatar.id} className="w-full h-full border-none shadow-none" />
                                 </button>
                             ))}
                         </div>
@@ -227,7 +245,7 @@ const EditProfileModal = ({ profileData, onSave, onClose, isForce = false }) => 
                         <button
                             type="button"
                             onClick={() => setShowAnimalModal(false)}
-                            className="btn-cartoon-secondary w-full py-3 text-xs font-black uppercase tracking-wider shadow-[2px_2px_0_#000]"
+                            className="w-full py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl text-white font-black uppercase text-xs tracking-wider transition-all cursor-pointer"
                         >
                             Fermer
                         </button>
