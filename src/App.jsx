@@ -24,31 +24,36 @@ import { ShoppingCart, Trophy, Gamepad2, BookOpen, Coins } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const pageSlideVariants = {
-  initial: (direction) => ({
-    x: direction > 0 ? '100%' : direction < 0 ? '-100%' : 0,
-    opacity: direction !== 0 ? 0.95 : 0,
-    scale: direction === 0 ? 0.98 : 1,
-  }),
-  animate: {
-    x: '0%',
-    opacity: 1,
-    scale: 1,
-    transition: {
-      x: { type: 'spring', stiffness: 280, damping: 28, mass: 0.75 },
-      opacity: { duration: 0.2 },
-      scale: { duration: 0.15 }
-    }
-  },
-  exit: (direction) => ({
-    x: direction > 0 ? '-100%' : direction < 0 ? '100%' : 0,
-    opacity: direction !== 0 ? 0.95 : 0,
-    scale: direction === 0 ? 0.98 : 1,
-    transition: {
-      x: { type: 'spring', stiffness: 280, damping: 28, mass: 0.75 },
-      opacity: { duration: 0.2 },
-      scale: { duration: 0.15 }
-    }
-  })
+  initial: (direction) => (
+    direction !== 0
+      ? { x: direction > 0 ? '100%' : '-100%', opacity: 1 }
+      : { opacity: 1, x: 0, scale: 1 }
+  ),
+  animate: (direction) => (
+    direction !== 0
+      ? {
+          x: '0%',
+          opacity: 1,
+          scale: 1,
+          transition: {
+            x: { type: 'spring', stiffness: 360, damping: 32, mass: 0.5 },
+            opacity: { duration: 0.12 }
+          }
+        }
+      : { opacity: 1, x: 0, scale: 1, transition: { duration: 0 } }
+  ),
+  exit: (direction) => (
+    direction !== 0
+      ? {
+          x: direction > 0 ? '-100%' : '100%',
+          opacity: 1,
+          transition: {
+            x: { type: 'spring', stiffness: 360, damping: 32, mass: 0.5 },
+            opacity: { duration: 0.12 }
+          }
+        }
+      : { opacity: 1, x: 0, scale: 1, transition: { duration: 0 } }
+  )
 };
 
 function App() {
@@ -613,7 +618,7 @@ function App() {
               initial="initial"
               animate="animate"
               exit="exit"
-              className="w-full h-full"
+              className="w-full h-full transform-gpu will-change-transform"
             >
               {currentScreen === 'home' && (
                 <Home
