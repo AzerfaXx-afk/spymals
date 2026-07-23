@@ -32,9 +32,14 @@ const Scoreboard = ({ players, winners, onReplay, onHome, onOpenSettings }) => {
 
                 {/* 3D Cutout Victory / Defeat Hero Character */}
                 <div className="relative w-full h-56 flex items-center justify-center mb-1 flex-shrink-0">
-                    <div className={`absolute inset-4 rounded-full blur-3xl opacity-50 pointer-events-none ${
-                        isCivilianWin ? 'bg-spy-lime' : 'bg-spy-orange'
-                    }`} />
+                    {/* Circular Cartoon Spotlight Disk & Glow */}
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <div className={`w-48 h-48 rounded-full blur-2xl opacity-45 ${
+                            isCivilianWin ? 'bg-spy-lime' : 'bg-orange-500'
+                        }`} />
+                        <div className="absolute w-44 h-44 rounded-full bg-gradient-to-b from-white/10 to-transparent border border-white/15 shadow-[inset_0_2px_12px_rgba(255,255,255,0.15)]" />
+                    </div>
+
                     <img 
                         src={isCivilianWin ? '/victory_civilians_cutout_3d.png' : '/victory_impostors_cutout_3d.png'} 
                         alt={winningTeamText} 
