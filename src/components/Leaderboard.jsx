@@ -3,28 +3,44 @@ import { Crown, ChevronDown, ChevronUp } from 'lucide-react';
 import { CartoonAvatar } from './CartoonAvatars';
 import { supabase } from '../utils/supabaseClient';
 
-const DEFAULT_AGENTS = [
-  { username: 'FoxDetective_07', coins: 1450, wins: 42, games: 50, avatar_emoji: 'fox-detective', level: 12, title: 'Détective Légendaire' },
-  { username: 'AgentCat_Secret', coins: 1120, wins: 38, games: 45, avatar_emoji: 'cat-spy', level: 9, title: 'Infiltré Élite' },
-  { username: 'DogMaster_Pro', coins: 980, wins: 28, games: 38, avatar_emoji: 'dog-agent', level: 8, title: 'Inspecteur Chef' },
-  { username: 'ChouetteHacker', coins: 850, wins: 24, games: 30, avatar_emoji: 'owl-hacker', level: 7, title: 'Cyber Spacialist' },
-  { username: 'GrenouilleTactique', coins: 690, wins: 19, games: 25, avatar_emoji: 'ninja-frog', level: 5, title: 'Ninja Furtif' },
-  { username: 'PandaMonocle', coins: 540, wins: 15, games: 20, avatar_emoji: 'panda-monocle', level: 4, title: 'Agent Spécial' },
-  { username: 'TigreCovert', coins: 420, wins: 12, games: 16, avatar_emoji: 'tiger-agent', level: 3, title: 'Tigre Ombre' },
-  { username: 'KoalaInfiltrator', coins: 380, wins: 10, games: 15, avatar_emoji: 'koala-agent', level: 3, title: 'Koala Silencieux' },
-  { username: 'LionLeader', coins: 350, wins: 9, games: 14, avatar_emoji: 'lion-detective', level: 2, title: 'Lion Stratège' },
-  { username: 'PenguinSecret', coins: 310, wins: 8, games: 13, avatar_emoji: 'penguin-secret', level: 2, title: 'Agent Arctique' },
-  { username: 'ShadowLynx', coins: 290, wins: 7, games: 12, avatar_emoji: 'cat-spy', level: 2, title: 'Ombre Furtive' },
-  { username: 'ViperTactical', coins: 270, wins: 6, games: 11, avatar_emoji: 'ninja-frog', level: 2, title: 'Recrue Tactique' },
-  { username: 'EagleEye_007', coins: 250, wins: 6, games: 12, avatar_emoji: 'owl-hacker', level: 2, title: 'Sniper Volant' },
-  { username: 'PantherGhost', coins: 230, wins: 5, games: 10, avatar_emoji: 'tiger-agent', level: 2, title: 'Fantôme Feline' },
-  { username: 'BearBouncer', coins: 210, wins: 5, games: 11, avatar_emoji: 'panda-monocle', level: 2, title: 'Garde du Corps' },
-  { username: 'WolfHunter', coins: 190, wins: 4, games: 9, avatar_emoji: 'dog-agent', level: 1, title: 'Chasseur de Nuit' },
-  { username: 'FoxJunior', coins: 170, wins: 4, games: 10, avatar_emoji: 'fox-detective', level: 1, title: 'Cadet Renard' },
-  { username: 'AgentKoala_99', coins: 150, wins: 3, games: 8, avatar_emoji: 'koala-agent', level: 1, title: 'Recrue Discrète' },
-  { username: 'PandaNinja', coins: 130, wins: 3, games: 9, avatar_emoji: 'panda-monocle', level: 1, title: 'Apprenti Ninja' },
-  { username: 'CatShadow_X', coins: 110, wins: 2, games: 7, avatar_emoji: 'cat-spy', level: 1, title: 'Chat de Nuit' }
+const ANIMAL_AVATARS = ['fox-detective', 'cat-spy', 'dog-agent', 'owl-hacker', 'ninja-frog', 'panda-monocle', 'tiger-agent', 'koala-agent', 'lion-detective', 'penguin-secret'];
+const PREFIXES = ['Agent', 'Shadow', 'Cyber', 'Master', 'Ninja', 'Spectre', 'Ghost', 'Viper', 'Eagle', 'Falcon', 'Panther', 'Hunter', 'Alpha', 'Delta', 'Omega', 'Vortex', 'Apex', 'Titan', 'Zenith', 'Kestrel'];
+const SUFFIXES = ['Pro', 'Elite', 'Spy', 'Tactical', 'X', 'Zero', 'Prime', '007', 'V', 'Matrix', 'Volt', 'Storm', 'Shadow', 'Blaze', 'Cipher', 'Stealth', 'Phantom', 'Fury', 'Rogue', 'Venom'];
+
+const BASE_10_AGENTS = [
+  { username: 'FoxDetective_07', coins: 1450, wins: 42, games: 50, avatar_emoji: 'fox-detective' },
+  { username: 'AgentCat_Secret', coins: 1120, wins: 38, games: 45, avatar_emoji: 'cat-spy' },
+  { username: 'DogMaster_Pro', coins: 980, wins: 28, games: 38, avatar_emoji: 'dog-agent' },
+  { username: 'ChouetteHacker', coins: 850, wins: 24, games: 30, avatar_emoji: 'owl-hacker' },
+  { username: 'GrenouilleTactique', coins: 690, wins: 19, games: 25, avatar_emoji: 'ninja-frog' },
+  { username: 'PandaMonocle', coins: 540, wins: 15, games: 20, avatar_emoji: 'panda-monocle' },
+  { username: 'TigreCovert', coins: 420, wins: 12, games: 16, avatar_emoji: 'tiger-agent' },
+  { username: 'KoalaInfiltrator', coins: 380, wins: 10, games: 15, avatar_emoji: 'koala-agent' },
+  { username: 'LionLeader', coins: 350, wins: 9, games: 14, avatar_emoji: 'lion-detective' },
+  { username: 'PenguinSecret', coins: 310, wins: 8, games: 13, avatar_emoji: 'penguin-secret' }
 ];
+
+const generate100Agents = () => {
+  const list = [...BASE_10_AGENTS];
+  for (let i = 11; i <= 100; i++) {
+    const prefix = PREFIXES[(i * 3) % PREFIXES.length];
+    const suffix = SUFFIXES[(i * 7) % SUFFIXES.length];
+    const avatar = ANIMAL_AVATARS[i % ANIMAL_AVATARS.length];
+    const wins = Math.max(1, 40 - Math.floor(i * 0.35));
+    const games = wins + Math.floor(i * 0.2) + 2;
+    const coins = Math.max(10, 1500 - (i * 14));
+    list.push({
+      username: `${prefix}_${suffix}_${i}`,
+      coins,
+      wins,
+      games,
+      avatar_emoji: avatar
+    });
+  }
+  return list;
+};
+
+const DEFAULT_AGENTS = generate100Agents();
 
 const Leaderboard = () => {
   const [leaderboardData, setLeaderboardData] = useState([]);
@@ -34,6 +50,14 @@ const Leaderboard = () => {
   useEffect(() => {
     fetchLeaderboard();
   }, []);
+
+  const getTitleByCoins = (coins) => {
+    if (coins >= 1200) return 'Légende Spymals';
+    if (coins >= 800) return 'Détective En Chef';
+    if (coins >= 500) return 'Infiltré Élite';
+    if (coins >= 300) return 'Agent Spécial';
+    return 'Recrue Furtive';
+  };
 
   const calculateStats = (item) => {
     const wins = item.wins || item.games_won || 0;
@@ -99,7 +123,7 @@ const Leaderboard = () => {
       console.warn("Could not parse local leaderboard", e);
     }
 
-    // 3. Populate default agents so list is ALWAYS rich
+    // 3. Populate default agents up to 100 players
     DEFAULT_AGENTS.forEach(defP => {
       if (!rawList.some(r => r.username.toLowerCase() === defP.username.toLowerCase())) {
         rawList.push(calculateStats(defP));
@@ -109,7 +133,7 @@ const Leaderboard = () => {
     // Sort primarily by Win Rate % (Réussite), tie-breaker by total wins, then coins
     rawList.sort((a, b) => b.winRate - a.winRate || b.wins - a.wins || b.coins - a.coins);
 
-    setLeaderboardData(rawList.slice(0, 100));
+    setLeaderboardData(rawList.slice(0, 100)); // Exactly TOP 100
     setLoading(false);
   };
 
@@ -119,14 +143,6 @@ const Leaderboard = () => {
 
   const handleShowLess = () => {
     setVisibleCount(10);
-  };
-
-  const getTitleByCoins = (coins) => {
-    if (coins >= 1200) return 'Légende Spymals';
-    if (coins >= 800) return 'Détective En Chef';
-    if (coins >= 500) return 'Infiltré Élite';
-    if (coins >= 300) return 'Agent Spécial';
-    return 'Recrue Furtive';
   };
 
   const top1 = leaderboardData[0];
@@ -150,7 +166,7 @@ const Leaderboard = () => {
         {/* Header Title (Aligned Higher Up at Top) */}
         <div className="text-center mb-1 flex-shrink-0">
           <div className="inline-flex items-center px-3 py-0.5 rounded-full bg-spy-lime/10 border border-spy-lime/30 text-spy-lime text-[8.5px] font-black uppercase tracking-widest mb-0.5 shadow-sm">
-            AGENTS ÉLITES
+            {visibleCount <= 10 ? 'TOP 10 AGENTS ÉLITES' : `TOP ${visibleCount} AGENTS ÉLITES`}
           </div>
           <h1 className="text-xl font-black text-white uppercase tracking-tighter drop-shadow-md">
             CLASSEMENT
@@ -233,8 +249,8 @@ const Leaderboard = () => {
 
         </div>
 
-        {/* ROUNDED RANK LIST CONTAINER - Fits all 7 items (#4 to #10) cleanly without truncation */}
-        <div className="w-full bg-slate-950/90 backdrop-blur-xl border-2 border-white/15 rounded-3xl p-2.5 shadow-[0_12px_30px_rgba(0,0,0,0.6)] flex flex-col overflow-hidden flex-shrink-0 max-h-[64dvh]">
+        {/* ROUNDED RANK LIST CONTAINER - Fits all 7 items (#4 to #10) cleanly with room to expand up to Top 100 */}
+        <div className="w-full bg-slate-950/90 backdrop-blur-xl border-2 border-white/15 rounded-3xl p-2.5 shadow-[0_12px_30px_rgba(0,0,0,0.6)] flex flex-col overflow-hidden flex-1 min-h-0">
           
           <div className="flex items-center justify-between px-2 pb-1 mb-1 border-b border-white/10 text-[8px] font-black uppercase tracking-widest text-white/40 flex-shrink-0">
             <span>RANG & AGENT</span>
@@ -242,15 +258,15 @@ const Leaderboard = () => {
           </div>
 
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-6 text-spy-lime gap-2">
+            <div className="flex flex-col items-center justify-center py-6 text-spy-lime gap-2 flex-1">
               <div className="w-5 h-5 border-2 border-spy-lime border-t-transparent rounded-full animate-spin"></div>
               <span className="text-[8.5px] font-black uppercase tracking-wider">Chargement des agents...</span>
             </div>
           ) : (
-            <div className="flex flex-col flex-shrink-0 overflow-hidden">
+            <div className="flex flex-col flex-1 overflow-hidden min-h-0 justify-between">
               
               {/* Scrollable list items */}
-              <div className="overflow-y-auto pr-0.5 no-scrollbar space-y-1 max-h-[350px] flex-shrink">
+              <div className="flex-1 overflow-y-auto pr-0.5 no-scrollbar space-y-1">
                 {paginatedList.map((agent, index) => {
                   const rankNumber = index + 4;
                   return (
@@ -260,7 +276,7 @@ const Leaderboard = () => {
                     >
                       {/* Left: Rank + Avatar + Name */}
                       <div className="flex items-center gap-2">
-                        <div className="w-5 h-5 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[8.5px] font-black text-white/70">
+                        <div className="w-5.5 h-5.5 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-[8.5px] font-black text-white/70">
                           #{rankNumber}
                         </div>
 
