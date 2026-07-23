@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Crown, ChevronDown, ChevronUp } from 'lucide-react';
 import { CartoonAvatar } from './CartoonAvatars';
 import { supabase } from '../utils/supabaseClient';
@@ -46,6 +46,7 @@ const Leaderboard = () => {
   const [leaderboardData, setLeaderboardData] = useState([]);
   const [visibleCount, setVisibleCount] = useState(10);
   const [loading, setLoading] = useState(true);
+  const scrollRef = useRef(null);
 
   useEffect(() => {
     fetchLeaderboard();
@@ -139,6 +140,8 @@ const Leaderboard = () => {
 
   const handleShowLess = () => {
     setVisibleCount(10);
+    // Scroll back to top of the list
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
   };
 
   const top1 = leaderboardData[0];
@@ -149,75 +152,105 @@ const Leaderboard = () => {
   const hasMore = visibleCount < Math.min(100, leaderboardData.length);
 
   return (
-    <div className="fixed inset-0 top-16 bottom-24 px-3 sm:px-5 max-w-md mx-auto flex flex-col items-center justify-start pt-1 overflow-hidden pointer-events-auto select-none z-10">
-      
-      {/* Smooth ambient background glow — fades naturally into the dark app bg */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-gradient-radial from-spy-lime/12 via-spy-lime/4 to-transparent rounded-full blur-[140px]"></div>
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[400px] h-[400px] bg-gradient-radial from-blue-500/8 via-blue-900/3 to-transparent rounded-full blur-[120px]"></div>
-        {/* Subtle vignette edges for depth */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-spy-dark/60"></div>
+    /* pb-28 = 112px clears the floating navbar (bottom-3 + ~80px nav height + breathing room) */
+    <div className="fixed inset-0 top-16 overflow-y-auto no-scrollbar pointer-events-auto select-none z-10"
+      style={{ paddingBottom: 'calc(100px + env(safe-area-inset-bottom, 0px))' }}
+    >
+      {/* Ambient background glows */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full blur-[140px]"
+          style={{ background: 'radial-gradient(circle, rgba(204,255,0,0.10) 0%, rgba(204,255,0,0.03) 50%, transparent 80%)' }}
+        ></div>
+        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 w-[400px] h-[400px] rounded-full blur-[120px]"
+          style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.06) 0%, rgba(30,58,138,0.02) 50%, transparent 80%)' }}
+        ></div>
       </div>
 
-      <div className="z-10 w-full flex flex-col items-center overflow-hidden flex-1 min-h-0">
+      <div className="relative z-10 w-full max-w-md mx-auto px-3 sm:px-5 flex flex-col items-center pt-1">
         
         {/* ═══════════ HEADER ═══════════ */}
-        <div className="text-center mb-0.5 sm:mb-1 flex-shrink-0">
-          <div className="inline-flex items-center px-3 py-0.5 rounded-full bg-spy-lime/10 border border-spy-lime/30 text-spy-lime text-[8px] sm:text-[9px] font-black uppercase tracking-widest mb-0.5 shadow-[0_2px_10px_rgba(204,255,0,0.12)]">
+        <div className="text-center mb-1 sm:mb-1.5">
+          <div className="inline-flex items-center px-3.5 py-1 rounded-full bg-spy-lime/8 border border-spy-lime/25 text-spy-lime text-[8px] sm:text-[9px] font-black uppercase tracking-[0.15em] mb-1"
+            style={{ boxShadow: '0 2px 12px rgba(204,255,0,0.08)' }}
+          >
             {visibleCount <= 10 ? 'TOP 10 AGENTS ÉLITES' : `TOP ${visibleCount} AGENTS ÉLITES`}
           </div>
-          <h1 className="text-lg sm:text-2xl font-black text-white uppercase tracking-tighter drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+          <h1 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight"
+            style={{ textShadow: '0 2px 12px rgba(0,0,0,0.6)' }}
+          >
             CLASSEMENT
           </h1>
-          <div className="w-12 sm:w-14 h-1 bg-gradient-to-r from-transparent via-spy-lime to-transparent mx-auto rounded-full mt-0.5"></div>
+          <div className="w-14 sm:w-16 h-[3px] bg-gradient-to-r from-transparent via-spy-lime to-transparent mx-auto rounded-full mt-1 opacity-80"></div>
         </div>
 
         {/* ═══════════ 3D PODIUM ═══════════ */}
-        <div className="w-full grid grid-cols-3 gap-1 sm:gap-2 items-end mb-1 sm:mb-1.5 px-0.5 flex-shrink-0">
+        <div className="w-full grid grid-cols-3 gap-1.5 sm:gap-2.5 items-end mb-2 sm:mb-2.5 px-1">
           
           {/* ── 2ND PLACE (Silver) ── */}
           {top2 && (
             <div className="flex flex-col items-center">
               <div className="relative mb-0.5 flex flex-col items-center">
-                <div className="w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full bg-gradient-to-b from-slate-200 to-slate-400 border-2 border-white flex items-center justify-center text-[8.5px] sm:text-[9px] font-black text-slate-900 shadow-[0_2px_8px_rgba(148,163,184,0.5)] -mb-2 z-20">
+                <div className="w-5 h-5 sm:w-5.5 sm:h-5.5 rounded-full bg-gradient-to-b from-slate-200 to-slate-400 border-2 border-white/90 flex items-center justify-center text-[9px] sm:text-[10px] font-black text-slate-800 -mb-2 z-20"
+                  style={{ boxShadow: '0 2px 8px rgba(148,163,184,0.5), 0 0 0 1px rgba(255,255,255,0.2)' }}
+                >
                   2
                 </div>
-                <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-b from-slate-700 to-slate-900 border-2 border-slate-300/80 p-0.5 shadow-[0_4px_16px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.1)] overflow-hidden">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-b from-slate-600 to-slate-900 border-2 border-slate-300/60 p-0.5 overflow-hidden"
+                  style={{ boxShadow: '0 6px 20px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.1)' }}
+                >
                   <CartoonAvatar id={top2.avatar_emoji} className="w-full h-full border-none shadow-none" />
                 </div>
               </div>
-              <span className="text-[8.5px] sm:text-[10px] font-black text-white truncate max-w-[70px] sm:max-w-[85px] text-center leading-tight mt-0.5">{top2.username}</span>
-              <span className="text-[7px] sm:text-[8px] font-black text-spy-lime">{top2.winRate}% Réussite</span>
+              <span className="text-[9px] sm:text-[10.5px] font-black text-white truncate max-w-[75px] sm:max-w-[90px] text-center leading-tight mt-1">{top2.username}</span>
+              <span className="text-[7px] sm:text-[8px] font-bold text-spy-lime/90">{top2.winRate}% Réussite</span>
               
               {/* Silver Pillar */}
-              <div className="w-full h-7 sm:h-8.5 mt-0.5 bg-gradient-to-b from-slate-700/90 to-slate-950 border border-slate-400/40 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.08)] p-0.5">
-                <span className="text-[10.5px] sm:text-xs font-black text-slate-300">#2</span>
-                <span className="text-[5px] sm:text-[6.5px] text-white/60 font-bold">{top2.wins} Victoires • {top2.losses} Défaites</span>
+              <div className="w-full h-8 sm:h-10 mt-1 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center p-0.5 relative overflow-hidden"
+                style={{
+                  background: 'linear-gradient(180deg, rgba(100,116,139,0.4) 0%, rgba(15,23,42,0.95) 100%)',
+                  border: '1.5px solid rgba(148,163,184,0.3)',
+                  boxShadow: '0 6px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)'
+                }}
+              >
+                <span className="text-[11px] sm:text-xs font-black text-slate-300/90">#2</span>
+                <span className="text-[5.5px] sm:text-[7px] text-white/50 font-bold">{top2.wins} Vic. • {top2.losses} Déf.</span>
               </div>
             </div>
           )}
 
           {/* ── 1ST PLACE (Gold Hero) ── */}
           {top1 && (
-            <div className="flex flex-col items-center -translate-y-0.5">
+            <div className="flex flex-col items-center -translate-y-1">
               <div className="relative mb-0.5 flex flex-col items-center">
-                <div className="w-5 h-5 sm:w-5.5 sm:h-5.5 rounded-full bg-gradient-to-b from-amber-300 to-amber-500 border-2 border-white flex items-center justify-center text-slate-950 shadow-[0_0_16px_rgba(251,191,36,0.6),0_2px_6px_rgba(0,0,0,0.3)] -mb-2 z-20">
-                  <Crown className="w-2.5 h-2.5 sm:w-3 sm:h-3 fill-slate-950" />
+                <div className="w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-full bg-gradient-to-b from-amber-300 to-amber-500 border-2 border-white/90 flex items-center justify-center text-slate-950 -mb-2.5 z-20"
+                  style={{ boxShadow: '0 0 18px rgba(251,191,36,0.6), 0 3px 8px rgba(0,0,0,0.3)' }}
+                >
+                  <Crown className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-slate-950" />
                 </div>
-                <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-gradient-to-b from-amber-500/30 to-slate-900 border-[2.5px] border-amber-400 p-0.5 shadow-[0_6px_24px_rgba(251,191,36,0.35),inset_0_1px_0_rgba(255,255,255,0.15)] overflow-hidden">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-b from-amber-500/30 to-slate-900 border-[2.5px] border-amber-400/80 p-0.5 overflow-hidden"
+                  style={{ boxShadow: '0 8px 28px rgba(251,191,36,0.3), inset 0 1px 0 rgba(255,255,255,0.15)' }}
+                >
                   <CartoonAvatar id={top1.avatar_emoji} className="w-full h-full border-none shadow-none" />
                 </div>
               </div>
-              <span className="text-[9px] sm:text-[10.5px] font-black text-amber-300 truncate max-w-[80px] sm:max-w-[95px] text-center drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)] leading-tight mt-0.5">{top1.username}</span>
-              <span className="text-[7.5px] sm:text-[8.5px] font-black text-spy-lime">{top1.winRate}% Réussite</span>
+              <span className="text-[9.5px] sm:text-[11px] font-black text-amber-300 truncate max-w-[85px] sm:max-w-[100px] text-center leading-tight mt-1"
+                style={{ textShadow: '0 1px 6px rgba(0,0,0,0.5)' }}
+              >{top1.username}</span>
+              <span className="text-[7.5px] sm:text-[8.5px] font-bold text-spy-lime/90">{top1.winRate}% Réussite</span>
               
               {/* Gold Pillar */}
-              <div className="w-full h-10 sm:h-12 mt-0.5 bg-gradient-to-b from-amber-500/20 via-amber-900/10 to-slate-950 border border-amber-400/50 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center shadow-[0_6px_24px_rgba(251,191,36,0.2),inset_0_1px_0_rgba(251,191,36,0.15)] relative overflow-hidden p-0.5">
-                <span className="text-[10.5px] sm:text-xs font-black text-amber-400">#1 ÉLITE</span>
-                <span className="text-[5px] sm:text-[6.5px] font-black text-amber-200/90">{top1.wins} Victoires • {top1.losses} Défaites</span>
+              <div className="w-full h-11 sm:h-13 mt-1 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center p-0.5 relative overflow-hidden"
+                style={{
+                  background: 'linear-gradient(180deg, rgba(245,158,11,0.2) 0%, rgba(120,53,15,0.1) 40%, rgba(15,23,42,0.95) 100%)',
+                  border: '1.5px solid rgba(251,191,36,0.4)',
+                  boxShadow: '0 8px 28px rgba(251,191,36,0.15), inset 0 1px 0 rgba(251,191,36,0.12)'
+                }}
+              >
+                <span className="text-[11px] sm:text-xs font-black text-amber-400">#1 ÉLITE</span>
+                <span className="text-[5.5px] sm:text-[7px] font-bold text-amber-200/80">{top1.wins} Vic. • {top1.losses} Déf.</span>
                 <div className="flex items-center gap-0.5 mt-0.5">
-                  <img src="/croquette_coin_3d.png" alt="coin" className="w-2.5 h-2.5 object-contain" />
-                  <span className="text-[6px] sm:text-[7.5px] font-black text-spy-lime">{top1.coins}</span>
+                  <img src="/croquette_coin_3d.png" alt="coin" className="w-2.5 h-2.5 sm:w-3 sm:h-3 object-contain" />
+                  <span className="text-[6.5px] sm:text-[8px] font-black text-spy-lime">{top1.coins}</span>
                 </div>
               </div>
             </div>
@@ -227,20 +260,30 @@ const Leaderboard = () => {
           {top3 && (
             <div className="flex flex-col items-center">
               <div className="relative mb-0.5 flex flex-col items-center">
-                <div className="w-4.5 h-4.5 sm:w-5 sm:h-5 rounded-full bg-gradient-to-b from-amber-600 to-amber-800 border-2 border-white flex items-center justify-center text-[8.5px] sm:text-[9px] font-black text-amber-100 shadow-[0_2px_8px_rgba(180,83,9,0.5)] -mb-2 z-20">
+                <div className="w-5 h-5 sm:w-5.5 sm:h-5.5 rounded-full bg-gradient-to-b from-amber-600 to-amber-800 border-2 border-white/80 flex items-center justify-center text-[9px] sm:text-[10px] font-black text-amber-100 -mb-2 z-20"
+                  style={{ boxShadow: '0 2px 8px rgba(180,83,9,0.5), 0 0 0 1px rgba(255,255,255,0.15)' }}
+                >
                   3
                 </div>
-                <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-b from-amber-900/60 to-slate-900 border-2 border-amber-600/70 p-0.5 shadow-[0_4px_16px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.08)] overflow-hidden">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-b from-amber-900/50 to-slate-900 border-2 border-amber-600/50 p-0.5 overflow-hidden"
+                  style={{ boxShadow: '0 6px 20px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08)' }}
+                >
                   <CartoonAvatar id={top3.avatar_emoji} className="w-full h-full border-none shadow-none" />
                 </div>
               </div>
-              <span className="text-[8.5px] sm:text-[10px] font-black text-white truncate max-w-[70px] sm:max-w-[85px] text-center leading-tight mt-0.5">{top3.username}</span>
-              <span className="text-[7px] sm:text-[8px] font-black text-spy-lime">{top3.winRate}% Réussite</span>
+              <span className="text-[9px] sm:text-[10.5px] font-black text-white truncate max-w-[75px] sm:max-w-[90px] text-center leading-tight mt-1">{top3.username}</span>
+              <span className="text-[7px] sm:text-[8px] font-bold text-spy-lime/90">{top3.winRate}% Réussite</span>
               
               {/* Bronze Pillar */}
-              <div className="w-full h-6.5 sm:h-8 mt-0.5 bg-gradient-to-b from-amber-900/50 to-slate-950 border border-amber-700/40 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center shadow-[0_4px_16px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)] p-0.5">
-                <span className="text-[10.5px] sm:text-xs font-black text-amber-600">#3</span>
-                <span className="text-[5px] sm:text-[6.5px] text-white/60 font-bold">{top3.wins} Victoires • {top3.losses} Défaites</span>
+              <div className="w-full h-7 sm:h-9 mt-1 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center p-0.5 relative overflow-hidden"
+                style={{
+                  background: 'linear-gradient(180deg, rgba(120,53,15,0.3) 0%, rgba(15,23,42,0.95) 100%)',
+                  border: '1.5px solid rgba(180,83,9,0.3)',
+                  boxShadow: '0 6px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)'
+                }}
+              >
+                <span className="text-[11px] sm:text-xs font-black text-amber-600/90">#3</span>
+                <span className="text-[5.5px] sm:text-[7px] text-white/50 font-bold">{top3.wins} Vic. • {top3.losses} Déf.</span>
               </div>
             </div>
           )}
@@ -248,69 +291,93 @@ const Leaderboard = () => {
         </div>
 
         {/* ═══════════ RANK LIST CARD ═══════════ */}
-        <div className={`w-full bg-gradient-to-b from-slate-900/95 via-slate-950/98 to-slate-950/95 backdrop-blur-2xl border border-white/10 rounded-2xl sm:rounded-3xl p-2 sm:p-2.5 flex flex-col overflow-hidden transition-all duration-300 ease-out ${visibleCount > 10 ? 'flex-1 min-h-0' : 'flex-1 sm:flex-shrink-0 min-h-0 sm:min-h-auto'}`}
+        <div className="w-full rounded-2xl sm:rounded-3xl p-2.5 sm:p-3"
           style={{
-            boxShadow: '0 -1px 0 rgba(255,255,255,0.05) inset, 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,0,0,0.2), 0 0 60px -10px rgba(204,255,0,0.04)'
+            background: 'linear-gradient(180deg, rgba(15,23,42,0.92) 0%, rgba(2,6,23,0.96) 50%, rgba(15,23,42,0.90) 100%)',
+            border: '1px solid rgba(255,255,255,0.08)',
+            boxShadow: '0 -1px 0 rgba(255,255,255,0.04) inset, 0 12px 40px rgba(0,0,0,0.5), 0 0 80px -20px rgba(204,255,0,0.03)'
           }}
         >
           
           {/* Column headers */}
-          <div className="flex items-center justify-between px-1.5 sm:px-2 pb-1 mb-1 border-b border-white/8 text-[7px] sm:text-[8.5px] font-black uppercase tracking-widest text-white/35 flex-shrink-0">
+          <div className="flex items-center justify-between px-1.5 sm:px-2 pb-1.5 mb-1.5 text-[7px] sm:text-[8.5px] font-black uppercase tracking-[0.12em] text-white/30"
+            style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+          >
             <span>RANG & AGENT</span>
             <span>RÉUSSITE & STATS</span>
           </div>
 
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-6 text-spy-lime gap-2 flex-1">
+            <div className="flex flex-col items-center justify-center py-8 text-spy-lime gap-2">
               <div className="w-5 h-5 border-2 border-spy-lime border-t-transparent rounded-full animate-spin"></div>
               <span className="text-[8.5px] font-black uppercase tracking-wider">Chargement des agents...</span>
             </div>
           ) : (
-            <div className="flex flex-col overflow-hidden flex-1 min-h-0">
-              
-              {/* Scrollable player rows */}
-              <div className={`overflow-y-auto pr-0.5 no-scrollbar space-y-[3px] sm:space-y-1 ${visibleCount > 10 ? 'flex-1' : 'flex-1 sm:flex-initial'}`}>
+            <>
+              {/* Player rows */}
+              <div ref={scrollRef} className="space-y-[3px] sm:space-y-1">
                 {paginatedList.map((agent, index) => {
                   const rankNumber = index + 4;
                   return (
                     <div
                       key={agent.username + index}
-                      className="flex items-center justify-between bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.06] hover:border-spy-lime/30 rounded-xl p-1 sm:p-1.5 transition-all duration-200 group"
+                      className="flex items-center justify-between rounded-xl p-1.5 sm:p-2 transition-all duration-200 group"
                       style={{
-                        boxShadow: '0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.03)'
+                        background: 'rgba(255,255,255,0.02)',
+                        border: '1px solid rgba(255,255,255,0.04)',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.02)'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+                        e.currentTarget.style.borderColor = 'rgba(204,255,0,0.2)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'rgba(255,255,255,0.02)';
+                        e.currentTarget.style.borderColor = 'rgba(255,255,255,0.04)';
                       }}
                     >
                       {/* Left: Rank + Avatar + Name */}
                       <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
-                        <div className="w-5 h-5 sm:w-5.5 sm:h-5.5 rounded-lg bg-white/5 border border-white/8 flex items-center justify-center text-[8px] sm:text-[9px] font-black text-white/60 flex-shrink-0">
+                        <div className="w-5.5 h-5.5 sm:w-6 sm:h-6 rounded-lg flex items-center justify-center text-[8.5px] sm:text-[9.5px] font-black text-white/50 flex-shrink-0"
+                          style={{
+                            background: 'rgba(255,255,255,0.04)',
+                            border: '1px solid rgba(255,255,255,0.06)'
+                          }}
+                        >
                           #{rankNumber}
                         </div>
 
-                        <div className="w-6.5 h-6.5 sm:w-8 sm:h-8 rounded-xl bg-slate-800/80 border border-white/10 overflow-hidden flex-shrink-0 shadow-[0_2px_6px_rgba(0,0,0,0.3)]">
+                        <div className="w-7 h-7 sm:w-8.5 sm:h-8.5 rounded-xl overflow-hidden flex-shrink-0"
+                          style={{
+                            background: 'linear-gradient(135deg, rgba(30,41,59,0.8), rgba(15,23,42,0.9))',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
+                          }}
+                        >
                           <CartoonAvatar id={agent.avatar_emoji} className="w-full h-full border-none shadow-none" />
                         </div>
 
                         <div className="flex flex-col text-left min-w-0">
-                          <span className="font-black text-[9px] sm:text-[11px] text-white tracking-wide truncate max-w-[80px] sm:max-w-[120px]">
+                          <span className="font-black text-[9.5px] sm:text-[11px] text-white tracking-wide truncate max-w-[85px] sm:max-w-[130px]">
                             {agent.username}
                           </span>
-                          <span className="text-[6.5px] sm:text-[8px] text-spy-lime/80 font-bold">
+                          <span className="text-[6.5px] sm:text-[8px] text-spy-lime/70 font-bold">
                             {agent.title} • Niv.{agent.level}
                           </span>
                         </div>
                       </div>
 
-                      {/* Right: Win Rate + Victoires / Défaites */}
+                      {/* Right: Win Rate + Stats */}
                       <div className="flex flex-col items-end flex-shrink-0">
-                        <span className="text-[9px] sm:text-[11px] font-black text-spy-lime tracking-tight">
+                        <span className="text-[10px] sm:text-[11.5px] font-black text-spy-lime tracking-tight">
                           {agent.winRate}%
                         </span>
-                        <span className="text-[6px] sm:text-[7.5px] text-white/50 font-bold whitespace-nowrap">
+                        <span className="text-[6px] sm:text-[7.5px] text-white/45 font-bold whitespace-nowrap">
                           {agent.wins} Vic. • {agent.losses} Déf.
                         </span>
                         <div className="flex items-center gap-0.5">
                           <img src="/croquette_coin_3d.png" alt="coin" className="w-2 h-2 sm:w-2.5 sm:h-2.5 object-contain" />
-                          <span className="text-[6px] sm:text-[7px] text-white/35 font-black">{agent.coins}</span>
+                          <span className="text-[6px] sm:text-[7px] text-white/30 font-black">{agent.coins}</span>
                         </div>
                       </div>
                     </div>
@@ -319,13 +386,15 @@ const Leaderboard = () => {
               </div>
 
               {/* ── BUTTONS: VOIR PLUS / REPLIER ── */}
-              <div className="pt-1.5 flex items-center gap-2 flex-shrink-0">
+              <div className="pt-2 sm:pt-2.5 flex items-center gap-2">
                 {hasMore && (
                   <button
                     onClick={handleLoadMore}
-                    className="flex-1 py-1.5 bg-gradient-to-r from-spy-lime via-[#d4ff1a] to-spy-lime hover:brightness-110 active:brightness-95 border border-[#a8cc00] rounded-xl sm:rounded-2xl text-slate-950 font-black uppercase text-[9px] sm:text-[10px] tracking-widest transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 active:scale-[0.97]"
+                    className="flex-1 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-slate-950 font-black uppercase text-[9.5px] sm:text-[10.5px] tracking-[0.12em] transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 active:scale-[0.97]"
                     style={{
-                      boxShadow: '0 4px_14px rgba(204,255,0,0.3), 0 2px 0 #88aa00, inset 0 1px 0 rgba(255,255,255,0.4)'
+                      background: 'linear-gradient(90deg, #ccff00, #d8ff33, #ccff00)',
+                      border: '1.5px solid rgba(255,255,255,0.3)',
+                      boxShadow: '0 4px 16px rgba(204,255,0,0.3), 0 2px 0 #7a9900, inset 0 1px 0 rgba(255,255,255,0.5)'
                     }}
                   >
                     <span>VOIR PLUS (+10)</span>
@@ -336,9 +405,11 @@ const Leaderboard = () => {
                 {visibleCount > 10 && (
                   <button
                     onClick={handleShowLess}
-                    className="py-1.5 px-3.5 bg-white/8 hover:bg-white/14 border border-white/15 rounded-xl sm:rounded-2xl text-white font-black uppercase text-[9px] sm:text-[10px] tracking-wider transition-all duration-200 cursor-pointer flex items-center justify-center gap-1 active:scale-[0.97] flex-shrink-0"
+                    className="py-2 sm:py-2.5 px-4 rounded-xl sm:rounded-2xl text-white font-black uppercase text-[9.5px] sm:text-[10.5px] tracking-wider transition-all duration-200 cursor-pointer flex items-center justify-center gap-1 active:scale-[0.97] flex-shrink-0"
                     style={{
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06)'
+                      background: 'rgba(255,255,255,0.06)',
+                      border: '1px solid rgba(255,255,255,0.12)',
+                      boxShadow: '0 2px 10px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05)'
                     }}
                   >
                     <span>REPLIER</span>
@@ -346,11 +417,13 @@ const Leaderboard = () => {
                   </button>
                 )}
               </div>
-
-            </div>
+            </>
           )}
 
         </div>
+
+        {/* Bottom fade to blend into navbar area — gives a smooth disappearing edge */}
+        <div className="w-full h-6 sm:h-8 bg-gradient-to-b from-transparent to-spy-dark/80 pointer-events-none"></div>
 
       </div>
 
