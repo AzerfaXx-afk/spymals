@@ -23,6 +23,34 @@ import { CartoonAvatar } from './components/CartoonAvatars';
 import { ShoppingCart, Trophy, Gamepad2, BookOpen, Coins } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+const pageSlideVariants = {
+  initial: (direction) => ({
+    x: direction > 0 ? '100%' : direction < 0 ? '-100%' : 0,
+    opacity: direction !== 0 ? 0.95 : 0,
+    scale: direction === 0 ? 0.98 : 1,
+  }),
+  animate: {
+    x: '0%',
+    opacity: 1,
+    scale: 1,
+    transition: {
+      x: { type: 'spring', stiffness: 280, damping: 28, mass: 0.75 },
+      opacity: { duration: 0.2 },
+      scale: { duration: 0.15 }
+    }
+  },
+  exit: (direction) => ({
+    x: direction > 0 ? '-100%' : direction < 0 ? '100%' : 0,
+    opacity: direction !== 0 ? 0.95 : 0,
+    scale: direction === 0 ? 0.98 : 1,
+    transition: {
+      x: { type: 'spring', stiffness: 280, damping: 28, mass: 0.75 },
+      opacity: { duration: 0.2 },
+      scale: { duration: 0.15 }
+    }
+  })
+};
+
 function App() {
   const [currentScreen, setCurrentScreen] = useState('home');
   const [players, setPlayers] = useState([]);
@@ -581,22 +609,10 @@ function App() {
             <motion.div
               key={currentScreen}
               custom={slideDirection}
-              initial={
-                slideDirection !== 0
-                  ? { x: slideDirection > 0 ? '100%' : '-100%', opacity: 0.9 }
-                  : { opacity: 0, scale: 0.98 }
-              }
-              animate={{ x: 0, opacity: 1, scale: 1 }}
-              exit={
-                slideDirection !== 0
-                  ? { x: slideDirection > 0 ? '-100%' : '100%', opacity: 0.9 }
-                  : { opacity: 0, scale: 0.98 }
-              }
-              transition={
-                slideDirection !== 0
-                  ? { type: "spring", stiffness: 260, damping: 26, mass: 0.75 }
-                  : { duration: 0.15 }
-              }
+              variants={pageSlideVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
               className="w-full h-full"
             >
               {currentScreen === 'home' && (
