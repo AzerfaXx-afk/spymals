@@ -294,10 +294,10 @@ const Leaderboard = () => {
         </div>
 
         {/* ═══════════ RANK LIST CARD ═══════════
-            Top 10 mode: card hugs content (flex-shrink-0), no empty space
-            VOIR PLUS mode: card expands to fill remaining space (flex-1 min-h-0), list scrolls internally
+            Always fills remaining space between podium and navbar.
+            The list scrolls internally — the card itself never moves or resizes.
         */}
-        <div className={`w-full rounded-2xl sm:rounded-3xl p-2 sm:p-2.5 flex flex-col overflow-hidden ${visibleCount > 10 ? 'flex-1 min-h-0' : 'flex-shrink-0'}`}
+        <div className="w-full rounded-2xl sm:rounded-3xl p-2 sm:p-2.5 flex flex-col overflow-hidden flex-1 min-h-0"
           style={{
             background: 'linear-gradient(180deg, rgba(15,23,42,0.92) 0%, rgba(2,6,23,0.96) 50%, rgba(15,23,42,0.90) 100%)',
             border: '1px solid rgba(255,255,255,0.08)',
