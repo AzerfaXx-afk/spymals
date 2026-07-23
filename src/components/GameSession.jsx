@@ -523,13 +523,21 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                                     ))}
                                 </div>
 
-                                {/* Who's spoken list */}
+                                {/* Who's spoken list - 3D Avatars with Checkmark Badges */}
                                 {currentSpeakerIndex > 0 && (
-                                    <div className="flex flex-wrap justify-center gap-2 mb-4">
+                                    <div className="flex flex-wrap items-center justify-center gap-2.5 mb-4">
                                         {speakingOrder.slice(0, currentSpeakerIndex).map(p => (
-                                            <div key={p.id} className="flex items-center gap-1.5 bg-black/40 rounded-full px-3 py-1 border border-spy-lime/30">
-                                                <span className={`${p.pseudoColor || 'text-white'} font-black text-xs uppercase`}>{p.name}</span>
-                                                <span className="text-spy-lime text-xs font-black">✓</span>
+                                            <div key={p.id} className="relative group cursor-pointer" title={`${p.name} (a parlé)`}>
+                                                <div className="w-10 h-10 rounded-full border-2 border-spy-lime/80 overflow-hidden shadow-[0_0_12px_rgba(204,255,0,0.3)] bg-slate-900 flex items-center justify-center">
+                                                    {p.avatar.type === 'image' ? (
+                                                        <img src={p.avatar.value} alt={p.name} className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        <CartoonAvatar id={p.avatar.value} className="w-full h-full border-none shadow-none" />
+                                                    )}
+                                                </div>
+                                                <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-spy-lime text-black flex items-center justify-center font-black text-[9px] border border-black shadow">
+                                                    ✓
+                                                </div>
                                             </div>
                                         ))}
                                     </div>
@@ -553,10 +561,10 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                                 transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                                 className="w-full flex flex-col items-center gap-4"
                             >
-                                {/* 3D Detective Mascot Hero Illustration */}
-                                <div className="relative w-36 h-36 flex items-center justify-center animate-bounce-slow">
-                                    <div className="absolute inset-0 bg-spy-orange/20 rounded-full blur-2xl pointer-events-none" />
-                                    <img src="/detective_mascot.png" alt="Agents Vote" className="w-full h-full object-contain filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.7)]" />
+                                {/* 3D Detective Mascot Hero Illustration - Static & Crisp */}
+                                <div className="relative w-36 h-36 flex items-center justify-center">
+                                    <div className="absolute inset-0 bg-spy-orange/25 rounded-full blur-2xl pointer-events-none" />
+                                    <img src="/detective_mascot.png" alt="Agents Vote" className="w-full h-full object-contain filter drop-shadow-[0_12px_24px_rgba(0,0,0,0.8)]" />
                                 </div>
 
                                 <div className="card-cartoon bg-gradient-to-b from-[#14233e] to-[#0a1426] p-6 border-[3.5px] border-white/20 shadow-2xl w-full rounded-[32px] text-center">
