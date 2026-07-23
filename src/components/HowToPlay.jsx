@@ -24,14 +24,14 @@ const HowToPlay = ({ onBack, onOpenSettings }) => {
 
     return (
         <div className="fixed inset-0 top-16 bottom-24 px-4 max-w-md mx-auto flex flex-col items-center justify-start pt-2 overflow-hidden pointer-events-auto select-none z-10">
-            
+
             {/* Background Soft Ambient Radial Glow - Seamless Blend */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
                 <div className="absolute top-6 left-1/2 -translate-x-1/2 w-72 h-72 bg-spy-lime/10 rounded-full blur-3xl"></div>
             </div>
 
             <div className="z-10 w-full flex flex-col items-center">
-                
+
                 {/* Header Title (Positioned Higher Up) */}
                 <div className="text-center mb-2 flex-shrink-0">
                     <div className="inline-flex items-center px-3.5 py-1 rounded-full bg-spy-lime/10 border border-spy-lime/30 text-spy-lime text-[9px] font-black uppercase tracking-widest mb-1 shadow-sm">
@@ -49,11 +49,10 @@ const HowToPlay = ({ onBack, onOpenSettings }) => {
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
-                            className={`flex-1 py-2 rounded-xl text-[10.5px] font-black uppercase tracking-wide transition-all duration-200 cursor-pointer flex items-center justify-center ${
-                                activeTab === tab.id
+                            className={`flex-1 py-2 rounded-xl text-[10.5px] font-black uppercase tracking-wide transition-all duration-200 cursor-pointer flex items-center justify-center ${activeTab === tab.id
                                     ? 'bg-spy-lime text-slate-950 shadow-[0_3px_0_#88bb00] font-extrabold border border-white scale-[1.02]'
                                     : 'text-white/60 hover:text-white hover:bg-white/5'
-                            }`}
+                                }`}
                         >
                             {tab.label}
                         </button>
@@ -62,7 +61,7 @@ const HowToPlay = ({ onBack, onOpenSettings }) => {
 
                 {/* MAIN CARTOON CONTENT CARD - Fixed height & clean rounded corners without square background cutoffs */}
                 <div className="w-full bg-slate-950/90 backdrop-blur-xl border-2 border-white/15 rounded-3xl p-4 shadow-[0_12px_30px_rgba(0,0,0,0.6)] flex flex-col justify-between overflow-hidden relative min-h-[380px]">
-                    
+
                     {/* TAB 1: LES RÔLES */}
                     {activeTab === 'roles' && (
                         <div className="flex-1 flex flex-col justify-between gap-2.5 py-1 animate-pop-in">
@@ -189,7 +188,7 @@ const HowToPlay = ({ onBack, onOpenSettings }) => {
                                     <span className="font-black text-xs text-purple-200 uppercase tracking-wide">VICTOIRE DE MR. BLANC</span>
                                 </div>
                                 <p className="text-[10px] text-white/90 font-bold leading-snug">
-                                    Devinez le mot exact des Innocents s'il est éliminé, ou survivez jusqu'à la fin !
+                                    Devinez le mot exact des Innocents s'il est éliminé, ou survivez jusqu'à la fin.
                                 </p>
                             </div>
                         </div>
@@ -209,9 +208,8 @@ const HowToPlay = ({ onBack, onOpenSettings }) => {
                                 <span
                                     key={t.id}
                                     onClick={() => setActiveTab(t.id)}
-                                    className={`w-2 h-2 rounded-full cursor-pointer transition-all duration-300 ${
-                                        activeTab === t.id ? 'w-5 bg-spy-lime shadow-[0_0_8px_rgba(204,255,0,0.8)]' : 'bg-white/20 hover:bg-white/40'
-                                    }`}
+                                    className={`w-2 h-2 rounded-full cursor-pointer transition-all duration-300 ${activeTab === t.id ? 'w-5 bg-spy-lime shadow-[0_0_8px_rgba(204,255,0,0.8)]' : 'bg-white/20 hover:bg-white/40'
+                                        }`}
                                 />
                             ))}
                         </div>
