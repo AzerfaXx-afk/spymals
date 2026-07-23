@@ -151,11 +151,11 @@ const Leaderboard = () => {
   const hasMore = visibleCount < Math.min(100, leaderboardData.length);
 
   return (
-    /* Fixed full-screen container — NO page scroll. Clears top bar and navbar */
-    <div className="fixed top-16 left-0 right-0 px-3 sm:px-5 max-w-md mx-auto flex flex-col items-center overflow-hidden pointer-events-auto select-none z-10"
-      style={{ bottom: 'calc(180px + env(safe-area-inset-bottom, 0px))' }}
+    /* Responsive full-screen container — perfectly fits Top 10 (#1 to #10) on mobile & PC while clearing navbar */
+    <div className="fixed top-14 sm:top-16 left-0 right-0 px-2.5 sm:px-5 max-w-md mx-auto flex flex-col items-center overflow-hidden pointer-events-auto select-none z-10"
+      style={{ bottom: 'calc(105px + env(safe-area-inset-bottom, 0px))' }}
     >
-
+      
       {/* Ambient background glows */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full blur-[140px]"
@@ -163,17 +163,17 @@ const Leaderboard = () => {
         ></div>
       </div>
 
-      {/* All content in a flex column — header & podium are fixed, card stretches */}
+      {/* All content in a flex column */}
       <div className="z-10 w-full flex flex-col items-center overflow-hidden flex-1 min-h-0">
-
-        {/* ═══════════ HEADER (never scrolls) ═══════════ */}
+        
+        {/* ═══════════ HEADER ═══════════ */}
         <div className="text-center mb-0.5 sm:mb-1 flex-shrink-0">
           <div className="inline-flex items-center px-3 py-0.5 rounded-full bg-spy-lime/8 border border-spy-lime/25 text-spy-lime text-[7.5px] sm:text-[9px] font-black uppercase tracking-[0.15em] mb-0.5"
             style={{ boxShadow: '0 2px 12px rgba(204,255,0,0.08)' }}
           >
             {visibleCount <= 10 ? 'TOP 10 AGENTS ÉLITES' : `TOP ${visibleCount} AGENTS ÉLITES`}
           </div>
-          <h1 className="text-lg sm:text-2xl font-black text-white uppercase tracking-tight"
+          <h1 className="text-base sm:text-2xl font-black text-white uppercase tracking-tight"
             style={{ textShadow: '0 2px 12px rgba(0,0,0,0.6)' }}
           >
             CLASSEMENT
@@ -181,35 +181,35 @@ const Leaderboard = () => {
           <div className="w-12 sm:w-14 h-[2px] bg-gradient-to-r from-transparent via-spy-lime to-transparent mx-auto rounded-full mt-0.5 opacity-80"></div>
         </div>
 
-        {/* ═══════════ 3D PODIUM (never scrolls) ═══════════ */}
-        <div className="w-full grid grid-cols-3 gap-1 sm:gap-2 items-end mb-1 sm:mb-1.5 px-0.5 flex-shrink-0">
-
+        {/* ═══════════ 3D PODIUM ═══════════ */}
+        <div className="w-full grid grid-cols-3 gap-1 sm:gap-2 items-end mb-0.5 sm:mb-1.5 px-0.5 flex-shrink-0">
+          
           {/* ── 2ND PLACE (Silver) ── */}
           {top2 && (
             <div className="flex flex-col items-center">
               <div className="relative mb-0.5 flex flex-col items-center">
-                <div className="w-4.5 h-4.5 sm:w-5.5 sm:h-5.5 rounded-full bg-gradient-to-b from-slate-200 to-slate-400 border-2 border-white/90 flex items-center justify-center text-[8px] sm:text-[10px] font-black text-slate-800 -mb-2 z-20"
+                <div className="w-4 h-4 sm:w-5.5 sm:h-5.5 rounded-full bg-gradient-to-b from-slate-200 to-slate-400 border-2 border-white/90 flex items-center justify-center text-[7.5px] sm:text-[10px] font-black text-slate-800 -mb-2 z-20"
                   style={{ boxShadow: '0 2px 8px rgba(148,163,184,0.5)' }}
                 >
                   2
                 </div>
-                <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-b from-slate-600 to-slate-900 border-2 border-slate-300/60 p-0.5 overflow-hidden"
+                <div className="w-8.5 h-8.5 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-b from-slate-600 to-slate-900 border-2 border-slate-300/60 p-0.5 overflow-hidden"
                   style={{ boxShadow: '0 6px 20px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.1)' }}
                 >
                   <CartoonAvatar id={top2.avatar_emoji} className="w-full h-full border-none shadow-none" />
                 </div>
               </div>
-              <span className="text-[8px] sm:text-[10.5px] font-black text-white truncate max-w-[70px] sm:max-w-[90px] text-center leading-tight mt-0.5">{top2.username}</span>
+              <span className="text-[8px] sm:text-[10.5px] font-black text-white truncate max-w-[65px] sm:max-w-[90px] text-center leading-tight mt-0.5">{top2.username}</span>
               <span className="text-[6.5px] sm:text-[8px] font-bold text-spy-lime/90">{top2.winRate}% Réussite</span>
-
-              <div className="w-full h-9 sm:h-12 mt-0.5 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center p-0.5"
+              
+              <div className="w-full h-8 sm:h-11 mt-0.5 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center p-0.5"
                 style={{
                   background: 'linear-gradient(180deg, rgba(100,116,139,0.4) 0%, rgba(15,23,42,0.95) 100%)',
                   border: '1.5px solid rgba(148,163,184,0.3)',
                   boxShadow: '0 6px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)'
                 }}
               >
-                <span className="text-[10px] sm:text-xs font-black text-slate-300/90">#2</span>
+                <span className="text-[9.5px] sm:text-xs font-black text-slate-300/90">#2</span>
                 <span className="text-[5px] sm:text-[7px] text-white/50 font-bold">{top2.wins} Vic. • {top2.losses} Déf.</span>
                 <div className="flex items-center gap-0.5 mt-0.5">
                   <img src="/croquette_coin_3d.png" alt="coin" className="w-2 h-2 sm:w-3 sm:h-3 object-contain" />
@@ -223,30 +223,30 @@ const Leaderboard = () => {
           {top1 && (
             <div className="flex flex-col items-center -translate-y-0.5">
               <div className="relative mb-0.5 flex flex-col items-center">
-                <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-gradient-to-b from-amber-300 to-amber-500 border-2 border-white/90 flex items-center justify-center text-slate-950 -mb-2.5 z-20"
+                <div className="w-4.5 h-4.5 sm:w-6 sm:h-6 rounded-full bg-gradient-to-b from-amber-300 to-amber-500 border-2 border-white/90 flex items-center justify-center text-slate-950 -mb-2 z-20"
                   style={{ boxShadow: '0 0 18px rgba(251,191,36,0.6), 0 3px 8px rgba(0,0,0,0.3)' }}
                 >
                   <Crown className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 fill-slate-950" />
                 </div>
-                <div className="w-11 h-11 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-b from-amber-500/30 to-slate-900 border-[2.5px] border-amber-400/80 p-0.5 overflow-hidden"
+                <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-b from-amber-500/30 to-slate-900 border-[2.5px] border-amber-400/80 p-0.5 overflow-hidden"
                   style={{ boxShadow: '0 8px 28px rgba(251,191,36,0.3), inset 0 1px 0 rgba(255,255,255,0.15)' }}
                 >
                   <CartoonAvatar id={top1.avatar_emoji} className="w-full h-full border-none shadow-none" />
                 </div>
               </div>
-              <span className="text-[9px] sm:text-[11px] font-black text-amber-300 truncate max-w-[80px] sm:max-w-[100px] text-center leading-tight mt-0.5"
+              <span className="text-[8.5px] sm:text-[11px] font-black text-amber-300 truncate max-w-[75px] sm:max-w-[100px] text-center leading-tight mt-0.5"
                 style={{ textShadow: '0 1px 6px rgba(0,0,0,0.5)' }}
               >{top1.username}</span>
-              <span className="text-[7px] sm:text-[8.5px] font-bold text-spy-lime/90">{top1.winRate}% Réussite</span>
-
-              <div className="w-full h-10 sm:h-13 mt-0.5 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center p-0.5 relative overflow-hidden"
+              <span className="text-[6.5px] sm:text-[8.5px] font-bold text-spy-lime/90">{top1.winRate}% Réussite</span>
+              
+              <div className="w-full h-9 sm:h-12 mt-0.5 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center p-0.5 relative overflow-hidden"
                 style={{
                   background: 'linear-gradient(180deg, rgba(245,158,11,0.2) 0%, rgba(120,53,15,0.1) 40%, rgba(15,23,42,0.95) 100%)',
                   border: '1.5px solid rgba(251,191,36,0.4)',
                   boxShadow: '0 8px 28px rgba(251,191,36,0.15), inset 0 1px 0 rgba(251,191,36,0.12)'
                 }}
               >
-                <span className="text-[10px] sm:text-xs font-black text-amber-400">#1 ÉLITE</span>
+                <span className="text-[9.5px] sm:text-xs font-black text-amber-400">#1 ÉLITE</span>
                 <span className="text-[5px] sm:text-[7px] font-bold text-amber-200/80">{top1.wins} Vic. • {top1.losses} Déf.</span>
                 <div className="flex items-center gap-0.5 mt-0.5">
                   <img src="/croquette_coin_3d.png" alt="coin" className="w-2 h-2 sm:w-3 sm:h-3 object-contain" />
@@ -260,28 +260,28 @@ const Leaderboard = () => {
           {top3 && (
             <div className="flex flex-col items-center">
               <div className="relative mb-0.5 flex flex-col items-center">
-                <div className="w-4.5 h-4.5 sm:w-5.5 sm:h-5.5 rounded-full bg-gradient-to-b from-amber-600 to-amber-800 border-2 border-white/80 flex items-center justify-center text-[8px] sm:text-[10px] font-black text-amber-100 -mb-2 z-20"
+                <div className="w-4 h-4 sm:w-5.5 sm:h-5.5 rounded-full bg-gradient-to-b from-amber-600 to-amber-800 border-2 border-white/80 flex items-center justify-center text-[7.5px] sm:text-[10px] font-black text-amber-100 -mb-2 z-20"
                   style={{ boxShadow: '0 2px 8px rgba(180,83,9,0.5)' }}
                 >
                   3
                 </div>
-                <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-b from-amber-900/50 to-slate-900 border-2 border-amber-600/50 p-0.5 overflow-hidden"
+                <div className="w-8.5 h-8.5 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-b from-amber-900/50 to-slate-900 border-2 border-amber-600/50 p-0.5 overflow-hidden"
                   style={{ boxShadow: '0 6px 20px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08)' }}
                 >
                   <CartoonAvatar id={top3.avatar_emoji} className="w-full h-full border-none shadow-none" />
                 </div>
               </div>
-              <span className="text-[8px] sm:text-[10.5px] font-black text-white truncate max-w-[70px] sm:max-w-[90px] text-center leading-tight mt-0.5">{top3.username}</span>
+              <span className="text-[8px] sm:text-[10.5px] font-black text-white truncate max-w-[65px] sm:max-w-[90px] text-center leading-tight mt-0.5">{top3.username}</span>
               <span className="text-[6.5px] sm:text-[8px] font-bold text-spy-lime/90">{top3.winRate}% Réussite</span>
-
-              <div className="w-full h-8 sm:h-11 mt-0.5 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center p-0.5"
+              
+              <div className="w-full h-7.5 sm:h-10 mt-0.5 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center p-0.5"
                 style={{
                   background: 'linear-gradient(180deg, rgba(120,53,15,0.3) 0%, rgba(15,23,42,0.95) 100%)',
                   border: '1.5px solid rgba(180,83,9,0.3)',
                   boxShadow: '0 6px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)'
                 }}
               >
-                <span className="text-[10px] sm:text-xs font-black text-amber-600/90">#3</span>
+                <span className="text-[9.5px] sm:text-xs font-black text-amber-600/90">#3</span>
                 <span className="text-[5px] sm:text-[7px] text-white/50 font-bold">{top3.wins} Vic. • {top3.losses} Déf.</span>
                 <div className="flex items-center gap-0.5 mt-0.5">
                   <img src="/croquette_coin_3d.png" alt="coin" className="w-2 h-2 sm:w-3 sm:h-3 object-contain" />
@@ -293,10 +293,7 @@ const Leaderboard = () => {
 
         </div>
 
-        {/* ═══════════ RANK LIST CARD ═══════════
-            Always fills remaining space between podium and navbar.
-            The list scrolls internally — the card itself never moves or resizes.
-        */}
+        {/* ═══════════ RANK LIST CARD (always fits all items #4 to #10) ═══════════ */}
         <div className="w-full rounded-2xl sm:rounded-3xl p-2 sm:p-2.5 flex flex-col overflow-hidden flex-1 min-h-0"
           style={{
             background: 'linear-gradient(180deg, rgba(15,23,42,0.92) 0%, rgba(2,6,23,0.96) 50%, rgba(15,23,42,0.90) 100%)',
@@ -304,7 +301,7 @@ const Leaderboard = () => {
             boxShadow: '0 -1px 0 rgba(255,255,255,0.04) inset, 0 12px 40px rgba(0,0,0,0.5)'
           }}
         >
-
+          
           {/* Column headers */}
           <div className="flex items-center justify-between px-1.5 sm:px-2 pb-1 mb-1 text-[7px] sm:text-[8.5px] font-black uppercase tracking-[0.12em] text-white/30 flex-shrink-0"
             style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
@@ -320,15 +317,15 @@ const Leaderboard = () => {
             </div>
           ) : (
             <div className="flex flex-col overflow-hidden flex-1 min-h-0">
-
-              {/* Scrollable player rows — ONLY this part scrolls */}
-              <div ref={scrollRef} className="overflow-y-auto no-scrollbar space-y-[3px] sm:space-y-1 flex-1 min-h-0 pr-0.5">
+              
+              {/* Scrollable player rows */}
+              <div ref={scrollRef} className="overflow-y-auto no-scrollbar space-y-[2px] sm:space-y-1 flex-1 min-h-0 pr-0.5">
                 {paginatedList.map((agent, index) => {
                   const rankNumber = index + 4;
                   return (
                     <div
                       key={agent.username + index}
-                      className="flex items-center justify-between rounded-xl p-1.5 sm:p-2 transition-all duration-200"
+                      className="flex items-center justify-between rounded-xl p-1 sm:p-1.5 transition-all duration-200"
                       style={{
                         background: 'rgba(255,255,255,0.02)',
                         border: '1px solid rgba(255,255,255,0.04)',
@@ -337,7 +334,7 @@ const Leaderboard = () => {
                     >
                       {/* Left: Rank + Avatar + Name */}
                       <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
-                        <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-lg flex items-center justify-center text-[8px] sm:text-[9.5px] font-black text-white/50 flex-shrink-0"
+                        <div className="w-4.5 h-4.5 sm:w-6 sm:h-6 rounded-lg flex items-center justify-center text-[7.5px] sm:text-[9.5px] font-black text-white/50 flex-shrink-0"
                           style={{
                             background: 'rgba(255,255,255,0.04)',
                             border: '1px solid rgba(255,255,255,0.06)'
@@ -346,7 +343,7 @@ const Leaderboard = () => {
                           #{rankNumber}
                         </div>
 
-                        <div className="w-7 h-7 sm:w-8.5 sm:h-8.5 rounded-xl overflow-hidden flex-shrink-0"
+                        <div className="w-6 h-6 sm:w-8.5 sm:h-8.5 rounded-xl overflow-hidden flex-shrink-0"
                           style={{
                             background: 'linear-gradient(135deg, rgba(30,41,59,0.8), rgba(15,23,42,0.9))',
                             border: '1px solid rgba(255,255,255,0.1)',
@@ -357,7 +354,7 @@ const Leaderboard = () => {
                         </div>
 
                         <div className="flex flex-col text-left min-w-0">
-                          <span className="font-black text-[9px] sm:text-[11px] text-white tracking-wide truncate max-w-[80px] sm:max-w-[130px]">
+                          <span className="font-black text-[8.5px] sm:text-[11px] text-white tracking-wide truncate max-w-[80px] sm:max-w-[130px]">
                             {agent.username}
                           </span>
                           <span className="text-[6px] sm:text-[8px] text-spy-lime/70 font-bold">
@@ -368,7 +365,7 @@ const Leaderboard = () => {
 
                       {/* Right: Win Rate + Stats */}
                       <div className="flex flex-col items-end flex-shrink-0">
-                        <span className="text-[9.5px] sm:text-[11.5px] font-black text-spy-lime tracking-tight">
+                        <span className="text-[9px] sm:text-[11.5px] font-black text-spy-lime tracking-tight">
                           {agent.winRate}%
                         </span>
                         <span className="text-[5.5px] sm:text-[7.5px] text-white/45 font-bold whitespace-nowrap">
@@ -384,25 +381,25 @@ const Leaderboard = () => {
                 })}
               </div>
 
-              {/* Buttons pinned at bottom of card — 3D Cartoon Graphiste Style */}
-              <div className="pt-2 flex items-center gap-2 flex-shrink-0 w-full">
+              {/* Buttons pinned at bottom of card — 3D Cartoon Ultra Rounded Pill Button */}
+              <div className="pt-1.5 sm:pt-2 flex items-center gap-2 flex-shrink-0 w-full">
                 {hasMore && (
                   <button
                     onClick={handleLoadMore}
-                    className="flex-1 py-2 sm:py-2.5 px-4 bg-gradient-to-b from-[#d9ff33] via-spy-lime to-[#99cc00] hover:brightness-110 border-2 border-white rounded-2xl text-slate-950 font-black uppercase text-[10px] sm:text-[11px] tracking-[0.12em] shadow-[0_4px_0_#668800,0_10px_22px_rgba(204,255,0,0.35)] active:translate-y-1 active:shadow-[0_1px_0_#668800] transition-all duration-150 cursor-pointer flex items-center justify-center gap-2 select-none"
+                    className="flex-1 py-1.5 sm:py-2.5 px-4 bg-gradient-to-b from-[#d9ff33] via-spy-lime to-[#88bb00] hover:brightness-110 border-2 border-white rounded-full text-slate-950 font-black uppercase text-[9.5px] sm:text-[11px] tracking-[0.12em] shadow-[0_4px_0_#557700,0_8px_18px_rgba(204,255,0,0.3)] active:translate-y-1 active:shadow-[0_1px_0_#557700] transition-all duration-150 cursor-pointer flex items-center justify-center gap-1.5 select-none"
                   >
                     <span>VOIR PLUS (+10)</span>
-                    <ChevronDown className="w-4 h-4 stroke-[3]" />
+                    <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3]" />
                   </button>
                 )}
 
                 {visibleCount > 10 && (
                   <button
                     onClick={handleShowLess}
-                    className="py-2 sm:py-2.5 px-4 bg-white/10 hover:bg-white/20 border-2 border-white/30 rounded-2xl text-white font-black uppercase text-[10px] sm:text-[11px] tracking-wider shadow-[0_4px_0_rgba(0,0,0,0.4),0_8px_16px_rgba(0,0,0,0.3)] active:translate-y-1 active:shadow-[0_1px_0_rgba(0,0,0,0.4)] transition-all duration-150 cursor-pointer flex items-center justify-center gap-1.5 flex-shrink-0 select-none"
+                    className="py-1.5 sm:py-2.5 px-4 bg-white/10 hover:bg-white/20 border-2 border-white/30 rounded-full text-white font-black uppercase text-[9.5px] sm:text-[11px] tracking-wider shadow-[0_4px_0_rgba(0,0,0,0.4),0_8px_16px_rgba(0,0,0,0.3)] active:translate-y-1 active:shadow-[0_1px_0_rgba(0,0,0,0.4)] transition-all duration-150 cursor-pointer flex items-center justify-center gap-1.5 flex-shrink-0 select-none"
                   >
                     <span>REPLIER</span>
-                    <ChevronUp className="w-4 h-4 stroke-[3]" />
+                    <ChevronUp className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[3]" />
                   </button>
                 )}
               </div>
