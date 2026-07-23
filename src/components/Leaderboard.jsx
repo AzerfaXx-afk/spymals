@@ -28,7 +28,7 @@ const DEFAULT_AGENTS = [
 
 const Leaderboard = () => {
   const [leaderboardData, setLeaderboardData] = useState([]);
-  const [visibleCount, setVisibleCount] = useState(13); // Podium (3) + 10 in list = 13 total
+  const [visibleCount, setVisibleCount] = useState(10); // Podium (3) + 7 in list = 10 total (Top 10)
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
