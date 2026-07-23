@@ -275,8 +275,8 @@ const Shop = ({ user, profileData, onUpdateProfile, onBack }) => {
                     
                     {/* TAB 1: USERNAME COLORS */}
                     {selectedTab === 'colors' && (
-                        USERNAME_COLORS.filter(c => c.price > 0).map(color => {
-                            const isOwned = unlockedItems.includes(color.id);
+                        USERNAME_COLORS.map(color => {
+                            const isOwned = color.price === 0 || unlockedItems.includes(color.id);
                             const isEquipped = equippedColor === color.id;
                             const isPreviewed = previewColorId === color.id;
 
@@ -348,8 +348,8 @@ const Shop = ({ user, profileData, onUpdateProfile, onBack }) => {
 
                     {/* TAB 2: BANNERS */}
                     {selectedTab === 'banners' && (
-                        PROFILE_BANNERS.filter(b => b.price > 0).map(banner => {
-                            const isOwned = unlockedItems.includes(banner.id);
+                        PROFILE_BANNERS.map(banner => {
+                            const isOwned = banner.price === 0 || unlockedItems.includes(banner.id);
                             const isEquipped = equippedBanner === banner.id;
                             const isPreviewed = previewBannerId === banner.id;
 
@@ -421,10 +421,10 @@ const Shop = ({ user, profileData, onUpdateProfile, onBack }) => {
 
                     {/* TAB 3: THEMES */}
                     {selectedTab === 'themes' && (
-                        THEMES_LIST.filter(t => t.price > 0).map(theme => {
+                        THEMES_LIST.map(theme => {
                             const themeItemId = `theme-${theme.id}`;
-                            const isOwned = unlockedItems.includes(themeItemId);
-                            const isEquipped = profileData?.equipped_theme === theme.id;
+                            const isOwned = theme.price === 0 || unlockedItems.includes(themeItemId) || unlockedItems.includes(theme.id);
+                            const isEquipped = (profileData?.equipped_theme || 'safari') === theme.id;
                             const isPreviewed = previewThemeId === theme.id;
                             const IconComp = theme.IconComponent || Eye;
 

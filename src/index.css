@@ -741,108 +741,128 @@ body.theme-retro {
 }
 
 /* ======================================================== */
-/* 🌟 THEME ACCENT & IMMERSIVE BACKGROUND SYSTEM           */
+/* 🌟 IMMERSIVE THEME & ACCENT SYSTEM (RADICAL STYLING)     */
 /* ======================================================== */
 
-/* 1. SAFARI (DEFAULT) - Tactical Lime Jungle */
+/* 1. SAFARI CLASSIQUE - Tactical Lime Jungle */
 body.theme-safari {
-    background-image: radial-gradient(circle at center top, #0f2b1d 0%, #081a11 60%, #030a06 100%) !important;
+    background-image: radial-gradient(circle at 50% 0%, #0e2e1e 0%, #071910 60%, #020a06 100%) !important;
 }
 
-/* 2. CYBER - Matrix Cyan Neon */
+/* 2. CYBER MATRIX - High-Tech Electric Cyan */
 body.theme-cyber {
-    background-image: radial-gradient(circle at center top, #082d40 0%, #041724 60%, #010912 100%) !important;
+    background-image: 
+        radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.15) 0%, transparent 60%),
+        radial-gradient(circle at 50% 0%, #092c42 0%, #041624 60%, #010912 100%) !important;
 }
 body.theme-cyber .text-spy-lime {
     color: #00F0FF !important;
+    text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
 }
 body.theme-cyber .bg-spy-lime {
     background-color: #00F0FF !important;
     color: #020b14 !important;
+    box-shadow: 0 0 16px rgba(0, 240, 255, 0.5) !important;
 }
 body.theme-cyber .border-spy-lime {
     border-color: #00F0FF !important;
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.3) !important;
 }
 body.theme-cyber input, body.theme-cyber select, body.theme-cyber textarea {
-    border: 2px solid rgba(0, 240, 255, 0.3) !important;
-    background: rgba(4, 20, 36, 0.9) !important;
+    border: 2px solid rgba(0, 240, 255, 0.4) !important;
+    background: rgba(4, 20, 36, 0.92) !important;
     color: #f0f0f5 !important;
 }
 body.theme-cyber input:focus, body.theme-cyber select:focus, body.theme-cyber textarea:focus {
     border-color: #00F0FF !important;
-    box-shadow: 0 0 14px rgba(0, 240, 255, 0.5) !important;
+    box-shadow: 0 0 16px rgba(0, 240, 255, 0.6) !important;
 }
 
-/* 3. POLAR - Arctic Blue Ice */
+/* 3. POLAR ARCTIC - Deep Glacier Ice Blue */
 body.theme-polar {
-    background-image: radial-gradient(circle at center top, #0c3666 0%, #061c36 60%, #020b17 100%) !important;
+    background-image: 
+        radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.18) 0%, transparent 60%),
+        radial-gradient(circle at 50% 0%, #0b3866 0%, #051d38 60%, #010c1c 100%) !important;
 }
 body.theme-polar .text-spy-lime {
     color: #38BDF8 !important;
+    text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
 }
 body.theme-polar .bg-spy-lime {
     background-color: #38BDF8 !important;
     color: #031429 !important;
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.5) !important;
 }
 body.theme-polar .border-spy-lime {
     border-color: #38BDF8 !important;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.3) !important;
 }
 body.theme-polar input, body.theme-polar select, body.theme-polar textarea {
     border: 2px solid rgba(56, 189, 248, 0.4) !important;
-    background: rgba(6, 28, 54, 0.9) !important;
+    background: rgba(5, 27, 54, 0.92) !important;
     color: #f0f8ff !important;
 }
 body.theme-polar input:focus, body.theme-polar select:focus, body.theme-polar textarea:focus {
     border-color: #38BDF8 !important;
-    box-shadow: 0 0 14px rgba(56, 189, 248, 0.4) !important;
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.6) !important;
 }
 
-/* 4. SPOOKY - Halloween Orange Nightmare */
+/* 4. SPOOKY NIGHTMARE - Pumpkin Orange & Halloween Purple */
 body.theme-spooky {
-    background-image: radial-gradient(circle at center top, #3b104c 0%, #1e0629 60%, #0b0112 100%) !important;
+    background-image: 
+        radial-gradient(circle at 50% 0%, rgba(255, 102, 0, 0.18) 0%, transparent 60%),
+        radial-gradient(circle at 50% 0%, #3e0c4f 0%, #20042b 60%, #0b0012 100%) !important;
 }
 body.theme-spooky .text-spy-lime {
     color: #FF6600 !important;
+    text-shadow: 0 0 10px rgba(255, 102, 0, 0.5);
 }
 body.theme-spooky .bg-spy-lime {
     background-color: #FF6600 !important;
     color: #12021a !important;
+    box-shadow: 0 0 16px rgba(255, 102, 0, 0.5) !important;
 }
 body.theme-spooky .border-spy-lime {
     border-color: #FF6600 !important;
+    box-shadow: 0 0 10px rgba(255, 102, 0, 0.3) !important;
 }
 body.theme-spooky input, body.theme-spooky select, body.theme-spooky textarea {
     border: 2px solid rgba(255, 102, 0, 0.4) !important;
-    background: rgba(30, 6, 41, 0.9) !important;
+    background: rgba(32, 4, 43, 0.92) !important;
     color: #fff0f0 !important;
 }
 body.theme-spooky input:focus, body.theme-spooky select:focus, body.theme-spooky textarea:focus {
     border-color: #FF6600 !important;
-    box-shadow: 0 0 14px rgba(255, 102, 0, 0.4) !important;
+    box-shadow: 0 0 16px rgba(255, 102, 0, 0.6) !important;
 }
 
-/* 5. RETRO - 80s Synthwave Hot Pink */
+/* 5. RETRO SYNTHWAVE - Hot Neon Pink 80s Arcade */
 body.theme-retro {
-    background-image: radial-gradient(circle at center top, #470942 0%, #240221 60%, #0f000e 100%) !important;
+    background-image: 
+        radial-gradient(circle at 50% 0%, rgba(255, 0, 127, 0.2) 0%, transparent 60%),
+        radial-gradient(circle at 50% 0%, #4a043c 0%, #26011e 60%, #0d000b 100%) !important;
 }
 body.theme-retro .text-spy-lime {
     color: #FF007F !important;
+    text-shadow: 0 0 10px rgba(255, 0, 127, 0.6);
 }
 body.theme-retro .bg-spy-lime {
     background-color: #FF007F !important;
     color: #ffffff !important;
+    box-shadow: 0 0 18px rgba(255, 0, 127, 0.6) !important;
 }
 body.theme-retro .border-spy-lime {
     border-color: #FF007F !important;
+    box-shadow: 0 0 10px rgba(255, 0, 127, 0.35) !important;
 }
 body.theme-retro input, body.theme-retro select, body.theme-retro textarea {
     border: 2px solid rgba(255, 0, 127, 0.4) !important;
-    background: rgba(36, 2, 33, 0.9) !important;
+    background: rgba(38, 1, 30, 0.92) !important;
     color: #ffffff !important;
 }
 body.theme-retro input:focus, body.theme-retro select:focus, body.theme-retro textarea:focus {
     border-color: #FF007F !important;
-    box-shadow: 0 0 14px rgba(255, 0, 127, 0.5) !important;
+    box-shadow: 0 0 16px rgba(255, 0, 127, 0.6) !important;
 }
 
 /* Accordion Animation & Custom classes */
