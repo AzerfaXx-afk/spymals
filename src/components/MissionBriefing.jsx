@@ -2,7 +2,7 @@ import React, { useState, useCallback, useRef } from 'react';
 import confetti from 'canvas-confetti';
 import { 
     Rocket, ShieldAlert, FolderKanban, Check, ChevronDown, 
-    Folder, Film, Brain, Dog, Gamepad2, Plane, Utensils, Smile, Dices, Edit3 
+    Folder, Film, Brain, Dog, Gamepad2, Plane, Utensils, Smile, Dices, Edit3, Flame, FlameKindling
 } from 'lucide-react';
 import RoleStepper from './RoleStepper';
 import BackArrow from './BackArrow';
@@ -13,12 +13,14 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
     const { playSfx } = useAudio();
     const [undercoverCount, setUndercoverCount] = useState(1);
     const [whiteCount, setWhiteCount] = useState(0);
+    const [bouffonCount, setBouffonCount] = useState(0);
     const [wordPack, setWordPack] = useState('standard');
     const [isPackDropdownOpen, setIsPackDropdownOpen] = useState(false);
     const [customWords, setCustomWords] = useState({ innocent: '', spy: '' });
 
     const packOptions = [
         { id: 'standard', label: 'Pack Standard', icon: <Folder className="w-5 h-5 text-spy-lime" /> },
+        { id: 'spicy', label: 'Pack Soirée (+18)', icon: <Flame className="w-5 h-5 text-red-500 animate-pulse" />, special: true },
         { id: 'pop-culture', label: 'Culture Pop', icon: <Film className="w-5 h-5 text-pink-400" /> },
         { id: 'abstract', label: 'Concepts Abstraits', icon: <Brain className="w-5 h-5 text-purple-400" /> },
         { id: 'animals', label: 'Animaux', icon: <Dog className="w-5 h-5 text-amber-400" /> },
@@ -62,7 +64,7 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
         }, 2000);
     }, [unscrewedScrews, playSfx]);
 
-    const civilianCount = totalPlayers - undercoverCount - whiteCount;
+    const civilianCount = totalPlayers - undercoverCount - whiteCount - bouffonCount;
 
     // Validation Logic
     const isRoleCountValid = civilianCount >= 2;
@@ -75,12 +77,16 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
 
     const handleIncrement = (type) => {
         if (type === 'undercover') {
-            if (totalPlayers - (undercoverCount + 1) - whiteCount >= 2) {
+            if (totalPlayers - (undercoverCount + 1) - whiteCount - bouffonCount >= 2) {
                 setUndercoverCount(undercoverCount + 1);
             }
-        } else {
-            if (totalPlayers - undercoverCount - (whiteCount + 1) >= 2) {
+        } else if (type === 'white') {
+            if (totalPlayers - undercoverCount - (whiteCount + 1) - bouffonCount >= 2) {
                 setWhiteCount(whiteCount + 1);
+            }
+        } else if (type === 'bouffon') {
+            if (totalPlayers - undercoverCount - whiteCount - (bouffonCount + 1) >= 2) {
+                setBouffonCount(bouffonCount + 1);
             }
         }
     };
@@ -88,8 +94,10 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
     const handleDecrement = (type) => {
         if (type === 'undercover') {
             if (undercoverCount > 1) setUndercoverCount(undercoverCount - 1);
-        } else {
+        } else if (type === 'white') {
             if (whiteCount > 0) setWhiteCount(whiteCount - 1);
+        } else if (type === 'bouffon') {
+            if (bouffonCount > 0) setBouffonCount(bouffonCount - 1);
         }
     };
 
@@ -105,7 +113,7 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
             </div>
 
             {/* Top Status Badge */}
-            <div className="z-10 mb-4 text-center flex-none animate-slide-up bg-black/40 px-6 py-2 rounded-full border-2 border-spy-lime/40 shadow-xl backdrop-blur-md">
+            <div className="z-10 mb-3 text-center flex-none animate-slide-up bg-black/40 px-6 py-2 rounded-full border-2 border-spy-lime/40 shadow-xl backdrop-blur-md">
                 <h2 className="text-xl font-black text-white uppercase tracking-tight flex items-center gap-2">
                     <FolderKanban className="w-5 h-5 text-spy-lime" /> Briefing de Mission
                 </h2>
@@ -116,7 +124,7 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
 
             <div className="w-full max-w-md flex-1 overflow-y-auto custom-scrollbar z-10 animate-slide-up space-y-4 px-2 pb-6" style={{ animationDelay: '0.1s' }}>
 
-                <div className="card-cartoon bg-gradient-to-b from-[#14233e] to-[#0a1426] p-6 border-[3.5px] border-white/20 shadow-2xl flex-none relative w-full rounded-[32px]">
+                <div className="card-cartoon bg-gradient-to-b from-[#14233e] to-[#0a1426] p-5 border-[3.5px] border-white/20 shadow-2xl flex-none relative w-full rounded-[32px]">
                     {/* Decorative Screws — Easter Egg! */}
                     {['tl', 'tr', 'bl', 'br'].map((pos) => {
                         const posClass = pos === 'tl' ? 'top-4 left-4'
@@ -148,29 +156,29 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
                     })}
 
                     {/* Civilians Display - Digital Readout */}
-                    <div className="bg-black/40 rounded-2xl p-4 flex items-center justify-between border-2 border-white/10 mb-5 relative overflow-hidden shadow-inner">
+                    <div className="bg-black/40 rounded-2xl p-3.5 flex items-center justify-between border-2 border-white/10 mb-4 relative overflow-hidden shadow-inner">
                         <div className="absolute left-0 top-0 w-1.5 h-full bg-spy-lime shadow-[0_0_10px_#ccff00]"></div>
                         <div className="relative z-10 flex items-center gap-3 w-full justify-between pl-2">
                             <div className="flex flex-col">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-white/40">PERSONNEL ACCRÉDITÉ</span>
-                                <span className="text-base font-black uppercase tracking-wider text-white">Innocents (Civils)</span>
+                                <span className="text-[9.5px] font-black uppercase tracking-widest text-white/40">PERSONNEL ACCRÉDITÉ</span>
+                                <span className="text-sm font-black uppercase tracking-wider text-white">Innocents (Civils)</span>
                             </div>
-                            <div className="bg-black/60 border-2 border-spy-lime/40 rounded-xl px-4 py-2 flex items-center justify-center shadow-inner">
-                                <span className="text-3xl font-display font-black leading-none text-spy-lime text-shadow-md">
+                            <div className="bg-black/60 border-2 border-spy-lime/40 rounded-xl px-3.5 py-1.5 flex items-center justify-center shadow-inner">
+                                <span className="text-2xl font-display font-black leading-none text-spy-lime text-shadow-md">
                                     {civilianCount.toString().padStart(2, '0')}
                                 </span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2 md:gap-3 items-stretch w-full overflow-hidden">
+                    <div className="grid grid-cols-3 gap-1.5 md:gap-2 items-stretch w-full overflow-hidden">
                         <RoleStepper
                             label="Espions"
                             count={undercoverCount}
                             onIncrement={() => handleIncrement('undercover')}
                             onDecrement={() => handleDecrement('undercover')}
                             color="text-spy-orange"
-                            subLabel="Mot différent"
+                            subLabel="Mot proche"
                             soundOptions={{ pitch: Math.min(2.0, 0.8 + ((undercoverCount) * 0.1)) }}
                         />
 
@@ -182,6 +190,16 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
                             color="text-cyan-400"
                             subLabel="Aucun mot"
                             soundOptions={{ pitch: Math.min(2.0, 0.8 + ((whiteCount) * 0.1)) }}
+                        />
+
+                        <RoleStepper
+                            label="Le Bouffon"
+                            count={bouffonCount}
+                            onIncrement={() => handleIncrement('bouffon')}
+                            onDecrement={() => handleDecrement('bouffon')}
+                            color="text-purple-400"
+                            subLabel="Veut être voté"
+                            soundOptions={{ pitch: Math.min(2.0, 0.8 + ((bouffonCount) * 0.1)) }}
                         />
                     </div>
                 </div>
@@ -201,7 +219,7 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
                         >
                             <div className="flex items-center gap-3">
                                 <span className="text-xl">{packOptions.find(p => p.id === wordPack)?.icon}</span>
-                                <span className={`text-sm uppercase tracking-wider font-black ${wordPack === 'custom' ? 'text-spy-orange' : 'text-white'}`}>
+                                <span className={`text-sm uppercase tracking-wider font-black ${wordPack === 'custom' ? 'text-spy-orange' : wordPack === 'spicy' ? 'text-red-400' : 'text-white'}`}>
                                     {packOptions.find(p => p.id === wordPack)?.label}
                                 </span>
                             </div>
@@ -211,7 +229,7 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
                         {/* Custom Dropdown Menu */}
                         {isPackDropdownOpen && (
                             <div className="w-full mt-2 bg-[#121c32]/98 backdrop-blur-2xl border-2 border-white/20 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.9)] overflow-hidden animate-slide-up origin-top z-30">
-                                <div className="max-h-[210px] overflow-y-auto custom-scrollbar">
+                                <div className="max-h-[220px] overflow-y-auto custom-scrollbar">
                                     {packOptions.map((pack) => (
                                         <button
                                             key={pack.id}
@@ -226,7 +244,7 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
                                         >
                                             <span className="text-xl flex-none">{pack.icon}</span>
                                             <span className={`text-xs font-black uppercase tracking-wider flex-1 ${
-                                                pack.special ? 'text-spy-orange' : wordPack === pack.id ? 'text-spy-lime' : 'text-white/90'
+                                                pack.id === 'spicy' ? 'text-red-400 font-bold' : pack.special ? 'text-spy-orange' : wordPack === pack.id ? 'text-spy-lime' : 'text-white/90'
                                             }`}>
                                                 {pack.label}
                                             </span>
@@ -287,7 +305,7 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
             {/* Launch Button Area */}
             <div className="w-full max-w-md mt-auto z-20 pt-2 pb-6 px-4 flex justify-center" style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}>
                 <button
-                    onClick={() => onStartGame({ undercoverCount, whiteCount, wordPack, customWords })}
+                    onClick={() => onStartGame({ undercoverCount, whiteCount, bouffonCount, wordPack, customWords })}
                     disabled={!isValid}
                     className={`btn-cartoon-primary w-full py-4 text-xl font-black uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-[0_6px_0_#000] active:translate-y-1.5 active:shadow-[0_0_0_#000] transition-all ${
                         !isValid ? 'opacity-50 cursor-not-allowed filter grayscale' : 'hover:scale-[1.01]'
@@ -302,4 +320,3 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
 };
 
 export default MissionBriefing;
-

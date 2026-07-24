@@ -11,12 +11,18 @@ export const wordPacks = {
         { civilian: "Eau plate", undercover: "Eau gazeuse" },
         { civilian: "Smoothie", undercover: "Milkshake" },
         { civilian: "Thé glacé", undercover: "Café frappé" },
-        // Astronomie
+        { civilian: "Mojito", undercover: "Caïpirinha" },
+        { civilian: "Tequila", undercover: "Mezcal" },
+        { civilian: "Whisky", undercover: "Bourbon" },
+        { civilian: "Vodka", undercover: "Gin" },
+        // Astronomie & Espace
         { civilian: "Soleil", undercover: "Lune" },
         { civilian: "Étoile", undercover: "Planète" },
         { civilian: "Comète", undercover: "Astéroïde" },
         { civilian: "Galaxie", undercover: "Nébuleuse" },
         { civilian: "Satellite", undercover: "Fusée" },
+        { civilian: "Trous noir", undercover: "Trou de ver" },
+        { civilian: "Astronaute", undercover: "Cosmonaute" },
         // Instruments
         { civilian: "Guitare", undercover: "Violon" },
         { civilian: "Piano", undercover: "Orgue" },
@@ -24,6 +30,8 @@ export const wordPacks = {
         { civilian: "Flûte", undercover: "Clarinette" },
         { civilian: "Trompette", undercover: "Saxophone" },
         { civilian: "Harpe", undercover: "Lyre" },
+        { civilian: "Ukulélé", undercover: "Banjo" },
+        { civilian: "Accordéon", undercover: "Harmonica" },
         // Sports
         { civilian: "Football", undercover: "Basketball" },
         { civilian: "Tennis", undercover: "Badminton" },
@@ -35,7 +43,9 @@ export const wordPacks = {
         { civilian: "Escalade", undercover: "Randonnée" },
         { civilian: "Surf", undercover: "Planche à voile" },
         { civilian: "Golf", undercover: "Bowling" },
-        // Fruits
+        { civilian: "Judo", undercover: "Taekwondo" },
+        { civilian: "Pétanque", undercover: "Palet" },
+        // Fruits & Légumes
         { civilian: "Pomme", undercover: "Poire" },
         { civilian: "Orange", undercover: "Clémentine" },
         { civilian: "Citron", undercover: "Pamplemousse" },
@@ -48,6 +58,9 @@ export const wordPacks = {
         { civilian: "Pêche", undercover: "Abricot" },
         { civilian: "Pastèque", undercover: "Melon" },
         { civilian: "Prune", undercover: "Mirabelle" },
+        { civilian: "Carotte", undercover: "Navet" },
+        { civilian: "Concombre", undercover: "Courgette" },
+        { civilian: "Oignon", undercover: "Échalote" },
         // Transport
         { civilian: "Avion", undercover: "Hélicoptère" },
         { civilian: "Voiture", undercover: "Camion" },
@@ -59,13 +72,13 @@ export const wordPacks = {
         { civilian: "Trottinette", undercover: "Skateboard" },
         { civilian: "Taxi", undercover: "VTC" },
         { civilian: "Ambulance", undercover: "Camion de pompiers" },
-        // Nature / Eau
+        { civilian: "Sous-marin", undercover: "Bathyscaphe" },
+        // Nature
         { civilian: "Océan", undercover: "Mer" },
         { civilian: "Lac", undercover: "Étang" },
         { civilian: "Rivière", undercover: "Fleuve" },
         { civilian: "Cascade", undercover: "Fontaine" },
         { civilian: "Marais", undercover: "Tourbière" },
-        // Nature / Terre
         { civilian: "Montagne", undercover: "Colline" },
         { civilian: "Forêt", undercover: "Bois" },
         { civilian: "Plage", undercover: "Désert" },
@@ -73,916 +86,286 @@ export const wordPacks = {
         { civilian: "Île", undercover: "Presqu'île" },
         { civilian: "Grotte", undercover: "Caverne" },
         { civilian: "Volcan", undercover: "Geyser" },
-        { civilian: "Prairie", undercover: "Plaine" },
-        // Animaux domestiques
-        { civilian: "Chat", undercover: "Chien" },
-        { civilian: "Hamster", undercover: "Cochon d'Inde" },
-        { civilian: "Poisson rouge", undercover: "Tortue" },
-        { civilian: "Perroquet", undercover: "Canari" },
-        // Nourriture
-        { civilian: "Pizza", undercover: "Pâtes" },
-        { civilian: "Hamburger", undercover: "Sandwich" },
-        { civilian: "Tomate", undercover: "Poivron" },
-        { civilian: "Chocolat", undercover: "Vanille" },
-        { civilian: "Glace", undercover: "Sorbet" },
-        { civilian: "Crêpe", undercover: "Gaufre" },
-        { civilian: "Pain", undercover: "Brioche" },
-        { civilian: "Fromage", undercover: "Beurre" },
-        { civilian: "Croissant", undercover: "Pain au chocolat" },
-        { civilian: "Sushi", undercover: "Maki" },
-        { civilian: "Steak", undercover: "Entrecôte" },
-        { civilian: "Soupe", undercover: "Bouillon" },
-        { civilian: "Salade", undercover: "Crudités" },
-        { civilian: "Frite", undercover: "Chips" },
-        { civilian: "Gâteau", undercover: "Tarte" },
-        { civilian: "Cookie", undercover: "Muffin" },
-        { civilian: "Bonbon", undercover: "Chewing-gum" },
-        { civilian: "Crème brûlée", undercover: "Flan" },
-        { civilian: "Raclette", undercover: "Fondue" },
-        { civilian: "Kebab", undercover: "Tacos" },
-        { civilian: "Couscous", undercover: "Tajine" },
-        { civilian: "Ratatouille", undercover: "Pot-au-feu" },
-        // Vêtements
-        { civilian: "Chemise", undercover: "T-shirt" },
-        { civilian: "Pantalon", undercover: "Short" },
-        { civilian: "Jupe", undercover: "Robe" },
-        { civilian: "Manteau", undercover: "Veste" },
-        { civilian: "Chapeau", undercover: "Casquette" },
-        { civilian: "Écharpe", undercover: "Foulard" },
-        { civilian: "Chaussette", undercover: "Collant" },
-        { civilian: "Basket", undercover: "Botte" },
-        { civilian: "Pull", undercover: "Gilet" },
-        { civilian: "Pyjama", undercover: "Robe de chambre" },
-        // Accessoires
-        { civilian: "Lunettes", undercover: "Lentilles" },
-        { civilian: "Montre", undercover: "Bracelet" },
-        { civilian: "Bague", undercover: "Collier" },
-        { civilian: "Sac à main", undercover: "Pochette" },
-        { civilian: "Ceinture", undercover: "Bretelles" },
-        { civilian: "Parapluie", undercover: "Parasol" },
-        // Médias
-        { civilian: "Livre", undercover: "Magazine" },
-        { civilian: "Journal", undercover: "Revue" },
-        { civilian: "Film", undercover: "Série" },
-        { civilian: "Théâtre", undercover: "Cinéma" },
-        { civilian: "Musique", undercover: "Chanson" },
-        { civilian: "Podcast", undercover: "Émission de radio" },
-        { civilian: "Documentaire", undercover: "Reportage" },
-        { civilian: "Bande dessinée", undercover: "Manga" },
-        { civilian: "Roman", undercover: "Nouvelle" },
-        // Art
-        { civilian: "Danse", undercover: "Ballet" },
-        { civilian: "Peinture", undercover: "Dessin" },
-        { civilian: "Photo", undercover: "Vidéo" },
-        { civilian: "Sculpture", undercover: "Statue" },
-        { civilian: "Graffiti", undercover: "Fresque" },
-        // Technologie
-        { civilian: "Ordinateur", undercover: "Tablette" },
-        { civilian: "Téléphone", undercover: "Smartphone" },
-        { civilian: "Clavier", undercover: "Souris" },
-        { civilian: "Écran", undercover: "Télévision" },
-        { civilian: "Casque audio", undercover: "Écouteurs" },
-        { civilian: "Imprimante", undercover: "Scanner" },
-        { civilian: "Clé USB", undercover: "Disque dur" },
-        { civilian: "Caméra", undercover: "Webcam" },
-        // Maison
-        { civilian: "Lampe", undercover: "Ampoule" },
-        { civilian: "Bougie", undercover: "Torche" },
-        { civilian: "Porte", undercover: "Fenêtre" },
-        { civilian: "Toit", undercover: "Plafond" },
-        { civilian: "Sol", undercover: "Plancher" },
-        { civilian: "Mur", undercover: "Cloison" },
-        { civilian: "Escalier", undercover: "Ascenseur" },
-        { civilian: "Canapé", undercover: "Fauteuil" },
+        // Maison & Quotidien
+        { civilian: "Chaise", undercover: "Tabouret" },
+        { civilian: "Lit", undercover: "Canapé" },
         { civilian: "Table", undercover: "Bureau" },
-        { civilian: "Lit", undercover: "Hamac" },
         { civilian: "Armoire", undercover: "Commode" },
+        { civilian: "Lampe", undercover: "Lustre" },
         { civilian: "Miroir", undercover: "Vitre" },
-        { civilian: "Rideau", undercover: "Store" },
+        { civilian: "Horloge", undercover: "Réveil" },
         { civilian: "Tapis", undercover: "Moquette" },
-        // Météo
-        { civilian: "Neige", undercover: "Grêle" },
-        { civilian: "Pluie", undercover: "Orage" },
-        { civilian: "Vent", undercover: "Tempête" },
-        { civilian: "Feu", undercover: "Flamme" },
-        { civilian: "Eau", undercover: "Liquide" },
-        { civilian: "Arc-en-ciel", undercover: "Brouillard" },
-        { civilian: "Éclair", undercover: "Tonnerre" },
-        { civilian: "Aurore boréale", undercover: "Coucher de soleil" },
-        // Ustensiles
-        { civilian: "Fourchette", undercover: "Cuillère" },
-        { civilian: "Couteau", undercover: "Ciseau" },
-        { civilian: "Poêle", undercover: "Casserole" },
-        { civilian: "Assiette", undercover: "Bol" },
+        { civilian: "Casserole", undercover: "Poêle" },
+        { civilian: "Couteau", undercover: "Fourchette" },
         { civilian: "Verre", undercover: "Tasse" },
-        // Métiers
-        { civilian: "Médecin", undercover: "Infirmier" },
-        { civilian: "Professeur", undercover: "Instituteur" },
-        { civilian: "Pompier", undercover: "Policier" },
-        { civilian: "Boulanger", undercover: "Pâtissier" },
-        { civilian: "Pilote", undercover: "Conducteur" },
-        { civilian: "Architecte", undercover: "Ingénieur" },
-        { civilian: "Avocat", undercover: "Juge" },
-        { civilian: "Plombier", undercover: "Électricien" },
-        { civilian: "Coiffeur", undercover: "Barbier" },
-        { civilian: "Photographe", undercover: "Cameraman" },
-        // Lieux
-        { civilian: "École", undercover: "Université" },
-        { civilian: "Hôpital", undercover: "Clinique" },
-        { civilian: "Restaurant", undercover: "Cantine" },
-        { civilian: "Bibliothèque", undercover: "Librairie" },
-        { civilian: "Musée", undercover: "Galerie" },
-        { civilian: "Stade", undercover: "Gymnase" },
-        { civilian: "Aéroport", undercover: "Gare" },
-        { civilian: "Hôtel", undercover: "Auberge" },
-        { civilian: "Prison", undercover: "Caserne" },
-        { civilian: "Église", undercover: "Cathédrale" },
+        { civilian: "Serviette", undercover: "Gant de toilette" },
+        // Électronique & Tech
+        { civilian: "Téléphone", undercover: "Tablette" },
+        { civilian: "Ordinateur", undercover: "Télévision" },
+        { civilian: "Clavier", undercover: "Souris" },
+        { civilian: "Casque", undercover: "Écouteurs" },
+        { civilian: "Appareil photo", undercover: "Caméra" }
     ],
+
     "pop-culture": [
-        // Super-héros
-        { civilian: "Harry Potter", undercover: "Gandalf" },
+        // Cinéma & Séries
+        { civilian: "Harry Potter", undercover: "Le Seigneur des Anneaux" },
+        { civilian: "Marvel", undercover: "DC Comics" },
         { civilian: "Batman", undercover: "Superman" },
         { civilian: "Spider-Man", undercover: "Iron Man" },
-        { civilian: "Hulk", undercover: "Thor" },
-        { civilian: "Captain America", undercover: "Wonder Woman" },
-        { civilian: "Wolverine", undercover: "Deadpool" },
-        { civilian: "Aquaman", undercover: "Namor" },
-        { civilian: "Flash", undercover: "Quicksilver" },
-        { civilian: "Black Panther", undercover: "Black Widow" },
-        { civilian: "Doctor Strange", undercover: "Scarlet Witch" },
-        // Méchants
-        { civilian: "Joker", undercover: "Harley Quinn" },
-        { civilian: "Darth Vader", undercover: "Voldemort" },
-        { civilian: "Thanos", undercover: "Ultron" },
-        { civilian: "Magneto", undercover: "Loki" },
-        { civilian: "Sauron", undercover: "Sarumane" },
-        // Franchises
         { civilian: "Star Wars", undercover: "Star Trek" },
-        { civilian: "Avengers", undercover: "Justice League" },
-        { civilian: "Matrix", undercover: "Inception" },
-        { civilian: "Avatar", undercover: "Titanic" },
-        { civilian: "Game of Thrones", undercover: "Lord of the Rings" },
-        { civilian: "Breaking Bad", undercover: "Better Call Saul" },
-        { civilian: "Friends", undercover: "How I Met Your Mother" },
-        { civilian: "Fast and Furious", undercover: "Need for Speed" },
-        { civilian: "Jurassic Park", undercover: "King Kong" },
-        { civilian: "Pirates des Caraïbes", undercover: "Moby Dick" },
-        { civilian: "Mission Impossible", undercover: "James Bond" },
-        { civilian: "Retour vers le futur", undercover: "Interstellar" },
-        { civilian: "Le Roi Lion", undercover: "Le Livre de la Jungle" },
-        { civilian: "Toy Story", undercover: "Monstres et Cie" },
-        { civilian: "Hunger Games", undercover: "Divergente" },
-        { civilian: "La Casa de Papel", undercover: "Prison Break" },
-        { civilian: "Stranger Things", undercover: "Dark" },
-        { civilian: "Squid Game", undercover: "Alice in Borderland" },
-        { civilian: "Peaky Blinders", undercover: "Boardwalk Empire" },
-        { civilian: "The Walking Dead", undercover: "World War Z" },
-        // Duos / Personnages
-        { civilian: "Mario", undercover: "Luigi" },
-        { civilian: "Zelda", undercover: "Link" },
-        { civilian: "Goku", undercover: "Vegeta" },
-        { civilian: "Naruto", undercover: "One Piece" },
-        { civilian: "Pikachu", undercover: "Sonic" },
+        { civilian: "Darth Vader", undercover: "Kylo Ren" },
         { civilian: "Luke Skywalker", undercover: "Han Solo" },
-        { civilian: "Homer Simpson", undercover: "Peter Griffin" },
+        { civilian: "Voldemort", undercover: "Grindelwald" },
+        { civilian: "Gandalf", undercover: "Dumbledore" },
+        { civilian: "Frodon", undercover: "Sam" },
+        { civilian: "Game of Thrones", undercover: "House of the Dragon" },
+        { civilian: "Stranger Things", undercover: "Wednesday" },
+        { civilian: "Squid Game", undercover: "Alice in Borderland" },
+        { civilian: "Breaking Bad", undercover: "Better Call Saul" },
+        { civilian: "La Casa de Papel", undercover: "Lupin" },
+        { civilian: "Friends", undercover: "How I Met Your Mother" },
+        { civilian: "The Office", undercover: "Parks and Recreation" },
+        { civilian: "Barbie", undercover: "Oppenheimer" },
+        { civilian: "Titanic", undercover: "Avatar" },
+        { civilian: "James Bond", undercover: "Ethan Hunt" },
+        { civilian: "Shrek", undercover: "L'Âne" },
         { civilian: "Mickey", undercover: "Donald" },
-        { civilian: "Tom", undercover: "Jerry" },
-        { civilian: "Spongebob", undercover: "Patrick" },
-        { civilian: "Simba", undercover: "Mufasa" },
-        { civilian: "Elsa", undercover: "Anna" },
-        { civilian: "Shrek", undercover: "Fiona" },
-        { civilian: "Minions", undercover: "Lapins Crétins" },
-        { civilian: "Sherlock Holmes", undercover: "Hercule Poirot" },
-        { civilian: "Astérix", undercover: "Obélix" },
-        { civilian: "Tintin", undercover: "Spirou" },
-        { civilian: "Lucky Luke", undercover: "Zorro" },
-        { civilian: "Scooby-Doo", undercover: "Garfield" },
-        { civilian: "Batman", undercover: "Robin" },
-        { civilian: "Titeuf", undercover: "Cédric" },
-        { civilian: "Sangoku", undercover: "Superman" },
-        // Jeux vidéo
-        { civilian: "Minecraft", undercover: "Roblox" },
-        { civilian: "Fortnite", undercover: "PUBG" },
-        { civilian: "FIFA", undercover: "PES" },
+        // Manga & Anime
+        { civilian: "Naruto", undercover: "Sasuke" },
+        { civilian: "One Piece", undercover: "Dragon Ball" },
+        { civilian: "Luffy", undercover: "Zoro" },
+        { civilian: "Goku", undercover: "Vegeta" },
+        { civilian: "Attack on Titan", undercover: "Demon Slayer" },
+        { civilian: "Death Note", undercover: "Code Geass" },
         { civilian: "Pokemon", undercover: "Digimon" },
-        { civilian: "GTA", undercover: "Saints Row" },
-        { civilian: "Call of Duty", undercover: "Battlefield" },
-        { civilian: "Among Us", undercover: "Werewolf Online" },
-        { civilian: "The Last of Us", undercover: "Resident Evil" },
-        { civilian: "Animal Crossing", undercover: "Stardew Valley" },
-        { civilian: "Tetris", undercover: "Puyo Puyo" },
-        { civilian: "Mario Kart", undercover: "Crash Team Racing" },
-        { civilian: "Overwatch", undercover: "Valorant" },
-        { civilian: "League of Legends", undercover: "Dota 2" },
-        { civilian: "Rocket League", undercover: "Fall Guys" },
-        // Marques / Monde numérique
-        { civilian: "Disney", undercover: "Pixar" },
-        { civilian: "Netflix", undercover: "Amazon Prime" },
-        { civilian: "YouTube", undercover: "Twitch" },
-        { civilian: "Instagram", undercover: "TikTok" },
-        { civilian: "Facebook", undercover: "Twitter" },
-        { civilian: "iPhone", undercover: "Samsung" },
-        { civilian: "PlayStation", undercover: "Xbox" },
-        { civilian: "Nintendo", undercover: "Sega" },
-        { civilian: "Google", undercover: "Bing" },
-        { civilian: "Spotify", undercover: "Deezer" },
-        { civilian: "Uber", undercover: "Bolt" },
-        { civilian: "Amazon", undercover: "AliExpress" },
-        { civilian: "WhatsApp", undercover: "Telegram" },
-        { civilian: "Snapchat", undercover: "BeReal" },
-        // Créatures
-        { civilian: "Dracula", undercover: "Frankenstein" },
-        { civilian: "Zombie", undercover: "Vampire" },
-        { civilian: "Alien", undercover: "Predator" },
-        { civilian: "Terminator", undercover: "RoboCop" },
-        { civilian: "Roi Arthur", undercover: "Robin des Bois" },
-        { civilian: "Barbie", undercover: "Bratz" },
-        // Musique
-        { civilian: "Eminem", undercover: "Jay-Z" },
-        { civilian: "Beatles", undercover: "Rolling Stones" },
-        { civilian: "Mozart", undercover: "Beethoven" },
-        { civilian: "Beyoncé", undercover: "Rihanna" },
-        { civilian: "Daft Punk", undercover: "David Guetta" },
+        { civilian: "Pikachu", undercover: "Évoli" },
+        // Musique & Célébrités
         { civilian: "Michael Jackson", undercover: "Prince" },
-        { civilian: "Bob Marley", undercover: "Jimmy Hendrix" },
-        { civilian: "Jul", undercover: "PNL" },
-        { civilian: "Aya Nakamura", undercover: "Angèle" },
+        { civilian: "Beyoncé", undercover: "Rihanna" },
+        { civilian: "Taylor Swift", undercover: "Katy Perry" },
         { civilian: "Drake", undercover: "Kanye West" },
-        // Célébrités / Sport
-        { civilian: "Messi", undercover: "Ronaldo" },
-        { civilian: "Mbappé", undercover: "Haaland" },
-        { civilian: "LeBron James", undercover: "Michael Jordan" },
-        { civilian: "Rafael Nadal", undercover: "Roger Federer" },
-        { civilian: "Usain Bolt", undercover: "Carl Lewis" },
-        { civilian: "Mike Tyson", undercover: "Mohamed Ali" },
-        { civilian: "Zidane", undercover: "Platini" },
-        { civilian: "Tony Parker", undercover: "Kobe Bryant" },
-        // Films FR
-        { civilian: "Les Visiteurs", undercover: "Astérix et Obélix" },
-        { civilian: "Intouchables", undercover: "Bienvenue chez les Ch'tis" },
-        { civilian: "Le Dîner de Cons", undercover: "La Cité de la Peur" },
-        { civilian: "Les Tuche", undercover: "Camping" },
-        { civilian: "OSS 117", undercover: "Le Grand Bain" },
-        { civilian: "Koh-Lanta", undercover: "Pékin Express" },
-        { civilian: "The Voice", undercover: "Star Academy" },
-        { civilian: "Fort Boyard", undercover: "Ninja Warrior" },
+        { civilian: "Eminem", undercover: "Snoop Dogg" },
+        { civilian: "Jul", undercover: "PNL" },
+        { civilian: "Orelsan", undercover: "Bigflo et Oli" },
+        { civilian: "Aya Nakamura", undercover: "Angèle" }
     ],
+
     abstract: [
-        // Émotions
-        { civilian: "Amour", undercover: "Amitié" },
+        { civilian: "Amour", undercover: "Attachement" },
+        { civilian: "Haine", undercover: "Rancœur" },
         { civilian: "Joie", undercover: "Bonheur" },
         { civilian: "Tristesse", undercover: "Mélancolie" },
-        { civilian: "Colère", undercover: "Haine" },
         { civilian: "Peur", undercover: "Angoisse" },
-        { civilian: "Surprise", undercover: "Étonnement" },
-        { civilian: "Honte", undercover: "Gêne" },
-        { civilian: "Dégoût", undercover: "Mépris" },
-        { civilian: "Jalousie", undercover: "Envie" },
-        { civilian: "Fierté", undercover: "Arrogance" },
-        { civilian: "Nostalgie", undercover: "Regret" },
-        { civilian: "Euphorie", undercover: "Extase" },
-        { civilian: "Ennui", undercover: "Monotonie" },
-        { civilian: "Sérénité", undercover: "Tranquillité" },
-        { civilian: "Frustration", undercover: "Impatience" },
-        // Valeurs
-        { civilian: "Liberté", undercover: "Justice" },
-        { civilian: "Courage", undercover: "Audace" },
-        { civilian: "Espoir", undercover: "Foi" },
-        { civilian: "Sagesse", undercover: "Intelligence" },
-        { civilian: "Honneur", undercover: "Dignité" },
-        { civilian: "Loyauté", undercover: "Fidélité" },
-        { civilian: "Générosité", undercover: "Charité" },
-        { civilian: "Humilité", undercover: "Modestie" },
-        { civilian: "Tolérance", undercover: "Patience" },
-        { civilian: "Compassion", undercover: "Empathie" },
-        { civilian: "Respect", undercover: "Admiration" },
-        { civilian: "Ambition", undercover: "Motivation" },
-        { civilian: "Discipline", undercover: "Rigueur" },
-        { civilian: "Persévérance", undercover: "Ténacité" },
-        // Opposés
-        { civilian: "Vérité", undercover: "Mensonge" },
-        { civilian: "Chaos", undercover: "Ordre" },
-        { civilian: "Guerre", undercover: "Bataille" },
-        { civilian: "Paix", undercover: "Sérénité" },
-        { civilian: "Vie", undercover: "Existence" },
-        { civilian: "Mort", undercover: "Néant" },
-        { civilian: "Richesse", undercover: "Opulence" },
-        { civilian: "Pauvreté", undercover: "Misère" },
-        { civilian: "Beauté", undercover: "Charme" },
-        { civilian: "Laideur", undercover: "Horreur" },
-        { civilian: "Force", undercover: "Puissance" },
-        { civilian: "Faiblesse", undercover: "Fragilité" },
-        { civilian: "Lumière", undercover: "Clarté" },
-        { civilian: "Ombre", undercover: "Obscurité" },
-        { civilian: "Chaleur", undercover: "Canicule" },
-        { civilian: "Froid", undercover: "Gel" },
-        { civilian: "Silence", undercover: "Bruit" },
-        { civilian: "Vitesse", undercover: "Rapidité" },
-        { civilian: "Lenteur", undercover: "Patience" },
-        // Temps
-        { civilian: "Temps", undercover: "Espace" },
-        { civilian: "Rêve", undercover: "Cauchemar" },
-        { civilian: "Doute", undercover: "Incertitude" },
+        { civilian: "Colère", undercover: "Rage" },
+        { civilian: "Espoir", undercover: "Optimisme" },
+        { civilian: "Rêve", undercover: "Fantasme" },
+        { civilian: "Vérité", undercover: "Sincérité" },
+        { civilian: "Mensonge", undercover: "Tromperie" },
+        { civilian: "Justice", undercover: "Équité" },
+        { civilian: "Liberté", undercover: "Indépendance" },
+        { civilian: "Temps", undercover: "Éternité" },
+        { civilian: "Espace", undercover: "Vide" },
         { civilian: "Destin", undercover: "Hasard" },
-        { civilian: "Chance", undercover: "Malchance" },
-        { civilian: "Passé", undercover: "Avenir" },
-        { civilian: "Mémoire", undercover: "Souvenir" },
-        { civilian: "Oubli", undercover: "Amnésie" },
-        { civilian: "Éternité", undercover: "Infini" },
-        { civilian: "Instant", undercover: "Moment" },
-        // Art & Culture
-        { civilian: "Musique", undercover: "Mélodie" },
-        { civilian: "Rythme", undercover: "Cadence" },
-        { civilian: "Réalité", undercover: "Illusion" },
-        { civilian: "Science", undercover: "Magie" },
-        { civilian: "Art", undercover: "Artisanat" },
-        { civilian: "Poésie", undercover: "Prose" },
-        { civilian: "Mythe", undercover: "Légende" },
-        { civilian: "Tradition", undercover: "Coutume" },
-        { civilian: "Culture", undercover: "Civilisation" },
-        { civilian: "Religion", undercover: "Spiritualité" },
-        // Concepts philosophiques
+        { civilian: "Pouvoir", undercover: "Autorité" },
+        { civilian: "Silence", undercover: "Calme" },
+        { civilian: "Sagesse", undercover: "Intelligence" },
+        { civilian: "Courage", undercover: "Bravoure" },
+        { civilian: "Légende", undercover: "Mythe" },
         { civilian: "Conscience", undercover: "Inconscient" },
         { civilian: "Raison", undercover: "Instinct" },
         { civilian: "Imagination", undercover: "Créativité" },
         { civilian: "Logique", undercover: "Intuition" },
         { civilian: "Âme", undercover: "Esprit" },
-        { civilian: "Paradis", undercover: "Enfer" },
-        { civilian: "Bien", undercover: "Mal" },
         { civilian: "Utopie", undercover: "Dystopie" },
-        { civilian: "Révolution", undercover: "Évolution" },
-        { civilian: "Progrès", undercover: "Déclin" },
-        // Société
-        { civilian: "Pouvoir", undercover: "Autorité" },
-        { civilian: "Démocratie", undercover: "Dictature" },
-        { civilian: "Égalité", undercover: "Équité" },
-        { civilian: "Succès", undercover: "Échec" },
-        { civilian: "Victoire", undercover: "Défaite" },
-        { civilian: "Risque", undercover: "Danger" },
-        { civilian: "Secret", undercover: "Mystère" },
-        { civilian: "Rumeur", undercover: "Ragot" },
-        { civilian: "Réputation", undercover: "Image" },
-        { civilian: "Influence", undercover: "Manipulation" },
-        { civilian: "Addiction", undercover: "Dépendance" },
-        { civilian: "Liberté", undercover: "Indépendance" },
-        // Nature abstraite
         { civilian: "Harmonie", undercover: "Équilibre" },
-        { civilian: "Énergie", undercover: "Vibration" },
-        { civilian: "Gravité", undercover: "Attraction" },
-        { civilian: "Perfection", undercover: "Excellence" },
-        { civilian: "Simplicité", undercover: "Minimalisme" },
-        { civilian: "Complexité", undercover: "Complication" },
-        { civilian: "Absurde", undercover: "Ironie" },
-        { civilian: "Paradoxe", undercover: "Contradiction" },
-        { civilian: "Destin", undercover: "Fatalité" },
-        { civilian: "Passion", undercover: "Obsession" },
-        { civilian: "Solitude", undercover: "Isolement" },
-        { civilian: "Trahison", undercover: "Tromperie" },
-        { civilian: "Confiance", undercover: "Méfiance" },
-        { civilian: "Curiosité", undercover: "Indiscrétion" },
-        { civilian: "Innocence", undercover: "Naïveté" },
-        { civilian: "Maturité", undercover: "Sagesse" },
-        { civilian: "Folie", undercover: "Démence" },
-        { civilian: "Génie", undercover: "Talent" },
+        { civilian: "Symbiose", undercover: "Mutualisme" },
+        { civilian: "Rumeur", undercover: "Ragot" }
     ],
+
     animals: [
-        // Félins
         { civilian: "Lion", undercover: "Tigre" },
         { civilian: "Chat", undercover: "Lynx" },
         { civilian: "Léopard", undercover: "Guépard" },
         { civilian: "Panthère", undercover: "Jaguar" },
         { civilian: "Puma", undercover: "Cougar" },
-        { civilian: "Serval", undercover: "Ocelot" },
-        // Canidés
         { civilian: "Loup", undercover: "Renard" },
-        { civilian: "Chien", undercover: "Loup" },
-        { civilian: "Coyote", undercover: "Chacal" },
+        { civilian: "Chien", undercover: "Coyote" },
         { civilian: "Husky", undercover: "Malamute" },
-        // Marins
         { civilian: "Requin", undercover: "Dauphin" },
         { civilian: "Baleine", undercover: "Orque" },
         { civilian: "Poulpe", undercover: "Calamar" },
         { civilian: "Crabe", undercover: "Homard" },
         { civilian: "Méduse", undercover: "Étoile de mer" },
-        { civilian: "Raie", undercover: "Requin-marteau" },
         { civilian: "Phoque", undercover: "Otarie" },
-        { civilian: "Morse", undercover: "Éléphant de mer" },
-        { civilian: "Hippocampe", undercover: "Poisson-clown" },
-        { civilian: "Thon", undercover: "Espadon" },
-        // Oiseaux
         { civilian: "Aigle", undercover: "Faucon" },
         { civilian: "Pingouin", undercover: "Manchot" },
         { civilian: "Autruche", undercover: "Émeu" },
-        { civilian: "Poule", undercover: "Canard" },
         { civilian: "Hibou", undercover: "Chouette" },
         { civilian: "Perroquet", undercover: "Toucan" },
         { civilian: "Flamant rose", undercover: "Héron" },
-        { civilian: "Colombe", undercover: "Pigeon" },
-        { civilian: "Moineau", undercover: "Rouge-gorge" },
-        { civilian: "Corbeau", undercover: "Pie" },
-        { civilian: "Paon", undercover: "Faisan" },
-        { civilian: "Cigogne", undercover: "Grue" },
-        { civilian: "Pélican", undercover: "Albatros" },
-        // Reptiles / Amphibiens
         { civilian: "Crocodile", undercover: "Alligator" },
         { civilian: "Tortue", undercover: "Lézard" },
-        { civilian: "Serpent", undercover: "Ver de terre" },
+        { civilian: "Serpent", undercover: "Vipère" },
         { civilian: "Grenouille", undercover: "Crapaud" },
         { civilian: "Iguane", undercover: "Caméléon" },
-        { civilian: "Gecko", undercover: "Salamandre" },
-        { civilian: "Python", undercover: "Boa" },
-        { civilian: "Cobra", undercover: "Vipère" },
-        // Insectes
         { civilian: "Papillon", undercover: "Abeille" },
         { civilian: "Mouche", undercover: "Moustique" },
         { civilian: "Araignée", undercover: "Scorpion" },
         { civilian: "Fourmi", undercover: "Termite" },
-        { civilian: "Cigale", undercover: "Grillon" },
-        { civilian: "Coccinelle", undercover: "Scarabée" },
-        { civilian: "Libellule", undercover: "Sauterelle" },
-        { civilian: "Guêpe", undercover: "Frelon" },
-        { civilian: "Mante religieuse", undercover: "Phasme" },
-        // Primates
-        { civilian: "Singe", undercover: "Gorille" },
-        { civilian: "Chimpanzé", undercover: "Bonobo" },
-        { civilian: "Orang-outan", undercover: "Gibbon" },
-        { civilian: "Babouin", undercover: "Mandrill" },
-        // Herbivores
-        { civilian: "Cheval", undercover: "Zèbre" },
+        { civilian: "Ours polar", undercover: "Grizzly" },
+        { civilian: "Panda", undercover: "Koala" },
+        { civilian: "Kangourou", undercover: "Wallaby" },
         { civilian: "Éléphant", undercover: "Rhinocéros" },
-        { civilian: "Girafe", undercover: "Chameau" },
-        { civilian: "Kangourou", undercover: "Koala" },
-        { civilian: "Vache", undercover: "Taureau" },
-        { civilian: "Mouton", undercover: "Chèvre" },
-        { civilian: "Cochon", undercover: "Sanglier" },
-        { civilian: "Lapin", undercover: "Lièvre" },
-        { civilian: "Cerf", undercover: "Élan" },
-        { civilian: "Antilope", undercover: "Gazelle" },
-        { civilian: "Bison", undercover: "Buffle" },
-        { civilian: "Hippopotame", undercover: "Rhinocéros" },
-        { civilian: "Âne", undercover: "Mulet" },
-        { civilian: "Lama", undercover: "Alpaga" },
-        { civilian: "Dromadaire", undercover: "Chameau" },
-        // Rongeurs
-        { civilian: "Souris", undercover: "Rat" },
-        { civilian: "Écureuil", undercover: "Castor" },
-        { civilian: "Hérisson", undercover: "Porc-épic" },
-        { civilian: "Hamster", undercover: "Gerbille" },
-        { civilian: "Marmotte", undercover: "Loutre" },
-        // Ours
-        { civilian: "Ours", undercover: "Panda" },
-        { civilian: "Ours polaire", undercover: "Ours brun" },
-        { civilian: "Panda roux", undercover: "Raton laveur" },
-        // Animaux nocturnes
-        { civilian: "Chauve-souris", undercover: "Hibou" },
-        { civilian: "Blaireau", undercover: "Putois" },
-        { civilian: "Renard", undercover: "Belette" },
-        // Préhistoriques / Mythiques
-        { civilian: "T-Rex", undercover: "Vélociraptor" },
-        { civilian: "Ptérodactyle", undercover: "Archéoptéryx" },
-        { civilian: "Mammouth", undercover: "Mastodonte" },
-        { civilian: "Dragon", undercover: "Griffon" },
-        { civilian: "Licorne", undercover: "Pégase" },
-        { civilian: "Phénix", undercover: "Dragon" },
-        // Exotiques
-        { civilian: "Paresseux", undercover: "Tatou" },
-        { civilian: "Okapi", undercover: "Girafe" },
-        { civilian: "Suricate", undercover: "Mangouste" },
-        { civilian: "Capybara", undercover: "Chinchilla" },
-        { civilian: "Wombat", undercover: "Quokka" },
-        { civilian: "Ornithorynque", undercover: "Kiwi" },
+        { civilian: "Girafe", undercover: "Zèbre" },
+        { civilian: "Hippopotame", undercover: "Rhinocéros" }
     ],
-    random: [
-        { civilian: "Croissant", undercover: "NASA" },
-        { civilian: "Chaussette", undercover: "Dinosaure" },
-        { civilian: "Wi-Fi", undercover: "Pyramide" },
-        { civilian: "Pyjama", undercover: "Volcan" },
-        { civilian: "Dentiste", undercover: "Skateboard" },
-        { civilian: "Spaghetti", undercover: "Ouragan" },
-        { civilian: "Aspirateur", undercover: "Pharaon" },
-        { civilian: "Licorne", undercover: "Impôts" },
-        { civilian: "Ketchup", undercover: "Galaxie" },
-        { civilian: "Chaussure", undercover: "Big Bang" },
-        { civilian: "Canapé", undercover: "Antarctique" },
-        { civilian: "Brosse à dents", undercover: "Samouraï" },
-        { civilian: "Mayonnaise", undercover: "Trampoline" },
-        { civilian: "Cactus", undercover: "Karaoké" },
-        { civilian: "Pantoufle", undercover: "Météorite" },
-        { civilian: "Poubelle", undercover: "Arc-en-ciel" },
-        { civilian: "Grille-pain", undercover: "Ninja" },
-        { civilian: "Oreiller", undercover: "Plombier" },
-        { civilian: "Parapluie", undercover: "Robot" },
-        { civilian: "Trottinette", undercover: "Momie" },
-        { civilian: "Réveil", undercover: "Pirate" },
-        { civilian: "Yaourt", undercover: "Bermuda" },
-        { civilian: "Tong", undercover: "Astronaute" },
-        { civilian: "Micro-ondes", undercover: "Viking" },
-        { civilian: "Confiture", undercover: "Hélicoptère" },
-        { civilian: "Bretelle", undercover: "Tsunami" },
-        { civilian: "Serviette", undercover: "Dragon" },
-        { civilian: "Cacahuète", undercover: "Opéra" },
-        { civilian: "Ampoule", undercover: "Lama" },
-        { civilian: "Sonnette", undercover: "Bermuda Triangle" },
-        { civilian: "Chewing-gum", undercover: "Safari" },
-        { civilian: "Éponge", undercover: "Gladiateur" },
-        { civilian: "Toboggan", undercover: "Wifi gratuit" },
-        { civilian: "Bonnet", undercover: "Fusée" },
-        { civilian: "Coussin", undercover: "Morse" },
-        { civilian: "Frigo", undercover: "Fantôme" },
-        { civilian: "Rideau", undercover: "Karaté" },
-        { civilian: "Nounours", undercover: "Comète" },
-        { civilian: "Claquettes", undercover: "Sous-marin" },
-        { civilian: "Moustache", undercover: "Igloo" },
-        { civilian: "Écharpe", undercover: "Tornade" },
-        { civilian: "Balai", undercover: "Satellite" },
-        { civilian: "Cheminée", undercover: "Origami" },
-        { civilian: "Tapis", undercover: "Météo" },
-        { civilian: "Bouilloire", undercover: "Zombie" },
-        { civilian: "Ceinture", undercover: "Mammouth" },
-        { civilian: "Savon", undercover: "Pyramide" },
-        { civilian: "Fourchette", undercover: "Cosmonaute" },
-        { civilian: "Drap", undercover: "Jacuzzi" },
-        { civilian: "Tiroir", undercover: "Dromadaire" },
-        { civilian: "Pelouse", undercover: "Requin-marteau" },
-        { civilian: "Couette", undercover: "Pharaon" },
-        { civilian: "Gouttière", undercover: "Tricératops" },
-        { civilian: "Poignée de porte", undercover: "Festival" },
-        { civilian: "Tabouret", undercover: "Yéti" },
-        { civilian: "Cuvette", undercover: "Discothèque" },
-        { civilian: "Nappe", undercover: "Gladiateur" },
-        { civilian: "Cintres", undercover: "Alien" },
-        { civilian: "Paillasson", undercover: "Moustique géant" },
-        { civilian: "Ventilateur", undercover: "Licorne de mer" },
-        // Nouvelles paires délirantes
-        { civilian: "Dentifrice", undercover: "Lave-vaisselle" },
-        { civilian: "Permis de conduire", undercover: "Ananas" },
-        { civilian: "Bretzel", undercover: "Parachute" },
-        { civilian: "Chaise longue", undercover: "Volcan" },
-        { civilian: "Trousse", undercover: "Tornado" },
-        { civilian: "Cadenas", undercover: "Méduse" },
-        { civilian: "Sonnerie", undercover: "Banquise" },
-        { civilian: "Lacet", undercover: "Sphinx" },
-        { civilian: "Post-it", undercover: "Bermuda" },
-        { civilian: "Agrafeuse", undercover: "Dauphin" },
-        { civilian: "Gommette", undercover: "Tremblement de terre" },
-        { civilian: "Crayola", undercover: "Lave" },
-        { civilian: "Essuie-glace", undercover: "Koala" },
-        { civilian: "Règle", undercover: "Comète de Halley" },
-        { civilian: "Autocollant", undercover: "Pharaon" },
-        { civilian: "Porte-clés", undercover: "Tsunami" },
-        { civilian: "Chausson", undercover: "Requin" },
-        { civilian: "Robinet", undercover: "Éclipse" },
-        { civilian: "Prise électrique", undercover: "Panda" },
-        { civilian: "Mouchoir", undercover: "Satellite" },
-        { civilian: "Chargeur", undercover: "Dinosaure" },
-        { civilian: "Papier toilette", undercover: "Pyramide" },
-        { civilian: "Clignotant", undercover: "Samouraï" },
-        { civilian: "Trombones", undercover: "Aurore boréale" },
-        { civilian: "Fermeture éclair", undercover: "Galaxie" },
-        { civilian: "Cric de voiture", undercover: "Pélican" },
-        { civilian: "Interrupteur", undercover: "Yéti" },
-        { civilian: "Boîte aux lettres", undercover: "Mars" },
-        { civilian: "Code postal", undercover: "Tatami" },
-        { civilian: "Table basse", undercover: "Pingouins" },
-        { civilian: "Serpillière", undercover: "Aztèque" },
-        { civilian: "Torchon", undercover: "Galaxie" },
-        { civilian: "Pince à linge", undercover: "Tornado" },
-        { civilian: "Calendrier", undercover: "Kraken" },
-        { civilian: "Réveil-matin", undercover: "Flamant rose" },
-        { civilian: "Thermostat", undercover: "Gladiateur" },
-        { civilian: "Télécommande", undercover: "Atlante" },
-        { civilian: "Pot de fleur", undercover: "Extraterrestre" },
-        { civilian: "Rouleau de scotch", undercover: "Bermuda" },
-        { civilian: "Gomme", undercover: "Tsunami" },
-        { civilian: "Compote", undercover: "Viking" },
-    ]
-,
+
     geek: [
-        {
-                "civilian": "Console",
-                "undercover": "PC"
-        },
-        {
-                "civilian": "Clavier",
-                "undercover": "Souris"
-        },
-        {
-                "civilian": "Nintendo",
-                "undercover": "Sega"
-        },
-        {
-                "civilian": "Zelda",
-                "undercover": "Link"
-        },
-        {
-                "civilian": "Minecraft",
-                "undercover": "Roblox"
-        },
-        {
-                "civilian": "Fortnite",
-                "undercover": "PUBG"
-        },
-        {
-                "civilian": "Pokémon",
-                "undercover": "Digimon"
-        },
-        {
-                "civilian": "PlayStation",
-                "undercover": "Xbox"
-        },
-        {
-                "civilian": "Steve Jobs",
-                "undercover": "Bill Gates"
-        },
-        {
-                "civilian": "Google",
-                "undercover": "Apple"
-        },
-        {
-                "civilian": "Netflix",
-                "undercover": "Disney+"
-        },
-        {
-                "civilian": "Instagram",
-                "undercover": "TikTok"
-        },
-        {
-                "civilian": "YouTube",
-                "undercover": "Twitch"
-        },
-        {
-                "civilian": "Écran OLED",
-                "undercover": "Écran LCD"
-        },
-        {
-                "civilian": "Casque VR",
-                "undercover": "Lunettes AR"
-        },
-        {
-                "civilian": "Cyborg",
-                "undercover": "Robot"
-        },
-        {
-                "civilian": "Hacker",
-                "undercover": "Pirate"
-        },
-        {
-                "civilian": "Intelligence Artificielle",
-                "undercover": "Robotique"
-        },
-        {
-                "civilian": "Disquette",
-                "undercover": "Clé USB"
-        },
-        {
-                "civilian": "Code source",
-                "undercover": "Algorithme"
-        }
-],
+        { civilian: "PlayStation", undercover: "Xbox" },
+        { civilian: "Nintendo Switch", undercover: "Steam Deck" },
+        { civilian: "PC Gamer", undercover: "Console" },
+        { civilian: "League of Legends", undercover: "Dota 2" },
+        { civilian: "Valorant", undercover: "Counter-Strike" },
+        { civilian: "Fortnite", undercover: "PUBG" },
+        { civilian: "Apex Legends", undercover: "Overwatch" },
+        { civilian: "Minecraft", undercover: "Roblox" },
+        { civilian: "Terraria", undercover: "Starbound" },
+        { civilian: "GTA V", undercover: "Red Dead Redemption" },
+        { civilian: "The Witcher", undercover: "Skyrim" },
+        { civilian: "Zelda", undercover: "Elden Ring" },
+        { civilian: "Dark Souls", undercover: "Bloodborne" },
+        { civilian: "Call of Duty", undercover: "Battlefield" },
+        { civilian: "FIFA / FC", undercover: "NBA 2K" },
+        { civilian: "Mario Kart", undercover: "Crash Team Racing" },
+        { civilian: "Super Smash Bros", undercover: "Brawlhalla" },
+        { civilian: "Cyberpunk 2077", undercover: "Deus Ex" },
+        { civilian: "Assassin's Creed", undercover: "Prince of Persia" },
+        { civilian: "God of War", undercover: "Devil May Cry" },
+        { civilian: "Resident Evil", undercover: "Silent Hill" },
+        { civilian: "Final Fantasy", undercover: "Kingdom Hearts" },
+        { civilian: "Discord", undercover: "TeamSpeak" },
+        { civilian: "Twitch", undercover: "Kick" },
+        { civilian: "Steam", undercover: "Epic Games Store" },
+        { civilian: "Carte graphique (GPU)", undercover: "Processeur (CPU)" }
+    ],
+
     travel: [
-        {
-                "civilian": "Paris",
-                "undercover": "Londres"
-        },
-        {
-                "civilian": "France",
-                "undercover": "Italie"
-        },
-        {
-                "civilian": "Espagne",
-                "undercover": "Portugal"
-        },
-        {
-                "civilian": "Plage",
-                "undercover": "Piscine"
-        },
-        {
-                "civilian": "Montagne",
-                "undercover": "Campagne"
-        },
-        {
-                "civilian": "Métro",
-                "undercover": "Tramway"
-        },
-        {
-                "civilian": "Avion",
-                "undercover": "Train"
-        },
-        {
-                "civilian": "Valise",
-                "undercover": "Sac à dos"
-        },
-        {
-                "civilian": "Hôtel",
-                "undercover": "Camping"
-        },
-        {
-                "civilian": "Passeport",
-                "undercover": "Carte d'identité"
-        },
-        {
-                "civilian": "Carte",
-                "undercover": "Boussole"
-        },
-        {
-                "civilian": "Valise",
-                "undercover": "Bagage à main"
-        },
-        {
-                "civilian": "Randonnée",
-                "undercover": "Escalade"
-        },
-        {
-                "civilian": "Tour Eiffel",
-                "undercover": "Arc de Triomphe"
-        },
-        {
-                "civilian": "Désert",
-                "undercover": "Savane"
-        },
-        {
-                "civilian": "Île",
-                "undercover": "Presqu'île"
-        },
-        {
-                "civilian": "Croisière",
-                "undercover": "Voilier"
-        },
-        {
-                "civilian": "Guide touristique",
-                "undercover": "GPS"
-        },
-        {
-                "civilian": "Souvenir",
-                "undercover": "Carte postale"
-        },
-        {
-                "civilian": "Valise à roulettes",
-                "undercover": "Sac de voyage"
-        }
-],
+        { civilian: "Paris", undercover: "Londres" },
+        { civilian: "New York", undercover: "Tokyo" },
+        { civilian: "Rome", undercover: "Athènes" },
+        { civilian: "Barcelone", undercover: "Madrid" },
+        { civilian: "Venise", undercover: "Florence" },
+        { civilian: "Japon", undercover: "Corée du Sud" },
+        { civilian: "Australie", undercover: "Nouvelle-Zélande" },
+        { civilian: "Canada", undercover: "États-Unis" },
+        { civilian: "Brésil", undercover: "Argentine" },
+        { civilian: "Égypte", undercover: "Maroc" },
+        { civilian: "Passeport", undercover: "Carte d'identité" },
+        { civilian: "Valise", undercover: "Sac à dos" },
+        { civilian: "Hôtel", undercover: "Auberge de jeunesse" },
+        { civilian: "Camping", undercover: "Bivouac" },
+        { civilian: "Carte postale", undercover: "Souvenir" },
+        { civilian: "Boussole", undercover: "GPS" }
+    ],
+
     food: [
-        {
-                "civilian": "Pizza",
-                "undercover": "Lasagne"
-        },
-        {
-                "civilian": "Hamburger",
-                "undercover": "Hot-dog"
-        },
-        {
-                "civilian": "Frites",
-                "undercover": "Chips"
-        },
-        {
-                "civilian": "Sushi",
-                "undercover": "Sashimi"
-        },
-        {
-                "civilian": "Chocolat noir",
-                "undercover": "Chocolat au lait"
-        },
-        {
-                "civilian": "Crêpe",
-                "undercover": "Gaufre"
-        },
-        {
-                "civilian": "Croissant",
-                "undercover": "Pain au chocolat"
-        },
-        {
-                "civilian": "Coca-Cola",
-                "undercover": "Pepsi"
-        },
-        {
-                "civilian": "Café",
-                "undercover": "Thé"
-        },
-        {
-                "civilian": "Sel",
-                "undercover": "Poivre"
-        },
-        {
-                "civilian": "Beurre",
-                "undercover": "Margarine"
-        },
-        {
-                "civilian": "Miel",
-                "undercover": "Sirop d'érable"
-        },
-        {
-                "civilian": "Fromage",
-                "undercover": "Yaourt"
-        },
-        {
-                "civilian": "Kebab",
-                "undercover": "Tacos"
-        },
-        {
-                "civilian": "Crème brûlée",
-                "undercover": "Flan"
-        },
-        {
-                "civilian": "Pâtes",
-                "undercover": "Riz"
-        },
-        {
-                "civilian": "Bière",
-                "undercover": "Cidre"
-        },
-        {
-                "civilian": "Soupe",
-                "undercover": "Velouté"
-        },
-        {
-                "civilian": "Pomme",
-                "undercover": "Poire"
-        },
-        {
-                "civilian": "Orange",
-                "undercover": "Clémentine"
-        }
-],
+        { civilian: "Pizza", undercover: "Pâtes" },
+        { civilian: "Hamburger", undercover: "Sandwich" },
+        { civilian: "Sushi", undercover: "Maki" },
+        { civilian: "Kebab", undercover: "Tacos" },
+        { civilian: "Crêpe", undercover: "Gaufre" },
+        { civilian: "Croissant", undercover: "Pain au chocolat" },
+        { civilian: "Chocolat", undercover: "Vanille" },
+        { civilian: "Raclette", undercover: "Fondue" },
+        { civilian: "Frite", undercover: "Chips" },
+        { civilian: "Cookie", undercover: "Muffin" },
+        { civilian: "Gâteau", undercover: "Tarte" },
+        { civilian: "Glace", undercover: "Sorbet" },
+        { civilian: "Fromage", undercover: "Beurre" },
+        { civilian: "Raclette", undercover: "Tartiflette" },
+        { civilian: "Ramen", undercover: "Udon" },
+        { civilian: "Paëlla", undercover: "Risotto" }
+    ],
+
     fun: [
-        {
-                "civilian": "Chaussette",
-                "undercover": "Caleçon"
-        },
-        {
-                "civilian": "Dentifrice",
-                "undercover": "Mayonnaise"
-        },
-        {
-                "civilian": "Licorne",
-                "undercover": "Pégase"
-        },
-        {
-                "civilian": "Slip",
-                "undercover": "Boxer"
-        },
-        {
-                "civilian": "Pyjama",
-                "undercover": "Chemise de nuit"
-        },
-        {
-                "civilian": "Perruque",
-                "undercover": "Postiche"
-        },
-        {
-                "civilian": "Clown",
-                "undercover": "Mime"
-        },
-        {
-                "civilian": "Poubelle",
-                "undercover": "Benne"
-        },
-        {
-                "civilian": "Aspirateur",
-                "undercover": "Balai"
-        },
-        {
-                "civilian": "Brosse à dents",
-                "undercover": "Cure-dent"
-        },
-        {
-                "civilian": "Crayon",
-                "undercover": "Stylo"
-        },
-        {
-                "civilian": "Gomme",
-                "undercover": "Correcteur"
-        },
-        {
-                "civilian": "Papier toilette",
-                "undercover": "Essuie-tout"
-        },
-        {
-                "civilian": "Bonnet de douche",
-                "undercover": "Casque de vélo"
-        },
-        {
-                "civilian": "Chausson",
-                "undercover": "Pantoufle"
-        },
-        {
-                "civilian": "Moustache",
-                "undercover": "Barbe"
-        },
-        {
-                "civilian": "Salade",
-                "undercover": "Épinard"
-        },
-        {
-                "civilian": "Escargot",
-                "undercover": "Limace"
-        },
-        {
-                "civilian": "Grenouille",
-                "undercover": "Crapaud"
-        },
-        {
-                "civilian": "Coussin",
-                "undercover": "Oreiller"
-        }
-]
+        { civilian: "Chaussette", undercover: "Caleçon" },
+        { civilian: "Dentifrice", undercover: "Mayonnaise" },
+        { civilian: "Licorne", undercover: "Pégase" },
+        { civilian: "Slip", undercover: "Boxer" },
+        { civilian: "Pyjama", undercover: "Chemise de nuit" },
+        { civilian: "Perruque", undercover: "Postiche" },
+        { civilian: "Clown", undercover: "Mime" },
+        { civilian: "Poubelle", undercover: "Benne" },
+        { civilian: "Aspirateur", undercover: "Balai" },
+        { civilian: "Brosse à dents", undercover: "Cure-dent" },
+        { civilian: "Papier toilette", undercover: "Essuie-tout" },
+        { civilian: "Bonnet de douche", undercover: "Casque de vélo" },
+        { civilian: "Chausson", undercover: "Pantoufle" },
+        { civilian: "Moustache", undercover: "Barbe" },
+        { civilian: "Escargot", undercover: "Limace" },
+        { civilian: "Grenouille", undercover: "Crapaud" },
+        { civilian: "Coussin", undercover: "Oreiller" }
+    ],
+
+    // 🔥 PACK SOIRÉE / +18 (SPICY)
+    spicy: [
+        // Alcools & Soirées
+        { civilian: "Tequila Paf", undercover: "Shot de Vodka" },
+        { civilian: "Vodka Redbull", undercover: "Jägerbomb" },
+        { civilian: "Mojito", undercover: "Sex on the Beach" },
+        { civilian: "Beer Pong", undercover: "Capitaine de Soirée" },
+        { civilian: "Cuite", undercover: "Gueule de bois" },
+        { civilian: "Blackout", undercover: "Trou de mémoire" },
+        { civilian: "Open Bar", undercover: "Happy Hour" },
+        { civilian: "Shots", undercover: "Pitcher de Bière" },
+        { civilian: "Rentre en VTC", undercover: "Dort sur le canapé" },
+        { civilian: "Whisky-Coke", undercover: "Rhum-Chararette" },
+        { civilian: "Cocktail", undercover: "Mocktail" },
+        { civilian: "Alcootest", undercover: "Sam" },
+        // Ambiance & Soirées coquines / Jeux de soirée
+        { civilian: "Action ou Vérité", undercover: "Jeu de la Bouteille" },
+        { civilian: "Je n'ai jamais", undercover: "Le Roi du Silence" },
+        { civilian: "Strip-Poker", undercover: "Action Coquine" },
+        { civilian: "Striptease", undercover: "Lap Dance" },
+        { civilian: "Twerk", undercover: "Slow" },
+        { civilian: "Glace à sucer", undercover: "Sucette" },
+        { civilian: "Bisou volé", undercover: "Pelle" },
+        { civilian: "Coup d'un soir", undercover: "Friends with benefits" },
+        { civilian: "Sex-appeal", undercover: "Charme naturel" },
+        { civilian: "Plan Q", undercover: "Relation libre" },
+        { civilian: "Marathon sous la couette", undercover: "Sieste crapuleuse" },
+
+        // Mots & Concepts +18 / Sensuels / Tabous
+        { civilian: "Préservatif", undercover: "Lubrifiant" },
+        { civilian: "Menottes", undercover: "Bandeau sur les yeux" },
+        { civilian: "Fouet", undercover: "Plume" },
+        { civilian: "Nuisette", undercover: "Lingerie" },
+        { civilian: "String", undercover: "Tanga" },
+        { civilian: "Dentelle", undercover: "Cuir" },
+        { civilian: "Sex-toy", undercover: "Vibreur" },
+        { civilian: "Menottes en moumoute", undercover: "Attaches de lit" },
+        { civilian: "Jeu de rôle", undercover: "Fantasme" },
+        { civilian: "Caresse", undercover: "Chatouille" },
+        { civilian: "Massage érotique", undercover: "Massage suédois" },
+        { civilian: "Huile de massage", undercover: "Gel chauffant" },
+        { civilian: "Bain à bulles", undercover: "Jacuzzi" },
+        { civilian: "Preservatif goût fraise", undercover: "Preservatif nervuré" },
+        { civilian: "Sexto", undercover: "Nude" },
+        { civilian: "Caméra cachée", undercover: "Miroir au plafond" },
+        { civilian: "Missionnaire", undercover: "Lévrette" },
+        { civilian: "69", undercover: "Cuillère" },
+        { civilian: "Andalouse", undercover: "Amazonienne" },
+        { civilian: "Cœur qui bat", undercover: "Rythme sauvage" },
+        { civilian: "Baiser de cinéma", undercover: "Baiser français" },
+        { civilian: "Orgasme", undercover: "Frisson" },
+        { civilian: "Désir", undercover: "Tentation" },
+        { civilian: "Péché", undercover: "Interdit" },
+        { civilian: "Chambre d'hôtel", undercover: "Love Room" }
+    ]
 };
+
+// Aliases for safe pack loading
+wordPacks["pop_culture"] = wordPacks["pop-culture"];
+wordPacks["plus18"] = wordPacks["spicy"];
+wordPacks["soiree"] = wordPacks["spicy"];

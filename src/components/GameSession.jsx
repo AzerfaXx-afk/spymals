@@ -1,16 +1,59 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
-import { Trophy, ShieldAlert, Check, X, Eye, Vote, Volume2, Lightbulb, Skull, PartyPopper, UserCheck } from 'lucide-react';
+import { Trophy, ShieldAlert, Check, X, Eye, Vote, Volume2, Lightbulb, Skull, PartyPopper, UserCheck, Timer, Clock } from 'lucide-react';
 import BouncyButton from './BouncyButton';
 import { wordPacks } from '../data/wordPacks';
 import SettingsGear from './SettingsGear';
 import { useAudio } from '../contexts/AudioContext';
 import { supabase } from '../utils/supabaseClient';
 import { CartoonAvatar } from './CartoonAvatars';
+import { getUnusedWordPair } from '../utils/wordHistory';
+
+// Web Audio API synthesizer for clean tick & timer alarm sounds
+const playTickSound = (secondsRemaining) => {
+    try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        const freq = secondsRemaining <= 5 ? 900 : 650;
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(0.25, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.08);
+    } catch (e) {
+        // Fallback silently if audio context unavailable
+    }
+};
+
+const playBuzzerSound = () => {
+    try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(200, ctx.currentTime);
+        gain.gain.setValueAtTime(0.4, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.4);
+    } catch (e) {
+        // Fallback silently
+    }
+};
 
 const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) => {
-    // States: distributing | playing | voting | reveal | mrwhite_guess
+    // States: distributing | playing | voting | reveal | mrwhite_guess | game_over_reveal
     const [gameState, setGameState] = useState('distributing');
     const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
     const [isRevealed, setIsRevealed] = useState(false);
@@ -23,6 +66,9 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
     const [speakingOrder, setSpeakingOrder] = useState([]);
     const [currentSpeakerIndex, setCurrentSpeakerIndex] = useState(0);
 
+    // 30s Clue Turn Timer
+    const [turnTimer, setTurnTimer] = useState(30);
+
     const { switchMusic, playSfx } = useAudio();
 
     // 3D Cartoon Tombstone drop animation state
@@ -31,10 +77,10 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
     // Auto trigger tombstone animation when entering reveal screen
     useEffect(() => {
         if (gameState === 'reveal') {
-            setShowTombstone(false); // reset first
+            setShowTombstone(false);
             const timer = setTimeout(() => {
                 setShowTombstone(true);
-                playSfx('/sons/mort.mp3', { volumeMultiplier: 1.0 }); // Death sound
+                playSfx('/sons/mort.mp3', { volumeMultiplier: 1.0 });
             }, 500);
             return () => clearTimeout(timer);
         }
@@ -48,10 +94,9 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                 assignRoles();
             }
         } else if (gameState === 'game_over_reveal') {
-            switchMusic('music.mp3'); // Keep original music playing in background
-            playSfx(finalWinningTeam === 'Civilian' ? '/sons/win.mp3' : '/sons/lose.mp3', { volumeMultiplier: 1.5 });
+            switchMusic('music.mp3');
+            playSfx(finalWinningTeam === 'Civilian' || finalWinningTeam === 'Bouffon' ? '/sons/win.mp3' : '/sons/lose.mp3', { volumeMultiplier: 1.5 });
         } else {
-            // Once we start playing or finish, revert to standard music
             switchMusic('music.mp3');
         }
     }, [gameState, assignedRoles.length, switchMusic, finalWinningTeam, playSfx]);
@@ -67,6 +112,27 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
         }
     }, [gameState]);
 
+    // 30-Second Turn Timer countdown during playing phase
+    useEffect(() => {
+        if (gameState !== 'playing' || !speakingOrder || speakingOrder.length === 0) return;
+
+        setTurnTimer(30);
+        const interval = setInterval(() => {
+            setTurnTimer(prev => {
+                if (prev <= 1) {
+                    playBuzzerSound();
+                    return 0;
+                }
+                if (prev <= 11) {
+                    playTickSound(prev - 1);
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [currentSpeakerIndex, gameState, speakingOrder]);
+
     // ── True uniform shuffle (Fisher-Yates) ──────────────────────────────────
     const shuffle = (arr) => {
         const a = [...arr];
@@ -78,7 +144,7 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
     };
 
     const assignRoles = async () => {
-        const { undercoverCount, whiteCount, wordPack, customWords } = config;
+        const { undercoverCount, whiteCount, bouffonCount = 0, wordPack, customWords } = config;
 
         let wordPair;
         if (wordPack === 'custom' && customWords) {
@@ -89,7 +155,6 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
         } else {
             let pack = null;
             try {
-                // Fetch words for this pack from Supabase
                 const { data, error } = await supabase
                     .from('spymals_words')
                     .select('civilian, undercover')
@@ -97,31 +162,29 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
 
                 if (data && data.length > 0 && !error) {
                     pack = data;
-                    console.log(`Fetched ${data.length} words from Supabase for pack: ${wordPack}`);
-                } else if (error) {
-                    console.error("Supabase query error:", error.message);
                 }
             } catch (err) {
                 console.error("Failed to query Supabase:", err);
             }
 
-            // Fallback to local
             if (!pack || pack.length === 0) {
-                console.log("Using local word packs fallback");
                 pack = wordPacks[wordPack] || wordPacks.standard;
             }
 
-            wordPair = pack[Math.floor(Math.random() * pack.length)];
+            // Anti-repetition selection system
+            const { wordPair: pickedPair } = getUnusedWordPair(wordPack, pack);
+            wordPair = pickedPair;
         }
 
         let roles = [];
         for (let i = 0; i < undercoverCount; i++) roles.push({ role: 'Undercover', word: wordPair.undercover });
         for (let i = 0; i < whiteCount; i++) roles.push({ role: 'Mr. White', word: null });
+        for (let i = 0; i < bouffonCount; i++) roles.push({ role: 'Bouffon', word: 'Le Bouffon (Aucun mot secret - Fais-toi voter !)' });
 
-        const civilianCount = players.length - undercoverCount - whiteCount;
+        const civilianCount = players.length - undercoverCount - whiteCount - bouffonCount;
         for (let i = 0; i < civilianCount; i++) roles.push({ role: 'Civilian', word: wordPair.civilian });
 
-        // Shuffle roles uniformly (Fisher-Yates via shuffle helper)
+        // Shuffle roles
         const shuffledRoles = shuffle(roles);
 
         // Assign roles to players
@@ -131,13 +194,12 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
             word: shuffledRoles[index].word,
         }));
 
-        // Shuffle the REVEAL ORDER independently — fully random
+        // Shuffle reveal order
         const shuffled = shuffle(assignments);
 
-        // Only constraint: Mr. White must NOT be first (no word = instant exposure)
+        // Mr. White constraint (not first)
         const firstMrWhiteIdx = shuffled.findIndex(p => p.role === 'Mr. White');
         if (firstMrWhiteIdx === 0) {
-            // Swap with a random non-first, non-Mr.-White position
             const candidates = shuffled
                 .map((p, i) => i)
                 .filter(i => i > 0 && shuffled[i].role !== 'Mr. White');
@@ -169,41 +231,25 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
         setGameState('reveal');
     };
 
-    // ─────────────────────────────────────────────
-    // WIN CONDITION CHECK
-    // Returns 'Civilian', 'Impostors', or null
-    // ─────────────────────────────────────────────
-    const checkWinConditions = (eliminatedIds) => {
-        const alive = assignedRoles.filter(p => !eliminatedIds.includes(p.id));
-
-        const aliveImpostors = alive.filter(p => p.role === 'Undercover' || p.role === 'Mr. White').length;
-        const aliveCivilians = alive.filter(p => p.role === 'Civilian').length;
-
-        // Civilians win: no impostors left alive
-        if (aliveImpostors === 0) return 'Civilian';
-
-        // Impostors win by survival: only 1 (or 0) civilian left alive
-        if (aliveCivilians <= 1) return 'Impostors';
-
-        return null;
-    };
-
-    // ─────────────────────────────────────────────
-    // ELIMINATE A PLAYER (called from reveal screen)
-    // ─────────────────────────────────────────────
     const handleEliminatePlayer = () => {
         if (!votedPlayer) return;
 
         const newEliminated = [...eliminatedPlayers, votedPlayer.id];
         setEliminatedPlayers(newEliminated);
 
-        // Mr. White gets a last-chance guess before the standard win check
+        // Check if Le Bouffon was voted out -> Instant Victory for Le Bouffon!
+        if (votedPlayer.role === 'Bouffon') {
+            triggerGameEnd('Bouffon');
+            return;
+        }
+
+        // Mr. White gets a last-chance guess
         if (votedPlayer.role === 'Mr. White') {
             setGameState('mrwhite_guess');
             return;
         }
 
-        // Standard win check for everyone else
+        // Standard win check
         const winner = checkWinConditions(newEliminated);
         if (winner) {
             triggerGameEnd(winner);
@@ -213,17 +259,11 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
         }
     };
 
-    // ─────────────────────────────────────────────
-    // MR. WHITE LAST CHANCE OUTCOMES
-    // ─────────────────────────────────────────────
     const handleMrWhiteSuccess = () => {
-        // Mr. White guessed correctly → Impostors win immediately
         triggerGameEnd('Impostors');
     };
 
     const handleMrWhiteFail = () => {
-        // Mr. White definitively eliminated – run standard win check
-        // eliminatedPlayers already includes Mr. White (set in handleEliminatePlayer)
         const winner = checkWinConditions(eliminatedPlayers);
         if (winner) {
             triggerGameEnd(winner);
@@ -233,21 +273,32 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
         }
     };
 
-    // ─────────────────────────────────────────────
-    // TRIGGER GAME END
-    // ─────────────────────────────────────────────
+    const checkWinConditions = (eliminatedIds) => {
+        const alive = assignedRoles.filter(p => !eliminatedIds.includes(p.id));
+
+        const aliveImpostors = alive.filter(p => p.role === 'Undercover' || p.role === 'Mr. White').length;
+        const aliveCivilians = alive.filter(p => p.role === 'Civilian').length;
+
+        if (aliveImpostors === 0) {
+            return 'Civilian';
+        }
+        if (aliveImpostors >= aliveCivilians) {
+            return 'Impostors';
+        }
+        return null;
+    };
+
     const triggerGameEnd = (winningTeam) => {
         setFinalWinningTeam(winningTeam);
         setGameState('game_over_reveal');
 
         confetti({
-            particleCount: 150,
-            spread: 70,
+            particleCount: 160,
+            spread: 80,
             origin: { y: 0.6 },
-            colors: winningTeam === 'Civilian' ? ['#CCFF00', '#ffffff'] : ['#FF6600', '#000000']
+            colors: winningTeam === 'Civilian' ? ['#CCFF00', '#ffffff'] : winningTeam === 'Bouffon' ? ['#a855f7', '#ccff00', '#ff6600'] : ['#FF6600', '#000000']
         });
 
-        // Play 🎉 sound
         playSfx('/sons/confetti.mp3', { volumeMultiplier: 0.8 });
     };
 
@@ -270,6 +321,7 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
     // ─────────────────────────────────────────────
     if (gameState === 'game_over_reveal') {
         const isCivilianWin = finalWinningTeam === 'Civilian';
+        const isBouffonWin = finalWinningTeam === 'Bouffon';
 
         return (
             <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-transparent text-center relative overflow-hidden">
@@ -292,14 +344,14 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                         {/* Circular Cartoon Spotlight Disk & Glow */}
                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                             <div className={`w-48 h-48 rounded-full blur-2xl opacity-45 ${
-                                isCivilianWin ? 'bg-spy-lime' : 'bg-orange-500'
+                                isBouffonWin ? 'bg-purple-500' : isCivilianWin ? 'bg-spy-lime' : 'bg-orange-500'
                             }`} />
                             <div className="absolute w-44 h-44 rounded-full bg-gradient-to-b from-white/10 to-transparent border border-white/15 shadow-[inset_0_2px_12px_rgba(255,255,255,0.15)]" />
                         </div>
 
                         <img 
-                            src={isCivilianWin ? '/victory_civilians_cutout_3d.png' : '/victory_impostors_cutout_3d.png'} 
-                            alt={isCivilianWin ? 'Victoire des Innocents' : 'Victoire des Imposteurs'} 
+                            src={isBouffonWin ? '/victory_impostors_cutout_3d.png' : isCivilianWin ? '/victory_civilians_cutout_3d.png' : '/victory_impostors_cutout_3d.png'} 
+                            alt={isBouffonWin ? 'Victoire du Bouffon' : isCivilianWin ? 'Victoire des Innocents' : 'Victoire des Imposteurs'} 
                             className="w-full h-full object-contain filter drop-shadow-[0_15px_25px_rgba(0,0,0,0.9)] z-10 transform hover:scale-105 transition-transform duration-300" 
                         />
                     </motion.div>
@@ -314,9 +366,16 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                         <h2 className="text-xl font-black text-white uppercase tracking-tight mb-1 text-shadow-md">
                             Mission Terminée
                         </h2>
-                        <h3 className={`text-3xl md:text-4xl font-black uppercase tracking-tight ${isCivilianWin ? 'text-spy-lime' : 'text-spy-orange'} text-shadow-lg`}>
-                            {isCivilianWin ? 'Victoire des Innocents !' : 'Victoire des Imposteurs !'}
+                        <h3 className={`text-3xl md:text-4xl font-black uppercase tracking-tight ${
+                            isBouffonWin ? 'text-purple-400 font-extrabold' : isCivilianWin ? 'text-spy-lime' : 'text-spy-orange'
+                        } text-shadow-lg`}>
+                            {isBouffonWin ? 'Victoire du Bouffon ! 🃏👑' : isCivilianWin ? 'Victoire des Innocents !' : 'Victoire des Imposteurs !'}
                         </h3>
+                        {isBouffonWin && (
+                            <p className="text-purple-300 text-xs font-black uppercase tracking-wider mt-1">
+                                Le Bouffon a réussi son piège et s'est fait éliminer au vote !
+                            </p>
+                        )}
                     </div>
 
                     {/* Words Reveal Card */}
@@ -331,7 +390,6 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                         </p>
 
                         <div className="flex flex-col gap-4">
-                            {/* Civilian Word */}
                             <motion.div
                                 initial={{ x: -20, opacity: 0 }}
                                 animate={{ x: 0, opacity: 1 }}
@@ -348,7 +406,6 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                                 </div>
                             </motion.div>
 
-                            {/* Undercover Word */}
                             <motion.div
                                 initial={{ x: 20, opacity: 0 }}
                                 animate={{ x: 0, opacity: 1 }}
@@ -400,7 +457,6 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                     transition={{ type: 'spring', stiffness: 280, damping: 22 }}
                     className="z-10 w-full max-w-md flex flex-col items-center"
                 >
-                    {/* Icon + Title */}
                     <div className="mb-6 flex flex-col items-center">
                         <div className="p-4 rounded-full bg-cyan-500/20 border-2 border-cyan-400/40 mb-3 animate-bounce-slow filter drop-shadow-[0_0_40px_rgba(6,182,212,0.3)]">
                             <ShieldAlert className="w-12 h-12 text-cyan-400 stroke-[2.5]" />
@@ -413,7 +469,6 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                         </h2>
                     </div>
 
-                    {/* Info card */}
                     <div className="card-cartoon bg-gradient-to-b from-[#14233e] to-[#0a1426] p-6 border-[3.5px] border-white/20 shadow-2xl mb-6 rounded-[32px] w-full">
                         <p className="text-white/90 font-bold text-base leading-relaxed">
                             <span className="text-spy-lime font-black">{votedPlayer?.name}</span> a été éliminé·e.
@@ -428,7 +483,6 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                         </div>
                     </div>
 
-                    {/* Action buttons */}
                     <div className="flex flex-col gap-3 w-full">
                         <button
                             onClick={handleMrWhiteSuccess}
@@ -450,7 +504,7 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
     }
 
     // ─────────────────────────────────────────────
-    // PLAYING STATE — Discussion / Speaking Order
+    // PLAYING STATE — Discussion / Speaking Order + 30s Clue Timer
     // ─────────────────────────────────────────────
     if (gameState === 'playing') {
         const currentSpeaker = speakingOrder[currentSpeakerIndex];
@@ -482,7 +536,7 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                                 </div>
                             </motion.div>
                         ) : !allSpoken && currentSpeaker ? (
-                            /* CURRENT SPEAKER CARD */
+                            /* CURRENT SPEAKER CARD WITH 30s TIMER */
                             <motion.div
                                 key={`speaker-${currentSpeakerIndex}`}
                                 initial={{ y: 30, opacity: 0, scale: 0.95 }}
@@ -492,12 +546,26 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                                 className="w-full flex flex-col items-center"
                             >
                                 {/* Speaker highlight card */}
-                                <div className="card-cartoon bg-gradient-to-b from-[#14233e] to-[#0a1426] p-7 border-[3.5px] border-white/20 shadow-2xl mb-5 flex flex-col items-center gap-4 w-full rounded-[36px]">
-                                    <div className="bg-spy-lime/20 border border-spy-lime/40 px-3 py-1 rounded-full flex items-center gap-1.5">
-                                        <Volume2 className="w-3.5 h-3.5 text-spy-lime stroke-[2.5]" />
-                                        <span className="text-spy-lime font-black uppercase tracking-[0.2em] text-[10px]">
-                                            À qui de parler
-                                        </span>
+                                <div className="card-cartoon bg-gradient-to-b from-[#14233e] to-[#0a1426] p-6 border-[3.5px] border-white/20 shadow-2xl mb-4 flex flex-col items-center gap-3 w-full rounded-[36px] relative overflow-hidden">
+                                    
+                                    {/* Top Timer Ribbon */}
+                                    <div className="w-full flex items-center justify-between px-2">
+                                        <div className="bg-spy-lime/20 border border-spy-lime/40 px-3 py-1 rounded-full flex items-center gap-1.5">
+                                            <Volume2 className="w-3.5 h-3.5 text-spy-lime stroke-[2.5]" />
+                                            <span className="text-spy-lime font-black uppercase tracking-[0.2em] text-[10px]">
+                                                À qui de parler
+                                            </span>
+                                        </div>
+
+                                        {/* 30s Countdown Badge */}
+                                        <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full border-2 font-display font-black text-sm tracking-wider shadow-md transition-all ${
+                                            turnTimer <= 5 ? 'bg-red-500/30 border-red-500 text-red-400 animate-ping-once'
+                                            : turnTimer <= 10 ? 'bg-spy-orange/30 border-spy-orange text-spy-orange animate-pulse'
+                                            : 'bg-black/40 border-spy-lime/40 text-spy-lime'
+                                        }`}>
+                                            <Timer className="w-4 h-4 stroke-[2.5]" />
+                                            <span>{turnTimer}s</span>
+                                        </div>
                                     </div>
 
                                     <div className="w-24 h-24 rounded-full bg-black/40 border-4 border-spy-lime flex items-center justify-center shadow-[0_0_30px_rgba(204,255,0,0.3)] overflow-hidden">
@@ -506,13 +574,14 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                                             : <CartoonAvatar id={currentSpeaker.avatar.value} className="w-full h-full border-none shadow-none" />
                                         }
                                     </div>
+
                                     <div>
                                         <h2 className={`text-3xl font-black uppercase tracking-tight text-shadow-md ${currentSpeaker.pseudoColor || 'text-white'}`}>
                                             {currentSpeaker.name}
                                         </h2>
                                         <p className="text-white/70 text-xs font-black mt-2 bg-black/30 px-4 py-2 rounded-xl border border-white/10 flex items-center justify-center gap-1.5">
                                             <Lightbulb className="w-4 h-4 text-spy-lime flex-shrink-0 stroke-[2.5]" />
-                                            <span>Donne un indice sur ton mot sans le révéler</span>
+                                            <span>Donne ton indice avant la fin du décompte !</span>
                                         </p>
                                     </div>
                                 </div>
@@ -532,7 +601,7 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                                     ))}
                                 </div>
 
-                                {/* Who's spoken list - 3D Avatars with Checkmark Badges */}
+                                {/* Who's spoken list */}
                                 {currentSpeakerIndex > 0 && (
                                     <div className="flex flex-wrap items-center justify-center gap-2.5 mb-4">
                                         {speakingOrder.slice(0, currentSpeakerIndex).map(p => (
@@ -570,7 +639,6 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                                 transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                                 className="w-full flex flex-col items-center gap-4"
                             >
-                                {/* 3D Spy Animals Voting Hero Illustration */}
                                 <div className="relative w-full max-w-sm h-48 rounded-3xl overflow-hidden border-[3.5px] border-spy-orange/70 shadow-[0_12px_30px_rgba(255,107,0,0.25)] bg-gradient-to-b from-[#182947] to-[#0a1426] group">
                                     <img 
                                         src="/spy_animals_voting_3d.png" 
@@ -680,13 +748,13 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
     }
 
     // ─────────────────────────────────────────────
-    // REVEAL STATE
+    // REVEAL STATE (Voted player result)
     // ─────────────────────────────────────────────
     if (gameState === 'reveal' && votedPlayer) {
         const isCivilian = votedPlayer.role === 'Civilian';
         const isMrWhite = votedPlayer.role === 'Mr. White';
         const isUndercover = votedPlayer.role === 'Undercover';
-        const isImpostor = isMrWhite || isUndercover;
+        const isBouffon = votedPlayer.role === 'Bouffon';
 
         return (
             <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-transparent text-center relative overflow-hidden">
@@ -700,7 +768,6 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                 >
                     <div className="mb-6 relative h-48 flex flex-col items-center justify-center w-full max-w-xs">
 
-                        {/* Avatar Frame - Squishes and disappears when crushed by tombstone */}
                         <motion.div 
                             animate={showTombstone ? { scaleY: 0, scaleX: 1.4, opacity: 0, y: 40 } : { scaleY: 1, scaleX: 1, opacity: 1, y: 0 }}
                             transition={{ type: 'spring', stiffness: 600, damping: 20 }}
@@ -713,7 +780,6 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                             )}
                         </motion.div>
 
-                        {/* 3D Cutout Cartoon Tombstone with engraved R.I.P - Replaces crushed avatar */}
                         <AnimatePresence>
                             {showTombstone && (
                                 <motion.div
@@ -722,7 +788,6 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                                     transition={{ type: 'spring', stiffness: 550, damping: 18, mass: 1.1 }}
                                     className="absolute inset-0 flex flex-col items-center justify-center z-20 pointer-events-none"
                                 >
-                                    {/* 3D Tombstone Image - 100% Transparent Cutout with engraved R.I.P */}
                                     <div className="relative w-44 h-44 flex items-center justify-center">
                                         <img 
                                             src="/cartoon_tombstone_3d.png" 
@@ -749,6 +814,8 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                                 <span className="text-spy-lime">Innocent (Civil)</span>
                             ) : isUndercover ? (
                                 <span className="text-spy-orange">Espion</span>
+                            ) : isBouffon ? (
+                                <span className="text-purple-400">Le Bouffon (Jester) 🃏</span>
                             ) : (
                                 <span className="text-cyan-400">Mr. Blanc</span>
                             )}
@@ -766,6 +833,12 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                                 <span>Bien joué agents ! L'espion est démasqué.</span>
                             </p>
                         )}
+                        {isBouffon && (
+                            <p className="text-purple-300 font-black text-xs mt-3 uppercase tracking-wider flex items-center justify-center gap-1.5 animate-pulse">
+                                <PartyPopper className="w-4 h-4 text-purple-400 flex-shrink-0 stroke-[2.5]" />
+                                <span>PIÈGE PARFAIT ! Le Bouffon gagne immédiatement la partie !</span>
+                            </p>
+                        )}
                         {isMrWhite && (
                             <p className="text-cyan-400 font-black text-xs mt-3 uppercase tracking-wider flex items-center justify-center gap-1.5">
                                 <Skull className="w-4 h-4 text-cyan-400 flex-shrink-0 stroke-[2.5]" />
@@ -780,6 +853,7 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                     >
                         {isCivilian && 'CONTINUER L\'ENQUÊTE'}
                         {isUndercover && 'VÉRIFIER VICTOIRE'}
+                        {isBouffon && 'VOIR LA VICTOIRE DU BOUFFON 🃏'}
                         {isMrWhite && 'DERNIÈRE CHANCE →'}
                     </button>
                 </motion.div>
@@ -802,7 +876,6 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
 
             <div className="z-10 flex flex-col items-center w-full max-w-sm gap-5">
 
-                {/* Player identity */}
                 <div className="flex flex-col items-center gap-3">
                     <div className="w-24 h-24 rounded-full bg-black/40 flex items-center justify-center border-4 border-spy-lime shadow-[0_0_30px_rgba(204,255,0,0.35)] overflow-hidden">
                         {currentPlayer.avatar.type === 'image' ? (
@@ -821,7 +894,6 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
 
                 <AnimatePresence mode="wait">
                     {!isRevealed ? (
-                        /* TAP TO REVEAL BUTTON */
                         <motion.button
                             key="tap"
                             initial={{ opacity: 0, scale: 0.9 }}
@@ -834,7 +906,6 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                             <Eye className="w-6 h-6 stroke-[3]" /> VOIR MON MOT SECRET
                         </motion.button>
                     ) : (
-                        /* WORD REVEAL CARD */
                         <motion.div
                             key="reveal"
                             initial={{ y: 30, opacity: 0, scale: 0.95 }}
@@ -842,14 +913,18 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                             className="w-full card-cartoon bg-gradient-to-b from-[#14233e] to-[#0a1426] border-[3.5px] border-white/20 rounded-[32px] overflow-hidden shadow-2xl p-6"
                         >
-                            {/* TOP SECRET badge */}
                             <div className="inline-block px-3 py-1 rounded-full bg-red-500/20 border border-red-500/50 mb-4">
                                 <span className="text-[9.5px] font-black uppercase tracking-[0.3em] text-red-400">⬛ Secret Défense ⬛</span>
                             </div>
 
-                            {/* Main content */}
                             <div className="flex flex-col items-center justify-center py-4 px-2 gap-2">
-                                {currentPlayer.role !== 'Mr. White' ? (
+                                {currentPlayer.role === 'Bouffon' ? (
+                                    <>
+                                        <p className="text-purple-400 text-[10px] font-black uppercase tracking-[0.3em]">Ton rôle spécial</p>
+                                        <p className="text-4xl font-black text-purple-400 uppercase tracking-tight text-shadow-md">Le Bouffon 🃏</p>
+                                        <p className="text-white/80 text-xs font-black mt-2">Tu n'as aucun mot secret. Fais-toi passer pour un Espion et fais-toi VOTER DEHORS pour gagner seul !</p>
+                                    </>
+                                ) : currentPlayer.role !== 'Mr. White' ? (
                                     <>
                                         <p className="text-white/50 text-[10px] font-black uppercase tracking-[0.3em]">Ton mot secret</p>
                                         <p className="text-4xl sm:text-5xl font-black text-spy-lime tracking-tight leading-tight break-words text-center text-shadow-md">
@@ -868,7 +943,6 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                                 )}
                             </div>
 
-                            {/* SUITE button */}
                             <div className="pt-4">
                                 <button
                                     onClick={nextPlayer}
