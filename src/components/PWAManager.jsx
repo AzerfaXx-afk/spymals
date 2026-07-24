@@ -104,52 +104,6 @@ const PWAManager = () => {
         };
     }, []);
 
-    // ── Pull-to-Refresh ──
-    useEffect(() => {
-        let startY = 0;
-        let pulling = false;
-
-        const onTouchStart = (e) => {
-            if (window.scrollY === 0 && e.touches.length === 1) {
-                startY = e.touches[0].clientY;
-                pulling = true;
-            }
-        };
-
-        const onTouchMove = (e) => {
-            if (!pulling) return;
-            const diff = e.touches[0].clientY - startY;
-            if (diff > 0 && diff < 150) {
-                setIsPulling(true);
-                setPullProgress(Math.min(diff / 100, 1));
-            }
-        };
-
-        const onTouchEnd = () => {
-            if (pullProgress >= 1) {
-                if ('serviceWorker' in navigator) {
-                    navigator.serviceWorker.getRegistration().then((reg) => {
-                        if (reg) reg.update();
-                    });
-                }
-                setTimeout(() => window.location.reload(), 800);
-            }
-            setIsPulling(false);
-            setPullProgress(0);
-            pulling = false;
-        };
-
-        document.addEventListener('touchstart', onTouchStart, { passive: true });
-        document.addEventListener('touchmove', onTouchMove, { passive: true });
-        document.addEventListener('touchend', onTouchEnd, { passive: true });
-
-        return () => {
-            document.removeEventListener('touchstart', onTouchStart);
-            document.removeEventListener('touchmove', onTouchMove);
-            document.removeEventListener('touchend', onTouchEnd);
-        };
-    }, [pullProgress]);
-
     // ── Handlers ──
     const handleUpdate = () => {
         if ('serviceWorker' in navigator) {
@@ -186,18 +140,6 @@ const PWAManager = () => {
 
     return (
         <>
-            {/* Pull-to-refresh indicator */}
-            {isPulling && (
-                <div
-                    className="fixed top-0 left-0 right-0 z-[300] flex justify-center pt-2 pointer-events-none transition-transform"
-                    style={{ transform: `translateY(${pullProgress * 40}px)`, opacity: pullProgress }}
-                >
-                    <div className="bg-spy-lime text-spy-blue rounded-full p-2 shadow-[2px_2px_0_#000] border-2 border-black">
-                        <RefreshCw className={`w-5 h-5 ${pullProgress >= 1 ? 'animate-spin' : ''}`} />
-                    </div>
-                </div>
-            )}
-
             {/* Offline indicator */}
             {isOffline && (
                 <div className="fixed top-2 left-1/2 -translate-x-1/2 z-[300] bg-rose-600 text-white text-[9px] font-black uppercase tracking-widest px-4 py-2 rounded-full border-2 border-black shadow-lg flex items-center gap-1.5 animate-pop-in">

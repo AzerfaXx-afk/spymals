@@ -1,4 +1,10 @@
-@import "tailwindcss";
+html, body, #root {
+    overscroll-behavior: none !important;
+    overscroll-behavior-y: none !important;
+    overscroll-behavior-x: none !important;
+    -webkit-overscroll-behavior: none !important;
+    touch-action: pan-x pan-y;
+}
 
 @theme {
     --color-spy-blue: #0A1F3D;
