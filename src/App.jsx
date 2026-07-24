@@ -21,7 +21,7 @@ import PullToRefresh from './components/PullToRefresh';
 import { AudioProvider } from './contexts/AudioContext';
 import { supabase } from './utils/supabaseClient';
 import { CartoonAvatar } from './components/CartoonAvatars';
-import { ShoppingCart, Trophy, Gamepad2, BookOpen, Coins } from 'lucide-react';
+import { ShoppingCart, Trophy, Gamepad2, BookOpen, Coins, Lock, LogIn, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const pageSlideVariants = {
@@ -70,6 +70,8 @@ function App() {
   const [authSkipped, setAuthSkipped] = useState(false);
   const [showSetupModal, setShowSetupModal] = useState(false);
   const [levelUpData, setLevelUpData] = useState(null);
+  const [showAuthRequiredModal, setShowAuthRequiredModal] = useState(false);
+  const [authRequiredFeature, setAuthRequiredFeature] = useState('');
 
   // Touch swipe gesture for navbar tabs only (Clash Royale style)
   const [touchStartX, setTouchStartX] = useState(null);
@@ -80,6 +82,13 @@ function App() {
   const NAVBAR_TABS = ['leaderboard', 'home', 'how-to-play'];
 
   const navigateToScreen = (newScreen) => {
+    // Restrict Shop and Leaderboard access for guest users
+    if (!user && (newScreen === 'shop' || newScreen === 'leaderboard')) {
+      setAuthRequiredFeature(newScreen === 'shop' ? 'la Boutique' : 'le Classement');
+      setShowAuthRequiredModal(true);
+      return;
+    }
+
     const prevIdx = NAVBAR_TABS.indexOf(currentScreen);
     const nextIdx = NAVBAR_TABS.indexOf(newScreen);
 
@@ -251,7 +260,7 @@ function App() {
         setProfileData(JSON.parse(stored));
       } else {
         const defaultGuest = {
-          username: "Agent Invité",
+          username: "Invité",
           avatar_emoji: 'fox-detective',
           coins: 100,
           xp: 0,
@@ -911,6 +920,56 @@ function App() {
             </div>
           )}
         </AnimatePresence>
+
+        {/* Guest Account Required Modal Prompt */}
+        {showAuthRequiredModal && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-pop-in">
+            <div className="card-cartoon w-full max-w-sm p-6 relative flex flex-col items-center text-center shadow-[0_25px_60px_rgba(0,0,0,0.95)] bg-gradient-to-b from-[#14233e]/98 via-[#0d182b]/98 to-[#0a1426]/98 border-[3.5px] border-spy-lime rounded-[36px] overflow-hidden space-y-4">
+              <button
+                onClick={() => setShowAuthRequiredModal(false)}
+                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 border-2 border-white/20 flex items-center justify-center text-white hover:bg-white/20 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+
+              <div className="w-16 h-16 rounded-full bg-spy-lime/20 border-2 border-spy-lime flex items-center justify-center text-spy-lime shadow-[0_0_25px_rgba(204,255,0,0.4)] animate-pulse-slow mt-2">
+                <Lock className="w-8 h-8 stroke-[2.5]" />
+              </div>
+
+              <div className="space-y-1">
+                <span className="text-[10px] font-black text-spy-lime uppercase tracking-[0.2em] block">
+                  CONNEXION REQUISE
+                </span>
+                <h2 className="text-xl font-black text-white uppercase tracking-tight text-shadow-md">
+                  DÉBLOQUER {authRequiredFeature.toUpperCase()}
+                </h2>
+              </div>
+
+              <p className="text-xs text-white/80 font-bold leading-relaxed px-2">
+                Créez un compte ou connectez-vous gratuitement pour accéder à {authRequiredFeature}, monter en niveau et sauvegarder vos statistiques !
+              </p>
+
+              <div className="w-full space-y-2 pt-2">
+                <button
+                  onClick={() => {
+                    setShowAuthRequiredModal(false);
+                    setAuthSkipped(false);
+                  }}
+                  className="btn-cartoon-primary w-full py-3.5 text-xs font-black uppercase tracking-wider shadow-[0_4px_0_#000] cursor-pointer flex items-center justify-center gap-2 active:scale-95 transition-all"
+                >
+                  <LogIn className="w-4 h-4 stroke-[3]" /> SE CONNECTER / S'INSCRIRE
+                </button>
+
+                <button
+                  onClick={() => setShowAuthRequiredModal(false)}
+                  className="w-full py-2 text-[11px] font-black text-white/50 hover:text-white uppercase tracking-wider cursor-pointer"
+                >
+                  Plus tard (Continuer en Invité)
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         </div>
       </PullToRefresh>
     </AudioProvider>
