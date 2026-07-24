@@ -1,8 +1,9 @@
 import React, { useState, useCallback, useRef } from 'react';
 import confetti from 'canvas-confetti';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
     Rocket, ShieldAlert, FolderKanban, Check, ChevronDown, 
-    Folder, Film, Brain, Dog, Gamepad2, Plane, Utensils, Smile, Dices, Edit3, Flame, FlameKindling
+    Folder, Film, Brain, Dog, Gamepad2, Plane, Utensils, Smile, Dices, Edit3, Flame, Info, X, Sliders, Sparkles
 } from 'lucide-react';
 import RoleStepper from './RoleStepper';
 import BackArrow from './BackArrow';
@@ -14,16 +15,21 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
     const [undercoverCount, setUndercoverCount] = useState(1);
     const [whiteCount, setWhiteCount] = useState(0);
     const [bouffonCount, setBouffonCount] = useState(0);
+    const [cameleonCount, setCameleonCount] = useState(0);
     const [wordPack, setWordPack] = useState('standard');
     const [isPackDropdownOpen, setIsPackDropdownOpen] = useState(false);
+    const [isSpecialRolesModalOpen, setIsSpecialRolesModalOpen] = useState(false);
+    const [activeRoleInfo, setActiveRoleInfo] = useState(null); // 'white' | 'bouffon' | 'cameleon' | null
     const [customWords, setCustomWords] = useState({ innocent: '', spy: '' });
 
+    // Pack options order requested:
+    // 1. Standard, 2. Culture Pop, 3. Concepts Abstraits, 4. Animaux, 5. Pack Soirée (+18), 6. Geek, 7. Voyage, 8. Nourriture, 9. Fun, 10. Random, 11. Custom
     const packOptions = [
         { id: 'standard', label: 'Pack Standard', icon: <Folder className="w-5 h-5 text-spy-lime" /> },
-        { id: 'spicy', label: 'Pack Soirée (+18)', icon: <Flame className="w-5 h-5 text-red-500 animate-pulse" />, special: true },
         { id: 'pop-culture', label: 'Culture Pop', icon: <Film className="w-5 h-5 text-pink-400" /> },
         { id: 'abstract', label: 'Concepts Abstraits', icon: <Brain className="w-5 h-5 text-purple-400" /> },
         { id: 'animals', label: 'Animaux', icon: <Dog className="w-5 h-5 text-amber-400" /> },
+        { id: 'spicy', label: 'Pack Soirée (+18)', icon: <Flame className="w-5 h-5 text-red-500" />, special: true },
         { id: 'geek', label: 'Jeux Vidéo & Geek', icon: <Gamepad2 className="w-5 h-5 text-cyan-400" /> },
         { id: 'travel', label: 'Voyage & Pays', icon: <Plane className="w-5 h-5 text-emerald-400" /> },
         { id: 'food', label: 'Gourmand / Nourriture', icon: <Utensils className="w-5 h-5 text-orange-400" /> },
@@ -31,6 +37,31 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
         { id: 'random', label: 'Aléatoire', icon: <Dices className="w-5 h-5 text-spy-lime" /> },
         { id: 'custom', label: 'Mots Personnalisés', icon: <Edit3 className="w-5 h-5 text-spy-orange" />, special: true },
     ];
+
+    // Role definitions for the info modals
+    const ROLE_INFOS = {
+        white: {
+            title: 'Mr. Blanc',
+            color: 'text-cyan-400',
+            bg: 'bg-cyan-500/20 border-cyan-400/50',
+            description: "Mr. Blanc n'a AUCUN mot secret. Son but est d'écouter les indices des autres pour bluffer et deviner le mot des Innocents.",
+            perk: "S'il est éliminé au vote, il a 1 DERNIÈRE CHANCE : s'il devine le mot exact des Civils, il fait gagner les Imposteurs !"
+        },
+        bouffon: {
+            title: 'Le Bouffon (Jester)',
+            color: 'text-purple-400',
+            bg: 'bg-purple-500/20 border-purple-400/50',
+            description: "Le Bouffon n'a aucun mot secret. Son rôle est d'agir de façon suspecte pour pousser le groupe à le voter dehors !",
+            perk: "S'il est éliminé au vote par les joueurs, la partie s'arrête net et LE BOUFFON GAGNE SEUL LA PARTIE !"
+        },
+        cameleon: {
+            title: 'Le Caméléon',
+            color: 'text-emerald-400',
+            bg: 'bg-emerald-500/20 border-emerald-400/50',
+            description: "Le Caméléon connaît le rôle des autres joueurs mais n'a pas le mot. Il doit s'adapter et s'infiltrer sans se faire repérer.",
+            perk: "S'il survit jusqu'à la fin de la mission avec les Civils sans se faire démasquer, il gagne avec l'équipe !"
+        }
+    };
 
     // Easter egg: screw animation
     const [unscrewedScrews, setUnscrewedScrews] = useState({});
@@ -64,7 +95,7 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
         }, 2000);
     }, [unscrewedScrews, playSfx]);
 
-    const civilianCount = totalPlayers - undercoverCount - whiteCount - bouffonCount;
+    const civilianCount = totalPlayers - undercoverCount - whiteCount - bouffonCount - cameleonCount;
 
     // Validation Logic
     const isRoleCountValid = civilianCount >= 2;
@@ -77,16 +108,20 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
 
     const handleIncrement = (type) => {
         if (type === 'undercover') {
-            if (totalPlayers - (undercoverCount + 1) - whiteCount - bouffonCount >= 2) {
+            if (totalPlayers - (undercoverCount + 1) - whiteCount - bouffonCount - cameleonCount >= 2) {
                 setUndercoverCount(undercoverCount + 1);
             }
         } else if (type === 'white') {
-            if (totalPlayers - undercoverCount - (whiteCount + 1) - bouffonCount >= 2) {
+            if (totalPlayers - undercoverCount - (whiteCount + 1) - bouffonCount - cameleonCount >= 2) {
                 setWhiteCount(whiteCount + 1);
             }
         } else if (type === 'bouffon') {
-            if (totalPlayers - undercoverCount - whiteCount - (bouffonCount + 1) >= 2) {
+            if (totalPlayers - undercoverCount - whiteCount - (bouffonCount + 1) - cameleonCount >= 2) {
                 setBouffonCount(bouffonCount + 1);
+            }
+        } else if (type === 'cameleon') {
+            if (totalPlayers - undercoverCount - whiteCount - bouffonCount - (cameleonCount + 1) >= 2) {
+                setCameleonCount(cameleonCount + 1);
             }
         }
     };
@@ -98,8 +133,12 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
             if (whiteCount > 0) setWhiteCount(whiteCount - 1);
         } else if (type === 'bouffon') {
             if (bouffonCount > 0) setBouffonCount(bouffonCount - 1);
+        } else if (type === 'cameleon') {
+            if (cameleonCount > 0) setCameleonCount(cameleonCount - 1);
         }
     };
+
+    const specialRolesActiveCount = whiteCount + bouffonCount + cameleonCount;
 
     return (
         <div className="min-h-screen h-[100dvh] flex flex-col items-center p-4 pt-16 relative overflow-hidden bg-transparent">
@@ -124,8 +163,9 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
 
             <div className="w-full max-w-md flex-1 overflow-y-auto custom-scrollbar z-10 animate-slide-up space-y-4 px-2 pb-6" style={{ animationDelay: '0.1s' }}>
 
+                {/* MAIN ROLES CARD */}
                 <div className="card-cartoon bg-gradient-to-b from-[#14233e] to-[#0a1426] p-5 border-[3.5px] border-white/20 shadow-2xl flex-none relative w-full rounded-[32px]">
-                    {/* Decorative Screws — Easter Egg! */}
+                    {/* Decorative Screws */}
                     {['tl', 'tr', 'bl', 'br'].map((pos) => {
                         const posClass = pos === 'tl' ? 'top-4 left-4'
                             : pos === 'tr' ? 'top-4 right-4'
@@ -171,40 +211,52 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-1.5 md:gap-2 items-stretch w-full overflow-hidden">
+                    {/* Espions Stepper - Spacious full-width block */}
+                    <div className="mb-4">
                         <RoleStepper
-                            label="Espions"
+                            label="Espions (Undercover)"
                             count={undercoverCount}
                             onIncrement={() => handleIncrement('undercover')}
                             onDecrement={() => handleDecrement('undercover')}
                             color="text-spy-orange"
-                            subLabel="Mot proche"
+                            subLabel="Ont un mot proche des innocents"
                             soundOptions={{ pitch: Math.min(2.0, 0.8 + ((undercoverCount) * 0.1)) }}
                         />
-
-                        <RoleStepper
-                            label="Mr. Blanc"
-                            count={whiteCount}
-                            onIncrement={() => handleIncrement('white')}
-                            onDecrement={() => handleDecrement('white')}
-                            color="text-cyan-400"
-                            subLabel="Aucun mot"
-                            soundOptions={{ pitch: Math.min(2.0, 0.8 + ((whiteCount) * 0.1)) }}
-                        />
-
-                        <RoleStepper
-                            label="Le Bouffon"
-                            count={bouffonCount}
-                            onIncrement={() => handleIncrement('bouffon')}
-                            onDecrement={() => handleDecrement('bouffon')}
-                            color="text-purple-400"
-                            subLabel="Veut être voté"
-                            soundOptions={{ pitch: Math.min(2.0, 0.8 + ((bouffonCount) * 0.1)) }}
-                        />
                     </div>
+
+                    {/* Long Sleek Button: OTHER ROLES */}
+                    <button
+                        type="button"
+                        onClick={() => setIsSpecialRolesModalOpen(true)}
+                        className="w-full bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border-2 border-white/20 rounded-2xl p-3.5 flex items-center justify-between text-white font-black hover:border-purple-400/60 transition-all shadow-lg cursor-pointer group active:scale-[0.99]"
+                    >
+                        <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-xl bg-purple-500/20 border border-purple-400/40 flex items-center justify-center text-purple-400 group-hover:scale-110 transition-transform">
+                                <Sliders className="w-4 h-4 stroke-[2.5]" />
+                            </div>
+                            <div className="flex flex-col text-left">
+                                <span className="text-xs uppercase font-black tracking-wider text-white">
+                                    Autres Rôles Spéciaux...
+                                </span>
+                                <span className="text-[9px] font-black text-white/50 tracking-widest uppercase">
+                                    Mr. Blanc, Le Bouffon, Le Caméléon
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            {specialRolesActiveCount > 0 && (
+                                <span className="bg-purple-500 text-black px-2.5 py-0.5 rounded-full font-black text-[10px] uppercase shadow">
+                                    {specialRolesActiveCount} Actif{specialRolesActiveCount > 1 ? 's' : ''}
+                                </span>
+                            )}
+                            <ChevronDown className="w-5 h-5 text-white/40 group-hover:text-purple-400 transition-colors -rotate-90" />
+                        </div>
+                    </button>
+
                 </div>
 
-                {/* Word Pack Selection */}
+                {/* WORD PACK SELECTION */}
                 <div className="card-cartoon bg-gradient-to-b from-[#14233e] to-[#0a1426] p-5 border-[3.5px] border-white/20 shadow-2xl flex-none relative w-full rounded-[32px]">
                     <div className="absolute -top-3.5 left-1/2 transform -translate-x-1/2 bg-[#0a1628] px-4 py-1 rounded-full text-[10px] uppercase font-black text-spy-lime border-2 border-spy-lime/40 tracking-widest shadow-md">
                         Pack de Mots
@@ -302,10 +354,196 @@ const MissionBriefing = ({ totalPlayers, onStartGame, onBack, onOpenSettings }) 
 
             </div>
 
+            {/* SPECIAL ROLES MODAL / DRAWER */}
+            <AnimatePresence>
+                {isSpecialRolesModalOpen && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                        <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setIsSpecialRolesModalOpen(false)}
+                            className="absolute inset-0 bg-black/80 backdrop-blur-md"
+                        />
+
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0, y: 30 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.9, opacity: 0, y: 30 }}
+                            className="z-10 w-full max-w-md card-cartoon bg-gradient-to-b from-[#14233e] via-[#0d182b] to-[#0a1426] border-[3.5px] border-white/20 p-6 rounded-[32px] shadow-[0_20px_50px_rgba(0,0,0,0.9)] flex flex-col gap-4 relative overflow-hidden"
+                        >
+                            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                                <div className="flex items-center gap-2">
+                                    <Sliders className="w-5 h-5 text-purple-400" />
+                                    <h3 className="text-lg font-black uppercase text-white tracking-wider">
+                                        Rôles Spéciaux
+                                    </h3>
+                                </div>
+                                <button
+                                    onClick={() => setIsSpecialRolesModalOpen(false)}
+                                    className="p-1 rounded-full bg-white/10 text-white/70 hover:text-white cursor-pointer"
+                                >
+                                    <X className="w-5 h-5" />
+                                </button>
+                            </div>
+
+                            <p className="text-white/60 text-xs font-black uppercase tracking-wider">
+                                Ajoutez des rôles uniques pour pimenter vos parties !
+                            </p>
+
+                            {/* Steppers for Special Roles with Info (i) button */}
+                            <div className="space-y-3 max-h-[60vh] overflow-y-auto custom-scrollbar pr-1">
+
+                                {/* Mr. Blanc */}
+                                <div className="bg-black/30 border border-white/10 rounded-2xl p-3 flex flex-col gap-2">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-black text-sm uppercase text-cyan-400">Mr. Blanc</span>
+                                            <button
+                                                type="button"
+                                                onClick={() => setActiveRoleInfo('white')}
+                                                className="w-5 h-5 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-400 flex items-center justify-center cursor-pointer hover:bg-cyan-400 hover:text-black transition-colors"
+                                                title="Information sur le rôle"
+                                            >
+                                                <Info className="w-3 h-3 stroke-[3]" />
+                                            </button>
+                                        </div>
+                                        <span className="text-[10px] font-black text-white/50 uppercase">Aucun mot · Devine</span>
+                                    </div>
+                                    <RoleStepper
+                                        label="Effectif Mr. Blanc"
+                                        count={whiteCount}
+                                        onIncrement={() => handleIncrement('white')}
+                                        onDecrement={() => handleDecrement('white')}
+                                        color="text-cyan-400"
+                                    />
+                                </div>
+
+                                {/* Le Bouffon */}
+                                <div className="bg-black/30 border border-white/10 rounded-2xl p-3 flex flex-col gap-2">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-black text-sm uppercase text-purple-400">Le Bouffon 🃏</span>
+                                            <button
+                                                type="button"
+                                                onClick={() => setActiveRoleInfo('bouffon')}
+                                                className="w-5 h-5 rounded-full bg-purple-500/20 border border-purple-400/40 text-purple-400 flex items-center justify-center cursor-pointer hover:bg-purple-400 hover:text-black transition-colors"
+                                                title="Information sur le rôle"
+                                            >
+                                                <Info className="w-3 h-3 stroke-[3]" />
+                                            </button>
+                                        </div>
+                                        <span className="text-[10px] font-black text-white/50 uppercase">Veut être voté</span>
+                                    </div>
+                                    <RoleStepper
+                                        label="Effectif Bouffon"
+                                        count={bouffonCount}
+                                        onIncrement={() => handleIncrement('bouffon')}
+                                        onDecrement={() => handleDecrement('bouffon')}
+                                        color="text-purple-400"
+                                    />
+                                </div>
+
+                                {/* Le Caméléon */}
+                                <div className="bg-black/30 border border-white/10 rounded-2xl p-3 flex flex-col gap-2">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-black text-sm uppercase text-emerald-400">Le Caméléon 🦎</span>
+                                            <button
+                                                type="button"
+                                                onClick={() => setActiveRoleInfo('cameleon')}
+                                                className="w-5 h-5 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-400 flex items-center justify-center cursor-pointer hover:bg-emerald-400 hover:text-black transition-colors"
+                                                title="Information sur le rôle"
+                                            >
+                                                <Info className="w-3 h-3 stroke-[3]" />
+                                            </button>
+                                        </div>
+                                        <span className="text-[10px] font-black text-white/50 uppercase">Adaptation · Infiltration</span>
+                                    </div>
+                                    <RoleStepper
+                                        label="Effectif Caméléon"
+                                        count={cameleonCount}
+                                        onIncrement={() => handleIncrement('cameleon')}
+                                        onDecrement={() => handleDecrement('cameleon')}
+                                        color="text-emerald-400"
+                                    />
+                                </div>
+
+                            </div>
+
+                            <button
+                                type="button"
+                                onClick={() => setIsSpecialRolesModalOpen(false)}
+                                className="btn-cartoon-primary w-full py-3.5 text-sm font-black uppercase tracking-wider cursor-pointer shadow-[0_4px_0_#000] active:translate-y-1 transition-all mt-2"
+                            >
+                                CONFIRMER LES RÔLES
+                            </button>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+
+            {/* ROLE EXPLANATION POPUP (i) */}
+            <AnimatePresence>
+                {activeRoleInfo && ROLE_INFOS[activeRoleInfo] && (
+                    <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
+                        <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setActiveRoleInfo(null)}
+                            className="absolute inset-0 bg-black/85 backdrop-blur-md"
+                        />
+
+                        <motion.div
+                            initial={{ scale: 0.85, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.85, opacity: 0 }}
+                            className="z-10 w-full max-w-sm card-cartoon bg-[#0d182b] border-[3.5px] border-white/20 p-6 rounded-[32px] shadow-2xl flex flex-col items-center text-center relative"
+                        >
+                            <button
+                                onClick={() => setActiveRoleInfo(null)}
+                                className="absolute top-4 right-4 p-1 rounded-full bg-white/10 text-white/70 hover:text-white cursor-pointer"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+
+                            <div className={`p-3 rounded-full border-2 mb-3 ${ROLE_INFOS[activeRoleInfo].bg}`}>
+                                <Info className={`w-8 h-8 ${ROLE_INFOS[activeRoleInfo].color}`} />
+                            </div>
+
+                            <h3 className={`text-xl font-black uppercase tracking-wide mb-2 ${ROLE_INFOS[activeRoleInfo].color}`}>
+                                {ROLE_INFOS[activeRoleInfo].title}
+                            </h3>
+
+                            <p className="text-white/80 font-bold text-xs leading-relaxed mb-4">
+                                {ROLE_INFOS[activeRoleInfo].description}
+                            </p>
+
+                            <div className="bg-black/40 border border-white/10 rounded-2xl p-3.5 text-left w-full shadow-inner">
+                                <span className="text-[10px] font-black uppercase tracking-widest text-spy-lime block mb-1">
+                                    ★ Pouvoir Spécial :
+                                </span>
+                                <p className="text-white/90 font-black text-xs leading-tight">
+                                    {ROLE_INFOS[activeRoleInfo].perk}
+                                </p>
+                            </div>
+
+                            <button
+                                onClick={() => setActiveRoleInfo(null)}
+                                className="btn-cartoon-primary w-full py-3 text-xs font-black uppercase tracking-wider cursor-pointer shadow-[0_4px_0_#000] active:translate-y-1 transition-all mt-4"
+                            >
+                                COMPRIS !
+                            </button>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+
             {/* Launch Button Area */}
             <div className="w-full max-w-md mt-auto z-20 pt-2 pb-6 px-4 flex justify-center" style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}>
                 <button
-                    onClick={() => onStartGame({ undercoverCount, whiteCount, bouffonCount, wordPack, customWords })}
+                    onClick={() => onStartGame({ undercoverCount, whiteCount, bouffonCount, cameleonCount, wordPack, customWords })}
                     disabled={!isValid}
                     className={`btn-cartoon-primary w-full py-4 text-xl font-black uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-[0_6px_0_#000] active:translate-y-1.5 active:shadow-[0_0_0_#000] transition-all ${
                         !isValid ? 'opacity-50 cursor-not-allowed filter grayscale' : 'hover:scale-[1.01]'

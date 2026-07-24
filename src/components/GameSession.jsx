@@ -144,7 +144,7 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
     };
 
     const assignRoles = async () => {
-        const { undercoverCount, whiteCount, bouffonCount = 0, wordPack, customWords } = config;
+        const { undercoverCount, whiteCount, bouffonCount = 0, cameleonCount = 0, wordPack, customWords } = config;
 
         let wordPair;
         if (wordPack === 'custom' && customWords) {
@@ -180,8 +180,9 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
         for (let i = 0; i < undercoverCount; i++) roles.push({ role: 'Undercover', word: wordPair.undercover });
         for (let i = 0; i < whiteCount; i++) roles.push({ role: 'Mr. White', word: null });
         for (let i = 0; i < bouffonCount; i++) roles.push({ role: 'Bouffon', word: 'Le Bouffon (Aucun mot secret - Fais-toi voter !)' });
+        for (let i = 0; i < cameleonCount; i++) roles.push({ role: 'Cameleon', word: 'Le Caméléon (Infiltre-toi sans mot secret !)' });
 
-        const civilianCount = players.length - undercoverCount - whiteCount - bouffonCount;
+        const civilianCount = players.length - undercoverCount - whiteCount - bouffonCount - cameleonCount;
         for (let i = 0; i < civilianCount; i++) roles.push({ role: 'Civilian', word: wordPair.civilian });
 
         // Shuffle roles
@@ -923,6 +924,12 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                                         <p className="text-purple-400 text-[10px] font-black uppercase tracking-[0.3em]">Ton rôle spécial</p>
                                         <p className="text-4xl font-black text-purple-400 uppercase tracking-tight text-shadow-md">Le Bouffon 🃏</p>
                                         <p className="text-white/80 text-xs font-black mt-2">Tu n'as aucun mot secret. Fais-toi passer pour un Espion et fais-toi VOTER DEHORS pour gagner seul !</p>
+                                    </>
+                                ) : currentPlayer.role === 'Cameleon' ? (
+                                    <>
+                                        <p className="text-emerald-400 text-[10px] font-black uppercase tracking-[0.3em]">Ton rôle spécial</p>
+                                        <p className="text-4xl font-black text-emerald-400 uppercase tracking-tight text-shadow-md">Le Caméléon 🦎</p>
+                                        <p className="text-white/80 text-xs font-black mt-2">Tu n'as pas de mot au départ. Écoute l'ambiance des Innocents et infiltre-toi !</p>
                                     </>
                                 ) : currentPlayer.role !== 'Mr. White' ? (
                                     <>
