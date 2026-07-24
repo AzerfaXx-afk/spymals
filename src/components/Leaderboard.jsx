@@ -264,6 +264,18 @@ const Leaderboard = () => {
               <div className="w-5 h-5 border-2 border-spy-lime border-t-transparent rounded-full animate-spin"></div>
               <span className="text-[8.5px] font-black uppercase tracking-wider">Chargement des agents...</span>
             </div>
+          ) : leaderboardData.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-8 text-center space-y-2 flex-1">
+              <div className="w-12 h-12 rounded-full bg-slate-900 border border-spy-lime/30 flex items-center justify-center text-xl">
+                🕵️‍♂️
+              </div>
+              <span className="text-xs font-black text-white uppercase tracking-wider">
+                Aucun agent au classement !
+              </span>
+              <p className="text-[9.5px] text-spy-lime font-bold uppercase tracking-widest px-4">
+                Sois le tout premier agent secret à jouer une partie pour décrocher le rang #1 !
+              </p>
+            </div>
           ) : (
             <div className="flex flex-col overflow-hidden flex-1 min-h-0">
               
