@@ -753,8 +753,29 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
             {view === 'lobby' && room && (
                 <div className="z-10 w-full animate-slide-up flex flex-col items-center">
                     
-                    {/* Top Room Banner: Code + Privacy Toggle */}
+                    {/* Top Room Banner: Host Avatar + Custom Room Name + Code + Privacy Toggle */}
                     <div className="card-cartoon bg-gradient-to-b from-[#14233e]/95 via-[#0d182b]/95 to-[#0a1426]/95 border-[3.5px] border-white/20 shadow-2xl rounded-[32px] p-4 w-full mb-3">
+                        
+                        {/* Host Profile Header */}
+                        {(() => {
+                            const hostPlayer = players.find(p => p.is_host) || players[0];
+                            return (
+                                <div className="flex items-center gap-3 bg-black/40 border-2 border-white/10 rounded-2xl p-3 mb-3">
+                                    <div className="w-12 h-12 rounded-full bg-slate-900 border-2 border-spy-lime/60 shadow-[0_0_12px_rgba(204,255,0,0.3)] flex-shrink-0">
+                                        <CartoonAvatar id={hostPlayer?.avatar_emoji || 'fox-detective'} className="w-full h-full" />
+                                    </div>
+                                    <div className="flex flex-col text-left min-w-0 flex-1">
+                                        <span className="text-[9.5px] font-black text-spy-lime uppercase tracking-[0.2em] flex items-center gap-1">
+                                            <Crown className="w-3 h-3 fill-spy-lime" /> Salon d'Agent • Hôte : {hostPlayer?.username}
+                                        </span>
+                                        <h2 className="text-base font-black text-white uppercase tracking-wide truncate">
+                                            {room.name || `Salon de ${hostPlayer?.username}`}
+                                        </h2>
+                                    </div>
+                                </div>
+                            );
+                        })()}
+
                         <div className="flex items-center justify-between mb-3">
                             <button
                                 onClick={handleTogglePublic}
@@ -771,7 +792,7 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
 
                             <button
                                 onClick={() => handleLeaveRoom(true)}
-                                className="text-white/40 hover:text-rose-400 px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider flex items-center gap-1 transition-colors"
+                                className="text-white/40 hover:text-rose-400 px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider flex items-center gap-1 transition-colors cursor-pointer"
                             >
                                 <X className="w-4 h-4" /> Quitter
                             </button>
