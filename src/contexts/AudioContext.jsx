@@ -86,10 +86,48 @@ export const AudioProvider = ({ children }) => {
         localStorage.setItem('sfxVolume', sfxVolume);
     }, [sfxVolume]);
 
+    // Auto-pause music when tab switches, app minimizes or user leaves to mobile home screen
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            if (!musicRef.current) return;
+            if (document.hidden || document.visibilityState === 'hidden') {
+                musicRef.current.pause();
+            } else {
+                if (musicVolume > 0) {
+                    musicRef.current.play().catch(e => console.log("Audio resume blocked until interaction", e));
+                }
+            }
+        };
+
+        const handleBlur = () => {
+            if (musicRef.current) {
+                musicRef.current.pause();
+            }
+        };
+
+        const handleFocus = () => {
+            if (musicRef.current && !document.hidden && musicVolume > 0) {
+                musicRef.current.play().catch(e => console.log("Audio resume blocked", e));
+            }
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        window.addEventListener('pagehide', handleBlur);
+        window.addEventListener('blur', handleBlur);
+        window.addEventListener('focus', handleFocus);
+
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            window.removeEventListener('pagehide', handleBlur);
+            window.removeEventListener('blur', handleBlur);
+            window.removeEventListener('focus', handleFocus);
+        };
+    }, [musicVolume]);
+
     // Global click listener to unlock audio
     useEffect(() => {
         const unlockAudio = () => {
-            if (musicRef.current && musicRef.current.paused) {
+            if (musicRef.current && musicRef.current.paused && !document.hidden) {
                 musicRef.current.play().catch(e => console.log("Still blocked", e));
             }
         };

@@ -10,10 +10,11 @@ const PullToRefresh = ({ children }) => {
     const isPullingRef = useRef(false);
 
     const handleTouchStart = (e) => {
-        // Only trigger pull to refresh if scrolled to the top of the container
+        // Only trigger pull to refresh if scrolled to the absolute top of the container and touching near top edge
         const scrollTop = window.scrollY || document.documentElement.scrollTop || 0;
-        if (scrollTop <= 5) {
-            startYRef.current = e.touches[0].clientY;
+        const touchY = e.touches[0].clientY;
+        if (scrollTop <= 2 && touchY < 100) {
+            startYRef.current = touchY;
             isPullingRef.current = true;
         }
     };

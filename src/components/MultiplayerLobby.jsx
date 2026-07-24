@@ -88,6 +88,15 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
     // Chat states
     const [chatText, setChatText] = useState('');
     const chatEndRef = useRef(null);
+    const containerRef = useRef(null);
+
+    // Scroll to top whenever view changes (when hosting or joining a room)
+    useEffect(() => {
+        window.scrollTo(0, 0);
+        if (containerRef.current) {
+            containerRef.current.scrollTop = 0;
+        }
+    }, [view]);
 
     // Game Settings state (for host)
     const [settings, setSettings] = useState({
@@ -601,7 +610,7 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
     const specialRolesActiveCount = whiteCount + bouffonCount + cameleonCount;
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-start p-4 pt-16 bg-gradient-to-b from-[#091325] via-[#0d1b36] to-[#070e1c] relative overflow-y-auto no-scrollbar pb-10 max-w-md mx-auto w-full">
+        <div ref={containerRef} className="min-h-screen flex flex-col items-center justify-start p-4 pt-16 bg-gradient-to-b from-[#091325] via-[#0d1b36] to-[#070e1c] relative overflow-y-auto no-scrollbar pb-10 max-w-md mx-auto w-full">
             {/* Always Render Back Button */}
             <BackArrow onClick={view === 'lobby' ? () => handleLeaveRoom(true) : view === 'browser' ? () => setView('select') : onBack} />
             <SettingsGear onClick={() => {}} />
