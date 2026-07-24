@@ -630,7 +630,7 @@ function App() {
               initial="initial"
               animate="animate"
               exit="exit"
-              className="w-full min-h-screen min-h-[100dvh] flex flex-col flex-1 transform-gpu will-change-transform"
+              className={`w-full min-h-screen min-h-[100dvh] flex flex-col flex-1 transform-gpu will-change-transform ${currentScreen === 'home' ? 'overflow-hidden touch-none select-none fixed inset-0' : ''}`}
             >
               {currentScreen === 'home' && (
                 <Home

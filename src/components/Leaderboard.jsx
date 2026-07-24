@@ -11,7 +11,11 @@ const Leaderboard = () => {
   const scrollRef = useRef(null);
 
   useEffect(() => {
-    fetchLeaderboard();
+    fetchLeaderboard(true);
+    const interval = setInterval(() => {
+      fetchLeaderboard(false);
+    }, 10000);
+    return () => clearInterval(interval);
   }, []);
 
   const calculateStats = (item) => {
@@ -37,8 +41,8 @@ const Leaderboard = () => {
     };
   };
 
-  const fetchLeaderboard = async () => {
-    setLoading(true);
+  const fetchLeaderboard = async (isInitial = true) => {
+    if (isInitial) setLoading(true);
     let rawList = [];
 
     // Purge old local testing cache to prevent fake guest names
