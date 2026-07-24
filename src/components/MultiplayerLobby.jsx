@@ -613,7 +613,7 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
         <div ref={containerRef} className="min-h-[100dvh] flex flex-col items-center justify-start p-4 pt-16 bg-gradient-to-b from-[#091325] via-[#0d1b36] to-[#070e1c] relative overflow-y-auto no-scrollbar pb-10 max-w-md mx-auto w-full">
             {/* Always Render Back Button */}
             <BackArrow onClick={view === 'lobby' ? () => handleLeaveRoom(true) : view === 'browser' ? () => setView('select') : onBack} />
-            <SettingsGear onClick={() => {}} />
+            <SettingsGear onClick={onOpenSettings} />
 
             {/* Background Ambient Glowing Orbs */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
