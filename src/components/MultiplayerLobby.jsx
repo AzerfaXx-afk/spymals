@@ -870,19 +870,49 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
                             );
                         })()}
 
-                        <div className="flex items-center justify-between mb-3">
-                            <button
-                                onClick={handleTogglePublic}
-                                disabled={!isHost}
-                                className={`px-3.5 py-1 rounded-full border text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 transition-all ${
-                                    room.is_public 
-                                        ? 'bg-spy-lime/20 border-spy-lime/50 text-spy-lime' 
-                                        : 'bg-spy-orange/20 border-spy-orange/50 text-spy-orange'
-                                }`}
-                            >
-                                {room.is_public ? <Globe className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
-                                <span>{room.is_public ? 'Salon Public 🌐' : 'Salon Privé 🔒'}</span>
-                            </button>
+                        {/* Interactive Public / Private Access Control Card */}
+                        <div className="bg-black/50 border-2 border-white/10 rounded-2xl p-2.5 mb-3 flex items-center justify-between gap-2">
+                            <div className="flex flex-col text-left pl-1">
+                                <span className="text-[9px] font-black text-white/50 uppercase tracking-[0.18em]">
+                                    ACCÈS AU SALON
+                                </span>
+                                <span className="text-xs font-black uppercase flex items-center gap-1.5 mt-0.5">
+                                    {room.is_public ? (
+                                        <span className="text-spy-lime flex items-center gap-1"><Globe className="w-3.5 h-3.5" /> Ouvert à tous</span>
+                                    ) : (
+                                        <span className="text-spy-orange flex items-center gap-1"><Lock className="w-3.5 h-3.5" /> Sur Code Uniquement</span>
+                                    )}
+                                </span>
+                            </div>
+
+                            {isHost ? (
+                                <button
+                                    onClick={handleTogglePublic}
+                                    className={`px-3.5 py-2 rounded-xl border-2 text-[10.5px] font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer active:scale-95 transition-all shadow-[0_3px_0_#000] ${
+                                        room.is_public
+                                            ? 'bg-spy-lime text-black border-spy-lime hover:bg-spy-lime/90'
+                                            : 'bg-spy-orange text-black border-spy-orange hover:bg-spy-orange/90'
+                                    }`}
+                                    title="Changer l'accès du salon"
+                                >
+                                    {room.is_public ? (
+                                        <>
+                                            <Globe className="w-4 h-4 stroke-[2.5]" />
+                                            <span>Public</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Lock className="w-4 h-4 stroke-[2.5]" />
+                                            <span>Privé</span>
+                                        </>
+                                    )}
+                                </button>
+                            ) : (
+                                <div className="px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-white/60 text-[10px] font-black uppercase flex items-center gap-1">
+                                    {room.is_public ? <Globe className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
+                                    <span>{room.is_public ? 'Public' : 'Privé'}</span>
+                                </div>
+                            )}
                         </div>
 
                         {/* Room Code Card */}
