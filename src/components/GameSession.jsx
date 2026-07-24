@@ -18,15 +18,21 @@ const playTickSound = (secondsRemaining) => {
         const ctx = new AudioCtx();
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
-        osc.type = 'sine';
-        const freq = secondsRemaining <= 5 ? 900 : 650;
+        osc.type = 'triangle';
+        
+        // Accentuated tick frequency & volume in the last 5 seconds!
+        const isPanic = secondsRemaining <= 5;
+        const freq = isPanic ? 1200 : 700;
+        const volume = isPanic ? 0.45 : 0.25;
+        const duration = isPanic ? 0.05 : 0.08;
+
         osc.frequency.setValueAtTime(freq, ctx.currentTime);
-        gain.gain.setValueAtTime(0.25, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+        gain.gain.setValueAtTime(volume, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
         osc.connect(gain);
         gain.connect(ctx.destination);
         osc.start();
-        osc.stop(ctx.currentTime + 0.08);
+        osc.stop(ctx.currentTime + duration);
     } catch (e) {
         // Fallback silently if audio context unavailable
     }
@@ -121,11 +127,11 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
             setTurnTimer(prev => {
                 if (prev <= 1) {
                     playBuzzerSound();
-                    return 0;
+                    // Auto advance to next speaker on 0s timeout!
+                    setCurrentSpeakerIndex(idx => idx + 1);
+                    return 30;
                 }
-                if (prev <= 11) {
-                    playTickSound(prev - 1);
-                }
+                playTickSound(prev - 1);
                 return prev - 1;
             });
         }, 1000);
