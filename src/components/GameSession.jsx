@@ -372,7 +372,7 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                         </div>
 
                         <img 
-                            src={isBouffonWin ? '/victory_impostors_cutout_3d.png' : isCivilianWin ? '/victory_civilians_cutout_3d.png' : '/victory_impostors_cutout_3d.png'} 
+                            src={isBouffonWin ? '/victory_bouffon_cutout_3d.png' : isCivilianWin ? '/victory_civilians_cutout_3d.png' : '/victory_impostors_cutout_3d.png'} 
                             alt={isBouffonWin ? 'Victoire du Bouffon' : isCivilianWin ? 'Victoire des Innocents' : 'Victoire des Imposteurs'} 
                             className="w-full h-full object-contain filter drop-shadow-[0_15px_25px_rgba(0,0,0,0.9)] z-10 transform hover:scale-105 transition-transform duration-300" 
                         />
@@ -479,28 +479,46 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
                     transition={{ type: 'spring', stiffness: 280, damping: 22 }}
                     className="z-10 w-full max-w-md flex flex-col items-center"
                 >
-                    <div className="mb-6 flex flex-col items-center">
-                        <div className="p-4 rounded-full bg-cyan-500/20 border-2 border-cyan-400/40 mb-3 animate-bounce-slow filter drop-shadow-[0_0_40px_rgba(6,182,212,0.3)]">
-                            <ShieldAlert className="w-12 h-12 text-cyan-400 stroke-[2.5]" />
+                    {/* 3D Interrogation Spotlight Image for Mr. White */}
+                    <motion.div
+                        initial={{ scale: 0.7, opacity: 0, y: 20 }}
+                        animate={{ scale: 1, opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1, type: 'spring', stiffness: 300, damping: 20 }}
+                        className="relative w-52 h-48 flex items-center justify-center mb-2 flex-shrink-0"
+                    >
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <div className="w-44 h-44 rounded-full bg-cyan-400 blur-2xl opacity-40 animate-pulse" />
+                            <div className="absolute w-40 h-40 rounded-full bg-gradient-to-b from-white/10 to-transparent border border-cyan-400/30 shadow-[inset_0_2px_12px_rgba(6,182,212,0.25)]" />
                         </div>
-                        <h2 className="text-2xl font-black text-white uppercase tracking-tight leading-tight mb-1 text-shadow-md">
-                            Dernière Chance
-                        </h2>
+
+                        <img 
+                            src="/mr_white_interrogation_3d.png" 
+                            alt="Mr. White Interrogation 3D" 
+                            className="w-full h-full object-contain filter drop-shadow-[0_15px_25px_rgba(0,0,0,0.95)] z-10 transform hover:scale-105 transition-transform duration-300" 
+                        />
+                    </motion.div>
+
+                    <div className="mb-4 flex flex-col items-center">
+                        <div className="bg-cyan-500/20 border border-cyan-400/40 px-4 py-1 rounded-full mb-1">
+                            <span className="text-[10px] font-black uppercase tracking-[0.25em] text-cyan-300">
+                                Ultime Interrogatoire
+                            </span>
+                        </div>
                         <h2 className="text-3xl font-black text-cyan-400 uppercase tracking-tight text-shadow-lg">
-                            Mr. Blanc
+                            Dernière Chance : Mr. Blanc
                         </h2>
                     </div>
 
-                    <div className="card-cartoon bg-gradient-to-b from-[#14233e] to-[#0a1426] p-6 border-[3.5px] border-white/20 shadow-2xl mb-6 rounded-[32px] w-full">
+                    <div className="card-cartoon bg-gradient-to-b from-[#14233e] to-[#0a1426] p-6 border-[3.5px] border-cyan-400/40 shadow-2xl mb-6 rounded-[32px] w-full text-center">
                         <p className="text-white/90 font-bold text-base leading-relaxed">
-                            <span className="text-spy-lime font-black">{votedPlayer?.name}</span> a été éliminé·e.
+                            <span className="text-cyan-300 font-black">{votedPlayer?.name}</span> (Mr. Blanc) a été éliminé·e.
                             <br /><br />
-                            S'il/elle devine le <span className="text-white font-black underline">mot secret des Civils</span> à voix haute,
+                            S'il/elle devine le <span className="text-spy-lime font-black underline">mot secret des Civils</span> à voix haute,
                             les imposteurs <span className="text-spy-orange font-black">gagnent la partie !</span>
                         </p>
                         <div className="mt-4 pt-3 border-t border-white/10">
                             <p className="text-white/50 text-xs font-black uppercase tracking-widest">
-                                Le groupe valide le résultat ci-dessous
+                                Le groupe valide le résultat ci-dessous :
                             </p>
                         </div>
                     </div>
