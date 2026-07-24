@@ -16,8 +16,15 @@ const Scoreboard = ({ players, winners, onReplay, onHome, onOpenSettings }) => {
     };
 
     const isCivilianWin = winners.includes('Civilian');
-    const winningTeamText = isCivilianWin ? 'Les Innocents' : 'Les Imposteurs';
-    const winningColor = isCivilianWin ? 'text-spy-lime' : 'text-spy-orange';
+    const isBouffonWin = winners.includes('Bouffon');
+
+    const winningTeamText = isBouffonWin ? 'Le Bouffon 🃏' : isCivilianWin ? 'Les Innocents' : 'Les Imposteurs';
+    const winningColor = isBouffonWin ? 'text-purple-400 font-extrabold' : isCivilianWin ? 'text-spy-lime' : 'text-spy-orange';
+    const heroImage = isBouffonWin 
+        ? '/victory_bouffon_cutout_3d.png' 
+        : isCivilianWin 
+            ? '/victory_civilians_cutout_3d.png' 
+            : '/victory_impostors_cutout_3d.png';
 
     return (
         <div className="min-h-screen min-h-[100dvh] flex flex-col items-center justify-between p-4 md:p-6 pt-14 md:pt-16 bg-transparent relative overflow-x-hidden max-w-xl mx-auto w-full">
@@ -35,13 +42,13 @@ const Scoreboard = ({ players, winners, onReplay, onHome, onOpenSettings }) => {
                     {/* Circular Cartoon Spotlight Disk & Glow */}
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                         <div className={`w-48 h-48 rounded-full blur-2xl opacity-45 ${
-                            isCivilianWin ? 'bg-spy-lime' : 'bg-orange-500'
+                            isBouffonWin ? 'bg-purple-500' : isCivilianWin ? 'bg-spy-lime' : 'bg-orange-500'
                         }`} />
                         <div className="absolute w-44 h-44 rounded-full bg-gradient-to-b from-white/10 to-transparent border border-white/15 shadow-[inset_0_2px_12px_rgba(255,255,255,0.15)]" />
                     </div>
 
                     <img 
-                        src={isCivilianWin ? '/victory_civilians_cutout_3d.png' : '/victory_impostors_cutout_3d.png'} 
+                        src={heroImage} 
                         alt={winningTeamText} 
                         className="w-full h-full object-contain filter drop-shadow-[0_20px_30px_rgba(0,0,0,0.95)] z-10 transform hover:scale-105 transition-transform duration-300" 
                     />
@@ -64,6 +71,8 @@ const Scoreboard = ({ players, winners, onReplay, onHome, onOpenSettings }) => {
                     <div className="space-y-3">
                         {sortedPlayers.map((player, index) => {
                             const rawAvatar = typeof player.avatar === 'object' ? player.avatar?.value : player.avatar;
+                            const role = player.role;
+
                             return (
                                 <div
                                     key={player.id}
@@ -85,12 +94,14 @@ const Scoreboard = ({ players, winners, onReplay, onHome, onOpenSettings }) => {
                                             <span className={`font-black text-sm uppercase tracking-wide truncate ${player.pseudoColor || (index === 0 ? 'text-yellow-400' : 'text-white')}`}>
                                                 {player.name}
                                             </span>
-                                            {player.role && (
+                                            {role && (
                                                 <span className={`text-[9px] font-black uppercase tracking-wider ${
-                                                    player.role === 'Civilian' ? 'text-spy-lime' :
-                                                    player.role === 'Undercover' ? 'text-spy-orange' : 'text-cyan-400'
+                                                    role === 'Civilian' ? 'text-spy-lime' :
+                                                    role === 'Undercover' ? 'text-spy-orange' :
+                                                    role === 'Mr. White' ? 'text-cyan-400' :
+                                                    role === 'Bouffon' ? 'text-purple-400' : 'text-emerald-400'
                                                 }`}>
-                                                    {player.role === 'Civilian' ? 'Civil' : player.role === 'Undercover' ? 'Espion' : 'Mr. Blanc'}
+                                                    {role === 'Civilian' ? 'Civil' : role === 'Undercover' ? 'Espion' : role === 'Mr. White' ? 'Mr. Blanc' : role === 'Bouffon' ? 'Bouffon 🃏' : 'Caméléon 🦎'}
                                                 </span>
                                             )}
                                         </div>

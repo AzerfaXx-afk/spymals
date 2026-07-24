@@ -406,24 +406,35 @@ function App() {
     // rolesMap: { playerId: 'Civilian' | 'Undercover' | 'Mr. White' }
   };
 
-  // Official Undercover scoring barème
+  // Official Spymals scoring barème
   const getPoints = (winningTeam, role) => {
-    if (winningTeam === 'Civilian' && role === 'Civilian') return 2;
-    if (winningTeam === 'Impostors' && role === 'Undercover') return 10;
-    if (winningTeam === 'Impostors' && role === 'Mr. White') return 6;
+    if (winningTeam === 'Bouffon') {
+      return role === 'Bouffon' ? 10 : 0;
+    }
+    if (winningTeam === 'Civilian') {
+      if (role === 'Civilian') return 3;
+      if (role === 'Cameleon') return 4;
+      return 0;
+    }
+    if (winningTeam === 'Impostors') {
+      if (role === 'Mr. White') return 8;
+      if (role === 'Undercover') return 6;
+      return 0;
+    }
     return 0;
   };
 
   // Revised handleGameEnd to accept winners info properly
   const handleScoreUpdate = (winningTeam, playerRoles) => {
-    setWinners(winningTeam === 'Civilian' ? ['Civilian'] : ['Impostors']);
+    setWinners([winningTeam]);
 
     setPlayers(prevPlayers => prevPlayers.map(p => {
-      const role = playerRoles[p.id];
+      const role = playerRoles ? playerRoles[p.id] : p.role;
       const pts = getPoints(winningTeam, role);
 
       return {
         ...p,
+        role: role,
         score: (p.score || 0) + pts
       };
     }));
