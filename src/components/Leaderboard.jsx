@@ -4,7 +4,7 @@ import { CartoonAvatar } from './CartoonAvatars';
 import { supabase } from '../utils/supabaseClient';
 import { getLevelTitle } from './Profile';
 
-const Leaderboard = () => {
+const Leaderboard = ({ profileData, user }) => {
   const [leaderboardData, setLeaderboardData] = useState([]);
   const [visibleCount, setVisibleCount] = useState(10);
   const [loading, setLoading] = useState(true);
@@ -12,11 +12,25 @@ const Leaderboard = () => {
 
   useEffect(() => {
     fetchLeaderboard(true);
+
+    // Auto-refresh every 10 seconds
     const interval = setInterval(() => {
       fetchLeaderboard(false);
     }, 10000);
-    return () => clearInterval(interval);
-  }, []);
+
+    // Realtime subscription to spymals_profiles
+    const channel = supabase
+      .channel('public:spymals_profiles_leaderboard')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'spymals_profiles' }, () => {
+        fetchLeaderboard(false);
+      })
+      .subscribe();
+
+    return () => {
+      clearInterval(interval);
+      supabase.removeChannel(channel);
+    };
+  }, [profileData]);
 
   const calculateStats = (item) => {
     const wins = item.wins || item.games_won || 0;
@@ -26,9 +40,11 @@ const Leaderboard = () => {
     const coins = item.coins || 0;
     const username = item.username || item.name || `Agent #${item.id?.slice(0, 4) || 'X'}`;
     const avatar_emoji = item.avatar_emoji || (typeof item.avatar === 'object' ? item.avatar?.value : item.avatar) || 'fox-detective';
-    const level = Math.max(1, Math.floor((coins / 100) + 1));
+    const level = item.level || Math.max(1, Math.floor((coins / 100) + 1));
+    const id = item.id;
 
     return {
+      id,
       username,
       coins,
       wins,
@@ -56,7 +72,6 @@ const Leaderboard = () => {
       const { data: profiles, error } = await supabase
         .from('spymals_profiles')
         .select('*')
-        .eq('is_online', true)
         .order('coins', { ascending: false })
         .limit(100);
 
@@ -65,6 +80,19 @@ const Leaderboard = () => {
       }
     } catch (e) {
       console.warn("Could not fetch remote profiles from Supabase", e);
+    }
+
+    // Always include the current logged-in account if profileData exists
+    if (profileData && profileData.username && profileData.username !== 'Invité') {
+      const currentStats = calculateStats(profileData);
+      const existsIndex = rawList.findIndex(
+        p => (profileData.id && p.id === profileData.id) || p.username === currentStats.username
+      );
+      if (existsIndex !== -1) {
+        rawList[existsIndex] = currentStats;
+      } else {
+        rawList.push(currentStats);
+      }
     }
 
     // Sort strictly by wins, level, and coins

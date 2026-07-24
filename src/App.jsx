@@ -721,6 +721,8 @@ function App() {
               )}
               {currentScreen === 'leaderboard' && (
                 <Leaderboard
+                  profileData={profileData}
+                  user={user}
                   onBack={() => navigateToScreen('home')}
                   onOpenSettings={() => setShowSettings(true)}
                 />
