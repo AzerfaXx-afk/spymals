@@ -172,6 +172,12 @@ function App() {
 
   const fetchProfile = async (userId, userMetadata = null) => {
     try {
+      // Set online status in database
+      await supabase
+        .from('spymals_profiles')
+        .update({ is_online: true, last_seen_at: new Date().toISOString() })
+        .eq('id', userId);
+
       const { data, error } = await supabase
         .from('spymals_profiles')
         .select('*')
@@ -179,7 +185,7 @@ function App() {
         .single();
       
       if (data && !error) {
-        setProfileData(data);
+        setProfileData({ ...data, is_online: true });
       } else {
         // Create default profile for OAuth/Google login if not exists
         const defaultProfile = {
@@ -189,6 +195,7 @@ function App() {
           coins: 150,
           xp: 0,
           level: 1,
+          is_online: true,
           unlocked_items: ['default'],
           equipped_color: 'default',
           equipped_banner: 'default',
@@ -297,11 +304,21 @@ function App() {
 
   const handleLogout = async () => {
     if (user) {
+      try {
+        await supabase
+          .from('spymals_profiles')
+          .update({ is_online: false })
+          .eq('id', user.id);
+      } catch (e) {
+        console.warn("Could not update online status on logout", e);
+      }
       await supabase.auth.signOut();
-    } else {
-      // Guest clicking "Connect" -> show Auth screen again
-      setAuthSkipped(false);
     }
+    setUser(null);
+    setProfileData(null);
+    loadLocalProfile();
+    // Guest clicking "Connect" -> show Auth screen again
+    setAuthSkipped(false);
   };
 
   const handleUpdateHistory = (newHistory) => {

@@ -56,6 +56,7 @@ const Leaderboard = () => {
       const { data: profiles, error } = await supabase
         .from('spymals_profiles')
         .select('*')
+        .eq('is_online', true)
         .order('coins', { ascending: false })
         .limit(100);
 
