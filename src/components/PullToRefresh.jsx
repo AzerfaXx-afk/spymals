@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { RefreshCw, ArrowDown } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { RefreshCw } from 'lucide-react';
 
-const PULL_THRESHOLD = 80;
+const PULL_THRESHOLD = 70;
 
 const PullToRefresh = ({ children }) => {
     const [pullY, setPullY] = useState(0);
@@ -10,10 +10,10 @@ const PullToRefresh = ({ children }) => {
     const isPullingRef = useRef(false);
 
     const handleTouchStart = (e) => {
-        // Only trigger pull to refresh if scrolled to the absolute top of the container and touching near top edge
+        // Only trigger pull to refresh if scrolled to top edge
         const scrollTop = window.scrollY || document.documentElement.scrollTop || 0;
         const touchY = e.touches[0].clientY;
-        if (scrollTop <= 2 && touchY < 100) {
+        if (scrollTop <= 2 && touchY < 90) {
             startYRef.current = touchY;
             isPullingRef.current = true;
         }
@@ -26,8 +26,7 @@ const PullToRefresh = ({ children }) => {
         const diff = currentY - startYRef.current;
 
         if (diff > 0) {
-            // Apply damping resistance formula
-            const resistancePull = Math.min(diff * 0.45, 110);
+            const resistancePull = Math.min(diff * 0.4, 90);
             setPullY(resistancePull);
         }
     };
@@ -38,12 +37,11 @@ const PullToRefresh = ({ children }) => {
 
         if (pullY >= PULL_THRESHOLD && !isRefreshing) {
             setIsRefreshing(true);
-            setPullY(65);
+            setPullY(50);
 
-            // Trigger smooth window reload or data refresh
             setTimeout(() => {
                 window.location.reload();
-            }, 600);
+            }, 500);
         } else {
             setPullY(0);
         }
@@ -58,40 +56,20 @@ const PullToRefresh = ({ children }) => {
             onTouchEnd={handleTouchEnd}
             className="relative min-h-screen min-h-[100dvh] w-full flex flex-col"
         >
-            {/* Pull to refresh visual indicator badge */}
+            {/* Minimal Awwwards Floating Top Refresh Indicator (App UI remains 100% fixed) */}
             {(pullY > 0 || isRefreshing) && (
-                <div 
-                    style={{ transform: `translateY(${pullY}px)` }}
-                    className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center pointer-events-none transition-transform duration-75"
-                >
-                    <div className="bg-slate-900/90 border-2 border-spy-lime/60 backdrop-blur-md px-4 py-2 rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.7)] flex items-center gap-2 text-white font-black text-xs uppercase tracking-wider">
-                        <div 
-                            style={{ transform: `rotate(${pullProgress * 360}deg)` }}
-                            className="w-5 h-5 flex items-center justify-center"
-                        >
-                            {isRefreshing ? (
-                                <RefreshCw className="w-4 h-4 text-spy-lime animate-spin stroke-[3]" />
-                            ) : pullY >= PULL_THRESHOLD ? (
-                                <RefreshCw className="w-4 h-4 text-spy-lime stroke-[3]" />
-                            ) : (
-                                <ArrowDown className="w-4 h-4 text-spy-lime stroke-[3]" />
-                            )}
-                        </div>
-                        <span className={pullY >= PULL_THRESHOLD || isRefreshing ? 'text-spy-lime' : 'text-white/80'}>
-                            {isRefreshing ? 'RAFRAÎCHISSEMENT...' : pullY >= PULL_THRESHOLD ? 'RELÂCHER POUR RAFRAÎCHIR' : 'TIRER POUR RAFRAÎCHIR'}
-                        </span>
+                <div className="fixed top-3 left-1/2 -translate-x-1/2 z-[100] pointer-events-none transition-all duration-150">
+                    <div className="w-10 h-10 rounded-full bg-slate-950/90 border-2 border-spy-lime shadow-[0_0_20px_rgba(204,255,0,0.6)] backdrop-blur-md flex items-center justify-center">
+                        <RefreshCw
+                            className={`w-5 h-5 text-spy-lime stroke-[2.5] ${isRefreshing ? 'animate-spin' : ''}`}
+                            style={{ transform: isRefreshing ? 'none' : `rotate(${pullProgress * 360}deg)` }}
+                        />
                     </div>
                 </div>
             )}
 
-            {/* Application Main Content Container */}
-            <div 
-                className="w-full flex-1 flex flex-col min-h-screen min-h-[100dvh]"
-                style={{ 
-                    transform: pullY > 0 ? `translateY(${pullY * 0.4}px)` : 'none',
-                    transition: isPullingRef.current ? 'none' : 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
-                }}
-            >
+            {/* Application Main Content Container - 100% FIXED & STABLE */}
+            <div className="w-full flex-1 flex flex-col min-h-screen min-h-[100dvh]">
                 {children}
             </div>
         </div>
