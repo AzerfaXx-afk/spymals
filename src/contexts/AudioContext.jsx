@@ -11,10 +11,9 @@ export const useAudio = () => {
 };
 
 export const AudioProvider = ({ children }) => {
-    // State for volumes (default 50%)
+    // State for volumes
     const [musicVolume, setMusicVolume] = useState(() => {
         const saved = localStorage.getItem('musicVolume');
-        // Reduce base volume to 20% by default as requested
         return saved !== null ? parseFloat(saved) : 0.2;
     });
 
@@ -23,17 +22,16 @@ export const AudioProvider = ({ children }) => {
         return saved !== null ? parseFloat(saved) : 0.5;
     });
 
+    const [isDucked, setIsDucked] = useState(false);
     const musicRef = useRef(null);
 
     // Initialize music
     useEffect(() => {
-        // Create audio instance if it doesn't exist
         if (!musicRef.current) {
             musicRef.current = new Audio('/sons/music.mp3');
             musicRef.current.loop = true;
         }
 
-        // Attempt to play (browser autoplay policies might block this initially)
         const playMusic = async () => {
             try {
                 if (musicRef.current.paused) {
@@ -44,7 +42,6 @@ export const AudioProvider = ({ children }) => {
             }
         };
 
-        // We try to play, but usually needs user interaction first
         playMusic();
 
         return () => {
@@ -59,7 +56,6 @@ export const AudioProvider = ({ children }) => {
     const switchMusic = async (trackName) => {
         if (!musicRef.current) return;
 
-        // Prevent unnecessary reloads
         if (musicRef.current.src.endsWith(trackName)) return;
 
         try {
@@ -67,30 +63,30 @@ export const AudioProvider = ({ children }) => {
             musicRef.current.src = `/sons/${trackName}`;
             musicRef.current.load();
 
-            // Only play if we are allowed to (prevents autoplay errors if user hasn't interacted)
             const playPromise = musicRef.current.play();
             if (playPromise !== undefined) {
                 await playPromise;
             }
         } catch (error) {
-            console.warn("Could not switch music (autoplay blocked or file missing):", error);
+            console.warn("Could not switch music:", error);
         }
     };
 
-    // Update music volume when state changes
+    // Update music volume when state or ducking changes
     useEffect(() => {
         if (musicRef.current) {
-            musicRef.current.volume = musicVolume;
+            const effectiveVolume = isDucked ? musicVolume * 0.35 : musicVolume;
+            musicRef.current.volume = effectiveVolume;
         }
         localStorage.setItem('musicVolume', musicVolume);
-    }, [musicVolume]);
+    }, [musicVolume, isDucked]);
 
     // Save SFX volume preference
     useEffect(() => {
         localStorage.setItem('sfxVolume', sfxVolume);
     }, [sfxVolume]);
 
-    // Global click listener to unlock audio context on first interaction
+    // Global click listener to unlock audio
     useEffect(() => {
         const unlockAudio = () => {
             if (musicRef.current && musicRef.current.paused) {
@@ -101,19 +97,22 @@ export const AudioProvider = ({ children }) => {
         return () => window.removeEventListener('click', unlockAudio);
     }, []);
 
-
     const playSfx = (soundPath = '/sons/button.mp3', options = {}) => {
-        const { pitch = 1.0, volumeMultiplier = 1.0 } = options;
+        try {
+            const { pitch = 1.0, volumeMultiplier = 1.0 } = options;
 
-        const sound = new Audio(soundPath);
-        sound.volume = Math.max(0, Math.min(1, sfxVolume * volumeMultiplier));
-        sound.playbackRate = pitch; // Changes pitch and speed
+            const sound = new Audio(soundPath);
+            sound.volume = Math.max(0, Math.min(1, sfxVolume * volumeMultiplier));
+            sound.playbackRate = pitch;
 
-        // Setup for potentially overlapping sounds (clones) is handled by creating new Audio instance each time
-        // ideally for high perf games we'd use Web Audio API, but for simple UI SFX this is fine.
-        // However, `playbackRate` on HTML5 Audio element does change pitch.
+            sound.play().catch(e => console.warn("SFX play failed", e));
+        } catch (e) {
+            console.warn("Error playing SFX", e);
+        }
+    };
 
-        sound.play().catch(e => console.warn("SFX play failed", e));
+    const setDucking = (duck) => {
+        setIsDucked(duck);
     };
 
     const value = {
@@ -122,7 +121,8 @@ export const AudioProvider = ({ children }) => {
         sfxVolume,
         setSfxVolume,
         playSfx,
-        switchMusic
+        switchMusic,
+        setDucking
     };
 
     return (

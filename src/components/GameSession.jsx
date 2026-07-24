@@ -75,7 +75,7 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
     // 30s Clue Turn Timer
     const [turnTimer, setTurnTimer] = useState(30);
 
-    const { switchMusic, playSfx } = useAudio();
+    const { switchMusic, playSfx, setDucking } = useAudio();
 
     // 3D Cartoon Tombstone drop animation state
     const [showTombstone, setShowTombstone] = useState(false);
@@ -120,24 +120,39 @@ const GameSession = ({ players, config, onEndGame, onAbort, onOpenSettings }) =>
 
     // 30-Second Turn Timer countdown during playing phase
     useEffect(() => {
-        if (gameState !== 'playing' || !speakingOrder || speakingOrder.length === 0) return;
+        if (gameState !== 'playing' || !speakingOrder || speakingOrder.length === 0 || currentSpeakerIndex >= speakingOrder.length) {
+            if (setDucking) setDucking(false);
+            return;
+        }
 
+        if (setDucking) setDucking(true);
         setTurnTimer(30);
+
         const interval = setInterval(() => {
             setTurnTimer(prev => {
                 if (prev <= 1) {
-                    playBuzzerSound();
-                    // Auto advance to next speaker on 0s timeout!
+                    playSfx('/sons/mort.mp3', { volumeMultiplier: 0.8 });
                     setCurrentSpeakerIndex(idx => idx + 1);
                     return 30;
                 }
-                playTickSound(prev - 1);
-                return prev - 1;
+
+                const nextTime = prev - 1;
+                if (nextTime <= 5) {
+                    // Panic tick in the last 5 seconds (higher pitch & volume)
+                    playSfx('/sons/tictac_panic.wav', { pitch: 1.25, volumeMultiplier: 1.2 });
+                } else {
+                    // Standard rhythmic tick sound
+                    playSfx('/sons/tictac.wav', { volumeMultiplier: 0.9 });
+                }
+                return nextTime;
             });
         }, 1000);
 
-        return () => clearInterval(interval);
-    }, [currentSpeakerIndex, gameState, speakingOrder]);
+        return () => {
+            clearInterval(interval);
+            if (setDucking) setDucking(false);
+        };
+    }, [currentSpeakerIndex, gameState, speakingOrder, playSfx, setDucking]);
 
     // ── True uniform shuffle (Fisher-Yates) ──────────────────────────────────
     const shuffle = (arr) => {
