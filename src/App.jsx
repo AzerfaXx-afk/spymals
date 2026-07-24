@@ -938,7 +938,7 @@ function App() {
                 <img
                   src="/trex_access_denied_3d.png"
                   alt="Inspecteur T-Rex Accès Refusé"
-                  className="w-full h-full object-contain filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)] animate-bounce-slow"
+                  className="w-full h-full object-contain filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)]"
                 />
               </div>
 
