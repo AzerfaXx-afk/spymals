@@ -69,6 +69,7 @@ function App() {
   const [profileData, setProfileData] = useState(null);
   const [authSkipped, setAuthSkipped] = useState(false);
   const [showSetupModal, setShowSetupModal] = useState(false);
+  const [levelUpData, setLevelUpData] = useState(null);
 
   // Touch swipe gesture for navbar tabs only (Clash Royale style)
   const [touchStartX, setTouchStartX] = useState(null);
@@ -278,6 +279,10 @@ function App() {
             username: updatedProfile.username,
             avatar_emoji: updatedProfile.avatar_emoji,
             coins: updatedProfile.coins,
+            xp: updatedProfile.xp,
+            level: updatedProfile.level,
+            games_played: updatedProfile.games_played,
+            games_won: updatedProfile.games_won,
             equipped_color: updatedProfile.equipped_color,
             equipped_banner: updatedProfile.equipped_banner,
             equipped_theme: updatedProfile.equipped_theme,
@@ -522,8 +527,9 @@ function App() {
       }
 
       // Calculate level up
+      const initialLevel = profileData.level || 1;
       let newXp = (profileData.xp || 0) + earnedXp;
-      let newLevel = profileData.level || 1;
+      let newLevel = initialLevel;
       let newCoins = (profileData.coins || 0) + earnedCoins;
       
       let xpNeeded = newLevel * 150;
@@ -533,6 +539,14 @@ function App() {
         newLevel += 1;
         newCoins += 100; // Level up bonus!
         xpNeeded = newLevel * 150;
+      }
+
+      if (newLevel > initialLevel) {
+        setLevelUpData({
+          oldLevel: initialLevel,
+          newLevel: newLevel,
+          bonusCoins: (newLevel - initialLevel) * 100
+        });
       }
 
       const updatedProfile = {
@@ -873,6 +887,52 @@ function App() {
             isForce={true}
           />
         )}
+
+        {/* Celebratory Level Up Modal */}
+        <AnimatePresence>
+          {levelUpData && (
+            <div className="fixed inset-0 z-[120] bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.8, opacity: 0, y: 20 }}
+                className="card-cartoon bg-gradient-to-b from-[#1a2e4e] via-[#0f1d35] to-[#0a1426] border-[4px] border-spy-lime p-6 rounded-[36px] max-w-sm w-full text-center space-y-4 shadow-[0_0_50px_rgba(204,255,0,0.4)] relative overflow-hidden"
+              >
+                <div className="absolute top-[-30%] left-[-30%] w-[200%] h-[200%] bg-spy-lime opacity-10 blur-3xl pointer-events-none animate-pulse-slow"></div>
+
+                <div className="text-4xl animate-bounce">🎉</div>
+
+                <div className="space-y-1">
+                  <span className="text-[10px] font-black text-spy-lime uppercase tracking-[0.3em] block">
+                    GAMIFICATION • PROMOTION D'AGENT
+                  </span>
+                  <h2 className="text-3xl font-black text-white uppercase tracking-tight text-shadow-md">
+                    NIVEAU SUPÉRIEUR !
+                  </h2>
+                </div>
+
+                <div className="bg-black/50 border-2 border-spy-lime/50 rounded-2xl p-4 flex items-center justify-center gap-3 shadow-inner">
+                  <span className="text-sm font-black text-white/50 uppercase">Niveau {levelUpData.oldLevel}</span>
+                  <span className="text-spy-lime font-black text-xl">➔</span>
+                  <span className="text-3xl font-black text-spy-lime uppercase font-display drop-shadow-[0_0_12px_rgba(204,255,0,0.6)]">
+                    NIV {levelUpData.newLevel}
+                  </span>
+                </div>
+
+                <div className="bg-spy-lime/20 border border-spy-lime/40 rounded-xl p-3 text-spy-lime text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5">
+                  <span>🥩 Reward : +{levelUpData.bonusCoins} Croquettes Bonus !</span>
+                </div>
+
+                <button
+                  onClick={() => setLevelUpData(null)}
+                  className="btn-cartoon-primary w-full py-4 text-sm font-black uppercase tracking-wider cursor-pointer shadow-[0_5px_0_#000] active:translate-y-1"
+                >
+                  C'EST PARTI !
+                </button>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
         </div>
       </PullToRefresh>
     </AudioProvider>
