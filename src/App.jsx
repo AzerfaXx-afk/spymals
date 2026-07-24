@@ -932,8 +932,14 @@ function App() {
                 <X className="w-4 h-4" />
               </button>
 
-              <div className="w-16 h-16 rounded-full bg-spy-lime/20 border-2 border-spy-lime flex items-center justify-center text-spy-lime shadow-[0_0_25px_rgba(204,255,0,0.4)] animate-pulse-slow mt-2">
-                <Lock className="w-8 h-8 stroke-[2.5]" />
+              {/* Inspector T-Rex 3D Cutout Graphic */}
+              <div className="relative w-28 h-28 -mt-2 -mb-2 flex items-center justify-center pointer-events-none">
+                <div className="absolute inset-0 bg-spy-lime/20 rounded-full blur-xl animate-pulse-slow"></div>
+                <img
+                  src="/trex_access_denied_3d.png"
+                  alt="Inspecteur T-Rex Accès Refusé"
+                  className="w-full h-full object-contain filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)] animate-bounce-slow"
+                />
               </div>
 
               <div className="space-y-1">
