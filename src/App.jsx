@@ -446,67 +446,28 @@ function App() {
 
     setCurrentScreen('scoreboard');
 
-    // Update Persistent Leaderboard
+    // ── UPDATE LOCAL TEAM HISTORY (For Replay / History Screen) ──
     try {
-      const stored = localStorage.getItem('spyMals_leaderboard');
-      let leaderboard = stored ? JSON.parse(stored) : {};
-
-      const currentPlayers = [...players];
-
-      currentPlayers.forEach(p => {
-        const role = playerRoles[p.id];
-        const pts = getPoints(winningTeam, role);
-
-        const key = p.name.toLowerCase().trim();
-
-        if (!leaderboard[key]) {
-          leaderboard[key] = {
-            name: p.name,
-            avatar: p.avatar,
-            score: 0,
-            games: 0,
-            wins: 0
-          };
-        }
-
-        // Update stats
-        leaderboard[key].games += 1;
-        leaderboard[key].score += pts;
-        if (pts > 0) {
-          leaderboard[key].wins += 1;
-        }
-        // Update avatar to latest used
-        leaderboard[key].avatar = p.avatar;
-      });
-
-      localStorage.setItem('spyMals_leaderboard', JSON.stringify(leaderboard));
-
-      // ── UPDATE HISTORY ──
-      try {
-        const historyEntry = {
-          id: Date.now(),
-          date: new Date().toISOString(),
-          players: [...players]
-        };
-        const updatedHistory = [historyEntry, ...gameHistory].slice(0, 20); // Keep last 20
-        setGameHistory(updatedHistory);
-        localStorage.setItem('spyMals_history', JSON.stringify(updatedHistory));
-      } catch (historyErr) {
-        console.error("Failed to save history", historyErr);
-      }
-
-    } catch (e) {
-      console.error("Failed to save leaderboard", e);
+      const historyEntry = {
+        id: Date.now(),
+        date: new Date().toISOString(),
+        players: [...players]
+      };
+      const updatedHistory = [historyEntry, ...gameHistory].slice(0, 20);
+      setGameHistory(updatedHistory);
+      localStorage.setItem('spyMals_history', JSON.stringify(updatedHistory));
+    } catch (historyErr) {
+      console.error("Failed to save team history", historyErr);
     }
 
-    // ── GAMIFICATION REWARDS ──
+    // ── GAMIFICATION REWARDS FOR DEVICE OWNER ACCOUNT ──
     if (profileData) {
-      let earnedXp = 50;
-      let earnedCoins = 20;
+      let earnedXp = 40;
+      let earnedCoins = 15;
       let won = false;
 
-      // Check if user's profile username is one of the players
-      const userPlayer = players.find(p => p.name.toLowerCase().trim() === profileData.username.toLowerCase().trim());
+      // Find Player 1 (Device Owner) in the game session
+      const userPlayer = players.find(p => p.id === 1 || p.name.toLowerCase().trim() === profileData.username.toLowerCase().trim());
       if (userPlayer) {
         const role = playerRoles[userPlayer.id];
         const pts = getPoints(winningTeam, role);
@@ -516,11 +477,10 @@ function App() {
           earnedCoins = 40;
         } else {
           won = false;
-          earnedXp = 50;
-          earnedCoins = 20;
+          earnedXp = 40;
+          earnedCoins = 15;
         }
       } else {
-        // Default rewards if not directly in the list
         won = winningTeam === 'Civilian';
         earnedXp = won ? 80 : 40;
         earnedCoins = won ? 30 : 15;
