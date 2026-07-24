@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     Zap, Building2, Globe, Lock, LogIn, PlusCircle, Users, Share2, Copy, Check, 
-    Play, CheckCircle2, MessageSquare, ShieldAlert, Sparkles, Crown, X, Radio, ArrowLeft, RefreshCw, ChevronDown, Send
+    Play, CheckCircle2, MessageSquare, ShieldAlert, Sparkles, Crown, X, Radio, RefreshCw, 
+    ChevronDown, Send, Edit2, Info, Plus, Minus, SlidersHorizontal, FolderKanban, Mail, MessageCircle
 } from 'lucide-react';
 import BouncyButton from './BouncyButton';
 import BackArrow from './BackArrow';
@@ -33,6 +34,27 @@ const PACK_OPTIONS = [
     { id: 'random', name: 'Aléatoire', icon: '🎲' }
 ];
 
+const ROLE_INFOS = {
+    white: {
+        title: "Mr. Blanc ⚪",
+        subtitle: "Camp : Imposteurs",
+        badgeColor: "text-cyan-400 bg-cyan-400/10 border-cyan-400/30",
+        description: "Mr. Blanc n'a aucun mot sur son écran. Son but est d'écouter les indices des Civils pour deviner leur mot. S'il est éliminé au vote, il a une ultime chance : s'il devine le mot des Civils à voix haute, les Imposteurs gagnent la partie !"
+    },
+    bouffon: {
+        title: "Le Bouffon 🃏",
+        subtitle: "Camp : Solo (Anarchiste)",
+        badgeColor: "text-purple-400 bg-purple-400/10 border-purple-400/30",
+        description: "Le Bouffon joue seul ! Son objectif unique est de faire croire qu'il est un Espion pour se faire voter dehors par le groupe. S'il se fait éliminer au vote, IL GAGNE LA PARTIE SEUL !"
+    },
+    cameleon: {
+        title: "Le Caméléon 🦎",
+        subtitle: "Camp : Civils (Infiltré)",
+        badgeColor: "text-emerald-400 bg-emerald-400/10 border-emerald-400/30",
+        description: "Le Caméléon fait partie de l'équipe des Civils mais n'a pas de mot au début. Il doit écouter attentivement les autres pour donner un indice crédible, ne pas se faire repérer par les Espions et faire gagner les Civils."
+    }
+};
+
 const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, onLoginRedirect }) => {
     const { playSfx } = useAudio();
     const [view, setView] = useState('select'); // 'select' | 'browser' | 'lobby'
@@ -47,8 +69,17 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
     const [copiedCode, setCopiedCode] = useState(false);
     const [copiedLink, setCopiedLink] = useState(false);
 
-    // Custom Pack Dropdown State
+    // Custom Room Name State
+    const [isEditingRoomName, setIsEditingRoomName] = useState(false);
+    const [editedRoomName, setEditedRoomName] = useState('');
+
+    // Share Modal state
+    const [showShareModal, setShowShareModal] = useState(false);
+
+    // Custom Pack Dropdown & Special Roles Modal States
     const [isPackDropdownOpen, setIsPackDropdownOpen] = useState(false);
+    const [isSpecialRolesModalOpen, setIsSpecialRolesModalOpen] = useState(false);
+    const [activeRoleTooltip, setActiveRoleTooltip] = useState(null);
 
     // Public room browser states
     const [publicRooms, setPublicRooms] = useState([]);
@@ -56,7 +87,6 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
 
     // Chat states
     const [chatText, setChatText] = useState('');
-    const [showChat, setShowChat] = useState(true);
     const chatEndRef = useRef(null);
 
     // Game Settings state (for host)
@@ -79,10 +109,10 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
 
     // Auto scroll chat to bottom
     useEffect(() => {
-        if (showChat && chatEndRef.current) {
+        if (chatEndRef.current) {
             chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
         }
-    }, [room?.game_state?.chat_messages, showChat]);
+    }, [room?.game_state?.chat_messages]);
 
     // Check for room code in URL query params on mount
     useEffect(() => {
@@ -159,6 +189,7 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
         setErrorMsg('');
         setLoading(true);
         const code = generateRoomCode();
+        const defaultName = `Salon de ${currentUsername}`;
 
         const hostPlayer = {
             id: currentUserId,
@@ -182,7 +213,7 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
                 .insert([{
                     code,
                     host_id: currentUserId,
-                    name: `Salon de ${currentUsername}`,
+                    name: defaultName,
                     status: 'lobby',
                     is_public: isPublic,
                     players: [hostPlayer],
@@ -196,6 +227,7 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
 
             setRoom(data);
             setRoomCode(code);
+            setEditedRoomName(defaultName);
             setPlayers([hostPlayer]);
             setSettings(initialSettings);
             setIsHost(true);
@@ -207,6 +239,23 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
             setErrorMsg("Erreur lors de la création du salon. Réessaie.");
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleSaveRoomName = async () => {
+        if (!isHost || !room || !editedRoomName.trim()) return;
+        try {
+            const cleanName = editedRoomName.trim();
+            await supabase
+                .from('spymals_rooms')
+                .update({ name: cleanName })
+                .eq('id', room.id);
+
+            setRoom(prev => ({ ...prev, name: cleanName }));
+            setIsEditingRoomName(false);
+            playSfx('/sons/click.mp3');
+        } catch (err) {
+            console.error("Failed to save room name:", err);
         }
     };
 
@@ -382,15 +431,12 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
         const shareUrl = `${window.location.origin}/?room=${roomCode}`;
         if (navigator.share) {
             navigator.share({
-                title: 'Rejoins ma partie Spymals !',
-                text: `Rejoins mon salon Spymals avec le code : ${roomCode}`,
+                title: 'Rejoins mon salon Spymals !',
+                text: `Rejoins mon salon secret sur Spymals avec le code : ${roomCode}`,
                 url: shareUrl
             }).catch(() => {});
         } else {
-            navigator.clipboard.writeText(shareUrl);
-            setCopiedLink(true);
-            playSfx('/sons/click.mp3');
-            setTimeout(() => setCopiedLink(false), 2000);
+            setShowShareModal(true);
         }
     };
 
@@ -546,9 +592,16 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
     };
 
     const selectedPackObj = PACK_OPTIONS.find(p => p.id === (settings.pack || 'standard')) || PACK_OPTIONS[0];
+    const totalPlayers = players.length;
+    const undercoverCount = settings.spies || 1;
+    const whiteCount = settings.whites || 1;
+    const cameleonCount = settings.cameleon || 0;
+    const bouffonCount = settings.bouffon || 0;
+    const civilianCount = Math.max(0, totalPlayers - undercoverCount - whiteCount - cameleonCount - bouffonCount);
+    const specialRolesActiveCount = whiteCount + bouffonCount + cameleonCount;
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-start p-4 pt-16 bg-transparent relative overflow-y-auto no-scrollbar pb-10 max-w-md mx-auto w-full">
+        <div className="min-h-screen flex flex-col items-center justify-start p-4 pt-16 bg-gradient-to-b from-[#091325] via-[#0d1b36] to-[#070e1c] relative overflow-y-auto no-scrollbar pb-10 max-w-md mx-auto w-full">
             {/* Always Render Back Button */}
             <BackArrow onClick={view === 'lobby' ? () => handleLeaveRoom(true) : view === 'browser' ? () => setView('select') : onBack} />
             <SettingsGear onClick={() => {}} />
@@ -597,7 +650,7 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
                                 <Lock className="w-3.5 h-3.5 text-spy-lime" /> Rejoindre un Salon avec Code
                             </label>
                             
-                            <div className="flex gap-2">
+                            <div className="flex items-center gap-2">
                                 <input
                                     type="text"
                                     maxLength={4}
@@ -609,9 +662,10 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
                                 <button
                                     onClick={() => handleJoinRoom()}
                                     disabled={loading || !inputCode.trim()}
-                                    className="btn-cartoon-primary px-5 py-3 text-xs font-black uppercase tracking-wider flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                                    className="btn-cartoon-primary w-12 h-12 rounded-xl text-white flex items-center justify-center cursor-pointer disabled:opacity-50 flex-shrink-0 shadow-[0_4px_0_#000] active:translate-y-1"
+                                    title="Rejoindre le salon"
                                 >
-                                    <LogIn className="w-4 h-4 stroke-[3]" /> ENTRER
+                                    <LogIn className="w-6 h-6 stroke-[3]" />
                                 </button>
                             </div>
                         </div>
@@ -753,24 +807,55 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
             {view === 'lobby' && room && (
                 <div className="z-10 w-full animate-slide-up flex flex-col items-center">
                     
-                    {/* Top Room Banner: Host Avatar + Custom Room Name + Code + Privacy Toggle */}
+                    {/* Top Room Banner: Host Profile Avatar + Editable Room Name + Code */}
                     <div className="card-cartoon bg-gradient-to-b from-[#14233e]/95 via-[#0d182b]/95 to-[#0a1426]/95 border-[3.5px] border-white/20 shadow-2xl rounded-[32px] p-4 w-full mb-3">
                         
-                        {/* Host Profile Header */}
+                        {/* Host Header Card */}
                         {(() => {
                             const hostPlayer = players.find(p => p.is_host) || players[0];
                             return (
-                                <div className="flex items-center gap-3 bg-black/40 border-2 border-white/10 rounded-2xl p-3 mb-3">
+                                <div className="flex items-center gap-3 bg-black/40 border-2 border-white/10 rounded-2xl p-3 mb-3 relative">
                                     <div className="w-12 h-12 rounded-full bg-slate-900 border-2 border-spy-lime/60 shadow-[0_0_12px_rgba(204,255,0,0.3)] flex-shrink-0">
                                         <CartoonAvatar id={hostPlayer?.avatar_emoji || 'fox-detective'} className="w-full h-full" />
                                     </div>
+
                                     <div className="flex flex-col text-left min-w-0 flex-1">
                                         <span className="text-[9.5px] font-black text-spy-lime uppercase tracking-[0.2em] flex items-center gap-1">
-                                            <Crown className="w-3 h-3 fill-spy-lime" /> Salon d'Agent • Hôte : {hostPlayer?.username}
+                                            <Crown className="w-3 h-3 fill-spy-lime" /> Hôte du Salon : {hostPlayer?.username}
                                         </span>
-                                        <h2 className="text-base font-black text-white uppercase tracking-wide truncate">
-                                            {room.name || `Salon de ${hostPlayer?.username}`}
-                                        </h2>
+
+                                        {isEditingRoomName && isHost ? (
+                                            <div className="flex gap-1.5 mt-1">
+                                                <input
+                                                    type="text"
+                                                    value={editedRoomName}
+                                                    onChange={(e) => setEditedRoomName(e.target.value)}
+                                                    onKeyDown={(e) => e.key === 'Enter' && handleSaveRoomName()}
+                                                    className="bg-slate-900 border border-spy-lime text-white font-black text-xs px-2 py-1 rounded-lg w-full"
+                                                />
+                                                <button
+                                                    onClick={handleSaveRoomName}
+                                                    className="bg-spy-lime text-black px-2 py-1 rounded-lg font-black text-xs"
+                                                >
+                                                    OK
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-center justify-between gap-1 mt-0.5">
+                                                <h2 className="text-base font-black text-white uppercase tracking-wide truncate">
+                                                    {room.name || `Salon de ${hostPlayer?.username}`}
+                                                </h2>
+                                                {isHost && (
+                                                    <button
+                                                        onClick={() => setIsEditingRoomName(true)}
+                                                        className="text-white/40 hover:text-spy-lime p-1 transition-colors"
+                                                        title="Modifier le nom du salon"
+                                                    >
+                                                        <Edit2 className="w-3.5 h-3.5" />
+                                                    </button>
+                                                )}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             );
@@ -788,13 +873,6 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
                             >
                                 {room.is_public ? <Globe className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
                                 <span>{room.is_public ? 'Salon Public 🌐' : 'Salon Privé 🔒'}</span>
-                            </button>
-
-                            <button
-                                onClick={() => handleLeaveRoom(true)}
-                                className="text-white/40 hover:text-rose-400 px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider flex items-center gap-1 transition-colors cursor-pointer"
-                            >
-                                <X className="w-4 h-4" /> Quitter
                             </button>
                         </div>
 
@@ -823,7 +901,7 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
                                     className="p-2.5 rounded-xl bg-spy-lime/20 hover:bg-spy-lime/30 border border-spy-lime/40 text-spy-lime text-xs font-black uppercase flex items-center gap-1 cursor-pointer active:scale-95 transition-all"
                                 >
                                     {copiedLink ? <Check className="w-4 h-4 text-spy-lime" /> : <Share2 className="w-4 h-4" />}
-                                    <span>{copiedLink ? 'Lien !' : 'Partager'}</span>
+                                    <span>Partager</span>
                                 </button>
                             </div>
                         </div>
@@ -876,14 +954,76 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
                         </div>
                     </div>
 
-                    {/* Host Game Settings & Custom Word Pack Dropdown */}
+                    {/* Host Game Settings Aligned with Offline Game Briefing Card */}
                     {isHost && (
-                        <div className="card-cartoon bg-gradient-to-b from-[#14233e]/95 via-[#0d182b]/95 to-[#0a1426]/95 border-[3.5px] border-white/20 shadow-2xl rounded-[32px] p-4 w-full mb-3 text-left space-y-3">
-                            <span className="text-xs font-black text-white uppercase tracking-wider block">
+                        <div className="card-cartoon bg-gradient-to-b from-[#14233e] to-[#0a1426] p-5 border-[3.5px] border-white/20 shadow-2xl w-full rounded-[32px] mb-3 text-left space-y-4">
+                            <span className="text-xs font-black text-white uppercase tracking-wider block border-b border-white/10 pb-2">
                                 ⚙️ Configuration de la Mission
                             </span>
 
-                            {/* Custom Cartoon Word Pack Dropdown */}
+                            {/* Civilians Display - Digital Readout */}
+                            <div className="bg-black/40 rounded-2xl p-3.5 flex items-center justify-between border-2 border-white/10 relative overflow-hidden shadow-inner">
+                                <div className="absolute left-0 top-0 w-1.5 h-full bg-spy-lime shadow-[0_0_10px_#ccff00]"></div>
+                                <div className="relative z-10 flex items-center gap-3 w-full justify-between pl-2">
+                                    <div className="flex flex-col">
+                                        <span className="text-[9.5px] font-black uppercase tracking-widest text-white/40">PERSONNEL ACCRÉDITÉ</span>
+                                        <span className="text-sm font-black uppercase tracking-wider text-white">Innocents (Civils)</span>
+                                    </div>
+                                    <div className="bg-black/60 border-2 border-spy-lime/40 rounded-xl px-3.5 py-1.5 flex items-center justify-center shadow-inner">
+                                        <span className="text-2xl font-display font-black leading-none text-spy-lime text-shadow-md">
+                                            {civilianCount.toString().padStart(2, '0')}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Espions Stepper */}
+                            <div className="bg-black/40 rounded-2xl p-3 border-2 border-white/10">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex flex-col text-left">
+                                        <span className="text-xs font-black uppercase tracking-wider text-spy-orange">Espions (Undercover)</span>
+                                        <span className="text-[9px] text-white/40 font-bold">Mots proches des Civils</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            onClick={() => handleUpdateSettings('spies', Math.max(1, undercoverCount - 1))}
+                                            className="w-8 h-8 rounded-lg bg-slate-800 border border-white/20 text-white font-black flex items-center justify-center active:scale-90"
+                                        >
+                                            -
+                                        </button>
+                                        <span className="text-lg font-black text-white w-6 text-center">{undercoverCount}</span>
+                                        <button
+                                            onClick={() => handleUpdateSettings('spies', Math.min(3, undercoverCount + 1))}
+                                            className="w-8 h-8 rounded-lg bg-spy-lime text-black font-black flex items-center justify-center active:scale-90"
+                                        >
+                                            +
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Special Roles Button (Opens Modal) */}
+                            <button
+                                onClick={() => setIsSpecialRolesModalOpen(true)}
+                                className="w-full bg-gradient-to-r from-purple-900/40 via-indigo-900/40 to-slate-900/40 hover:from-purple-900/60 hover:to-slate-900/60 border-2 border-purple-400/40 rounded-2xl p-3.5 flex items-center justify-between text-left transition-all cursor-pointer shadow-lg group"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <div className="w-9 h-9 rounded-xl bg-purple-500/20 border border-purple-400/50 flex items-center justify-center text-purple-300">
+                                        <SlidersHorizontal className="w-4 h-4 stroke-[2.5]" />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <span className="text-xs font-black uppercase tracking-wider text-white group-hover:text-purple-300 transition-colors">
+                                            Autres Rôles Spéciaux...
+                                        </span>
+                                        <span className="text-[9px] font-bold text-purple-300/70 uppercase tracking-widest">
+                                            Mr. Blanc, Le Bouffon, Le Caméléon ({specialRolesActiveCount} actif{specialRolesActiveCount > 1 ? 's' : ''})
+                                        </span>
+                                    </div>
+                                </div>
+                                <ChevronDown className="w-4 h-4 text-purple-300 -rotate-90 group-hover:translate-x-1 transition-transform" />
+                            </button>
+
+                            {/* Pack de Mots Dropdown */}
                             <div className="relative">
                                 <label className="text-[9.5px] font-black text-white/50 uppercase tracking-widest block mb-1">
                                     PACK DE MOTS
@@ -927,38 +1067,11 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
                                     )}
                                 </AnimatePresence>
                             </div>
-
-                            {/* Role Count Steppers */}
-                            <div className="grid grid-cols-2 gap-2 pt-1">
-                                <div className="bg-black/40 p-2.5 rounded-xl border border-white/10 flex items-center justify-between">
-                                    <span className="text-xs font-bold text-spy-orange">Espions</span>
-                                    <input
-                                        type="number"
-                                        min={1}
-                                        max={3}
-                                        value={settings.spies || 1}
-                                        onChange={(e) => handleUpdateSettings('spies', parseInt(e.target.value) || 1)}
-                                        className="w-12 bg-slate-900 border border-white/20 text-white font-black text-xs py-1 rounded text-center"
-                                    />
-                                </div>
-
-                                <div className="bg-black/40 p-2.5 rounded-xl border border-white/10 flex items-center justify-between">
-                                    <span className="text-xs font-bold text-cyan-300">Mr. Blanc</span>
-                                    <input
-                                        type="number"
-                                        min={0}
-                                        max={2}
-                                        value={settings.whites || 0}
-                                        onChange={(e) => handleUpdateSettings('whites', parseInt(e.target.value) || 0)}
-                                        className="w-12 bg-slate-900 border border-white/20 text-white font-black text-xs py-1 rounded text-center"
-                                    />
-                                </div>
-                            </div>
                         </div>
                     )}
 
                     {/* Live Lobby Chat Component */}
-                    <div className="card-cartoon bg-gradient-to-b from-[#14233e]/95 via-[#0d182b]/95 to-[#0a1426]/95 border-[3.5px] border-white/20 shadow-2xl rounded-[32px] p-4 w-full mb-4 text-left">
+                    <div className="card-cartoon bg-gradient-to-b from-[#14233e]/95 via-[#0d182b]/95 to-[#0a1426]/95 border-[3.5px] border-white/20 shadow-2xl rounded-[32px] p-4 w-full mb-3 text-left">
                         <div className="flex items-center justify-between mb-2">
                             <span className="text-xs font-black text-white uppercase tracking-wider flex items-center gap-1.5">
                                 <MessageSquare className="w-4 h-4 text-spy-lime" /> Tchat du Salon
@@ -968,10 +1081,9 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
                             </span>
                         </div>
 
-                        {/* Chat Messages Log */}
-                        <div className="bg-black/50 border-2 border-white/10 rounded-2xl p-3 h-32 overflow-y-auto custom-scrollbar space-y-2 mb-2">
+                        <div className="bg-black/50 border-2 border-white/10 rounded-2xl p-3 h-28 overflow-y-auto custom-scrollbar space-y-2 mb-2">
                             {(room.game_state?.chat_messages || []).length === 0 ? (
-                                <p className="text-white/30 text-[10px] font-black uppercase text-center py-8">
+                                <p className="text-white/30 text-[10px] font-black uppercase text-center py-6">
                                     Aucun message. Envoie une réaction à l'équipe !
                                 </p>
                             ) : (
@@ -994,7 +1106,7 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
                             <div ref={chatEndRef} />
                         </div>
 
-                        {/* Quick Reaction Chips */}
+                        {/* Quick Reactions */}
                         <div className="flex items-center gap-1.5 overflow-x-auto custom-scrollbar pb-1 mb-2">
                             {['🦊', '🕵️‍♂️', '🔥', '👀', '🎉', '👑', '🤫', '💥'].map(emoji => (
                                 <button
@@ -1007,7 +1119,7 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
                             ))}
                         </div>
 
-                        {/* Message Input */}
+                        {/* Input */}
                         <div className="flex gap-2">
                             <input
                                 type="text"
@@ -1026,8 +1138,8 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
                         </div>
                     </div>
 
-                    {/* Action Button: Ready / Start Game */}
-                    <div className="w-full space-y-2">
+                    {/* Action Button & Quitter Button at Bottom */}
+                    <div className="w-full space-y-3">
                         {isHost ? (
                             <button
                                 onClick={handleStartGame}
@@ -1046,10 +1158,202 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
                                 <CheckCircle2 className="w-5 h-5 stroke-[3]" /> {isReady ? 'JE SUIS PRÊT !' : 'CLIQUER QUAND TU ES PRÊT'}
                             </button>
                         )}
+
+                        <button
+                            onClick={() => handleLeaveRoom(true)}
+                            className="w-full py-3 rounded-2xl border-2 border-dashed border-rose-600/50 text-rose-400 font-black uppercase text-xs tracking-wider hover:bg-rose-600/10 transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+                        >
+                            <X className="w-4 h-4" /> QUITTER LE SALON
+                        </button>
                     </div>
 
                 </div>
             )}
+
+            {/* ─────────────────────────────────────────────
+                SPECIAL ROLES MODAL (OFFLINE MATCHING)
+               ───────────────────────────────────────────── */}
+            <AnimatePresence>
+                {isSpecialRolesModalOpen && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            className="card-cartoon bg-gradient-to-b from-[#14233e] to-[#0a1426] border-[3.5px] border-white/20 p-5 rounded-[32px] w-full max-w-md space-y-4 shadow-2xl relative"
+                        >
+                            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                                <h3 className="text-lg font-black text-white uppercase tracking-wider flex items-center gap-2">
+                                    <SlidersHorizontal className="w-5 h-5 text-purple-400" /> Rôles Spéciaux
+                                </h3>
+                                <button
+                                    onClick={() => setIsSpecialRolesModalOpen(false)}
+                                    className="p-1 rounded-lg text-white/50 hover:text-white"
+                                >
+                                    <X className="w-5 h-5" />
+                                </button>
+                            </div>
+
+                            <div className="space-y-3">
+                                {/* Mr. Blanc */}
+                                <div className="bg-black/40 border border-white/10 rounded-2xl p-3 flex items-center justify-between">
+                                    <div className="flex flex-col text-left">
+                                        <div className="flex items-center gap-1.5">
+                                            <span className="text-xs font-black text-cyan-300 uppercase tracking-wider">Mr. Blanc</span>
+                                            <button onClick={() => setActiveRoleTooltip(ROLE_INFOS.white)} className="text-cyan-400 hover:text-white">
+                                                <Info className="w-3.5 h-3.5" />
+                                            </button>
+                                        </div>
+                                        <span className="text-[9px] text-white/40 font-bold">Aucun mot • Devine les Civils</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <button onClick={() => handleUpdateSettings('whites', Math.max(0, whiteCount - 1))} className="w-8 h-8 rounded-lg bg-slate-800 border border-white/20 text-white font-black">-</button>
+                                        <span className="text-lg font-black text-white w-6 text-center">{whiteCount}</span>
+                                        <button onClick={() => handleUpdateSettings('whites', Math.min(2, whiteCount + 1))} className="w-8 h-8 rounded-lg bg-spy-lime text-black font-black">+</button>
+                                    </div>
+                                </div>
+
+                                {/* Le Bouffon */}
+                                <div className="bg-black/40 border border-white/10 rounded-2xl p-3 flex items-center justify-between">
+                                    <div className="flex flex-col text-left">
+                                        <div className="flex items-center gap-1.5">
+                                            <span className="text-xs font-black text-purple-300 uppercase tracking-wider">Le Bouffon 🃏</span>
+                                            <button onClick={() => setActiveRoleTooltip(ROLE_INFOS.bouffon)} className="text-purple-400 hover:text-white">
+                                                <Info className="w-3.5 h-3.5" />
+                                            </button>
+                                        </div>
+                                        <span className="text-[9px] text-white/40 font-bold">Veut se faire éliminer</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <button onClick={() => handleUpdateSettings('bouffon', Math.max(0, bouffonCount - 1))} className="w-8 h-8 rounded-lg bg-slate-800 border border-white/20 text-white font-black">-</button>
+                                        <span className="text-lg font-black text-white w-6 text-center">{bouffonCount}</span>
+                                        <button onClick={() => handleUpdateSettings('bouffon', Math.min(1, bouffonCount + 1))} className="w-8 h-8 rounded-lg bg-spy-lime text-black font-black">+</button>
+                                    </div>
+                                </div>
+
+                                {/* Le Caméléon */}
+                                <div className="bg-black/40 border border-white/10 rounded-2xl p-3 flex items-center justify-between">
+                                    <div className="flex flex-col text-left">
+                                        <div className="flex items-center gap-1.5">
+                                            <span className="text-xs font-black text-emerald-300 uppercase tracking-wider">Le Caméléon 🦎</span>
+                                            <button onClick={() => setActiveRoleTooltip(ROLE_INFOS.cameleon)} className="text-emerald-400 hover:text-white">
+                                                <Info className="w-3.5 h-3.5" />
+                                            </button>
+                                        </div>
+                                        <span className="text-[9px] text-white/40 font-bold">Infiltré chez les Civils</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <button onClick={() => handleUpdateSettings('cameleon', Math.max(0, cameleonCount - 1))} className="w-8 h-8 rounded-lg bg-slate-800 border border-white/20 text-white font-black">-</button>
+                                        <span className="text-lg font-black text-white w-6 text-center">{cameleonCount}</span>
+                                        <button onClick={() => handleUpdateSettings('cameleon', Math.min(1, cameleonCount + 1))} className="w-8 h-8 rounded-lg bg-spy-lime text-black font-black">+</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button
+                                onClick={() => setIsSpecialRolesModalOpen(false)}
+                                className="btn-cartoon-primary w-full py-3.5 text-xs font-black uppercase tracking-wider"
+                            >
+                                CONFIRMER LES RÔLES
+                            </button>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+
+            {/* ─────────────────────────────────────────────
+                SHARE MODAL (DESKTOP / FALLBACK)
+               ───────────────────────────────────────────── */}
+            <AnimatePresence>
+                {showShareModal && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            className="card-cartoon bg-gradient-to-b from-[#14233e] to-[#0a1426] border-[3.5px] border-white/20 p-5 rounded-[32px] w-full max-w-sm space-y-4 shadow-2xl text-center relative"
+                        >
+                            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                                <h3 className="text-base font-black text-white uppercase tracking-wider flex items-center gap-2">
+                                    <Share2 className="w-4 h-4 text-spy-lime" /> Partager le Salon
+                                </h3>
+                                <button onClick={() => setShowShareModal(false)} className="p-1 rounded-lg text-white/50 hover:text-white">
+                                    <X className="w-5 h-5" />
+                                </button>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-2.5 pt-1">
+                                <a
+                                    href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`Rejoins mon salon secret sur Spymals avec le code ${roomCode} : ${window.location.origin}/?room=${roomCode}`)}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="p-3 bg-emerald-600/20 border border-emerald-500/40 rounded-xl text-emerald-300 font-black text-xs uppercase flex items-center justify-center gap-1.5"
+                                >
+                                    <MessageCircle className="w-4 h-4" /> WhatsApp
+                                </a>
+
+                                <a
+                                    href={`mailto:?subject=${encodeURIComponent('Invitation Salon Spymals')}&body=${encodeURIComponent(`Rejoins mon salon secret avec le code ${roomCode} : ${window.location.origin}/?room=${roomCode}`)}`}
+                                    className="p-3 bg-blue-600/20 border border-blue-500/40 rounded-xl text-blue-300 font-black text-xs uppercase flex items-center justify-center gap-1.5"
+                                >
+                                    <Mail className="w-4 h-4" /> E-Mail
+                                </a>
+                            </div>
+
+                            <button
+                                onClick={() => {
+                                    navigator.clipboard.writeText(`${window.location.origin}/?room=${roomCode}`);
+                                    setCopiedLink(true);
+                                    setTimeout(() => setCopiedLink(false), 2000);
+                                }}
+                                className="w-full py-3 bg-spy-lime/20 border border-spy-lime/40 text-spy-lime font-black text-xs uppercase rounded-xl flex items-center justify-center gap-1.5"
+                            >
+                                <Copy className="w-4 h-4" /> {copiedLink ? 'Lien copié dans le presse-papier !' : 'Copier le lien direct'}
+                            </button>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+
+            {/* ─────────────────────────────────────────────
+                ROLE EXPLANATION TOOLTIP POPUP
+               ───────────────────────────────────────────── */}
+            <AnimatePresence>
+                {activeRoleTooltip && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            className="card-cartoon bg-gradient-to-b from-[#14233e] to-[#0a1426] border-[3.5px] border-white/20 p-5 rounded-[32px] w-full max-w-sm space-y-3 shadow-2xl relative text-left"
+                        >
+                            <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                                <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${activeRoleTooltip.badgeColor}`}>
+                                    {activeRoleTooltip.subtitle}
+                                </span>
+                                <button onClick={() => setActiveRoleTooltip(null)} className="text-white/50 hover:text-white p-1">
+                                    <X className="w-5 h-5" />
+                                </button>
+                            </div>
+
+                            <h3 className="text-xl font-black text-white uppercase tracking-tight">
+                                {activeRoleTooltip.title}
+                            </h3>
+
+                            <p className="text-white/80 text-xs font-bold leading-relaxed">
+                                {activeRoleTooltip.description}
+                            </p>
+
+                            <button
+                                onClick={() => setActiveRoleTooltip(null)}
+                                className="btn-cartoon-primary w-full py-3 text-xs font-black uppercase tracking-wider mt-2"
+                            >
+                                J'AI COMPRIS
+                            </button>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
 
         </div>
     );
