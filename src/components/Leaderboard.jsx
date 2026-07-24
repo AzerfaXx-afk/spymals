@@ -41,43 +41,29 @@ const Leaderboard = () => {
     setLoading(true);
     let rawList = [];
 
+    // Purge old local testing cache to prevent fake guest names
+    try {
+      localStorage.removeItem('spyMals_leaderboard');
+    } catch (e) {
+      console.warn("Could not purge local leaderboard cache", e);
+    }
+
     try {
       const { data: profiles, error } = await supabase
         .from('spymals_profiles')
         .select('*')
+        .order('coins', { ascending: false })
         .limit(100);
 
       if (profiles && profiles.length > 0 && !error) {
         rawList = profiles.map(calculateStats);
       }
     } catch (e) {
-      console.warn("Could not fetch remote profiles", e);
+      console.warn("Could not fetch remote profiles from Supabase", e);
     }
 
-    try {
-      const stored = localStorage.getItem('spyMals_leaderboard');
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        const localList = Object.values(parsed).map(p => calculateStats({
-          username: p.name,
-          coins: p.score * 10 || p.wins * 25,
-          wins: p.wins || 0,
-          games: p.games || 0,
-          avatar: p.avatar
-        }));
-
-        localList.forEach(localP => {
-          if (!rawList.some(r => r.username.toLowerCase() === localP.username.toLowerCase())) {
-            rawList.push(localP);
-          }
-        });
-      }
-    } catch (e) {
-      console.warn("Could not parse local leaderboard", e);
-    }
-
-    // Sort by wins, level, and coins
-    rawList.sort((a, b) => b.wins - a.wins || b.level - a.level || b.coins - a.coins || b.winRate - a.winRate);
+    // Sort strictly by wins, level, and coins
+    rawList.sort((a, b) => (b.wins || 0) - (a.wins || 0) || (b.level || 1) - (a.level || 1) || (b.coins || 0) - (a.coins || 0));
 
     setLeaderboardData(rawList.slice(0, 100));
     setLoading(false);
