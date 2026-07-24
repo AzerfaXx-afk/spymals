@@ -610,7 +610,7 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
     const specialRolesActiveCount = whiteCount + bouffonCount + cameleonCount;
 
     return (
-        <div ref={containerRef} className="min-h-screen flex flex-col items-center justify-start p-4 pt-16 bg-gradient-to-b from-[#091325] via-[#0d1b36] to-[#070e1c] relative overflow-y-auto no-scrollbar pb-10 max-w-md mx-auto w-full">
+        <div ref={containerRef} className="min-h-[100dvh] flex flex-col items-center justify-start p-4 pt-16 bg-gradient-to-b from-[#091325] via-[#0d1b36] to-[#070e1c] relative overflow-y-auto no-scrollbar pb-10 max-w-md mx-auto w-full">
             {/* Always Render Back Button */}
             <BackArrow onClick={view === 'lobby' ? () => handleLeaveRoom(true) : view === 'browser' ? () => setView('select') : onBack} />
             <SettingsGear onClick={() => {}} />
@@ -659,22 +659,22 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
                                 <Lock className="w-3.5 h-3.5 text-spy-lime" /> Rejoindre un Salon avec Code
                             </label>
                             
-                            <div className="flex items-center gap-2">
+                            <div className="relative flex items-center w-full">
                                 <input
                                     type="text"
                                     maxLength={4}
                                     value={inputCode}
                                     onChange={(e) => setInputCode(e.target.value.toUpperCase())}
                                     placeholder="A7K9"
-                                    className="flex-1 bg-slate-900/90 border-2 border-white/20 rounded-xl px-3 py-3 text-center text-xl font-black uppercase tracking-[0.3em] text-white placeholder-white/20 focus:outline-none focus:border-spy-lime transition-all"
+                                    className="w-full bg-slate-900/90 border-2 border-white/20 rounded-2xl py-3 pl-4 pr-14 text-center text-xl font-black uppercase tracking-[0.3em] text-white placeholder-white/20 focus:outline-none focus:border-spy-lime transition-all"
                                 />
                                 <button
                                     onClick={() => handleJoinRoom()}
                                     disabled={loading || !inputCode.trim()}
-                                    className="btn-cartoon-primary w-12 h-12 rounded-xl text-white flex items-center justify-center cursor-pointer disabled:opacity-50 flex-shrink-0 shadow-[0_4px_0_#000] active:translate-y-1"
+                                    className="absolute right-1.5 p-2.5 rounded-xl bg-spy-lime text-black flex items-center justify-center cursor-pointer disabled:opacity-40 shadow-[0_3px_0_#000] active:translate-y-0.5 transition-all"
                                     title="Rejoindre le salon"
                                 >
-                                    <LogIn className="w-6 h-6 stroke-[3]" />
+                                    <LogIn className="w-5 h-5 stroke-[3]" />
                                 </button>
                             </div>
                         </div>
@@ -787,7 +787,7 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
                                                         <span className="text-spy-lime">{packObj.icon} {packObj.name}</span>
                                                         <span>•</span>
                                                         <span className="flex items-center gap-0.5">
-                                                            <Users className="w-3 h-3 text-white/60" /> {count}/8
+                                                            <Users className="w-3 h-3 text-white/60" /> {count}/20
                                                         </span>
                                                     </div>
                                                 </div>
@@ -795,7 +795,7 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
 
                                             <button
                                                 onClick={() => handleJoinRoom(publicRoom.code)}
-                                                disabled={loading || count >= 8}
+                                                disabled={loading || count >= 20}
                                                 className="btn-cartoon-primary px-3.5 py-2 text-[10.5px] font-black uppercase tracking-wider flex items-center gap-1 cursor-pointer"
                                             >
                                                 <LogIn className="w-3.5 h-3.5 stroke-[2.5]" /> Rejoindre
@@ -920,7 +920,7 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
                     <div className="card-cartoon bg-gradient-to-b from-[#14233e]/95 via-[#0d182b]/95 to-[#0a1426]/95 border-[3.5px] border-white/20 shadow-2xl rounded-[32px] p-4 w-full mb-3">
                         <div className="flex items-center justify-between mb-3">
                             <span className="text-xs font-black text-white uppercase tracking-wider flex items-center gap-1.5">
-                                <Users className="w-4 h-4 text-spy-lime" /> Agents Connectés ({players.length}/8)
+                                <Users className="w-4 h-4 text-spy-lime" /> Agents Connectés ({players.length}/20)
                             </span>
                             <span className="text-[9.5px] text-white/50 font-black uppercase">
                                 3 agents minimum
