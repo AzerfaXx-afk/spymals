@@ -4,45 +4,6 @@ import { CartoonAvatar } from './CartoonAvatars';
 import { supabase } from '../utils/supabaseClient';
 import { getLevelTitle } from './Profile';
 
-const ANIMAL_AVATARS = ['fox-detective', 'cat-spy', 'dog-agent', 'owl-hacker', 'ninja-frog', 'panda-monocle', 'tiger-agent', 'koala-agent', 'lion-detective', 'penguin-secret'];
-const PREFIXES = ['Agent', 'Shadow', 'Cyber', 'Master', 'Ninja', 'Spectre', 'Ghost', 'Viper', 'Eagle', 'Falcon', 'Panther', 'Hunter', 'Alpha', 'Delta', 'Omega', 'Vortex', 'Apex', 'Titan', 'Zenith', 'Kestrel'];
-const SUFFIXES = ['Pro', 'Elite', 'Spy', 'Tactical', 'X', 'Zero', 'Prime', '007', 'V', 'Matrix', 'Volt', 'Storm', 'Shadow', 'Blaze', 'Cipher', 'Stealth', 'Phantom', 'Fury', 'Rogue', 'Venom'];
-
-const BASE_10_AGENTS = [
-  { username: 'FoxDetective_07', coins: 1450, wins: 42, games: 50, avatar_emoji: 'fox-detective' },
-  { username: 'AgentCat_Secret', coins: 1120, wins: 38, games: 45, avatar_emoji: 'cat-spy' },
-  { username: 'DogMaster_Pro', coins: 980, wins: 28, games: 38, avatar_emoji: 'dog-agent' },
-  { username: 'ChouetteHacker', coins: 850, wins: 24, games: 30, avatar_emoji: 'owl-hacker' },
-  { username: 'GrenouilleTactique', coins: 690, wins: 19, games: 25, avatar_emoji: 'ninja-frog' },
-  { username: 'PandaMonocle', coins: 540, wins: 15, games: 20, avatar_emoji: 'panda-monocle' },
-  { username: 'TigreCovert', coins: 420, wins: 12, games: 16, avatar_emoji: 'tiger-agent' },
-  { username: 'KoalaInfiltrator', coins: 380, wins: 10, games: 15, avatar_emoji: 'koala-agent' },
-  { username: 'LionLeader', coins: 350, wins: 9, games: 14, avatar_emoji: 'lion-detective' },
-  { username: 'PenguinSecret', coins: 310, wins: 8, games: 13, avatar_emoji: 'penguin-secret' }
-];
-
-const generateTop100Agents = () => {
-  const list = [...BASE_10_AGENTS];
-  for (let i = 11; i <= 100; i++) {
-    const prefix = PREFIXES[(i * 3) % PREFIXES.length];
-    const suffix = SUFFIXES[(i * 7) % SUFFIXES.length];
-    const avatar = ANIMAL_AVATARS[i % ANIMAL_AVATARS.length];
-    const wins = Math.max(1, 40 - Math.floor(i * 0.35));
-    const games = wins + Math.floor(i * 0.2) + 2;
-    const coins = Math.max(10, 1500 - (i * 14));
-    list.push({
-      username: `${prefix}_${suffix}_${i}`,
-      coins,
-      wins,
-      games,
-      avatar_emoji: avatar
-    });
-  }
-  return list;
-};
-
-const DEFAULT_AGENTS = generateTop100Agents();
-
 const Leaderboard = () => {
   const [leaderboardData, setLeaderboardData] = useState([]);
   const [visibleCount, setVisibleCount] = useState(10);
@@ -115,13 +76,8 @@ const Leaderboard = () => {
       console.warn("Could not parse local leaderboard", e);
     }
 
-    DEFAULT_AGENTS.forEach(defP => {
-      if (!rawList.some(r => r.username.toLowerCase() === defP.username.toLowerCase())) {
-        rawList.push(calculateStats(defP));
-      }
-    });
-
-    rawList.sort((a, b) => b.winRate - a.winRate || b.wins - a.wins || b.coins - a.coins);
+    // Sort by wins, level, and coins
+    rawList.sort((a, b) => b.wins - a.wins || b.level - a.level || b.coins - a.coins || b.winRate - a.winRate);
 
     setLeaderboardData(rawList.slice(0, 100));
     setLoading(false);
