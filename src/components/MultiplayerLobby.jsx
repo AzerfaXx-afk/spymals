@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     Zap, Building2, Globe, Lock, LogIn, PlusCircle, Users, Share2, Copy, Check, 
-    Play, CheckCircle2, MessageSquare, ShieldAlert, Sparkles, Crown, X, Radio, ArrowLeft, RefreshCw
+    Play, CheckCircle2, MessageSquare, ShieldAlert, Sparkles, Crown, X, Radio, ArrowLeft, RefreshCw, ChevronDown, Send
 } from 'lucide-react';
 import BouncyButton from './BouncyButton';
 import BackArrow from './BackArrow';
@@ -20,18 +20,18 @@ const generateRoomCode = () => {
     return code;
 };
 
-const PACK_NAMES = {
-    standard: 'Standard',
-    pop_culture: 'Culture Pop',
-    abstract: 'Concepts Abstraits',
-    animals: 'Animaux',
-    spicy: 'Pack Soirée (+18) 🌶️',
-    geek: 'Jeux Vidéo & Geek',
-    travel: 'Voyage & Pays',
-    food: 'Gourmand / Nourriture',
-    fun: 'Absurde & Fun',
-    random: 'Aléatoire'
-};
+const PACK_OPTIONS = [
+    { id: 'standard', name: 'Standard', icon: '🎯' },
+    { id: 'pop_culture', name: 'Culture Pop', icon: '🎬' },
+    { id: 'abstract', name: 'Concepts Abstraits', icon: '💡' },
+    { id: 'animals', name: 'Animaux', icon: '🦁' },
+    { id: 'spicy', name: 'Pack Soirée (+18)', icon: '🌶️' },
+    { id: 'geek', name: 'Jeux Vidéo & Geek', icon: '🕹️' },
+    { id: 'travel', name: 'Voyage & Pays', icon: '✈️' },
+    { id: 'food', name: 'Gourmand / Nourriture', icon: '🍕' },
+    { id: 'fun', name: 'Absurde & Fun', icon: '🤪' },
+    { id: 'random', name: 'Aléatoire', icon: '🎲' }
+];
 
 const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, onLoginRedirect }) => {
     const { playSfx } = useAudio();
@@ -47,13 +47,17 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
     const [copiedCode, setCopiedCode] = useState(false);
     const [copiedLink, setCopiedLink] = useState(false);
 
+    // Custom Pack Dropdown State
+    const [isPackDropdownOpen, setIsPackDropdownOpen] = useState(false);
+
     // Public room browser states
     const [publicRooms, setPublicRooms] = useState([]);
     const [fetchingRooms, setFetchingRooms] = useState(false);
 
     // Chat states
     const [chatText, setChatText] = useState('');
-    const [showChat, setShowChat] = useState(false);
+    const [showChat, setShowChat] = useState(true);
+    const chatEndRef = useRef(null);
 
     // Game Settings state (for host)
     const [settings, setSettings] = useState({
@@ -72,6 +76,13 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
 
     const currentUsername = profileData?.username || 'Agent Secret';
     const currentAvatar = profileData?.avatar_emoji || 'fox-detective';
+
+    // Auto scroll chat to bottom
+    useEffect(() => {
+        if (showChat && chatEndRef.current) {
+            chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [room?.game_state?.chat_messages, showChat]);
 
     // Check for room code in URL query params on mount
     useEffect(() => {
@@ -144,7 +155,7 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
         }
     };
 
-    const handleCreateRoom = async (isPublic = true) => {
+    const handleCreateRoom = async (isPublic = false) => {
         setErrorMsg('');
         setLoading(true);
         const code = generateRoomCode();
@@ -299,7 +310,7 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
             }
         } catch (err) {
             console.error("Auto matchmake error:", err);
-            setErrorMsg("Aucun salon trouvé. Création d'un nouveau salon...");
+            setErrorMsg("Aucun salon ouvert. Création d'un nouveau salon...");
             await handleCreateRoom(true);
         } finally {
             setLoading(false);
@@ -463,7 +474,6 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
 
             let selectedPairs = wordPairs;
             if (error || !wordPairs || wordPairs.length === 0) {
-                // Fallback words if pack query fails
                 selectedPairs = [
                     { word_civilian: 'Pizza', word_undercover: 'Burger' },
                     { word_civilian: 'Chien', word_undercover: 'Loup' },
@@ -535,16 +545,18 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
         }
     };
 
+    const selectedPackObj = PACK_OPTIONS.find(p => p.id === (settings.pack || 'standard')) || PACK_OPTIONS[0];
+
     return (
-        <div className="min-h-screen flex flex-col items-center justify-start p-4 pt-16 bg-transparent relative overflow-y-auto no-scrollbar pb-10 max-w-md mx-auto">
-            {view === 'select' && <BackArrow onClick={onBack} />}
-            {view === 'browser' && <BackArrow onClick={() => setView('select')} />}
+        <div className="min-h-screen flex flex-col items-center justify-start p-4 pt-16 bg-transparent relative overflow-y-auto no-scrollbar pb-10 max-w-md mx-auto w-full">
+            {/* Always Render Back Button */}
+            <BackArrow onClick={view === 'lobby' ? () => handleLeaveRoom(true) : view === 'browser' ? () => setView('select') : onBack} />
             <SettingsGear onClick={() => {}} />
 
-            {/* Background Ambient Lights */}
-            <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-                <div className="absolute top-[-10%] right-[-20%] w-[600px] h-[600px] bg-spy-lime opacity-[0.1] rounded-full blur-[120px] animate-pulse-slow"></div>
-                <div className="absolute bottom-[-10%] left-[-20%] w-[500px] h-[500px] bg-spy-orange opacity-[0.1] rounded-full blur-[120px] animate-pulse-slow delay-700"></div>
+            {/* Background Ambient Glowing Orbs */}
+            <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+                <div className="absolute top-[-10%] right-[-20%] w-[600px] h-[600px] bg-spy-lime opacity-[0.12] rounded-full blur-[130px] animate-pulse-slow"></div>
+                <div className="absolute bottom-[-10%] left-[-20%] w-[500px] h-[500px] bg-spy-orange opacity-[0.12] rounded-full blur-[130px] animate-pulse-slow delay-700"></div>
             </div>
 
             {/* Error Notification Alert */}
@@ -566,18 +578,18 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
             {view === 'select' && (
                 <div className="z-10 w-full animate-slide-up flex flex-col items-center">
                     
-                    {/* Header Banner */}
+                    {/* Header Banner - 100% French */}
                     <div className="text-center mb-5">
                         <div className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-black/40 border border-spy-lime/40 text-spy-lime text-[9.5px] font-black uppercase tracking-[0.2em] shadow-lg backdrop-blur-md mb-1">
                             <Radio className="w-3.5 h-3.5 animate-pulse" /> ESPIONS EN LIGNE
                         </div>
                         <h1 className="text-2xl font-black text-white uppercase tracking-tight text-shadow-md">
-                            MULTIJOUEUR REALTIME
+                            MULTIJOUEUR EN TEMPS RÉEL
                         </h1>
                     </div>
 
-                    {/* Main Glass Card */}
-                    <div className="card-cartoon bg-gradient-to-b from-[#14233e]/95 via-[#0d182b]/95 to-[#0a1426]/95 border-[3.5px] border-white/20 shadow-2xl rounded-[32px] p-5 w-full space-y-5">
+                    {/* Main Cartoon Glass Card */}
+                    <div className="card-cartoon bg-gradient-to-b from-[#14233e]/95 via-[#0d182b]/95 to-[#0a1426]/95 border-[3.5px] border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.9)] backdrop-blur-xl rounded-[32px] p-5 w-full space-y-5">
                         
                         {/* Box 1: Join with Code */}
                         <div className="bg-black/40 border-2 border-white/10 rounded-2xl p-4 shadow-inner space-y-2.5">
@@ -604,7 +616,7 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
                             </div>
                         </div>
 
-                        {/* Box 2: Quick Play Matchmaking */}
+                        {/* Box 2: Quick Play Browser */}
                         <div className="space-y-2">
                             <button
                                 onClick={handleOpenBrowser}
@@ -612,7 +624,7 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
                                 className="w-full py-4 rounded-2xl bg-gradient-to-r from-lime-400 to-emerald-500 hover:from-lime-300 hover:to-emerald-400 text-black font-black uppercase text-sm tracking-wider border-[3px] border-black shadow-[0_5px_0_#000] active:translate-y-1 transition-all flex items-center justify-center gap-2 cursor-pointer"
                             >
                                 <Zap className="w-5 h-5 fill-black stroke-black" />
-                                <span>PARTIE RAPIDE MATCHMAKING</span>
+                                <span>RECHERCHE RAPIDE DE SALON</span>
                             </button>
 
                             <p className="text-[9.5px] text-white/40 font-bold uppercase tracking-wider text-center">
@@ -620,22 +632,15 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
                             </p>
                         </div>
 
-                        {/* Box 3: Host Options */}
-                        <div className="grid grid-cols-2 gap-2.5 pt-1">
-                            <button
-                                onClick={() => handleCreateRoom(true)}
-                                disabled={loading}
-                                className="py-3.5 rounded-2xl bg-slate-800/90 hover:bg-slate-700/90 text-white font-black uppercase text-[11px] tracking-wider border-2 border-white/20 shadow-[0_4px_0_#000] active:translate-y-1 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-                            >
-                                <Globe className="w-4 h-4 text-spy-lime stroke-[2.5]" /> HÉBERGER PUBLIC
-                            </button>
-
+                        {/* Box 3: Host Room (Single Button -> Defaults to Private) */}
+                        <div className="pt-1">
                             <button
                                 onClick={() => handleCreateRoom(false)}
                                 disabled={loading}
-                                className="py-3.5 rounded-2xl bg-slate-800/90 hover:bg-slate-700/90 text-white font-black uppercase text-[11px] tracking-wider border-2 border-white/20 shadow-[0_4px_0_#000] active:translate-y-1 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                                className="w-full py-4 rounded-2xl bg-slate-800/95 hover:bg-slate-700/95 text-white font-black uppercase text-sm tracking-wider border-[3px] border-white/20 shadow-[0_5px_0_#000] active:translate-y-1 transition-all flex items-center justify-center gap-2 cursor-pointer"
                             >
-                                <Lock className="w-4 h-4 text-spy-orange stroke-[2.5]" /> HÉBERGER PRIVÉ
+                                <Building2 className="w-5 h-5 text-spy-lime stroke-[2.5]" />
+                                <span>HÉBERGER UN SALON</span>
                             </button>
                         </div>
 
@@ -644,23 +649,22 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
             )}
 
             {/* ─────────────────────────────────────────────
-                VIEW 2: PUBLIC ROOM BROWSER (MATCHMAKING)
+                VIEW 2: PUBLIC ROOM BROWSER
                ───────────────────────────────────────────── */}
             {view === 'browser' && (
                 <div className="z-10 w-full animate-slide-up flex flex-col items-center">
                     
                     <div className="text-center mb-4">
                         <div className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full bg-black/40 border border-spy-lime/40 text-spy-lime text-[9.5px] font-black uppercase tracking-[0.2em] shadow-lg backdrop-blur-md mb-1">
-                            <Zap className="w-3.5 h-3.5 fill-spy-lime" /> RECHERCHE DE SALON
+                            <Zap className="w-3.5 h-3.5 fill-spy-lime" /> SALONS OUVERTS
                         </div>
                         <h1 className="text-2xl font-black text-white uppercase tracking-tight">
-                            SALONS EN LIGNE
+                            RECHERCHE DE SALONS
                         </h1>
                     </div>
 
                     <div className="card-cartoon bg-gradient-to-b from-[#14233e]/95 via-[#0d182b]/95 to-[#0a1426]/95 border-[3.5px] border-white/20 shadow-2xl rounded-[32px] p-4 w-full flex flex-col max-h-[70vh]">
                         
-                        {/* Top Bar: Auto Match + Refresh */}
                         <div className="flex items-center gap-2 mb-3 flex-shrink-0">
                             <button
                                 onClick={handleAutoMatchmake}
@@ -680,7 +684,6 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
                             </button>
                         </div>
 
-                        {/* Room List Container */}
                         <div className="flex-1 overflow-y-auto custom-scrollbar space-y-2.5 pr-1">
                             {fetchingRooms ? (
                                 <div className="py-12 text-center text-white/50 font-black uppercase tracking-widest text-xs animate-pulse">
@@ -702,7 +705,7 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
                                 publicRooms.map(publicRoom => {
                                     const count = (publicRoom.players || []).length;
                                     const hostPlayer = publicRoom.players?.[0];
-                                    const packName = PACK_NAMES[publicRoom.settings?.pack] || 'Standard';
+                                    const packObj = PACK_OPTIONS.find(p => p.id === publicRoom.settings?.pack) || PACK_OPTIONS[0];
 
                                     return (
                                         <div
@@ -717,8 +720,8 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
                                                     <span className="font-black text-xs text-white uppercase tracking-wide truncate">
                                                         {publicRoom.name || `Salon de ${hostPlayer?.username}`}
                                                     </span>
-                                                    <div className="flex items-center gap-2 text-[9px] text-white/50 font-bold uppercase tracking-wider">
-                                                        <span className="text-spy-lime">{packName}</span>
+                                                    <div className="flex items-center gap-2 text-[9.5px] text-white/60 font-bold uppercase tracking-wider">
+                                                        <span className="text-spy-lime">{packObj.icon} {packObj.name}</span>
                                                         <span>•</span>
                                                         <span className="flex items-center gap-0.5">
                                                             <Users className="w-3 h-3 text-white/60" /> {count}/8
@@ -745,42 +748,40 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
             )}
 
             {/* ─────────────────────────────────────────────
-                VIEW 3: ROOM LOBBY (WAITING & HOST CONTROLS)
+                VIEW 3: ROOM LOBBY (WAITING, PLAYERS, CHAT)
                ───────────────────────────────────────────── */}
             {view === 'lobby' && room && (
                 <div className="z-10 w-full animate-slide-up flex flex-col items-center">
                     
                     {/* Top Room Banner: Code + Privacy Toggle */}
-                    <div className="card-cartoon bg-gradient-to-b from-[#14233e]/95 via-[#0d182b]/95 to-[#0a1426]/95 border-[3.5px] border-white/20 shadow-2xl rounded-[32px] p-4 w-full mb-4">
+                    <div className="card-cartoon bg-gradient-to-b from-[#14233e]/95 via-[#0d182b]/95 to-[#0a1426]/95 border-[3.5px] border-white/20 shadow-2xl rounded-[32px] p-4 w-full mb-3">
                         <div className="flex items-center justify-between mb-3">
-                            {/* Privacy Toggle */}
                             <button
                                 onClick={handleTogglePublic}
                                 disabled={!isHost}
-                                className={`px-3 py-1 rounded-full border text-[9.5px] font-black uppercase tracking-wider flex items-center gap-1.5 transition-all ${
+                                className={`px-3.5 py-1 rounded-full border text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 transition-all ${
                                     room.is_public 
                                         ? 'bg-spy-lime/20 border-spy-lime/50 text-spy-lime' 
                                         : 'bg-spy-orange/20 border-spy-orange/50 text-spy-orange'
                                 }`}
                             >
-                                {room.is_public ? <Globe className="w-3 h-3" /> : <Lock className="w-3 h-3" />}
+                                {room.is_public ? <Globe className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
                                 <span>{room.is_public ? 'Salon Public 🌐' : 'Salon Privé 🔒'}</span>
                             </button>
 
-                            {/* Leave Room button */}
                             <button
                                 onClick={() => handleLeaveRoom(true)}
-                                className="text-white/40 hover:text-rose-400 p-1 rounded-lg text-[10px] font-black uppercase tracking-wider flex items-center gap-1"
+                                className="text-white/40 hover:text-rose-400 px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider flex items-center gap-1 transition-colors"
                             >
                                 <X className="w-4 h-4" /> Quitter
                             </button>
                         </div>
 
-                        {/* Big Room Code Box */}
+                        {/* Room Code Card */}
                         <div className="bg-black/50 border-2 border-spy-lime/40 rounded-2xl p-3 flex items-center justify-between">
                             <div className="text-left">
                                 <span className="text-[9px] font-black text-white/50 uppercase tracking-[0.2em] block">
-                                    CODE DE REJOINTE
+                                    CODE DU SALON
                                 </span>
                                 <span className="text-3xl font-black text-white tracking-[0.3em] font-display text-shadow-md">
                                     {roomCode}
@@ -790,61 +791,59 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
                             <div className="flex gap-2">
                                 <button
                                     onClick={handleCopyCode}
-                                    className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-black uppercase flex items-center gap-1 cursor-pointer active:scale-95"
-                                    title="Copier le code"
+                                    className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-black uppercase flex items-center gap-1 cursor-pointer active:scale-95 transition-all"
                                 >
                                     {copiedCode ? <Check className="w-4 h-4 text-spy-lime" /> : <Copy className="w-4 h-4" />}
-                                    <span className="hidden sm:inline">{copiedCode ? 'Copie !' : 'Code'}</span>
+                                    <span>{copiedCode ? 'Copie !' : 'Code'}</span>
                                 </button>
 
                                 <button
                                     onClick={handleShareLink}
-                                    className="p-2.5 rounded-xl bg-spy-lime/20 hover:bg-spy-lime/30 border border-spy-lime/40 text-spy-lime text-xs font-black uppercase flex items-center gap-1 cursor-pointer active:scale-95"
-                                    title="Partager le lien"
+                                    className="p-2.5 rounded-xl bg-spy-lime/20 hover:bg-spy-lime/30 border border-spy-lime/40 text-spy-lime text-xs font-black uppercase flex items-center gap-1 cursor-pointer active:scale-95 transition-all"
                                 >
                                     {copiedLink ? <Check className="w-4 h-4 text-spy-lime" /> : <Share2 className="w-4 h-4" />}
-                                    <span className="hidden sm:inline">{copiedLink ? 'Lien !' : 'Partager'}</span>
+                                    <span>{copiedLink ? 'Lien !' : 'Partager'}</span>
                                 </button>
                             </div>
                         </div>
                     </div>
 
-                    {/* Joined Players Ribbon */}
-                    <div className="card-cartoon bg-gradient-to-b from-[#14233e]/95 via-[#0d182b]/95 to-[#0a1426]/95 border-[3.5px] border-white/20 shadow-2xl rounded-[32px] p-4 w-full mb-4">
+                    {/* Spacious Players Card */}
+                    <div className="card-cartoon bg-gradient-to-b from-[#14233e]/95 via-[#0d182b]/95 to-[#0a1426]/95 border-[3.5px] border-white/20 shadow-2xl rounded-[32px] p-4 w-full mb-3">
                         <div className="flex items-center justify-between mb-3">
                             <span className="text-xs font-black text-white uppercase tracking-wider flex items-center gap-1.5">
                                 <Users className="w-4 h-4 text-spy-lime" /> Agents Connectés ({players.length}/8)
                             </span>
-                            <span className="text-[10px] text-white/40 font-bold uppercase">
-                                Attente : 3 joueurs min.
+                            <span className="text-[9.5px] text-white/50 font-black uppercase">
+                                3 agents minimum
                             </span>
                         </div>
 
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                        <div className="grid grid-cols-2 gap-2.5">
                             {players.map((p) => {
                                 const isMe = p.id === currentUserId;
                                 return (
                                     <div
                                         key={p.id}
-                                        className={`bg-black/40 border-2 rounded-2xl p-2.5 flex items-center gap-2.5 relative ${
-                                            p.is_ready ? 'border-spy-lime/60 shadow-[0_0_12px_rgba(204,255,0,0.15)]' : 'border-white/10'
+                                        className={`bg-black/40 border-2 rounded-2xl p-2.5 flex items-center gap-3 relative ${
+                                            p.is_ready ? 'border-spy-lime/60 shadow-[0_0_14px_rgba(204,255,0,0.18)]' : 'border-white/10'
                                         }`}
                                     >
-                                        <div className="w-9 h-9 rounded-full bg-slate-900 border border-white/20 flex-shrink-0">
+                                        <div className="w-10 h-10 rounded-full bg-slate-900 border border-white/20 flex-shrink-0">
                                             <CartoonAvatar id={p.avatar_emoji || 'fox-detective'} className="w-full h-full" />
                                         </div>
 
-                                        <div className="flex flex-col min-w-0 text-left">
+                                        <div className="flex flex-col min-w-0 text-left truncate">
                                             <span className={`text-xs font-black uppercase tracking-wide truncate ${p.pseudoColor || 'text-white'}`}>
                                                 {p.username} {isMe && '(Moi)'}
                                             </span>
-                                            <span className={`text-[8.5px] font-black uppercase tracking-wider flex items-center gap-0.5 ${
+                                            <span className={`text-[9px] font-black uppercase tracking-wider flex items-center gap-0.5 ${
                                                 p.is_ready ? 'text-spy-lime' : 'text-amber-400/80'
                                             }`}>
                                                 {p.is_host ? (
-                                                    <span className="text-yellow-400 font-extrabold flex items-center gap-0.5"><Crown className="w-3 h-3 fill-yellow-400" /> Hôte</span>
+                                                    <span className="text-yellow-400 font-extrabold flex items-center gap-0.5"><Crown className="w-3.5 h-3.5 fill-yellow-400" /> Hôte</span>
                                                 ) : p.is_ready ? (
-                                                    <span className="flex items-center gap-0.5"><CheckCircle2 className="w-3 h-3" /> Prêt</span>
+                                                    <span className="flex items-center gap-0.5"><CheckCircle2 className="w-3.5 h-3" /> Prêt</span>
                                                 ) : (
                                                     'En attente...'
                                                 )}
@@ -856,29 +855,60 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
                         </div>
                     </div>
 
-                    {/* Host Settings (If Host) */}
+                    {/* Host Game Settings & Custom Word Pack Dropdown */}
                     {isHost && (
-                        <div className="card-cartoon bg-gradient-to-b from-[#14233e]/95 via-[#0d182b]/95 to-[#0a1426]/95 border-[3.5px] border-white/20 shadow-2xl rounded-[32px] p-4 w-full mb-4 text-left space-y-3">
+                        <div className="card-cartoon bg-gradient-to-b from-[#14233e]/95 via-[#0d182b]/95 to-[#0a1426]/95 border-[3.5px] border-white/20 shadow-2xl rounded-[32px] p-4 w-full mb-3 text-left space-y-3">
                             <span className="text-xs font-black text-white uppercase tracking-wider block">
                                 ⚙️ Configuration de la Mission
                             </span>
 
-                            {/* Pack Selection */}
-                            <div className="flex items-center justify-between bg-black/40 p-2.5 rounded-xl border border-white/10">
-                                <span className="text-xs font-bold text-white/80">Pack de Mots</span>
-                                <select
-                                    value={settings.pack || 'standard'}
-                                    onChange={(e) => handleUpdateSettings('pack', e.target.value)}
-                                    className="bg-slate-900 border border-white/20 text-spy-lime font-black text-xs px-3 py-1.5 rounded-lg uppercase focus:outline-none"
+                            {/* Custom Cartoon Word Pack Dropdown */}
+                            <div className="relative">
+                                <label className="text-[9.5px] font-black text-white/50 uppercase tracking-widest block mb-1">
+                                    PACK DE MOTS
+                                </label>
+
+                                <button
+                                    onClick={() => setIsPackDropdownOpen(!isPackDropdownOpen)}
+                                    className="w-full bg-slate-900/90 border-2 border-white/20 hover:border-spy-lime/50 rounded-xl px-3.5 py-2.5 text-left text-xs font-black text-white uppercase tracking-wider flex items-center justify-between transition-all"
                                 >
-                                    {Object.entries(PACK_NAMES).map(([key, name]) => (
-                                        <option key={key} value={key}>{name}</option>
-                                    ))}
-                                </select>
+                                    <span className="flex items-center gap-2">
+                                        <span>{selectedPackObj.icon}</span>
+                                        <span>{selectedPackObj.name}</span>
+                                    </span>
+                                    <ChevronDown className={`w-4 h-4 text-spy-lime transition-transform ${isPackDropdownOpen ? 'rotate-180' : ''}`} />
+                                </button>
+
+                                <AnimatePresence>
+                                    {isPackDropdownOpen && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: -10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: -10 }}
+                                            className="absolute top-full left-0 w-full mt-1.5 bg-slate-900 border-2 border-spy-lime/40 rounded-2xl shadow-2xl z-40 overflow-hidden max-h-48 overflow-y-auto custom-scrollbar"
+                                        >
+                                            {PACK_OPTIONS.map(pack => (
+                                                <button
+                                                    key={pack.id}
+                                                    onClick={() => {
+                                                        handleUpdateSettings('pack', pack.id);
+                                                        setIsPackDropdownOpen(false);
+                                                    }}
+                                                    className={`w-full px-3.5 py-2 text-left text-xs font-black uppercase tracking-wider flex items-center gap-2 hover:bg-spy-lime/20 transition-colors border-b border-white/5 last:border-none ${
+                                                        settings.pack === pack.id ? 'bg-spy-lime/30 text-spy-lime' : 'text-white'
+                                                    }`}
+                                                >
+                                                    <span>{pack.icon}</span>
+                                                    <span>{pack.name}</span>
+                                                </button>
+                                            ))}
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
                             </div>
 
-                            {/* Steppers: Spies & Whites */}
-                            <div className="grid grid-cols-2 gap-2">
+                            {/* Role Count Steppers */}
+                            <div className="grid grid-cols-2 gap-2 pt-1">
                                 <div className="bg-black/40 p-2.5 rounded-xl border border-white/10 flex items-center justify-between">
                                     <span className="text-xs font-bold text-spy-orange">Espions</span>
                                     <input
@@ -905,6 +935,75 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
                             </div>
                         </div>
                     )}
+
+                    {/* Live Lobby Chat Component */}
+                    <div className="card-cartoon bg-gradient-to-b from-[#14233e]/95 via-[#0d182b]/95 to-[#0a1426]/95 border-[3.5px] border-white/20 shadow-2xl rounded-[32px] p-4 w-full mb-4 text-left">
+                        <div className="flex items-center justify-between mb-2">
+                            <span className="text-xs font-black text-white uppercase tracking-wider flex items-center gap-1.5">
+                                <MessageSquare className="w-4 h-4 text-spy-lime" /> Tchat du Salon
+                            </span>
+                            <span className="text-[9px] text-spy-lime font-black uppercase">
+                                En Direct
+                            </span>
+                        </div>
+
+                        {/* Chat Messages Log */}
+                        <div className="bg-black/50 border-2 border-white/10 rounded-2xl p-3 h-32 overflow-y-auto custom-scrollbar space-y-2 mb-2">
+                            {(room.game_state?.chat_messages || []).length === 0 ? (
+                                <p className="text-white/30 text-[10px] font-black uppercase text-center py-8">
+                                    Aucun message. Envoie une réaction à l'équipe !
+                                </p>
+                            ) : (
+                                (room.game_state?.chat_messages || []).map((msg) => (
+                                    <div key={msg.id} className="flex items-start gap-2 text-xs">
+                                        <div className="w-6 h-6 rounded-full bg-slate-900 border border-white/20 flex-shrink-0">
+                                            <CartoonAvatar id={msg.sender_avatar} className="w-full h-full" />
+                                        </div>
+                                        <div className="flex flex-col text-left min-w-0">
+                                            <span className="text-[9px] font-black text-spy-lime uppercase tracking-wider">
+                                                {msg.sender_name}
+                                            </span>
+                                            <span className="text-white font-bold leading-tight break-words">
+                                                {msg.text}
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                            <div ref={chatEndRef} />
+                        </div>
+
+                        {/* Quick Reaction Chips */}
+                        <div className="flex items-center gap-1.5 overflow-x-auto custom-scrollbar pb-1 mb-2">
+                            {['🦊', '🕵️‍♂️', '🔥', '👀', '🎉', '👑', '🤫', '💥'].map(emoji => (
+                                <button
+                                    key={emoji}
+                                    onClick={() => handleSendChatMessage(emoji)}
+                                    className="px-2.5 py-1 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-sm flex-shrink-0 active:scale-95 transition-transform cursor-pointer"
+                                >
+                                    {emoji}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Message Input */}
+                        <div className="flex gap-2">
+                            <input
+                                type="text"
+                                value={chatText}
+                                onChange={(e) => setChatText(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleSendChatMessage()}
+                                placeholder="Écris un message..."
+                                className="flex-1 bg-slate-900 border border-white/20 rounded-xl px-3 py-2 text-xs font-bold text-white placeholder-white/30 focus:outline-none focus:border-spy-lime"
+                            />
+                            <button
+                                onClick={() => handleSendChatMessage()}
+                                className="btn-cartoon-primary px-3 py-2 text-xs font-black uppercase flex items-center justify-center cursor-pointer"
+                            >
+                                <Send className="w-3.5 h-3.5" />
+                            </button>
+                        </div>
+                    </div>
 
                     {/* Action Button: Ready / Start Game */}
                     <div className="w-full space-y-2">
