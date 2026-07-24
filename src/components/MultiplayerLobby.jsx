@@ -55,7 +55,7 @@ const ROLE_INFOS = {
     }
 };
 
-const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, onLoginRedirect }) => {
+const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, onLoginRedirect, onOpenSettings }) => {
     const { playSfx } = useAudio();
     const [view, setView] = useState('select'); // 'select' | 'browser' | 'lobby'
     const [roomCode, setRoomCode] = useState('');
@@ -852,7 +852,7 @@ const MultiplayerLobby = ({ user, profileData, onBack, onStartMultiplayerGame, o
                                         ) : (
                                             <div className="flex items-center justify-between gap-1 mt-0.5">
                                                 <h2 className="text-base font-black text-white uppercase tracking-wide truncate">
-                                                    {room.name || `Salon de ${hostPlayer?.username}`}
+                                                    {room.name || hostPlayer?.username || 'Salon Espions'}
                                                 </h2>
                                                 {isHost && (
                                                     <button

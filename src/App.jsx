@@ -738,6 +738,7 @@ function App() {
                     setCurrentScreen('multiplayer-game');
                   }}
                   onBack={() => setCurrentScreen('home')}
+                  onOpenSettings={() => setShowSettings(true)}
                 />
               )}
               {currentScreen === 'multiplayer-game' && (
